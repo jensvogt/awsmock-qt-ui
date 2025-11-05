@@ -1,0 +1,33 @@
+#ifndef SNS_MESSAGE_DETAILS_DIALOG_H
+#define SNS_MESSAGE_DETAILS_DIALOG_H
+
+#include <QDialog>
+
+#include <modules/sns/SNSService.h>
+
+namespace Ui {
+class SNSMessageDetailsDialog;
+}
+
+class SNSMessageDetailsDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit SNSMessageDetailsDialog(const QString &messageId, QWidget *parent = nullptr);
+    ~SNSMessageDetailsDialog();
+
+private slots:
+
+    void on_prettyPushButton_toggled(bool checked);
+
+private:
+    void UpdateMessageDetails(const SNSGetMessageDetailsResponse &response);
+
+    Ui::SNSMessageDetailsDialog *_ui;
+    QString _messageId;
+    SNSService* _snsService;
+    bool _changed=false;
+};
+
+#endif // SNS_MESSAGE_DETAILS_DIALOG_H

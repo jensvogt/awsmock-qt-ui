@@ -1,0 +1,4 @@
+#ifndef SNS_MESSAGE_LIST_H
+#define SNS_MESSAGE_LIST_H
+
+#endif // SNS_MESSAGE_LIST_H

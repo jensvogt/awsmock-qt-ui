@@ -1,0 +1,236 @@
+#include <mainwindow.h>
+
+/**
+ * @brief Helper widget for the content area.
+ * Displays a simple message based on the section selected.
+ */
+class ContentPage : public BasePage
+{
+public:
+    ContentPage(const QString& title, QWidget *parent = nullptr) : BasePage(parent), title(title) {}
+
+    void LoadContent() {
+        // Set up the layout for the individual content pages
+        QVBoxLayout *layout = new QVBoxLayout(this);
+
+        QLabel *titleLabel = new QLabel(QString("<h1>%1</h1>").arg(title), this);
+        titleLabel->setAlignment(Qt::AlignCenter);
+
+        QLabel *detailLabel = new QLabel(QString("<p>This is the detailed content for the <b>%1</b> section.</p>").arg(title), this);
+        detailLabel->setAlignment(Qt::AlignCenter);
+
+        layout->addWidget(titleLabel);
+        layout->addWidget(detailLabel);
+        layout->addStretch(); // Push content to the top
+    }
+
+private:
+
+    /**
+     * Page title
+     */
+    QString title;
+
+};
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+{
+    setWindowTitle("AwsMock UI");
+    setMinimumSize(1200, 800);
+
+    // Setup menu bar
+    SetupMenuBar();
+
+    // 1. Create the main layout container (QSplitter)
+    QSplitter *mainSplitter = new QSplitter(this);
+    mainSplitter->setOrientation(Qt::Horizontal);
+
+    // 2. Create the Navigation Pane (QListWidget)
+    m_navPane = new QListWidget(mainSplitter);
+    m_navPane->setMaximumWidth(200); // Set a maximum width for the navigation bar
+    m_navPane->setMinimumWidth(150);
+
+    m_navPane->addItem("Dashboard");
+    m_navPane->addItem("SQS");
+    m_navPane->addItem("SNS");
+    m_navPane->addItem("S3");
+
+    // Select the first item by default
+    m_navPane->setCurrentRow(0);
+
+    // 3. Create the Content Pane (QStackedWidget)
+    // QStackedWidget allows us to stack multiple widgets and show only one at a time.
+    m_contentPane = new QStackedWidget(this);
+
+    // 4. Add the panes to the splitter
+    mainSplitter->addWidget(m_navPane);
+    mainSplitter->addWidget(m_contentPane);
+
+    // Set initial proportional sizes for the panes (e.g., 20% nav, 80% content)
+    QList<int> sizes;
+    sizes << 200 << 600; // Initial widths in pixels (QSplitter prefers list of sizes)
+    mainSplitter->setSizes(sizes);
+
+    // 5. Set the splitter as the central widget of the QMainWindow
+    setCentralWidget(mainSplitter);
+
+    // 6. Connect navigation signal to content slot
+    // When the selected row in the list changes, update the content pane index.
+    connect(m_navPane, &QListWidget::currentRowChanged, this, &MainWindow::NavigationSelectionChanged);
+
+    // "Status bar" at the bottom
+    statusBar()->showMessage("Ready");
+}
+
+MainWindow::~MainWindow()
+{    
+}
+
+void MainWindow::SetupMenuBar() {
+
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
+    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+
+    // File menu
+    QAction *importAction = new QAction(QIcon(":/icons/import.png"),tr("&Import infrastructure"), this);
+    connect(importAction, &QAction::triggered, this, &MainWindow::ImportInfrastructure);
+    fileMenu->addAction(importAction);
+
+    QAction *exportAction = new QAction(QIcon(":/icons/export.png"), tr("&Export infrastructure"), this);
+    connect(exportAction, &QAction::triggered, this, &MainWindow::ExportInfrastructure);
+    fileMenu->addAction(exportAction);
+
+    fileMenu->addSeparator();
+
+    QAction *exitAction = new QAction(QIcon(":/icons/exit.png"), tr("E&xit"), this);
+    connect(exitAction, &QAction::triggered, this, &MainWindow::Exit);
+    fileMenu->addAction(exitAction);
+
+    // Edit Menu
+    QAction *prefAction = new QAction(QIcon(":/icons/preferences.png"), tr("&Preferences"), this);
+    connect(prefAction, &QAction::triggered, this, &MainWindow::EditPreferences);
+    editMenu->addAction(prefAction);
+
+}
+
+void MainWindow::ImportInfrastructure() {
+    qDebug() << "Import Infrastructure";
+}
+
+void MainWindow::ExportInfrastructure() {
+    qDebug() << "Export Infrastructure";
+}
+
+void MainWindow::EditPreferences() {
+    EditPreferencesDialog dialog;
+    if (dialog.exec() == QDialog::Accepted) {
+        QString info = QString("BaseUrl: %1").arg(dialog.GetBaseUrl());
+
+        QMessageBox::information(nullptr, "User Info", info);
+    }
+}
+
+void MainWindow::NavigationSelectionChanged(int currentRow) {
+
+    currentWidgetIndex =  currentRow;
+    if (!loadedPages.contains(currentRow)) {
+        // Lazy load page
+        BasePage *page = CreatePage(currentRow);
+        loadedPages[currentRow] = page;
+        m_contentPane->addWidget(page);
+    }
+    m_contentPane->setCurrentWidget(loadedPages[currentRow]);
+    loadedPages[currentRow]->StartAutoUpdate();
+}
+
+void MainWindow::UpdateStatusBar(const QString &text) {
+    statusBar()->showMessage(text);
+}
+
+BasePage* MainWindow::CreatePage(int index)
+{
+    switch (index) {
+    case 0:
+        return new ContentPage("Dashboard");
+    case 1:{
+
+        SQSQueueList* queueListPage = new SQSQueueList("SQS Queue List");
+
+        // Connect child's signal to update status bar
+        connect(queueListPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+        // Route to the message list
+        connect(queueListPage, &SQSQueueList::ShowMessages, this, [=](const QString &queueArn, const QString &queueUrl) {
+
+            // Stop the auto updater
+            queueListPage->StopAutoUpdate();
+
+            // Get the Queue name
+            QString queueName = queueArn.mid(queueArn.lastIndexOf(":")+1);
+
+            // Create the message list page
+            SQSMessageList* messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, nullptr);
+
+            // Add it to the loaded pages list
+            m_contentPane->addWidget(messageListPage);
+            m_contentPane->setCurrentWidget(messageListPage);
+
+            connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            // Connect the back button
+            connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&](){
+                NavigationSelectionChanged(1);
+            });
+
+            // Start auto updater
+            messageListPage->StartAutoUpdate();
+        });
+        return queueListPage;
+    }
+    case 2:{
+
+        SNSTopicList* topicListPage = new SNSTopicList("SNS Topic List");
+
+        // Connect child's signal to update status bar
+        connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+        // Route to the message list
+        connect(topicListPage, &SNSTopicList::ShowSnsMessages, this, [=](const QString &topicArn) {
+
+            // Stop the auto updater
+            topicListPage->StopAutoUpdate();
+
+            // Get the Queue name
+            QString topicName = topicArn.mid(topicArn.lastIndexOf(":")+1);
+
+            // Create the message list page
+            SNSMessageList* messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn, nullptr);
+
+            // Add it to the loaded pages list
+            m_contentPane->addWidget(messageListPage);
+            m_contentPane->setCurrentWidget(messageListPage);
+
+            connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            // Connect the back button
+            connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&](){
+                NavigationSelectionChanged(2);
+            });
+
+            // Start auto updater
+            messageListPage->StartAutoUpdate();
+        });
+
+        return topicListPage;
+    }
+    case 3:
+        return new ContentPage("S3");
+    default:
+        return nullptr;
+    }
+}
+
+void MainWindow::Exit() {
+    QApplication::quit();
+}
