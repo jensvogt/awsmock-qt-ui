@@ -1,7 +1,7 @@
 
 #include <utils/BasePage.h>
 
-BasePage::BasePage(QWidget* parent) : QWidget(parent) {
+BasePage::BasePage(QWidget* parent) : QWidget(parent), autoUpdateTimer(nullptr) {
 }
 
 void BasePage::StartAutoUpdate() {
@@ -19,7 +19,7 @@ void BasePage::StartAutoUpdate() {
     autoUpdateTimer->start(10000);
 }
 
-void BasePage::StopAutoUpdate(){
+void BasePage::StopAutoUpdate() const {
 
     // Stop the auto updater
     autoUpdateTimer->stop();

@@ -33,7 +33,7 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar add action
-    QPushButton *purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Topics");
     connect(purgeAllButton, &QPushButton::clicked, [this](){
@@ -41,15 +41,14 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    QPushButton *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Topiclist");
     connect(refreshButton, &QPushButton::clicked, this, [this](){
         LoadContent();
     });
 
-    //toolBar->addWidget(backButton);
-    toolBar->addWidget(titleLabel);
+//    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);

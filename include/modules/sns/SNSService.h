@@ -34,19 +34,20 @@ public:
      * @param region AWS region
      * @param topicName name of the topic
      */
-    void AddTopic(const QString &region, const QString &QueueName);
+    void AddTopic(const QString &region, const QString &topicName);
 
     /**
      * @brief List SNS Topics
      *
-     * @param prefix Topicname prefix
+     * @param prefix topic name prefix
      */
     void ListTopics(const QString &prefix);
 
     /**
      * @brief List SNS messages
      *
-     * @param prefix Topicname prefix
+     * @param topicArn topic ARN
+     * @param prefix topic name prefix
      */
     void ListMessages(const QString &topicArn, const QString &prefix);
 

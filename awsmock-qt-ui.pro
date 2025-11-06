@@ -6,7 +6,7 @@ CONFIG += release
 TEMPLATE = app
 TARGET = awsmock-qt-ui
 INCLUDEPATH += include
-QT += network widgets
+QT += network widgets charts
 RESOURCES += resources/awsmock-qt-ui.qrc
 
 # You can make your code fail to compile if you use deprecated APIs.
@@ -32,6 +32,7 @@ HEADERS += include/mainwindow.h \
            include/dto/sns/SNSListTopicResult.h \
            include/dto/sns/SNSMessageCounter.h \
            include/dto/sns/SNSTopicCounter.h \
+           include/modules/dashboard/Dashboard.h \
            include/modules/sqs/SQSService.h \
            include/modules/sqs/SQSQueueList.h \
            include/modules/sqs/SQSMessageList.h \
@@ -40,11 +41,11 @@ HEADERS += include/mainwindow.h \
            include/modules/sns/SNSTopicList.h \
            include/modules/sns/SNSMessageList.h
            include/modules/sns/SNSQueueList.h
-#           build/Desktop_Qt_6_10_0-Debug/awsmock-qt-ui_autogen/EWIEGA46WW/moc_mainwindow.cpp
 FORMS += src/modules/sqs/SQSQueueDetailsDialog.ui \
            src/modules/sqs/SQSMessageDetailsDialog.ui\
            src/modules/sns/SNSTopicDetailsDialog.ui \
-           src/modules/sns/SNSMessageDetailsDialog.ui
+           src/modules/sns/SNSMessageDetailsDialog.ui \
+           src/modules/dashboard/Dashboard.ui
 SOURCES += src/main.cpp \
            src/mainwindow.cpp \
            src/utils/Configuration.cpp \
@@ -52,6 +53,7 @@ SOURCES += src/main.cpp \
            src/utils/RestManager.cpp \
            src/utils/EditPreferencesDialog.cpp \
            src/utils/IconUtils.cpp \
+           src/modules/dashboard/Dashboard.cpp \
            src/modules/sqs/SQSMessageDetailsDialog.cpp \
            src/modules/sqs/SQSMessageList.cpp \
            src/modules/sqs/SQSQueueDetailsDialog.cpp \
@@ -63,6 +65,4 @@ SOURCES += src/main.cpp \
            src/modules/sns/SNSService.cpp \
            src/modules/sns/SNSTopicDetailsDialog.cpp \
            src/modules/sns/SNSTopicList.cpp
-#           build/Desktop_Qt_6_10_0-Debug/awsmock-qt-ui_autogen/mocs_compilation.cpp \
-#           build/Desktop_Qt_6_10_0-Debug/CMakeFiles/3.30.5/CompilerIdCXX/CMakeCXXCompilerId.cpp
 TRANSLATIONS += awsmock-qt-ui_en_150.ts
