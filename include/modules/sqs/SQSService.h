@@ -1,15 +1,9 @@
 #ifndef SQS_SERVICE_H
 #define SQS_SERVICE_H
 
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QMessageBox>
 #include <QObject>
 #include <QTableWidget>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
 
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <dto/sqs/SQSGetQueueDetailsResponse.h>
@@ -18,7 +12,7 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 
-class SQSService : public QObject
+class SQSService final : public QObject
 {
     Q_OBJECT
 
@@ -32,30 +26,17 @@ public:
     /**
      * @brief List SQS Queues
      *
-     * @param prefix Queuename prefix
+     * @param prefix Queue name prefix
+     * @param tableWidget table widget
      */
     void ListQueues(const QString &prefix, QTableWidget* tableWidget);
 
     /**
-     * @brief HandleListResult
-     *
-     * @param replay Qt network manager reply
-     */
-    void HandleListResult(QNetworkReply *reply);
-
-    /**
      * @brief Purge Queue
      *
-     * @param QueueUrl Queue URL
+     * @param queueUrl Queue URL
      */
-    void PurgeQueue(QString QueueUrl);
-
-    /**
-     * @brief HandlePurgeResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandlePurgeResult(QNetworkReply *reply);
+    void PurgeQueue(const QString& queueUrl);
 
     /**
      * @brief Purge all Queues
@@ -63,115 +44,62 @@ public:
     void PurgeAllQueues();
 
     /**
-     * @brief HandleAllPurgeResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandleAllPurgeResult(QNetworkReply *reply);
-
-    /**
      * @brief Add Queue
-     */
-    void AddQueue(const QString &QueueName);
-
-    /**
-     * @brief HandleAddResult
      *
-     * @param reply Qt network manager reply
+     * @param queueName name of the queue
      */
-    void HandleAddResult(QNetworkReply *reply);
+    void AddQueue(const QString &queueName);
 
     /**
      * @brief Redrive Queue
      *
-     * @param QueueUrl Queue URL
+     * @param queueUrl Queue URL
      */
-    void RedriveQueue(QString QueueUrl);
-
-    /**
-     * @brief HandleRedriveResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandleRedriveResult(QNetworkReply *reply);
+    void RedriveQueue(const QString& queueUrl);
 
     /**
      * @brief GetQueueDetails Queue
      *
-     * @param QueueArn Queue ARN
+     * @param queueArn Queue ARN
      */
-    void GetQueueDetails(QString QueueArn);
-
-    /**
-     * @brief HandleGetQueueDetailResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandleGetQueueDetailResult(QNetworkReply *reply);
+    void GetQueueDetails(const QString& queueArn);
 
     /**
      * @brief Update a Queue
      *
-     * @param QueueArn Queue Arn
+     * @param updateQueueRequest update request
      */
-    void UpdateQueue(const UpdateQueueRequest &updateQuueRequest);
-
-    /**
-     * @brief HandleUpdateResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandleUpdateResult(QNetworkReply *reply);
+    void UpdateQueue(const UpdateQueueRequest &updateQueueRequest);
 
     /**
      * @brief Delete Queue
      *
-     * @param QueueUrl Queue URL
+     * @param queueUrl Queue URL
      */
-    void DeleteQueue(const QString &QueueUrl);
-
-    /**
-     * @brief HandleDeleteResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandleDeleteResult(QNetworkReply *reply);
+    void DeleteQueue(const QString &queueUrl);
 
     /**
      * @brief List SQS messages
      *
-     * @param QueueArn ARN of the Queue
+     * @param queueArn ARN of the Queue
      * @param prefix message id prefix
+     * @param tableWidget table widget
      */
-    void ListMessages(const QString &QueueArn, const QString &prefix, QTableWidget* tableWidget);
-
-    /**
-     * @brief HandleListResult
-     *
-     * @param replay Qt network manager reply
-     */
-    void HandleMessageListResult(QNetworkReply *reply);
+    void ListMessages(const QString &queueArn, const QString &prefix, QTableWidget* tableWidget);
 
     /**
      * @brief Purge all messages
      *
      * @param QueueUrl URL of the Queue to purge
      */
-    void PurgeAllMesssages(const QString &QueueUrl);
-
-    /**
-     * @brief HandleAllPurgeResult
-     *
-     * @param reply Qt network manager reply
-     */
-    void HandleMessageAllPurgeResult(QNetworkReply *reply);
+    void PurgeAllMessages(const QString &QueueUrl);
 
     /**
      * @brief Get message details response
      *
      * @param messageId message ID
      */
-    void GetSqsMessageDetails(QString messageId);
+    void GetSqsMessageDetails(const QString& messageId);
 
 signals:
     void LoadContent();
@@ -181,19 +109,14 @@ signals:
 private:
 
     /**
-     * @brief Network manager
+     * @brief Base URL
      */
-    QNetworkAccessManager *m_netManager;
+    QUrl url;
 
     /**
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl url;
 
     /**
      * @brief Target table widget

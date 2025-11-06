@@ -93,22 +93,22 @@ void MainWindow::SetupMenuBar() {
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
     // File menu
-    QAction *importAction = new QAction(QIcon(":/icons/import.png"),tr("&Import infrastructure"), this);
+    QAction *importAction = new QAction(IconUtils::GetIcon("dark", "import"),tr("&Import infrastructure"), this);
     connect(importAction, &QAction::triggered, this, &MainWindow::ImportInfrastructure);
     fileMenu->addAction(importAction);
 
-    QAction *exportAction = new QAction(QIcon(":/icons/export.png"), tr("&Export infrastructure"), this);
+    QAction *exportAction = new QAction(IconUtils::GetIcon("dark", "export"), tr("&Export infrastructure"), this);
     connect(exportAction, &QAction::triggered, this, &MainWindow::ExportInfrastructure);
     fileMenu->addAction(exportAction);
 
     fileMenu->addSeparator();
 
-    QAction *exitAction = new QAction(QIcon(":/icons/exit.png"), tr("E&xit"), this);
+    QAction *exitAction = new QAction(IconUtils::GetIcon("dark", "exit"), tr("E&xit"), this);
     connect(exitAction, &QAction::triggered, this, &MainWindow::Exit);
     fileMenu->addAction(exitAction);
 
     // Edit Menu
-    QAction *prefAction = new QAction(QIcon(":/icons/preferences.png"), tr("&Preferences"), this);
+    QAction *prefAction = new QAction(IconUtils::GetIcon("dark", "preferences"), tr("&Preferences"), this);
     connect(prefAction, &QAction::triggered, this, &MainWindow::EditPreferences);
     editMenu->addAction(prefAction);
 
@@ -123,15 +123,14 @@ void MainWindow::ExportInfrastructure() {
 }
 
 void MainWindow::EditPreferences() {
-    EditPreferencesDialog dialog;
-    if (dialog.exec() == QDialog::Accepted) {
+    if (EditPreferencesDialog dialog; dialog.exec() == QDialog::Accepted) {
         QString info = QString("BaseUrl: %1").arg(dialog.GetBaseUrl());
 
         QMessageBox::information(nullptr, "User Info", info);
     }
 }
 
-void MainWindow::NavigationSelectionChanged(int currentRow) {
+void MainWindow::NavigationSelectionChanged(const int currentRow) {
 
     currentWidgetIndex =  currentRow;
     if (!loadedPages.contains(currentRow)) {
@@ -144,7 +143,7 @@ void MainWindow::NavigationSelectionChanged(int currentRow) {
     loadedPages[currentRow]->StartAutoUpdate();
 }
 
-void MainWindow::UpdateStatusBar(const QString &text) {
+void MainWindow::UpdateStatusBar(const QString &text) const {
     statusBar()->showMessage(text);
 }
 

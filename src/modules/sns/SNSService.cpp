@@ -16,7 +16,7 @@ void SNSService::AddTopic(const QString &region, const QString &topicName) {
                       {{"x-awsmock-target", "sns"},
                        {"x-awsmock-action", "create-topic"},
                        {"content-type", "application/json"}},
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, const QByteArray& response, int status, const QString& error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
@@ -80,7 +80,7 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
     jRequest["sortColumns"] = jSortingArray;
-    QJsonDocument requestDoc(jRequest);
+    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),

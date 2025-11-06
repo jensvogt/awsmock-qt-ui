@@ -6,20 +6,21 @@
 #include <QStyleFactory>
 #include <QCommandLineParser>
 
-#include<utils/Configuration.h>
+#include <utils/Configuration.h>
+#include <utils/IconUtils.h>
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":/icons/awsmock.png"));
+    const QApplication app(argc, argv);
+    QApplication::setWindowIcon(IconUtils::GetCommonIcon("awsmock.png"));
 
     // set style
-    app.setStyle(QStyleFactory::create("Fusion"));
+    QApplication::setStyle(QStyleFactory::create("Fusion"));
 
     // increase font size for better reading
     QFont defaultFont = QApplication::font();
     defaultFont.setPointSize(defaultFont.pointSize());
-    app.setFont(defaultFont);
+    QApplication::setFont(defaultFont);
 
     // modify palette to dark
     QPalette darkPalette;
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
     darkPalette.setColor(QPalette::Base,QColor(42,42,42));
     darkPalette.setColor(QPalette::AlternateBase,QColor(66,66,66));
     darkPalette.setColor(QPalette::ToolTipBase,Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText,Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText,Qt::black);
     darkPalette.setColor(QPalette::Text,Qt::white);
     darkPalette.setColor(QPalette::Disabled,QPalette::Text,QColor(127,127,127));
     darkPalette.setColor(QPalette::Dark,QColor(35,35,35));
@@ -43,8 +44,9 @@ int main(int argc, char *argv[])
     darkPalette.setColor(QPalette::Disabled,QPalette::Highlight,QColor(80,80,80));
     darkPalette.setColor(QPalette::HighlightedText,Qt::white);
     darkPalette.setColor(QPalette::Disabled,QPalette::HighlightedText,QColor(127,127,127));
+    darkPalette.setColor(QPalette::PlaceholderText,QColor(127,127,127));
 
-    app.setPalette(darkPalette);
+    QApplication::setPalette(darkPalette);
 
     QCommandLineParser parser;
     parser.setApplicationDescription("AWS simulation");
@@ -54,26 +56,24 @@ int main(int argc, char *argv[])
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
-        const QString baseName = "awsmock-qt-ui_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
-            app.installTranslator(&translator);
+        if (const QString baseName = "awsmock-qt-ui_" + QLocale(locale).name(); translator.load(":/i18n/" + baseName)) {
+            QApplication::installTranslator(&translator);
             break;
         }
     }
 
-    QCommandLineOption configOption(QStringList() << "c" << "config", "Path to config file.", "file");
+    const QCommandLineOption configOption(QStringList() << "c" << "config", "Path to config file.", "file");
     parser.addOption(configOption);
 
     // Process the actual command-line arguments
     parser.process(app);
 
     // Retrieve values
-    QString configPath = parser.value(configOption);
-    if(!configPath.isEmpty()) {
+    if(const QString configPath = parser.value(configOption); !configPath.isEmpty()) {
         Configuration::instance().SetFilePath(configPath);
     }
 
     MainWindow w;
     w.show();
-    return app.exec();
+    return QApplication::exec();
 }

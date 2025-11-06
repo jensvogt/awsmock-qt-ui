@@ -22,6 +22,7 @@
 #include <utils/BasePage.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSTopicDetailsDialog.h>
+#include <utils/IconUtils.h>
 
 /**
  * @brief Helper widget for the content area.
@@ -62,7 +63,7 @@ signals:
     void ShowSnsMessages(const QString &topicArn);
 
 private slots:
-    void ShowContextMenu(const QPoint &pos);
+    void ShowContextMenu(const QPoint &pos) const;
 
     void NotifyStatusBar() {
         QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");

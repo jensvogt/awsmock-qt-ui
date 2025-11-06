@@ -55,7 +55,7 @@ signals:
     void ShowMessages(const QString &QueueArn, const QString &QueueUrl);
 
 private slots:
-    void ShowContextMenu(const QPoint &pos);
+    void ShowContextMenu(const QPoint &pos) const;
 
     void NotifyStatusBar() {
         QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");

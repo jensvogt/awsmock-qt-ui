@@ -24,24 +24,27 @@
 #include <utils/BasePage.h>
 #include <utils/EditPreferencesDialog.h>
 
-class MainWindow : public QMainWindow
+class MainWindow final : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
 private slots:
     void NavigationSelectionChanged(int currentRow);
-    void UpdateStatusBar(const QString &text);
+    void UpdateStatusBar(const QString &text) const;
 
 private:
     // Setup menu bar
     void SetupMenuBar();
-    void ImportInfrastructure();
-    void ExportInfrastructure();
-    void EditPreferences();
+
+    static void ImportInfrastructure();
+
+    static void ExportInfrastructure();
+
+    static void EditPreferences();
     BasePage* CreatePage(int currentRow);
     void Exit();
 

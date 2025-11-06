@@ -18,6 +18,8 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
         ${TS_FILES}
+        src/utils/IconUtils.cpp
+        include/utils/IconUtils.h
 )
 
 

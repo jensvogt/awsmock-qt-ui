@@ -22,6 +22,7 @@ HEADERS += include/mainwindow.h \
            include/utils/BasePage.h \
            include/utils/RestManager.h \
            include/utils/EditPreferencesDialog.h \
+           include/utils/IconUtils.h \
            include/dto/sqs/SQSGetMessageDetailsResponse.h \
            include/dto/sqs/SQSQueueDetailsResponse.h \
            include/dto/sqs/UpdateQueueRequest.h \
@@ -50,6 +51,7 @@ SOURCES += src/main.cpp \
            src/utils/BasePage.cpp \
            src/utils/RestManager.cpp \
            src/utils/EditPreferencesDialog.cpp \
+           src/utils/IconUtils.cpp \
            src/modules/sqs/SQSMessageDetailsDialog.cpp \
            src/modules/sqs/SQSMessageList.cpp \
            src/modules/sqs/SQSQueueDetailsDialog.cpp \

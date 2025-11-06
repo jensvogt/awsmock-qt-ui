@@ -13,15 +13,15 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     connect(snsService, &SNSService::ReloadMessagesSignal, this, &SNSTopicList::LoadContent);
 
     // Define toolbar
-    QHBoxLayout *toolBar = new QHBoxLayout();
-    QWidget *spacer = new QWidget();
+    const auto toolBar = new QHBoxLayout();
+    const auto spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar title
-    QLabel* titleLabel = new QLabel(title);
+    const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    QPushButton *addButton = new QPushButton(QIcon(":/icons/add.png"),"");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"),"");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Topic");
     connect(addButton, &QPushButton::clicked, [this](){
@@ -33,7 +33,7 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar add action
-    QPushButton *purgeAllButton = new QPushButton(QIcon(":/icons/purge.png"),"");
+    QPushButton *purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Topics");
     connect(purgeAllButton, &QPushButton::clicked, [this](){
@@ -41,7 +41,7 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    QPushButton *refreshButton = new QPushButton(QIcon(":/icons/refresh.png"),"");
+    QPushButton *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Topiclist");
     connect(refreshButton, &QPushButton::clicked, this, [this](){
@@ -136,19 +136,19 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
         tableWidget->insertRow(r);
         tableWidget->setItem(r, 0, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicName));
 
-        QTableWidgetItem *item1 = new QTableWidgetItem;
+        const auto item1 = new QTableWidgetItem();
         item1->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).messages));
         tableWidget->setItem(r, 1, item1);
 
-        QTableWidgetItem *item2 = new QTableWidgetItem;
+        const auto item2 = new QTableWidgetItem();
         item2->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).messagesSend));
         tableWidget->setItem(r, 2, item2);
 
-        QTableWidgetItem *item3 = new QTableWidgetItem;
+        const auto item3 = new QTableWidgetItem();
         item3->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).messagesResend));
         tableWidget->setItem(r, 3, item3);
 
-        QTableWidgetItem *item4 = new QTableWidgetItem;
+        const auto item4 = new QTableWidgetItem();
         item4->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).size));
         tableWidget->setItem(r, 4, item4);
 
@@ -161,12 +161,12 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
     NotifyStatusBar();
 }
 
-void SNSTopicList::ShowContextMenu(const QPoint &pos){
+void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
 
-    QModelIndex index = tableWidget->indexAt(pos);
+    const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
-    int row = index.row();
+    const int row = index.row();
 
     QMenu menu;
     QAction *editAction = menu.addAction(QIcon(":/icons/edit.png"), "Edit Topic");
@@ -179,7 +179,7 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos){
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(QIcon(":/icons/delete.png"), "Delete Topic");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Topic");
     deleteAction->setToolTip("Delete the Topic");
 
     QString topicArn = tableWidget->item(row, 7)->text();

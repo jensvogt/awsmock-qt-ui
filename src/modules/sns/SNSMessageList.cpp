@@ -1,6 +1,8 @@
 
 #include <modules/sns/SNSMessageList.h>
 
+#include "utils/IconUtils.h"
+
 SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QWidget *parent) : BasePage(parent), topicArn(topicArn)
 {
     // Connect service
@@ -14,7 +16,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar back action
-    QPushButton *backButton = new QPushButton(QIcon(":/icons/back.png"),"");
+    QPushButton *backButton = new QPushButton(IconUtils::GetIcon("dark", "back"),"");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Add a new Queue");
     QObject::connect(backButton, &QPushButton::clicked, [this](){
@@ -25,10 +27,10 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     QLabel* titleLabel = new QLabel(title);
 
     // Toolbar add action
-    QPushButton *addButton = new QPushButton(QIcon(":/icons/add.png"),"");
+    QPushButton *addButton = new QPushButton(IconUtils::GetIcon("dark", "add"),"");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Queue");
-    QObject::connect(addButton, &QPushButton::clicked, [this](){
+    QObject::connect(addButton, &QPushButton::clicked, [](){
         bool ok;
         QString text = QInputDialog::getText(0, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok);
         if (ok && !text.isEmpty()) {
@@ -37,7 +39,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     });
 
     // Toolbar add action
-    QPushButton *purgeAllButton = new QPushButton(QIcon(":/icons/purge.png"),"");
+    QPushButton *purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
     QObject::connect(purgeAllButton, &QPushButton::clicked, [&](){
@@ -46,7 +48,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     });
 
     // Toolbar refresh action
-    QPushButton *refreshButton = new QPushButton(QIcon(":/icons/refresh.png"),"");
+    QPushButton *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Queuelist");
     QObject::connect(refreshButton, &QPushButton::clicked, [this](){
@@ -177,7 +179,7 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos){
     QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages");*/
     menu.addSeparator();
-    QAction *deleteAction = menu.addAction(QIcon(":/icons/delete.png"), "Delete Message");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark","delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
     QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
@@ -188,7 +190,7 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos){
         QString QueueUrl = tableWidget->item(row, 7)->text();
 //        DeleteQueue(QueueUrl);
     } else*/ if (selectedAction == deleteAction) {
-        QString id = tableWidget->item(row, 0)->text();
+        const QString id = tableWidget->item(row, 0)->text();
         qDebug() << "Delete " << id;
         //        DeleteQueue(QueueUrl);
     }
