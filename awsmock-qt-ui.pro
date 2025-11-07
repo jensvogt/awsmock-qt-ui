@@ -41,6 +41,9 @@ HEADERS += include/mainwindow.h \
            include/modules/sns/SNSTopicList.h \
            include/modules/sns/SNSMessageList.h
            include/modules/sns/SNSQueueList.h
+           include/modules/application/ApplicationList.h
+           include/modules/application/ApplicationService.h
+           include/modules/application/ApplicationAddDialog.h
 FORMS += src/modules/sqs/SQSQueueDetailsDialog.ui \
            src/modules/sqs/SQSMessageDetailsDialog.ui\
            src/modules/sns/SNSTopicDetailsDialog.ui \
@@ -64,5 +67,8 @@ SOURCES += src/main.cpp \
            src/modules/sns/SNSMessageList.cpp \
            src/modules/sns/SNSService.cpp \
            src/modules/sns/SNSTopicDetailsDialog.cpp \
-           src/modules/sns/SNSTopicList.cpp
+           src/modules/sns/SNSTopicList.cpp \
+           src/modules/sns/ApplicationList.cpp \
+           src/modules/sns/ApplicationService.cpp \
+           src/modules/sns/ApplicationAddDialog.cpp
 TRANSLATIONS += awsmock-qt-ui_en_150.ts

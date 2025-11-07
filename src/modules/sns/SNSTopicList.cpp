@@ -2,6 +2,8 @@
 
 SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
 
+    setAttribute(Qt::WA_DeleteOnClose);
+
     // Set region
     _region = Configuration::instance().GetRegion();
 
@@ -15,11 +17,8 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     const auto spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    // Toolbar title
-    const auto titleLabel = new QLabel(title);
-
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Topic");
     connect(addButton, &QPushButton::clicked, [this]() {
@@ -30,7 +29,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Topics");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -38,7 +37,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Topiclist");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
@@ -69,7 +68,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
                                 << tr("Modified")
                                 << tr("TopicArn");
 
-    tableWidget = new QTableWidget();
+    tableWidget = new QTableWidget(this);
 
     tableWidget->setColumnCount(headers.count());
     tableWidget->setShowGrid(true);
@@ -104,7 +103,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSTopicList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
     layout->addWidget(prefixEdit, 1);
     layout->addWidget(tableWidget, 2);
@@ -175,16 +174,14 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Topic");
     deleteAction->setToolTip("Delete the Topic");
 
-    QString topicArn = tableWidget->item(row, 7)->text();
-    QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
-    if (selectedAction == purgeAction) {
+    const QString topicArn = tableWidget->item(row, 7)->text();
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
         snsService->PurgeTopic(topicArn);
     } else if (selectedAction == deleteAction) {
         snsService->DeleteTopic(topicArn);
     } else if (selectedAction == editAction) {
-        QString TopicArn = tableWidget->item(row, 7)->text();
-        SNSTopicDetailsDialog dialog(TopicArn);
-        if (dialog.exec() == QDialog::Accepted) {
+        const QString TopicArn = tableWidget->item(row, 7)->text();
+        if (SNSTopicDetailsDialog dialog(TopicArn); dialog.exec() == QDialog::Accepted) {
             qDebug() << "SNS Topic edit dialog exit";
         }
     }

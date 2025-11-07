@@ -1,7 +1,6 @@
 #ifndef LIST_MESSAGE_RESULT_H
 #define LIST_MESSAGE_RESULT_H
 
-
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>

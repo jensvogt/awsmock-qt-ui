@@ -19,6 +19,17 @@ set(PROJECT_SOURCES
         src/mainwindow.cpp
         ${TS_FILES}
         src/modules/dashboard/DashboardService.cpp
+        include/modules/application/ApplicationList.h
+        src/modules/application/ApplicationList.cpp
+        src/modules/application/ApplicationService.cpp
+        include/dto/application/ApplicationListResponse.h
+        src/modules/application/ApplicationAddDialog.cpp
+        include/modules/application/ApplicationAddDialog.h
+        include/utils/DropField.h
+        include/utils/FileUtils.h
+        include/dto/application/ApplicationUploadRequest.h
+        include/dto/application/Application.h
+        include/dto/application/ApplicationCreateRequest.h
 )
 
 
@@ -31,15 +42,20 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/utils/BasePage.h
             include/utils/Configuration.h
             include/utils/EditPreferencesDialog.h
-            include/dto/sqs/SQSGetQueueDetailsResponse.h
+            include/utils/RestManager.h
+            include/utils/JsonUtils.h
             include/dto/sns/SNSListTopicResult.h
             include/dto/sns/SNSTopicCounter.h
             include/dto/sns/SNSMessageList.h
             include/dto/sns/SNSListMessagesResult.h
             include/dto/sns/SNSMessageCounter.h
             include/dto/sns/SNSGetTopicDetailsResponse.h
+            include/dto/sns/SNSGetMessageDetailsResponse.h
+            include/dto/sqs/SQSGetQueueDetailsResponse.h
             include/dto/sqs/SQSGetMessageDetailsResponse.h
             include/dto/dashboard/DashboardCounterResult.h
+            include/dto/application/ApplicationListResponse.h
+            include/dto/application/ApplicationCounter.h
             include/modules/dashboard/Dashboard.h
             include/modules/dashboard/DashboardService.h
             include/modules/sqs/SQSQueueList.h
@@ -51,9 +67,13 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/modules/sns/SNSService.h
             include/modules/sns/SNSMessageList.h
             include/modules/sns/SNSTopicDetailsDialog.h
+            include/modules/sns/SNSMessageDetailsDialog.h
+            include/modules/application/ApplicationList.h
+            include/modules/application/ApplicationService.h
             src/utils/BasePage.cpp
             src/utils/Configuration.cpp
             src/utils/EditPreferencesDialog.cpp
+            src/utils/RestManager.cpp
             src/modules/dashboard/Dashboard.cpp
             src/modules/dashboard/Dashboard.ui
             src/modules/dashboard/DashboardService.cpp
@@ -70,13 +90,9 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/modules/sns/SNSTopicDetailsDialog.ui
             src/modules/sns/SNSTopicDetailsDialog.cpp
             src/modules/sns/SNSMessageDetailsDialog.ui
-            include/dto/sns/SNSGetMessageDetailsResponse.h
             src/modules/sns/SNSMessageDetailsDialog.cpp
-            include/modules/sns/SNSMessageDetailsDialog.h
-            include/utils/RestManager.h
-            src/utils/RestManager.cpp
-            include/utils/JsonUtils.h
-
+            src/modules/application/ApplicationList.cpp
+            src/modules/application/ApplicationService.cpp
     )
     # Define target properties for Android with Qt 6 as:
     #    set_property(TARGET awsmock-qt-ui APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

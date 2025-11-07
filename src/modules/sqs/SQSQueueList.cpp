@@ -60,7 +60,7 @@ SQSQueueList::SQSQueueList(const QString& title, QWidget *parent) : BasePage(par
     });
 
     // Table
-    QStringList headers = QStringList() << tr("Name")
+    const QStringList headers = QStringList() << tr("Name")
                                         << tr("Available")
                                         << tr("InFlight")
                                         << tr("Delayed")
@@ -111,7 +111,7 @@ SQSQueueList::SQSQueueList(const QString& title, QWidget *parent) : BasePage(par
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
     layout->addWidget(prefixEdit, 1);
     layout->addWidget(tableWidget, 2);

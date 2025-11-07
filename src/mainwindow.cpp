@@ -1,25 +1,26 @@
 #include <mainwindow.h>
 
-#include "modules/dashboard/Dashboard.h"
+#include <modules/application/ApplicationList.h>
+#include <modules/dashboard/Dashboard.h>
 
 /**
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class ContentPage : public BasePage
-{
+class ContentPage : public BasePage {
 public:
-    ContentPage(const QString& title, QWidget *parent = nullptr) : BasePage(parent), title(title) {}
+    ContentPage(const QString &title, QWidget *parent = nullptr) : BasePage(parent), title(title) {
+    }
 
     void LoadContent() {
-
         // Set up the layout for the individual content pages
         QVBoxLayout *layout = new QVBoxLayout(this);
 
         QLabel *titleLabel = new QLabel(QString("<h1>%1</h1>").arg(title), this);
         titleLabel->setAlignment(Qt::AlignCenter);
 
-        QLabel *detailLabel = new QLabel(QString("<p>This is the detailed content for the <b>%1</b> section.</p>").arg(title), this);
+        QLabel *detailLabel = new QLabel(
+            QString("<p>This is the detailed content for the <b>%1</b> section.</p>").arg(title), this);
         detailLabel->setAlignment(Qt::AlignCenter);
 
         layout->addWidget(titleLabel);
@@ -28,16 +29,13 @@ public:
     }
 
 private:
-
     /**
      * Page title
      */
     QString title;
-
 };
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("AwsMock UI");
     setMinimumSize(1200, 800);
 
@@ -57,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     m_navPane->addItem("SQS");
     m_navPane->addItem("SNS");
     m_navPane->addItem("S3");
+    m_navPane->addItem("Application");
 
     // Select the first item by default
     m_navPane->setCurrentRow(0);
@@ -89,18 +88,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar()->showMessage("Ready");
 }
 
-MainWindow::~MainWindow()
-{    
+MainWindow::~MainWindow() {
 }
 
 void MainWindow::SetupMenuBar() {
-
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
     // File menu
-    const auto importAction = new QAction(IconUtils::GetIcon("dark", "import"),tr("&Import infrastructure"), this);
+    const auto importAction = new QAction(IconUtils::GetIcon("dark", "import"), tr("&Import infrastructure"), this);
     connect(importAction, &QAction::triggered, this, &MainWindow::ImportInfrastructure);
     fileMenu->addAction(importAction);
 
@@ -142,8 +139,7 @@ void MainWindow::EditPreferences() {
 }
 
 void MainWindow::NavigationSelectionChanged(const int currentRow) {
-
-    currentWidgetIndex =  currentRow;
+    currentWidgetIndex = currentRow;
     if (!loadedPages.contains(currentRow)) {
         // Lazy load page
         BasePage *page = CreatePage(currentRow);
@@ -158,92 +154,99 @@ void MainWindow::UpdateStatusBar(const QString &text) const {
     statusBar()->showMessage(text);
 }
 
-BasePage* MainWindow::CreatePage(const int currentRow)
-{
+BasePage *MainWindow::CreatePage(const int currentRow) {
     switch (currentRow) {
-    case 0: {
-        const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
+        case 0: {
+            const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
 
-        // Connect child's signal to update status bar
-        connect(dashboardPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+            // Connect child's signal to update status bar
+            connect(dashboardPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
-        return dashboardPage;
-    }
-    case 1:{
+            return dashboardPage;
+        }
+        case 1: {
+            const auto queueListPage = new SQSQueueList("SQS Queue List");
 
-        const auto queueListPage = new SQSQueueList("SQS Queue List");
+            // Connect child's signal to update status bar
+            connect(queueListPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
-        // Connect child's signal to update status bar
-        connect(queueListPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+            // Route to the message list
+            connect(queueListPage, &SQSQueueList::ShowMessages, this,
+                    [=](const QString &queueArn, const QString &queueUrl) {
+                        // Stop the auto updater
+                        queueListPage->StopAutoUpdate();
 
-        // Route to the message list
-        connect(queueListPage, &SQSQueueList::ShowMessages, this, [=](const QString &queueArn, const QString &queueUrl) {
+                        // Get the Queue name
+                        const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
 
-            // Stop the auto updater
-            queueListPage->StopAutoUpdate();
+                        // Create the message list page
+                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn,
+                                                                        queueUrl, nullptr);
 
-            // Get the Queue name
-            const QString queueName = queueArn.mid(queueArn.lastIndexOf(":")+1);
+                        // Add it to the loaded pages list
+                        m_contentPane->addWidget(messageListPage);
+                        m_contentPane->setCurrentWidget(messageListPage);
 
-            // Create the message list page
-            const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, nullptr);
+                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this,
+                                &MainWindow::UpdateStatusBar);
 
-            // Add it to the loaded pages list
-            m_contentPane->addWidget(messageListPage);
-            m_contentPane->setCurrentWidget(messageListPage);
+                        // Connect the back button
+                        connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&]() {
+                            NavigationSelectionChanged(1);
+                        });
 
-            connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+                        // Start auto updater
+                        messageListPage->StartAutoUpdate();
+                    });
+            return queueListPage;
+        }
+        case 2: {
+            const auto topicListPage = new SNSTopicList("SNS Topic List");
 
-            // Connect the back button
-            connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&](){
-                NavigationSelectionChanged(1);
+            // Connect child's signal to update status bar
+            connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            // Route to the message list
+            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this, [=](const QString &topicArn) {
+                // Stop the auto updater
+                topicListPage->StopAutoUpdate();
+
+                // Get the Queue name
+                const QString topicName = topicArn.mid(topicArn.lastIndexOf(":") + 1);
+
+                // Create the message list page
+                const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn,nullptr);
+
+                // Add it to the loaded pages list
+                m_contentPane->addWidget(messageListPage);
+                m_contentPane->setCurrentWidget(messageListPage);
+
+                connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+                // Connect the back button
+                connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&]() {
+                    NavigationSelectionChanged(2);
+                });
+
+                // Start auto updater
+                messageListPage->StartAutoUpdate();
             });
 
-            // Start auto updater
-            messageListPage->StartAutoUpdate();
-        });
-        return queueListPage;
-    }
-    case 2:{
+            return topicListPage;
+        }
+        case 3:
+            return new ContentPage("S3");
 
-        const auto topicListPage = new SNSTopicList("SNS Topic List");
+        case 4: {
+            const auto applicationPage = new ApplicationList("Applications", m_contentPane);
 
-        // Connect child's signal to update status bar
-        connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+            // Connect child's signal to update status bar
+            connect(applicationPage, &ApplicationList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
-        // Route to the message list
-        connect(topicListPage, &SNSTopicList::ShowSnsMessages, this, [=](const QString &topicArn) {
-
-            // Stop the auto updater
-            topicListPage->StopAutoUpdate();
-
-            // Get the Queue name
-            QString topicName = topicArn.mid(topicArn.lastIndexOf(":")+1);
-
-            // Create the message list page
-            SNSMessageList* messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn, nullptr);
-
-            // Add it to the loaded pages list
-            m_contentPane->addWidget(messageListPage);
-            m_contentPane->setCurrentWidget(messageListPage);
-
-            connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Connect the back button
-            connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&](){
-                NavigationSelectionChanged(2);
-            });
-
-            // Start auto updater
-            messageListPage->StartAutoUpdate();
-        });
-
-        return topicListPage;
-    }
-    case 3:
-        return new ContentPage("S3");
-    default:
-        return nullptr;
+            return applicationPage;
+        }
+        default:
+            return nullptr;
     }
 }
 

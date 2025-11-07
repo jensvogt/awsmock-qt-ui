@@ -4,24 +4,38 @@
         <file>light/add.png</file>
         <file>light/back.png</file>
         <file>light/delete.png</file>
+        <file>light/disabled.png</file>
+        <file>light/edit.png</file>
+        <file>light/enabled.png</file>
         <file>light/exit.png</file>
         <file>light/export.png</file>
+        <file>light/fileexplorer.png</file>
         <file>light/help.png</file>
         <file>light/import.png</file>
         <file>light/preferences.png</file>
         <file>light/purge.png</file>
         <file>light/redrive.png</file>
         <file>light/refresh.png</file>
+        <file>light/restart.png</file>
         <file>light/edit.png</file>
+        <file>light/start.png</file>
+        <file>light/stop.png</file>
         <file>dark/add.png</file>
         <file>dark/back.png</file>
         <file>dark/delete.png</file>
+        <file>dark/disabled.png</file>
+        <file>dark/edit.png</file>
+        <file>dark/enabled.png</file>
         <file>dark/exit.png</file>
         <file>dark/export.png</file>
+        <file>dark/fileexplorer.png</file>
         <file>dark/help.png</file>
         <file>dark/import.png</file>
         <file>dark/preferences.png</file>
         <file>dark/purge.png</file>
         <file>dark/refresh.png</file>
+        <file>dark/restart.png</file>
+        <file>dark/start.png</file>
+        <file>dark/stop.png</file>
     </qresource>
 </RCC>
