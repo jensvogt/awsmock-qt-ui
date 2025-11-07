@@ -48,7 +48,7 @@ public:
     /**
      * @brief Destructor
      */
-    ~SNSMessageList();
+    ~SNSMessageList() override;
 
     /**
      * @brief ListQueues
@@ -68,12 +68,6 @@ public:
     void HandleReloadMessageSignal();
 
 signals:
-    /**
-     * @brief Send a status bar update message to the main window
-     *
-     * @param text status text
-     */
-    void StatusUpdateRequested(const QString &text);
 
     /**
      * @brief Sent a show SNS message to the main window
@@ -83,9 +77,7 @@ signals:
     void ShowMessages(const QString &topicArn);
 
     /**
-     * @brief Sents a back message to the main window
-     *
-     * @param QueueArn Queue ARN of the Queue for the messages
+     * @brief Sends a back message to the main window
      */
     void BackToTopicList();
 
@@ -97,14 +89,6 @@ private slots:
      * @param pos position in table
      */
     void ShowContextMenu(const QPoint &pos);
-
-    /**
-     * @brief Notify status bar
-     */
-    void NotifyStatusBar() {
-        QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");
-        emit StatusUpdateRequested(msg);
-    }
 
     void OnBackClicked() {
         StopAutoUpdate();

@@ -43,7 +43,7 @@ public:
 
     QDateTime modified;
 
-    void FromJson(QJsonDocument jsonDoc) {
+    void FromJson(const QJsonDocument &jsonDoc) {
         queueName = jsonDoc["queueName"].toString();
         queueUrl = jsonDoc["queueUrl"].toString();
         queueArn = jsonDoc["queueArn"].toString();

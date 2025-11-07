@@ -30,7 +30,7 @@
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class SQSMessageList : public BasePage
+class SQSMessageList final : public BasePage
 {
     Q_OBJECT
 
@@ -39,14 +39,16 @@ public:
      * @brief SQSQueueList
      *
      * @param title widget title
+     * @param queueArn queue ARN
+     * @param queueUrl queue URL
      * @param parent parent widget
      */
-    SQSMessageList(const QString& title, const QString& QueueArn, const QString &QueueUrl, QWidget *parent = nullptr);
+    SQSMessageList(const QString& title, const QString& queueArn, const QString &queueUrl, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
-    ~SQSMessageList();
+    ~SQSMessageList() override;
 
     /**
      * @brief ListQueues
@@ -54,12 +56,6 @@ public:
     void LoadContent() override;
 
 signals:
-    /**
-     * @brief Send a status bar update message to the main window
-     *
-     * @param text status text
-     */
-    void StatusUpdateRequested(const QString &text);
 
     /**
      * @brief Sent a show SQS message to the main window
@@ -69,9 +65,7 @@ signals:
     void ShowMessages(const QString &QueueArn);
 
     /**
-     * @brief Sents a back message to the main window
-     *
-     * @param QueueArn Queue ARN of the Queue for the messages
+     * @brief Sends a back message to the main window
      */
     void BackToQueueList();
 
@@ -82,15 +76,7 @@ private slots:
      *
      * @param pos position in table
      */
-    void ShowContextMenu(const QPoint &pos);
-
-    /**
-     * @brief Notify status bar
-     */
-    void NotifyStatusBar() {
-        QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");
-        emit StatusUpdateRequested(msg);
-    }
+    void ShowContextMenu(const QPoint &pos) const;
 
     void OnBackClicked() {
         StopAutoUpdate();

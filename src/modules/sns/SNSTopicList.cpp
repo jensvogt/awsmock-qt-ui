@@ -1,8 +1,6 @@
-
 #include <modules/sns/SNSTopicList.h>
 
-SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(parent)
-{
+SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
     _region = Configuration::instance().GetRegion();
@@ -21,41 +19,40 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"),"");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Topic");
-    connect(addButton, &QPushButton::clicked, [this](){
+    connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        QString topicName = QInputDialog::getText(0, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok);
-        if (ok && !topicName.isEmpty()) {
+        if (const QString topicName = QInputDialog::getText(0, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
             snsService->AddTopic(_region, topicName);
         }
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Topics");
-    connect(purgeAllButton, &QPushButton::clicked, [this](){
+    connect(purgeAllButton, &QPushButton::clicked, [this]() {
         snsService->PurgeAllTopics();
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Topiclist");
-    connect(refreshButton, &QPushButton::clicked, this, [this](){
+    connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
 
-//    toolBar->addWidget(titleLabel);
+    //    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    QLineEdit* prefixEdit = new QLineEdit(this);
+    auto prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
     connect(prefixEdit, &QLineEdit::returnPressed, this, [this, prefixEdit]() {
         prefixValue = prefixEdit->text();
@@ -63,14 +60,14 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     });
 
     // Table
-    QStringList headers = QStringList() << tr("Name")
-                                        << tr("Available")
-                                        << tr("Send")
-                                        << tr("Resend")
-                                        << tr("Size")
-                                        << tr("Created")
-                                        << tr("Modified")
-                                        << tr("TopicArn");
+    const QStringList headers = QStringList() << tr("Name")
+                                << tr("Available")
+                                << tr("Send")
+                                << tr("Resend")
+                                << tr("Size")
+                                << tr("Created")
+                                << tr("Modified")
+                                << tr("TopicArn");
 
     tableWidget = new QTableWidget();
 
@@ -92,13 +89,11 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
-
         // Get the position
-        int row = index.row();
-        int col = index.column();
+        const int row = index.row();
 
         // Extract ARN and URL
-        QString topicArn = tableWidget->item(row, 7)->text();
+        const QString topicArn = tableWidget->item(row, 7)->text();
 
         // Send notification
         emit ShowSnsMessages(topicArn);
@@ -117,7 +112,7 @@ SNSTopicList::SNSTopicList(const QString& title, QWidget *parent) : BasePage(par
     layout->stretch(1);
 }
 
-SNSTopicList::~SNSTopicList(){
+SNSTopicList::~SNSTopicList() {
     StopAutoUpdate();
 }
 
@@ -125,13 +120,11 @@ void SNSTopicList::LoadContent() {
     snsService->ListTopics(prefixValue);
 }
 
-void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult){
-
+void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult) {
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
     tableWidget->sortItems(-1);
     for (auto r = 0; r < listTopicResult.topicCounters.count(); r++) {
-
         tableWidget->insertRow(r);
         tableWidget->setItem(r, 0, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicName));
 
@@ -151,8 +144,10 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
         item4->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).size));
         tableWidget->setItem(r, 4, item4);
 
-        tableWidget->setItem(r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString(Qt::ISODate)));
-        tableWidget->setItem(r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString(Qt::ISODate)));
+        tableWidget->setItem(
+            r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString(Qt::ISODate)));
+        tableWidget->setItem(
+            r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString(Qt::ISODate)));
         tableWidget->setItem(r, 7, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicArn));
     }
     tableWidget->setRowCount(listTopicResult.topicCounters.count());
@@ -161,7 +156,6 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
 }
 
 void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
-
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 

@@ -7,6 +7,9 @@
 #include <utils/RestManager.h>
 #include <utils/JsonUtils.h>
 
+#include <dto/dashboard/DashboardCounterResult.h>
+#include <modules/dashboard/ChartConfig.h>
+
 class DashboardService final : public QObject
 {
     Q_OBJECT
@@ -21,25 +24,12 @@ public:
     /**
      * @brief Get a multi series counters
      *
-     * @param region AWS region
-     * @param name counter name
-     * @param labelName label name
-     * @param labelValue label value
-     * @param step number of step
-     * @param limit top n limit
-     * @param start start time
-     * @param end end time
+     * @param config chart configuration
      */
-    void GetMultiSeriesCounter(const QString &region, const QString &name, const QString &labelName,
-                               const QString &labelValue, int step, int limit, const QDateTime &start,
-                               const QDateTime &end);
+    void GetMultiSeriesCounter(const ChartConfig &config);
 
 signals:
-/*    void ListTopicSignal(const SNSListTopicResult &listTopicResult);
-    void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
-    void GetTopicDetailsSignal(const SNSGetTopicDetailsResponse &response);
-    void GetMessageDetailsSignal(const SNSGetMessageDetailsResponse &response);
-    void ReloadMessagesSignal();*/
+    void ReloadMonitoringSignal(const DashboardCounter &result);
 
 private:
 

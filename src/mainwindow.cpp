@@ -163,6 +163,10 @@ BasePage* MainWindow::CreatePage(const int currentRow)
     switch (currentRow) {
     case 0: {
         const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
+
+        // Connect child's signal to update status bar
+        connect(dashboardPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
         return dashboardPage;
     }
     case 1:{

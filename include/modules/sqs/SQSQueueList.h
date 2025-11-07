@@ -27,7 +27,7 @@
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class SQSQueueList : public BasePage
+class SQSQueueList final : public BasePage
 {
     Q_OBJECT
 
@@ -38,12 +38,12 @@ public:
      * @param title widget title
      * @param parent parent widget
      */
-    SQSQueueList(const QString& title, QWidget *parent = nullptr);
+    explicit SQSQueueList(const QString& title, QWidget *parent = nullptr);
 
     /**
      * Destructor
      */
-    ~SQSQueueList();
+    ~SQSQueueList() override;
 
     /**
      * @brief Load page content
@@ -51,16 +51,10 @@ public:
     void LoadContent() override;
 
 signals:
-    void StatusUpdateRequested(const QString &text);
     void ShowMessages(const QString &QueueArn, const QString &QueueUrl);
 
 private slots:
     void ShowContextMenu(const QPoint &pos) const;
-
-    void NotifyStatusBar() {
-        QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");
-        emit StatusUpdateRequested(msg);
-    }
 
 private:
 

@@ -252,6 +252,7 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
 }
 
 void SQSService::ListMessages(const QString &queueArn, const QString &prefix, QTableWidget *tableWidget) {
+
     // Copy table widget
     this->tableWidget = tableWidget;
 

@@ -18,12 +18,7 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
         ${TS_FILES}
-        src/utils/IconUtils.cpp
-        include/utils/IconUtils.h
-        src/modules/dashboard/Dashboard.cpp
-        include/modules/dashboard/Dashboard.h
-        src/modules/dashboard/Dashboard.ui
-        include/modules/dashboard/Dashboard.h
+        src/modules/dashboard/DashboardService.cpp
 )
 
 
@@ -44,7 +39,9 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/dto/sns/SNSMessageCounter.h
             include/dto/sns/SNSGetTopicDetailsResponse.h
             include/dto/sqs/SQSGetMessageDetailsResponse.h
+            include/dto/dashboard/DashboardCounterResult.h
             include/modules/dashboard/Dashboard.h
+            include/modules/dashboard/DashboardService.h
             include/modules/sqs/SQSQueueList.h
             include/modules/sqs/SQSMessageList.h
             include/modules/sqs/SQSService.h
@@ -59,6 +56,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/utils/EditPreferencesDialog.cpp
             src/modules/dashboard/Dashboard.cpp
             src/modules/dashboard/Dashboard.ui
+            src/modules/dashboard/DashboardService.cpp
             src/modules/sqs/SQSQueueList.cpp
             src/modules/sqs/SQSMessageList.cpp
             src/modules/sqs/SQSService.cpp

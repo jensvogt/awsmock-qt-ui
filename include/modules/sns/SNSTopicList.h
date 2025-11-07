@@ -59,16 +59,10 @@ public:
     void HandleListTopicSignal(const SNSListTopicResult &listTopicResult);
 
 signals:
-    void StatusUpdateRequested(const QString &text);
     void ShowSnsMessages(const QString &topicArn);
 
 private slots:
     void ShowContextMenu(const QPoint &pos) const;
-
-    void NotifyStatusBar() {
-        QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");
-        emit StatusUpdateRequested(msg);
-    }
 
 private:
 

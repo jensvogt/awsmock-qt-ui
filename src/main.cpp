@@ -5,9 +5,13 @@
 #include <QTranslator>
 #include <QStyleFactory>
 #include <QCommandLineParser>
+#include <qscreen.h>
 
 #include <utils/Configuration.h>
 #include <utils/IconUtils.h>
+
+#define INITIAL_WIDTH 2000
+#define INITIAL_HEIGHT 1200
 
 int main(int argc, char *argv[])
 {
@@ -74,6 +78,11 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
+    const QScreen *screen = QGuiApplication::primaryScreen();
+    const QRect screenGeometry = screen->availableGeometry();
+    const int x = (screenGeometry.width() - INITIAL_WIDTH) / 2;
+    const int y = (screenGeometry.height() - INITIAL_HEIGHT) / 2;
+    w.setGeometry(x, y, INITIAL_WIDTH, INITIAL_HEIGHT);
     w.show();
     return QApplication::exec();
 }

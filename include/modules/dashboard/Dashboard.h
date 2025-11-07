@@ -5,14 +5,19 @@
 #ifndef AWSMOCK_QT_UI_DASHBOARD_H
 #define AWSMOCK_QT_UI_DASHBOARD_H
 
-#include <qboxlayout.h>
 #include <QWidget>
+#include <QBoxLayout>
 #include <QLabel>
+#include <QtCharts/QDateTimeAxis>
+#include <QtCharts/QValueAxis>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
+
+#include "ChartConfig.h"
+#include "DashboardService.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -26,17 +31,19 @@ class Dashboard final : public BasePage {
     Q_OBJECT
 
 public:
-    explicit Dashboard(const QString& title, QWidget *parent = nullptr);
+    explicit Dashboard(const QString &title, QWidget *parent = nullptr);
 
     ~Dashboard() override;
 
 private:
-
     void LoadContent() override;
-    QChartView* GetChart();
+
+    void CounterArrived(const DashboardCounter &dashboardCounters);
 
     Ui::Dashboard *ui;
+    QWidget* parent;
     QHBoxLayout toolBar;
+    DashboardService *dashboardService;
 };
 
 

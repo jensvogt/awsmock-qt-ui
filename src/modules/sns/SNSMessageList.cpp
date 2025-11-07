@@ -48,10 +48,10 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     });
 
     // Toolbar refresh action
-    QPushButton *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Queuelist");
-    QObject::connect(refreshButton, &QPushButton::clicked, [this](){
+    connect(refreshButton, &QPushButton::clicked, [this](){
         LoadContent();
     });
 
@@ -63,7 +63,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    QLineEdit* prefixEdit = new QLineEdit(this);
+    const auto prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
     connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
@@ -71,7 +71,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     });
 
     // Table
-    QStringList headers = QStringList() << tr("ID")
+    const QStringList headers = QStringList() << tr("ID")
                                         << tr("ContentType")
                                         << tr("Size")
                                         << tr("Status")
@@ -98,16 +98,14 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::Interactive);
     tableWidget->setColumnHidden(7, true);
 
-    // COnnect double-click
+    // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
 
         // Get the position
-        int row = index.row();
-        int col = index.column();
+        const int row = index.row();
 
-        QString messageId = tableWidget->item(row, 0)->text();
-        SNSMessageDetailsDialog dialog(messageId);
-        if (dialog.exec() == QDialog::Accepted) {
+        const QString messageId = tableWidget->item(row, 0)->text();
+        if (SNSMessageDetailsDialog dialog(messageId); dialog.exec() == QDialog::Accepted) {
             qDebug() << "SQS Queue edit dialog exit";
         }
     });
@@ -117,7 +115,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSMessageList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
     layout->addWidget(prefixEdit, 1);
     layout->addWidget(tableWidget, 2);
