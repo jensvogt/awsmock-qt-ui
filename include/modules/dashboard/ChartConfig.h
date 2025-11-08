@@ -9,7 +9,6 @@
 #include <QDateTime>
 
 struct ChartConfig {
-
     QString region;
 
     QString title;
@@ -37,7 +36,8 @@ struct ChartConfig {
     int limit = -1;
 
     int step = 5;
-};
 
+    int scale = -1;
+};
 
 #endif //AWSMOCK_QT_CHART_CONFIG_H

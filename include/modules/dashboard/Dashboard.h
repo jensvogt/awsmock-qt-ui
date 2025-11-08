@@ -16,8 +16,10 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 
-#include "ChartConfig.h"
-#include "DashboardService.h"
+#include <modules/dashboard/ChartConfig.h>
+#include <modules/dashboard/DashboardService.h>
+#include <modules/dashboard/ChartConfig.h>
+#include <modules/dashboard/CrossHairChartView.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -41,7 +43,7 @@ private:
     void CounterArrived(const DashboardCounter &dashboardCounters);
 
     Ui::Dashboard *ui;
-    QWidget* parent;
+    QWidget *parent;
     QHBoxLayout toolBar;
     DashboardService *dashboardService;
 };

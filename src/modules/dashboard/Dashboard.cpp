@@ -6,10 +6,8 @@
 
 #include <modules/dashboard/Dashboard.h>
 #include "ui_Dashboard.h"
-#include "modules/dashboard/ChartConfig.h"
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), ui(new Ui::Dashboard), parent(parent) {
-
     // Connect service
     dashboardService = new DashboardService();
     connect(dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
@@ -60,7 +58,7 @@ void Dashboard::LoadContent() {
     config.xAxisText = "Time";
     config.xAxisFormat = "HH:mm";
     config.yAxisText = "% CPU";
-    config.yAxisFormat = "%.1f";
+    config.yAxisFormat = "%.3f";
     config.row = 0;
     config.column = 1;
     config.start = start;
@@ -90,6 +88,7 @@ void Dashboard::LoadContent() {
     config.yAxisText = "Memory [MB]";
     config.yAxisFormat = "%.1f";
     config.row = 1;
+    config.scale = 1024 * 1024;
     config.column = 0;
     config.start = start;
     config.end = end;
@@ -168,7 +167,6 @@ void Dashboard::LoadContent() {
     config.end = end;
     config.limit = 5;
     dashboardService->GetMultiSeriesCounter(config);
-
 }
 
 void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
@@ -200,17 +198,23 @@ void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
         const auto series = new QLineSeries();
 
         for (const auto &[timestamp, value]: val) {
-            max = std::max(value, max);
-            series->append(static_cast<qreal>(timestamp.toMSecsSinceEpoch()), value);
+            if (dashboardCounters.chartConfig.scale > 0) {
+                max = std::max(value / dashboardCounters.chartConfig.scale, max);
+                series->append(static_cast<qreal>(timestamp.toMSecsSinceEpoch()), value / dashboardCounters.chartConfig.scale);
+            } else {
+                max = std::max(value, max);
+                series->append(static_cast<qreal>(timestamp.toMSecsSinceEpoch()), value);
+            }
         }
         chart->addSeries(series);
         series->attachAxis(axisX);
         series->attachAxis(axisY);
         series->setName(key);
     }
+
     axisY->setRange(0, max + 0.5 * max);
 
-    const auto chartView = new QChartView(chart, this);
+    const auto chartView = new CrosshairChartView(chart, this);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setRubberBand(QChartView::RectangleRubberBand);
     chartView->show();

@@ -6,19 +6,18 @@
 #include <modules/sns/SNSService.h>
 
 namespace Ui {
-class SNSMessageDetailsDialog;
+    class SNSMessageDetailsDialog;
 }
 
-class SNSMessageDetailsDialog : public QDialog
-{
+class SNSMessageDetailsDialog final : public QDialog {
     Q_OBJECT
 
 public:
     explicit SNSMessageDetailsDialog(const QString &messageId, QWidget *parent = nullptr);
-    ~SNSMessageDetailsDialog();
+
+    ~SNSMessageDetailsDialog() override;
 
 private slots:
-
     void on_prettyPushButton_toggled(bool checked) const;
 
 private:
@@ -26,8 +25,8 @@ private:
 
     Ui::SNSMessageDetailsDialog *_ui;
     QString _messageId;
-    SNSService* _snsService;
-    bool _changed=false;
+    SNSService *_snsService;
+    bool _changed = false;
 };
 
 #endif // SNS_MESSAGE_DETAILS_DIALOG_H

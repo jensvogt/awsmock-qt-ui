@@ -38,6 +38,9 @@ set(PROJECT_SOURCES
         include/dto/sqs/SQSQueueCounter.h
         include/dto/sqs/SQSListQueueResponse.h
         include/dto/sqs/SQSMessageCounter.h
+        include/modules/dashboard/CrossHairChartView.h
+        include/modules/dashboard/CrossHairChartView.h
+        include/modules/dashboard/CrossHairChartView.h
 )
 
 
