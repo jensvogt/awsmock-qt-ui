@@ -89,9 +89,11 @@ public:
     /**
      * @brief Reload the application code
      *
-     * @param name application name
+     * @param applicationName application name
+     * @param version
+     * @param applicationCode
      */
-    void ReloadApplication(const QString &name);
+    void UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode);
 
     /**
      * @brief Deletes new application

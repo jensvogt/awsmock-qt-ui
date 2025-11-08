@@ -3,12 +3,11 @@
 
 #include "utils/IconUtils.h"
 
-SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QWidget *parent) : BasePage(parent), topicArn(topicArn)
-{
+SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QWidget *parent) : BasePage(parent), topicArn(topicArn) {
     // Connect service
-    snsService = new SNSService();
-    connect(snsService, &SNSService::ListMessagesSignal, this, &SNSMessageList::HandleListMessageSignal);
-    connect(snsService, &SNSService::ReloadMessagesSignal, this, &SNSMessageList::HandleReloadMessageSignal);
+    _snsService = new SNSService();
+    connect(_snsService, &SNSService::ListMessagesSignal, this, &SNSMessageList::HandleListMessageSignal);
+    connect(_snsService, &SNSService::ReloadMessagesSignal, this, &SNSMessageList::HandleReloadMessageSignal);
 
     // Toolbar
     const auto toolBar = new QHBoxLayout();
@@ -16,10 +15,10 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar back action
-    const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"),"");
+    const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Add a new Queue");
-    connect(backButton, &QPushButton::clicked, [this](){
+    connect(backButton, &QPushButton::clicked, [this]() {
         OnBackClicked();
     });
 
@@ -27,10 +26,10 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"),"");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Queue");
-    connect(addButton, &QPushButton::clicked, [](){
+    connect(addButton, &QPushButton::clicked, []() {
         bool ok;
         if (const QString text = QInputDialog::getText(0, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
             // AddQueue(text);
@@ -38,19 +37,19 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
-    connect(purgeAllButton, &QPushButton::clicked, [&](){
-        qDebug() << "Purge topic: "<<topicArn;
-        snsService->PurgeTopic(topicArn);
+    connect(purgeAllButton, &QPushButton::clicked, [&]() {
+        qDebug() << "Purge topic: " << topicArn;
+        _snsService->PurgeTopic(topicArn);
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the queue list");
-    connect(refreshButton, &QPushButton::clicked, [this](){
+    connect(refreshButton, &QPushButton::clicked, [this]() {
         LoadContent();
     });
 
@@ -71,13 +70,13 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
 
     // Table
     const QStringList headers = QStringList() << tr("ID")
-                                        << tr("ContentType")
-                                        << tr("Size")
-                                        << tr("Status")
-                                        << tr("LastSend")
-                                        << tr("Created")
-                                        << tr("Modified")
-                                        << tr("TopicArn");
+                                << tr("ContentType")
+                                << tr("Size")
+                                << tr("Status")
+                                << tr("LastSend")
+                                << tr("Created")
+                                << tr("Modified")
+                                << tr("TopicArn");
 
     tableWidget = new QTableWidget();
 
@@ -127,12 +126,12 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     layout->addWidget(tableWidget, 2);
 }
 
-SNSMessageList::~SNSMessageList(){
+SNSMessageList::~SNSMessageList() {
     StopAutoUpdate();
 }
 
-void SNSMessageList::LoadContent(){
-    snsService->ListMessages(topicArn, prefixValue);
+void SNSMessageList::LoadContent() {
+    _snsService->ListMessages(topicArn, prefixValue);
 }
 
 void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) {
@@ -142,14 +141,14 @@ void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMe
     for (auto r = 0; r < listMessageResult.messageCounters.count(); r++) {
 
         tableWidget->insertRow(r);
-        SetColumn(tableWidget, r,0,listMessageResult.messageCounters.at(r).messageId);
-        SetColumn(tableWidget, r,1,listMessageResult.messageCounters.at(r).contentType);
-        SetColumn(tableWidget, r,2,listMessageResult.messageCounters.at(r).size);
-        SetColumn(tableWidget, r,3,listMessageResult.messageCounters.at(r).messageStatus);
-        SetColumn(tableWidget, r,4,listMessageResult.messageCounters.at(r).lastSend);
-        SetColumn(tableWidget, r,5,listMessageResult.messageCounters.at(r).created);
-        SetColumn(tableWidget, r,6,listMessageResult.messageCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r,7,listMessageResult.messageCounters.at(r).topicArn);
+        SetColumn(tableWidget, r, 0, listMessageResult.messageCounters.at(r).messageId);
+        SetColumn(tableWidget, r, 1, listMessageResult.messageCounters.at(r).contentType);
+        SetColumn(tableWidget, r, 2, listMessageResult.messageCounters.at(r).size);
+        SetColumn(tableWidget, r, 3, listMessageResult.messageCounters.at(r).messageStatus);
+        SetColumn(tableWidget, r, 4, listMessageResult.messageCounters.at(r).lastSend);
+        SetColumn(tableWidget, r, 5, listMessageResult.messageCounters.at(r).created);
+        SetColumn(tableWidget, r, 6, listMessageResult.messageCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, 7, listMessageResult.messageCounters.at(r).topicArn);
     }
     tableWidget->setRowCount(static_cast<int>(listMessageResult.messageCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -157,8 +156,8 @@ void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMe
     NotifyStatusBar();
 }
 
-void SNSMessageList::HandleReloadMessageSignal(){
-    snsService->ListMessages(topicArn, prefixValue);
+void SNSMessageList::HandleReloadMessageSignal() {
+    _snsService->ListMessages(topicArn, prefixValue);
     NotifyStatusBar();
 }
 
@@ -175,7 +174,7 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
     QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages");*/
     menu.addSeparator();
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark","delete"), "Delete Message");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
     /*if (selectedAction == purgeAction) {
@@ -184,9 +183,9 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
     } else if (selectedAction == redriveAction) {
         QString QueueUrl = tableWidget->item(row, 7)->text();
 //        DeleteQueue(QueueUrl);
-    } else*/ if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
-        const QString id = tableWidget->item(row, 0)->text();
-        qDebug() << "Delete " << id;
-        //        DeleteQueue(QueueUrl);
+    } else*/
+    if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+        const QString messageId = tableWidget->item(row, 0)->text();
+        _snsService->DeleteMessage(topicArn, messageId);
     }
 }

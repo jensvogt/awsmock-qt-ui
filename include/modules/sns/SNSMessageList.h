@@ -110,7 +110,7 @@ private:
     /**
      * @brief REST service handler
      */
-    SNSService* snsService;
+    SNSService* _snsService;
 
     /**
      * @brief Prefix search

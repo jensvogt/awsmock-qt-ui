@@ -82,6 +82,14 @@ public:
      */
     void DeleteTopic(const QString &topicArn);
 
+    /**
+     * @brief Delete SNS message
+     *
+     * @param topicArn topic ARN
+     * @param messageId message ID
+     */
+    void DeleteMessage(const QString &topicArn, const QString &messageId);
+
 signals:
     void ListTopicSignal(const SNSListTopicResult &listTopicResult);
 

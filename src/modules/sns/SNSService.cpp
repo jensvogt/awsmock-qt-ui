@@ -213,3 +213,26 @@ void SNSService::GetSnsMessageDetails(const QString &messageId) {
                           }
                       });
 }
+
+void SNSService::DeleteMessage(const QString &topicArn, const QString &messageId) {
+
+    QJsonObject jRequest;
+    jRequest["topicArn"] = topicArn;
+    jRequest["messageId"] = messageId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "delete-message"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, QByteArray, int, const QString &error) {
+                          if (success) {
+                              emit ReloadMessagesSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}

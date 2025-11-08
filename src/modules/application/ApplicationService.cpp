@@ -260,21 +260,19 @@ void ApplicationService::RestartAllApplications() {
                       });
 }
 
-void ApplicationService::ReloadApplication(const QString &name) {
-
-    QJsonObject jApplication;
-    jApplication["region"] = Configuration::instance().GetRegion();
-    jApplication["name"] = name;
+void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
 
     QJsonObject jRequest;
-    jRequest["application"] = jApplication;
+    jRequest["version"] = applicationName;
+    jRequest["applicationName"] = applicationName;
+    jRequest["applicationCode"] = applicationCode;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
-                          {"x-awsmock-action", "restart-application"},
+                          {"x-awsmock-action", "upload-application"},
                           {"content-type", "application/json"}
                       },
                       [this](const bool success, const QByteArray &, int, const QString &error) {

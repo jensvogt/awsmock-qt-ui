@@ -1,8 +1,6 @@
 
 #include <utils/Configuration.h>
 
-#include "utils/JsonUtils.h"
-
 void Configuration::SetFilePath(const QString &filePath) {
     this->filePath = filePath;
     ReadConfigurationFile(filePath);
@@ -16,11 +14,11 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
         return;
     }
 
-    QByteArray jsonData = file.readAll();
+    const QByteArray jsonData = file.readAll();
     file.close();
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+    const QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
     if (parseError.error != QJsonParseError::NoError) {
         qWarning() << "JSON parse error:" << parseError.errorString();
         return;
@@ -35,9 +33,9 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
     baseUrl = doc.object()["BaseUrl"].toString();
 }
 
-void Configuration::WriteConfigurationFile(const QString &filePath){
+void Configuration::WriteConfigurationFile(const QString &filePath) {
 
-    if(!filePath.isEmpty()) {
+    if (!filePath.isEmpty()) {
         this->filePath = filePath;
     }
 
@@ -46,7 +44,7 @@ void Configuration::WriteConfigurationFile(const QString &filePath){
     configurationObject["BaseUrl"] = baseUrl;
 
     // Wrap it in a QJsonDocument
-    QJsonDocument doc(configurationObject);
+    const QJsonDocument doc(configurationObject);
 
     // Open the file for writing
     QFile file(filePath);

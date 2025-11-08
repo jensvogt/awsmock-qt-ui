@@ -7,23 +7,30 @@
 #include <QFile>
 #include <QIODevice>
 
+// Awsmock includes
+#include <utils/JsonUtils.h>
+
 #ifdef _WIN32
-#define DEFAULT_CONFIGURAITON_FILE_PATH QString("C:\\Program Files (x86)\\awsmock-qt-ui\\etc\\awsmock-qt-ui.json")
+#define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files (x86)\\awsmock-qt-ui\\etc\\awsmock-qt-ui.json")
 #else
-#define DEFAULT_CONFIGURAITON_FILE_PATH QString("/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui.json")
+#define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/etc/awsmock-qt-ui.json")
 #endif
 
-class Configuration : public QObject {
+class Configuration final : public QObject {
     Q_OBJECT
 
 public:
-
     /**
      * @brief Constructor
      */
-    Configuration()=default;
+    Configuration() = default;
 
-    static Configuration& instance() {
+    /**
+     * @brief Singleton instance
+     *
+     * @return
+     */
+    static Configuration &instance() {
         static Configuration instance;
         return instance;
     }
@@ -33,14 +40,14 @@ public:
      *
      * @return base URL
      */
-    QString GetBaseUrl() {return baseUrl;}
+    QString GetBaseUrl() { return baseUrl; }
 
     /**
      * @brief Returns the region
      *
      * @return region
      */
-    QString GetRegion() {return region;}
+    QString GetRegion() { return region; }
 
     /**
      * @brief Write a JSON configuration file
@@ -59,26 +66,24 @@ public:
     /**
      * @brief SetFilePath
      *
-     * @param filePath absulote path to configuration file
+     * @param filePath absolute path to configuration file
      */
     void SetFilePath(const QString &filePath);
 
 signals:
-
     /**
      * @brief Send when a preferences changed
      *
      * @param key preference key
-     * @param value preferance value
+     * @param value preference value
      */
     void ConfigurationChanged(const QString &key, const QString &value);
 
 private:
-
     /**
      * @brief File path
      */
-    QString filePath = DEFAULT_CONFIGURAITON_FILE_PATH;
+    QString filePath = DEFAULT_CONFIGURATION_FILE_PATH;
 
     /**
      * @brief Base URL

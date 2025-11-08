@@ -49,6 +49,10 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPUploadDialog.ui
         include/utils/NonEmptyValidator.h
         include/utils/NonEmptyValidator.h
+        src/modules/application/UploadApplicationCodeDialog.cpp
+        include/modules/application/UploadApplicationCodeDialog.h
+        src/modules/application/UploadApplicationCodeDialog.ui
+        src/modules/application/UploadApplicationCodeDialog.cpp
 )
 
 qt6_add_statecharts(ftpclient simpleftp.scxml)

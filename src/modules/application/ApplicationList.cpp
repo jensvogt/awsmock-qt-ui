@@ -98,8 +98,8 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
         // Extract ARN and URL
         const QString name = tableWidget->item(row, 0)->text();
 
-        if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
-        }
+        ApplicationEditDialog dialog(name);
+        dialog.exec();
     });
 
     // Add context menu
@@ -108,7 +108,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
         _sortColumn = column;
         _sortOrder = order;
     });
@@ -176,7 +176,10 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     menu.addSeparator();
 
     QAction *reloadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Reload Application");
-    reloadAction->setToolTip("Reload the application code");
+    reloadAction->setToolTip("Reload the by creating a new container");
+
+    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("dark", "upload"), "Upload Application Code");
+    uploadAction->setToolTip("Upload new application code");
 
     menu.addSeparator();
 
@@ -184,6 +187,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     deleteAction->setToolTip("Delete the Topic");
 
     const QString name = tableWidget->item(row, 0)->text();
+    const QString version = tableWidget->item(row, 1)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
         }
@@ -194,15 +198,16 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == restartAction) {
         _applicationService->RestartApplication(name);
     } else if (selectedAction == reloadAction) {
-        _applicationService->ReloadApplication(name);
+        //_applicationService->UploadApplicationCode(name, TODO, TODO);
+    } else if (selectedAction == uploadAction) {
+        UploadApplicationCodeDialog dialog(name);
+        dialog.exec();
+        //        _applicationService->UploadApplicationCode(name, version, "");
     } else if (selectedAction == deleteAction) {
         _applicationService->DeleteApplication(name);
     } else if (selectedAction == editAction) {
-        QString TopicArn = tableWidget->item(row, 7)->text();
-        //SNSTopicDetailsDialog dialog(TopicArn);
-        /*   if (dialog.exec() == QDialog::Accepted) {
-               qDebug() << "SNS Topic edit dialog exit";
-           }*/
+        ApplicationEditDialog dialog(name);
+        dialog.exec();
     }
     StartAutoUpdate();
 }
