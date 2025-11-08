@@ -86,9 +86,9 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
@@ -133,30 +133,15 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
     tableWidget->setSortingEnabled(false);
     for (auto r = 0; r < listApplicationResponse.applicationCounters.count(); r++) {
         tableWidget->insertRow(r);
-        tableWidget->setItem(r, 0, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).name));
-        tableWidget->setItem(r, 1, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).version));
-
-        if (listApplicationResponse.applicationCounters.at(r).enabled) {
-            auto *iconItem = new QTableWidgetItem();
-            iconItem->setIcon(IconUtils::GetIcon("dark", "enabled"));
-            iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-            iconItem->setData(Qt::DisplayRole, listApplicationResponse.applicationCounters.at(r).enabled ? 1 : 0);
-            iconItem->setText("");
-            tableWidget->setItem(r, 2, iconItem);
-        } else {
-            auto *iconItem = new QTableWidgetItem();
-            iconItem->setIcon(IconUtils::GetIcon("dark", "disabled"));
-            iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-            iconItem->setData(Qt::DisplayRole, listApplicationResponse.applicationCounters.at(r).enabled ? 1 : 0);
-            iconItem->setText("");
-            tableWidget->setItem(r, 2, iconItem);
-        }
-        tableWidget->setItem(r, 3, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).status));
-        tableWidget->setItem(r, 4, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).privatePort));
-        tableWidget->setItem(r, 5, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).publicPort));
-        tableWidget->setItem(r, 6, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).created.toString(Qt::ISODate)));
-        tableWidget->setItem(r, 7, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).created.toString(Qt::ISODate)));
-        tableWidget->setItem(r, 8, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).modified.toString(Qt::ISODate)));
+        SetColumn(tableWidget, r, 0, listApplicationResponse.applicationCounters.at(r).name);
+        SetColumn(tableWidget, r, 1, listApplicationResponse.applicationCounters.at(r).version);
+        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("dark", "enabled"), IconUtils::GetIcon("dark", "disabled"));
+        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
+        SetColumn(tableWidget, r, 4, listApplicationResponse.applicationCounters.at(r).privatePort);
+        SetColumn(tableWidget, r, 5, listApplicationResponse.applicationCounters.at(r).publicPort);
+        SetColumn(tableWidget, r, 6, listApplicationResponse.applicationCounters.at(r).lastStarted);
+        SetColumn(tableWidget, r, 7, listApplicationResponse.applicationCounters.at(r).created);
+        SetColumn(tableWidget, r, 8, listApplicationResponse.applicationCounters.at(r).modified);
     }
     tableWidget->setRowCount(static_cast<int>(listApplicationResponse.applicationCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -165,7 +150,6 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {
-
     StopAutoUpdate();
 
     // Cell index

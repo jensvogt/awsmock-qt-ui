@@ -55,7 +55,6 @@ public:
     void HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse);
 
 private slots:
-
     /**
      * @brief Show context menu
      *
@@ -64,7 +63,6 @@ private slots:
     void ShowContextMenu(const QPoint &pos);
 
 private:
-
     /**
      * AWS region
      */
@@ -88,12 +86,12 @@ private:
     /**
      * @brief Sort column index
      */
-    int _sortColumn{};
+    int _sortColumn = 1;
 
     /**
      * @brief Sort order
      */
-    Qt::SortOrder _sortOrder{};
+    Qt::SortOrder _sortOrder = Qt::AscendingOrder;
 };
 
 #endif //AWSMOCK_QT_UI_APPLICATION_LIST_H

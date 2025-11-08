@@ -27,6 +27,8 @@ public:
 
     static void SetColumn(QTableWidget *tableWidget, int row, int col, const QDateTime &value);
 
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon);
+
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, const QString &value);
 
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, bool value);

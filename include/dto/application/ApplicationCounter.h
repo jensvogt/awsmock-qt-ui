@@ -5,7 +5,6 @@
 #include <QJsonObject>
 
 struct ApplicationCounter {
-
     QString name;
 
     QString runtime;
@@ -37,6 +36,7 @@ struct ApplicationCounter {
         version = jsonObject["version"].toString();
         status = jsonObject["status"].toString();
         enabled = jsonObject["enabled"].toBool();
+        lastStarted = QDateTime::fromString(jsonObject["lastStarted"].toString(), Qt::ISODate);
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }

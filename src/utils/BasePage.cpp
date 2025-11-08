@@ -44,7 +44,16 @@ void BasePage::SetColumn(QTableWidget *tableWidget, const int row, const int col
     tableWidget->setItem(row, col, item);
 }
 
-void BasePage::SetHiddenColumn(QTableWidget *tableWidget, int row, int col, const QString &value) {
+void BasePage::SetColumn(QTableWidget *tableWidget, const int row, const int col, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) {
+    auto *iconItem = new QTableWidgetItem();
+    iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    iconItem->setData(Qt::DisplayRole, value ? 1 : 0);
+    iconItem->setText("");
+    iconItem->setIcon(value ? enabledIcon : disabledIcon);
+    tableWidget->setItem(row, col, iconItem);
+}
+
+void BasePage::SetHiddenColumn(QTableWidget *tableWidget, const int row, const int col, const QString &value) {
     const auto item = new QTableWidgetItem;
     item->setData(Qt::EditRole, value);
     tableWidget->setItem(row, col, item);
