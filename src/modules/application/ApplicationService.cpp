@@ -114,6 +114,60 @@ void ApplicationService::GetApplication(const QString &name) {
                       });
 }
 
+void ApplicationService::EnableApplication(const QString &name) {
+
+    QJsonObject jApplication;
+    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["name"] = name;
+
+    QJsonObject jRequest;
+    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["application"] = jApplication;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "application"},
+                          {"x-awsmock-action", "enable-application"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllApplications();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void ApplicationService::DisableApplication(const QString &name) {
+
+    QJsonObject jApplication;
+    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["name"] = name;
+
+    QJsonObject jRequest;
+    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["application"] = jApplication;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "application"},
+                          {"x-awsmock-action", "disable-application"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllApplications();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
 void ApplicationService::StartApplication(const QString &name) {
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetRegion();

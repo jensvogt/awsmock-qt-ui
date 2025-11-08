@@ -141,7 +141,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
 
     setLayout(mainLayout);
 
-    // 2. Enable Drop Events for this widget
+    // Enable Drop Events for this widget
     setAcceptDrops(true);
 
     // Apply initial styles

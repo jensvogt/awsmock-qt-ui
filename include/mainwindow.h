@@ -16,6 +16,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QToolBar>
+#include <QFileDialog>
 
 #include <modules/sns/SNSTopicList.h>
 #include <modules/sns/SNSMessageList.h>
@@ -24,37 +25,57 @@
 #include <utils/BasePage.h>
 #include <utils/EditPreferencesDialog.h>
 
-class MainWindow final : public QMainWindow
-{
+#include "modules/infrastructure/InfrastructureService.h"
+
+class MainWindow final : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+
     ~MainWindow() override;
 
 private slots:
     void NavigationSelectionChanged(int currentRow);
+
     void UpdateStatusBar(const QString &text) const;
 
 private:
     // Setup menu bar
     void SetupMenuBar();
 
-    static void ImportInfrastructure();
+    void ImportInfrastructure() const;
 
-    static void ExportInfrastructure();
+    static void ImportInfrastructureResponse();
+
+    void ExportInfrastructure() const;
+
+    static void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
+
+    void CleanInfrastructure() const;
+
+    static void CleanInfrastructureResponse();
+
+    static void FtpUpload();
 
     static void EditPreferences();
-    BasePage* CreatePage(int currentRow);
+
+    BasePage *CreatePage(int currentRow);
+
     void Exit();
 
-    QMenuBar* mainMenuBar;
+    QMenuBar *mainMenuBar{};
     QListWidget *m_navPane;
     QStackedWidget *m_contentPane;
-    QMap<int, BasePage*> loadedPages;
-    QLabel* myStatusBar;
-    QLabel* timeLabel;
+    QMap<int, BasePage *> loadedPages;
+    QLabel *myStatusBar{};
+    QLabel *timeLabel{};
 
     int currentWidgetIndex = 0;
+
+    /**
+     * @brief Infrastructure service
+     */
+    InfraStructureService *_infraStructureService{};
 };
 #endif // MAINWINDOW_H

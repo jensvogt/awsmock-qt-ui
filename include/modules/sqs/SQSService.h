@@ -99,6 +99,14 @@ public:
      */
     void GetSqsMessageDetails(const QString &messageId);
 
+    /**
+     * @brief Delete a message
+     *
+     * @param queueUrl message ID
+     * @param receiptHandle
+     */
+    void DeleteMessage(const QString &queueUrl, const QString &receiptHandle);
+
 signals:
     void ListQueuesSignal(const SQSQueueListResponse &listQueueResponse);
 

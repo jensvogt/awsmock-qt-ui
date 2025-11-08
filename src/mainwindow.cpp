@@ -3,23 +3,27 @@
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
 
+#include <utility>
+
+#include "modules/ftp/FTPUploadDialog.h"
+
 /**
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class ContentPage : public BasePage {
+class ContentPage final : public BasePage {
 public:
-    ContentPage(const QString &title, QWidget *parent = nullptr) : BasePage(parent), title(title) {
+    explicit ContentPage(QString title, QWidget *parent = nullptr) : BasePage(parent), title(std::move(title)) {
     }
 
-    void LoadContent() {
+    void LoadContent() override {
         // Set up the layout for the individual content pages
-        QVBoxLayout *layout = new QVBoxLayout(this);
+        const auto layout = new QVBoxLayout(this);
 
-        QLabel *titleLabel = new QLabel(QString("<h1>%1</h1>").arg(title), this);
+        const auto titleLabel = new QLabel(QString("<h1>%1</h1>").arg(title), this);
         titleLabel->setAlignment(Qt::AlignCenter);
 
-        QLabel *detailLabel = new QLabel(
+        const auto detailLabel = new QLabel(
             QString("<p>This is the detailed content for the <b>%1</b> section.</p>").arg(title), this);
         detailLabel->setAlignment(Qt::AlignCenter);
 
@@ -36,8 +40,15 @@ private:
 };
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+
+    // Connect infrastructure signals
+    _infraStructureService = new InfraStructureService();
+    connect(_infraStructureService, &InfraStructureService::ImportResponseSignal, this, &ImportInfrastructureResponse);
+    connect(_infraStructureService, &InfraStructureService::ExportResponseSignal, this, &WriteInfrastructureExport);
+    connect(_infraStructureService, &InfraStructureService::CleanResponseSignal, this, &CleanInfrastructureResponse);
+
     setWindowTitle("AwsMock UI");
-    setMinimumSize(1200, 800);
+    resize(1200, 800);
 
     // Setup menu bar
     SetupMenuBar();
@@ -88,12 +99,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     statusBar()->showMessage("Ready");
 }
 
-MainWindow::~MainWindow() {
-}
+MainWindow::~MainWindow() = default;
 
 void MainWindow::SetupMenuBar() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
+    QMenu *ftpMenu = menuBar()->addMenu(tr("&FTP"));
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
     // File menu
@@ -104,6 +115,10 @@ void MainWindow::SetupMenuBar() {
     const auto exportAction = new QAction(IconUtils::GetIcon("dark", "export"), tr("&Export infrastructure"), this);
     connect(exportAction, &QAction::triggered, this, &MainWindow::ExportInfrastructure);
     fileMenu->addAction(exportAction);
+
+    const auto cleanAction = new QAction(IconUtils::GetIcon("dark", "clean"), tr("&Clean infrastructure"), this);
+    connect(cleanAction, &QAction::triggered, this, &MainWindow::CleanInfrastructure);
+    fileMenu->addAction(cleanAction);
 
     fileMenu->addSeparator();
 
@@ -116,18 +131,86 @@ void MainWindow::SetupMenuBar() {
     connect(prefAction, &QAction::triggered, this, &MainWindow::EditPreferences);
     editMenu->addAction(prefAction);
 
-    // Edit Menu
+    // FTP menu
+    const auto uploadAction = new QAction(IconUtils::GetIcon("dark", "upload"), tr("&Upload file"), this);
+    connect(uploadAction, &QAction::triggered, this, &MainWindow::FtpUpload);
+    ftpMenu->addAction(uploadAction);
+
+    // Help Menu
     const auto helpAction = new QAction(IconUtils::GetIcon("dark", "help"), tr("&Help"), this);
     connect(helpAction, &QAction::triggered, this, &MainWindow::EditPreferences);
     editMenu->addAction(helpAction);
 }
 
-void MainWindow::ImportInfrastructure() {
-    qDebug() << "Import Infrastructure";
+void MainWindow::ImportInfrastructure() const {
+
+    // Create a QFileDialog set to select existing files
+    const QString filter = "JSON Files (*.json);;All Files (*.*)";
+    const QString defaultDir = QDir::homePath();
+
+    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
+            return;
+        }
+
+        const QByteArray jsonData = file.readAll();
+        file.close();
+
+        _infraStructureService->ImportInfrastructure(jsonData);
+    }
 }
 
-void MainWindow::ExportInfrastructure() {
-    qDebug() << "Export Infrastructure";
+void MainWindow::ImportInfrastructureResponse() {
+    QMessageBox::information(nullptr, "Information", "Infrastructure imported");
+}
+
+void MainWindow::ExportInfrastructure() const {
+
+    // Create a QFileDialog set to select existing files
+    const QString filter = "JSON Files (*.json);;All Files (*.*)";
+    const QString defaultDir = QDir::homePath();
+
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+        _infraStructureService->ExportInfrastructure(filePath);
+    }
+}
+
+void MainWindow::WriteInfrastructureExport(const QString &filename, const QString &exportResponse) {
+
+    qDebug() << filename;
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(nullptr, "Warning", "Couldn't open file for writing: " + file.fileName());
+        return;
+    }
+
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(exportResponse.toUtf8(), &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        QMessageBox::warning(nullptr, "Warning", "Could not convert to pretty print, file: " + file.fileName());
+        return;
+    }
+
+    // Write formatted (pretty-printed) JSON
+    file.write(doc.toJson(QJsonDocument::Indented));
+    file.close();
+    QMessageBox::information(nullptr, "Information", "Infrastructure saved to file: " + file.fileName());
+}
+
+void MainWindow::CleanInfrastructure() const {
+    _infraStructureService->CleanInfrastructure();
+}
+
+void MainWindow::CleanInfrastructureResponse() {
+    QMessageBox::information(nullptr, "Information", "Infrastructure cleaned");
+}
+
+void MainWindow::FtpUpload() {
+    if (FTPUploadDialog dialog; dialog.exec() == QDialog::Accepted) {
+        //QMessageBox::information(nullptr, "User Info", "info");
+    }
 }
 
 void MainWindow::EditPreferences() {
@@ -215,7 +298,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
                 const QString topicName = topicArn.mid(topicArn.lastIndexOf(":") + 1);
 
                 // Create the message list page
-                const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn,nullptr);
+                const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn, nullptr);
 
                 // Add it to the loaded pages list
                 m_contentPane->addWidget(messageListPage);

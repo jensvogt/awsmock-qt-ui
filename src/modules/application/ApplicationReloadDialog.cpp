@@ -8,11 +8,10 @@
 #include <modules/application/ApplicationReloadDialog.h>
 
 ApplicationReloadDialog::ApplicationReloadDialog(QWidget *parent) : QDialog(parent) {
-
     // Connect service
     _applicationService = new ApplicationService();
 
-    // 1. Setup UI Components
+    // Setup UI Components
     setWindowTitle("Add Application");
     setMinimumSize(800, 500);
 
@@ -25,7 +24,7 @@ ApplicationReloadDialog::ApplicationReloadDialog(QWidget *parent) : QDialog(pare
     nameEdit->setPlaceholderText("Name");
 
     // Regex for the name
-    const QRegularExpression nameRegex("\\b[A-Z0-9._+-]+\\b", QRegularExpression::CaseInsensitiveOption);
+    const QRegularExpression nameRegex("\\b[A-Za-z0-9._+-]+\\b", QRegularExpression::CaseInsensitiveOption);
     const auto nameValidator = new QRegularExpressionValidator(nameRegex, this);
     nameEdit->setValidator(nameValidator);
     connect(nameEdit, &QLineEdit::textChanged, this, &ApplicationReloadDialog::UpdateLineEditStyle);
@@ -78,8 +77,8 @@ ApplicationReloadDialog::ApplicationReloadDialog(QWidget *parent) : QDialog(pare
     fileNameEdit->setDisabled(true);
     fileNameEdit->setPlaceholderText("File path");
     // Valid range: 1 to 65536
-    const QRegularExpression filenameRegex("\\b[A-Z0-9._+-]+\\b", QRegularExpression::CaseInsensitiveOption);
-    const auto filenameValidator = new QRegularExpressionValidator(nameRegex, this);
+    const QRegularExpression filenameRegex(R"(\b[A-Za-z0-9._+-]+\b)", QRegularExpression::CaseInsensitiveOption);
+    const auto filenameValidator = new QRegularExpressionValidator(filenameRegex, this);
     fileNameEdit->setValidator(filenameValidator);
     connect(fileNameEdit, &QLineEdit::textChanged, this, &ApplicationReloadDialog::UpdateLineEditStyle);
 
@@ -198,7 +197,6 @@ void ApplicationReloadDialog::OpenFilesDialog() {
 }
 
 void ApplicationReloadDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::State state) {
-
     // Define colors
     const QString defaultStyle = "QLineEdit { border: 1px solid #ccc; background-color: #424242; padding: 2px; border-radius: 4px; }";
     const QString invalidStyle = "QLineEdit { border: 2px solid #dc3545; padding: 2px; border-radius: 4px; }"; // Red frame/background
@@ -275,7 +273,6 @@ void ApplicationReloadDialog::VerifyAllInputs() {
 }
 
 void ApplicationReloadDialog::UploadFile(const QFileInfo &fileInfo) {
-
     // Create file
     QFile file(fileInfo.absoluteFilePath());
 

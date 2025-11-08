@@ -67,6 +67,11 @@ signals:
      */
     void BackToQueueList();
 
+    /**
+     * @brief Sends a reload message list to the message list
+     */
+    void ReloadMessagesSignal();
+
 private slots:
     /**
      * @brief Row context menu
@@ -101,7 +106,7 @@ private:
     /**
      * @brief REST service handler
      */
-    SQSService *sqsService;
+    SQSService *_sqsService;
 
     /**
      * @brief prefix search

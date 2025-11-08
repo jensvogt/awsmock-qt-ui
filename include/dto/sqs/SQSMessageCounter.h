@@ -5,6 +5,12 @@
 #include <QJsonObject>
 
 struct SQSMessageCounter {
+    QString region;
+
+    QString queueName;
+
+    QString queueUrl;
+
     QString queueArn;
 
     QString messageId;
@@ -15,19 +21,25 @@ struct SQSMessageCounter {
 
     QString messageStatus;
 
-    long size;
+    QString receiptHandle;
 
-    long retries;
+    long size{};
+
+    long retries{};
 
     QDateTime created;
 
     QDateTime modified;
 
     void FromJson(const QJsonObject &jsonObject) {
+        region = jsonObject["region"].toString();
+        queueName = jsonObject["queueName"].toString();
+        queueUrl = jsonObject["queueUrl"].toString();
         queueArn = jsonObject["queueArn"].toString();
         messageId = jsonObject["messageId"].toString();
         message = jsonObject["message"].toString();
         messageStatus = jsonObject["messageStatus"].toString();
+        receiptHandle = jsonObject["receiptHandle"].toString();
         contentType = jsonObject["contentType"].toString();
         size = jsonObject["size"].toInteger();
         retries = jsonObject["retries"].toInteger();

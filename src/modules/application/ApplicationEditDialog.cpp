@@ -17,6 +17,14 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationEditDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationEditDialog::HandleReject);
+
+    connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [this]() {
+        if (_ui->enabledCheckBox->isChecked()) {
+            _applicationService->EnableApplication(_ui->nameEdit->text());
+        } else {
+            _applicationService->DisableApplication(_ui->nameEdit->text());
+        }
+    });
 }
 
 ApplicationEditDialog::~ApplicationEditDialog() {
@@ -41,19 +49,17 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->createdEdit->setText(applicationGetResponse.application.created.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->modifiedEdit->setText(applicationGetResponse.application.modified.toString("yyyy-MM-dd hh:mm:ss"));
 
-    connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [&]() {this->_changed = true;});
+    connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [&]() { this->_changed = true; });
 }
 
-void ApplicationEditDialog::HandleAccept()
-{
-    if(this->_changed) {
+void ApplicationEditDialog::HandleAccept() {
+    if (this->_changed) {
 
     }
     accept();
 }
 
 
-void ApplicationEditDialog::HandleReject()
-{
+void ApplicationEditDialog::HandleReject() {
     accept();
 }

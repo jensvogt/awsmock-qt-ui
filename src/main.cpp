@@ -13,8 +13,7 @@
 #define INITIAL_WIDTH 2000
 #define INITIAL_HEIGHT 1200
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     const QApplication app(argc, argv);
     QApplication::setWindowIcon(IconUtils::GetCommonIcon("awsmock.png"));
 
@@ -28,25 +27,25 @@ int main(int argc, char *argv[])
 
     // modify palette to dark
     QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window,QColor(53,53,53));
-    darkPalette.setColor(QPalette::WindowText,Qt::white);
-    darkPalette.setColor(QPalette::Disabled,QPalette::WindowText,QColor(127,127,127));
-    darkPalette.setColor(QPalette::Base,QColor(42,42,42));
-    darkPalette.setColor(QPalette::AlternateBase,QColor(66,66,66));
-    darkPalette.setColor(QPalette::ToolTipBase,Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText,Qt::black);
-    darkPalette.setColor(QPalette::Text,Qt::white);
-    darkPalette.setColor(QPalette::Disabled,QPalette::Text,QColor(127,127,127));
-    darkPalette.setColor(QPalette::Dark,QColor(35,35,35));
-    darkPalette.setColor(QPalette::Shadow,QColor(20,20,20));
-    darkPalette.setColor(QPalette::Button,QColor(53,53,53));
-    darkPalette.setColor(QPalette::ButtonText,Qt::white);
-    darkPalette.setColor(QPalette::BrightText,Qt::red);
-    darkPalette.setColor(QPalette::Link,QColor(42,130,218));
-    darkPalette.setColor(QPalette::Highlight,QColor(42,130,218));
-    darkPalette.setColor(QPalette::HighlightedText,Qt::white);
-    darkPalette.setColor(QPalette::PlaceholderText,QColor(127,127,127));
-    darkPalette.setColor(QPalette::Midlight,QColor(0,0,0));
+    darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(127, 127, 127));
+    darkPalette.setColor(QPalette::Base, QColor(42, 42, 42));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(66, 66, 66));
+    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::black);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(127, 127, 127));
+    darkPalette.setColor(QPalette::Dark, QColor(35, 35, 35));
+    darkPalette.setColor(QPalette::Shadow, QColor(20, 20, 20));
+    darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::white);
+    darkPalette.setColor(QPalette::PlaceholderText, QColor(127, 127, 127));
+    darkPalette.setColor(QPalette::Midlight, QColor(0, 0, 0));
 
     QApplication::setPalette(darkPalette);
 
@@ -57,7 +56,7 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale : uiLanguages) {
+    for (const QString &locale: uiLanguages) {
         if (const QString baseName = "awsmock-qt-ui_" + QLocale(locale).name(); translator.load(":/i18n/" + baseName)) {
             QApplication::installTranslator(&translator);
             break;
@@ -71,16 +70,22 @@ int main(int argc, char *argv[])
     parser.process(app);
 
     // Retrieve values
-    if(const QString configPath = parser.value(configOption); !configPath.isEmpty()) {
+    if (const QString configPath = parser.value(configOption); !configPath.isEmpty()) {
         Configuration::instance().SetFilePath(configPath);
     }
 
     MainWindow w;
-    const QScreen *screen = QGuiApplication::primaryScreen();
-    const QRect screenGeometry = screen->availableGeometry();
-    const int x = (screenGeometry.width() - INITIAL_WIDTH) / 2;
-    const int y = (screenGeometry.height() - INITIAL_HEIGHT) / 2;
-    w.setGeometry(x, y, INITIAL_WIDTH, INITIAL_HEIGHT);
+    constexpr int screenIndex = 0;
+    if (const QList<QScreen *> screens = QGuiApplication::screens(); screenIndex < screens.count()) {
+        const QScreen *targetScreen = screens.at(screenIndex);
+        const QRect screenGeometry = targetScreen->geometry();
+
+        // Center the window on that screen in global coordinates
+        const int x = screenGeometry.x() + (screenGeometry.width() - w.width()) / 2;
+        const int y = screenGeometry.y() + (screenGeometry.height() - w.height()) / 2;
+
+        w.move(x, y);
+    }
     w.show();
     return QApplication::exec();
 }

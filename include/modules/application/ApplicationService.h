@@ -56,6 +56,10 @@ public:
      */
     void GetApplication(const QString &name);
 
+    void EnableApplication(const QString &name);
+
+    void DisableApplication(const QString &name);
+
     /**
      * @brief Stop an applications
      *

@@ -270,3 +270,27 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                           }
                       });
 }
+
+void SQSService::DeleteMessage(const QString &queueUrl, const QString &receiptHandle) {
+
+    QJsonObject jRequest;
+    jRequest["QueueUrl"] = queueUrl;
+    jRequest["ReceiptHandle"] = receiptHandle;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "delete-message"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
+                          if (success) {
+                              emit ReloadMessagesSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+

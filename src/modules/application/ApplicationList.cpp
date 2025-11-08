@@ -98,8 +98,8 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
         // Extract ARN and URL
         const QString name = tableWidget->item(row, 0)->text();
 
-        // Send notification
-        //emit ShowSnsMessages(topicArn);
+        if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
+        }
     });
 
     // Add context menu

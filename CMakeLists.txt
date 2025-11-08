@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 6.10 REQUIRED COMPONENTS Core Widgets Linguist Network Charts)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Linguist Network Charts)
+find_package(QT NAMES Qt6 6.10 REQUIRED COMPONENTS Core Widgets Linguist Network Charts Scxml)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Linguist Network Charts Scxml)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 
@@ -41,8 +41,17 @@ set(PROJECT_SOURCES
         include/modules/dashboard/CrossHairChartView.h
         include/modules/dashboard/CrossHairChartView.h
         include/modules/dashboard/CrossHairChartView.h
+        include/modules/infrastructure/InfrastructureService.h
+        include/modules/infrastructure/InfrastructureService.h
+        src/modules/infrastructure/InfrastructureService.cpp
+        src/modules/ftp/FTPUploadDialog.cpp
+        include/modules/ftp/FTPUploadDialog.h
+        src/modules/ftp/FTPUploadDialog.ui
+        include/utils/NonEmptyValidator.h
+        include/utils/NonEmptyValidator.h
 )
 
+qt6_add_statecharts(ftpclient simpleftp.scxml)
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(awsmock-qt-ui
@@ -81,6 +90,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/modules/sns/SNSMessageDetailsDialog.h
             include/modules/application/ApplicationList.h
             include/modules/application/ApplicationService.h
+            include/modules/infrastructure/InfrastructureService.h
             src/utils/BasePage.cpp
             src/utils/Configuration.cpp
             src/utils/EditPreferencesDialog.cpp
@@ -104,6 +114,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/modules/sns/SNSMessageDetailsDialog.cpp
             src/modules/application/ApplicationList.cpp
             src/modules/application/ApplicationService.cpp
+            src/modules/infrastructure/InfrastructureService.cpp
     )
     # Define target properties for Android with Qt 6 as:
     #    set_property(TARGET awsmock-qt-ui APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -134,7 +145,7 @@ add_subdirectory(src/modules/sns)
 target_include_directories(awsmock-qt-ui PRIVATE ./include)
 target_sources(awsmock-qt-ui PRIVATE src/main.cpp src/mainwindow.cpp)
 target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
-        Qt${QT_VERSION_MAJOR}::Charts)
+        Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Scxml ftpclient curl)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

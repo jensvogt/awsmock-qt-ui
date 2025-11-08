@@ -5,10 +5,11 @@
 #include "utils/IconUtils.h"
 
 SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl) {
-    // Connect table events
-    sqsService = new SQSService();
-    connect(sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
-    connect(sqsService, &SQSService::ReloadMessagesSignal, this, &SQSMessageList::HandleReloadMessageSignal);
+
+    // Connect service events
+    _sqsService = new SQSService();
+    connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
+    connect(_sqsService, &SQSService::ReloadMessagesSignal, this, &SQSMessageList::HandleReloadMessageSignal);
 
     const auto toolBar = new QHBoxLayout();
     const auto spacer = new QWidget();
@@ -42,7 +43,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
     connect(purgeAllButton, &QPushButton::clicked, [&]() {
-        sqsService->PurgeAllMessages(queueUrl);
+        _sqsService->PurgeAllMessages(queueUrl);
     });
 
     // Toolbar refresh action
@@ -76,7 +77,8 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
                                 << tr("Created")
                                 << tr("Modified")
                                 << tr("QueueUrl")
-                                << tr("QueueArn");
+                                << tr("QueueArn")
+                                << tr("ReceiptHandle");
 
     tableWidget = new QTableWidget();
 
@@ -94,6 +96,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
     tableWidget->setColumnHidden(6, true);
     tableWidget->setColumnHidden(7, true);
+    tableWidget->setColumnHidden(8, true);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
@@ -129,7 +132,7 @@ SQSMessageList::~SQSMessageList() {
 }
 
 void SQSMessageList::LoadContent() {
-    sqsService->ListMessages(_queueArn, prefixValue);
+    _sqsService->ListMessages(_queueArn, prefixValue);
 }
 
 void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) {
@@ -147,6 +150,9 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
         SetColumn(tableWidget, r, 3, listMessageResponse.messageCounters.at(r).retries);
         SetColumn(tableWidget, r, 4, listMessageResponse.messageCounters.at(r).created);
         SetColumn(tableWidget, r, 5, listMessageResponse.messageCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, 6, listMessageResponse.messageCounters.at(r).queueUrl);
+        SetHiddenColumn(tableWidget, r, 7, listMessageResponse.messageCounters.at(r).queueArn);
+        SetHiddenColumn(tableWidget, r, 8, listMessageResponse.messageCounters.at(r).receiptHandle);
     }
     tableWidget->setRowCount(static_cast<int>(listMessageResponse.messageCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -154,7 +160,7 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
 }
 
 void SQSMessageList::HandleReloadMessageSignal() const {
-    sqsService->ListMessages(_queueArn, prefixValue);
+    _sqsService->ListMessages(_queueArn, prefixValue);
 }
 
 void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
@@ -172,7 +178,6 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
     /*if (selectedAction == purgeAction) {
         QString QueueUrl = tableWidget->item(row, 7)->text();
 //        PurgeQueue(QueueUrl);
@@ -180,9 +185,9 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
         QString QueueUrl = tableWidget->item(row, 7)->text();
 //        DeleteQueue(QueueUrl);
     } else*/
-    if (selectedAction == deleteAction) {
-        QString id = tableWidget->item(row, 0)->text();
-        qDebug() << "Delete " << id;
-        //        DeleteQueue(QueueUrl);
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+        const QString queueUrl = tableWidget->item(row, 6)->text();
+        const QString receiptHandle = tableWidget->item(row, 8)->text();
+        _sqsService->DeleteMessage(queueUrl, receiptHandle);
     }
 }
