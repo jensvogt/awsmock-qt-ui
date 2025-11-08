@@ -59,20 +59,16 @@ protected:
                 labelProxy->setVisible(true);
             }
 
-            // --- Update Graphics ---
+            // Update Graphics
             vLine->setLine(mousePos.x(), plotArea.top(), mousePos.x(), plotArea.bottom());
-
             hLine->setLine(plotArea.left(), mousePos.y(), plotArea.right(), mousePos.y());
 
-            // --- Coordinate Mapping (Value Display) ---
             // Map the screen coordinates (mousePos) to chart data values
             const QPointF chartValue = chart()->mapToValue(mousePos);
             const QDateTime xDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(chartValue.x()));
 
             // Update the label text with formatted values
-            const QString text = QString("X: %1 | Y: %2")
-                    .arg(xDateTime.toString("hh:mm:ss"))
-                    .arg(chartValue.y(), 0, 'f', 2);
+            const QString text = QString("X: %1 | Y: %2").arg(xDateTime.toString("hh:mm:ss")).arg(chartValue.y(), 0, 'f', 3);
             valueLabel->setText(text);
             valueLabel->setStyleSheet("color:black; background-color: rgba(200, 220, 255, 220); border: 1px solid blue; padding: 3px; font-weight: bold;");
 
@@ -80,21 +76,21 @@ protected:
             // We offset the label slightly to the right/down so it doesn't cover the intersection
             labelProxy->setPos(mousePos.x() + 5, mousePos.y() + 5);
 
-            // 1. Calculate the required size of the label (it changes based on text)
+            // Calculate the required size of the label (it changes based on text)
             valueLabel->adjustSize();
-            qreal labelWidth = valueLabel->width();
-            qreal labelHeight = valueLabel->height();
-            const qreal padding = 5.0; // The fixed offset distance
+            const qreal labelWidth = valueLabel->width();
+            const qreal labelHeight = valueLabel->height();
+            constexpr qreal padding = 5.0; // The fixed offset distance
 
             qreal newX = mousePos.x() + padding;
             qreal newY = mousePos.y() + padding;
 
-            // 2. Check Right Edge: If the label's right edge exceeds the plot area boundary, flip the X offset.
+            // Check Right Edge: If the label's right edge exceeds the plot area boundary, flip the X offset.
             if (newX + labelWidth > plotArea.right()) {
                 newX = mousePos.x() - labelWidth - padding;
             }
 
-            // 3. Check Bottom Edge: If the label's bottom edge exceeds the plot area boundary, flip the Y offset.
+            // Check Bottom Edge: If the label's bottom edge exceeds the plot area boundary, flip the Y offset.
             if (newY + labelHeight > plotArea.bottom()) {
                 newY = mousePos.y() - labelHeight - padding;
             }
@@ -113,7 +109,7 @@ protected:
         QChartView::mouseMoveEvent(event);
     }
 
-    // 3. Optional: Override leaveEvent for explicit control
+    // Override leaveEvent for explicit control
     void leaveEvent(QEvent *event) override {
         vLine->setVisible(false);
         hLine->setVisible(false);
