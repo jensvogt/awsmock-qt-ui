@@ -88,7 +88,7 @@ private slots:
      *
      * @param pos position in table
      */
-    void ShowContextMenu(const QPoint &pos);
+    void ShowContextMenu(const QPoint &pos) const;
 
     void OnBackClicked() {
         StopAutoUpdate();
@@ -98,12 +98,36 @@ private slots:
 private:
 
     /**
+     * @brief Parent topic ARN
+     */
+    QString topicArn;
+
+    /**
      * @brief Qt network manager
      */
     QTableWidget* tableWidget;
+
+    /**
+     * @brief REST service handler
+     */
     SNSService* snsService;
+
+    /**
+     * @brief Prefix search
+     */
     QString prefixValue = "";
-    QString topicArn;
+
+    /**
+     * @brief Sort column index
+     *
+     * @par Default sort column is 'messages', index=1
+     */
+    int _sortColumn = 1;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
 
 #endif // SNS_MESSAGE_LIST_H

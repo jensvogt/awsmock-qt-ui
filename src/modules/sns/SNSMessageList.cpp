@@ -113,6 +113,13 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSMessageList::ShowContextMenu);
 
+    // Save sort column
+    const QHeaderView *header = tableWidget->horizontalHeader();
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+        _sortColumn = column;
+        _sortOrder = order;
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
@@ -126,33 +133,27 @@ SNSMessageList::~SNSMessageList(){
 
 void SNSMessageList::LoadContent(){
     snsService->ListMessages(topicArn, prefixValue);
-    NotifyStatusBar();
 }
 
 void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) {
 
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
-    tableWidget->sortItems(-1);
     for (auto r = 0; r < listMessageResult.messageCounters.count(); r++) {
 
         tableWidget->insertRow(r);
-        tableWidget->setItem(r, 0, new QTableWidgetItem(listMessageResult.messageCounters.at(r).messageId));
-        tableWidget->setItem(r, 1, new QTableWidgetItem(listMessageResult.messageCounters.at(r).contentType));
-
-        QTableWidgetItem *item2 = new QTableWidgetItem;
-        item2->setData(Qt::EditRole, QVariant::fromValue(listMessageResult.messageCounters.at(r).size));
-        tableWidget->setItem(r, 2, item2);
-
-        tableWidget->setItem(r, 3, new QTableWidgetItem(listMessageResult.messageCounters.at(r).messageStatus));
-
-        tableWidget->setItem(r, 4, new QTableWidgetItem(listMessageResult.messageCounters.at(r).lastSend.toString("yyyy-MM-dd hh:mm:ss")));
-        tableWidget->setItem(r, 5, new QTableWidgetItem(listMessageResult.messageCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss")));
-        tableWidget->setItem(r, 6, new QTableWidgetItem(listMessageResult.messageCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss")));
-        tableWidget->setItem(r, 7, new QTableWidgetItem(listMessageResult.messageCounters.at(r).topicArn));
+        SetColumn(tableWidget, r,0,listMessageResult.messageCounters.at(r).messageId);
+        SetColumn(tableWidget, r,1,listMessageResult.messageCounters.at(r).contentType);
+        SetColumn(tableWidget, r,2,listMessageResult.messageCounters.at(r).size);
+        SetColumn(tableWidget, r,3,listMessageResult.messageCounters.at(r).messageStatus);
+        SetColumn(tableWidget, r,4,listMessageResult.messageCounters.at(r).lastSend);
+        SetColumn(tableWidget, r,5,listMessageResult.messageCounters.at(r).created);
+        SetColumn(tableWidget, r,6,listMessageResult.messageCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r,7,listMessageResult.messageCounters.at(r).topicArn);
     }
-    tableWidget->setRowCount(listMessageResult.messageCounters.count());
+    tableWidget->setRowCount(static_cast<int>(listMessageResult.messageCounters.count()));
     tableWidget->setSortingEnabled(true);
+    tableWidget->sortItems(_sortColumn, _sortOrder);
     NotifyStatusBar();
 }
 
@@ -161,12 +162,12 @@ void SNSMessageList::HandleReloadMessageSignal(){
     NotifyStatusBar();
 }
 
-void SNSMessageList::ShowContextMenu(const QPoint &pos){
+void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
 
-    QModelIndex index = tableWidget->indexAt(pos);
+    const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
-    int row = index.row();
+    const int row = index.row();
 
     QMenu menu;
     /*    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
@@ -177,14 +178,13 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos){
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark","delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
     /*if (selectedAction == purgeAction) {
         QString QueueUrl = tableWidget->item(row, 7)->text();
 //        PurgeQueue(QueueUrl);
     } else if (selectedAction == redriveAction) {
         QString QueueUrl = tableWidget->item(row, 7)->text();
 //        DeleteQueue(QueueUrl);
-    } else*/ if (selectedAction == deleteAction) {
+    } else*/ if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
         const QString id = tableWidget->item(row, 0)->text();
         qDebug() << "Delete " << id;
         //        DeleteQueue(QueueUrl);

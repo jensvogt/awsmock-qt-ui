@@ -12,13 +12,12 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <dto/sqs/SQSListQueueResponse.h>
+#include <dto/sqs/SQSListMessagesResponse.h>
 
-class SQSService final : public QObject
-{
+class SQSService final : public QObject {
     Q_OBJECT
 
 public:
-
     /**
      * @brief SQSService
      */
@@ -36,7 +35,7 @@ public:
      *
      * @param queueUrl Queue URL
      */
-    void PurgeQueue(const QString& queueUrl);
+    void PurgeQueue(const QString &queueUrl);
 
     /**
      * @brief Purge all Queues
@@ -55,14 +54,14 @@ public:
      *
      * @param queueUrl Queue URL
      */
-    void RedriveQueue(const QString& queueUrl);
+    void RedriveQueue(const QString &queueUrl);
 
     /**
      * @brief GetQueueDetails Queue
      *
      * @param queueArn Queue ARN
      */
-    void GetQueueDetails(const QString& queueArn);
+    void GetQueueDetails(const QString &queueArn);
 
     /**
      * @brief Update a Queue
@@ -83,9 +82,8 @@ public:
      *
      * @param queueArn ARN of the Queue
      * @param prefix message id prefix
-     * @param tableWidget table widget
      */
-    void ListMessages(const QString &queueArn, const QString &prefix, QTableWidget* tableWidget);
+    void ListMessages(const QString &queueArn, const QString &prefix);
 
     /**
      * @brief Purge all messages
@@ -99,16 +97,22 @@ public:
      *
      * @param messageId message ID
      */
-    void GetSqsMessageDetails(const QString& messageId);
+    void GetSqsMessageDetails(const QString &messageId);
 
 signals:
     void ListQueuesSignal(const SQSQueueListResponse &listQueueResponse);
+
     void GetQueueDetailsSignal(const SQSGetQueueDetailsResponse &response);
+
+    void ListMessagesSignal(const SQSListMessagesResponse &listMessagesResponse);
+
     void GetSqsMessageDetailsSignal(const SQSGetMessageDetailsResponse &response);
+
     void ReloadQueuesSignal();
 
-private:
+    void ReloadMessagesSignal();
 
+private:
     /**
      * @brief Base URL
      */
@@ -122,7 +126,7 @@ private:
     /**
      * @brief Target table widget
      */
-    QTableWidget* tableWidget{};
+    QTableWidget *tableWidget{};
 };
 
 #endif // SQS_SERVICE_H

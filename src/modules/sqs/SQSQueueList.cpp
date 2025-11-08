@@ -136,44 +136,16 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
     tableWidget->setSortingEnabled(false); // stop sorting
     for (auto r = 0; r < queueListResponse.queueCounters.count(); r++) {
         tableWidget->insertRow(r);
-        tableWidget->setItem(r, 0, new QTableWidgetItem(queueListResponse.queueCounters.at(r).queueName));
-
-        auto *item1 = new QTableWidgetItem;
-        item1->setData(Qt::EditRole, QVariant::fromValue(queueListResponse.queueCounters.at(r).available));
-        tableWidget->setItem(r, 1, item1);
-
-        auto *item2 = new QTableWidgetItem;
-        item2->setData(Qt::EditRole, QVariant::fromValue(queueListResponse.queueCounters.at(r).invisible));
-        tableWidget->setItem(r, 2, item2);
-
-        auto *item3 = new QTableWidgetItem;
-        item3->setData(Qt::EditRole, QVariant::fromValue(queueListResponse.queueCounters.at(r).delayed));
-        tableWidget->setItem(r, 3, item3);
-
-        auto *item4 = new QTableWidgetItem;
-        item4->setData(Qt::EditRole, QVariant::fromValue(queueListResponse.queueCounters.at(r).size));
-        tableWidget->setItem(r, 4, item4);
-
-        auto *item5 = new QTableWidgetItem;
-        item5->setData(Qt::EditRole, queueListResponse.queueCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss"));
-        tableWidget->setItem(r, 5, item5);
-
-        auto *item6 = new QTableWidgetItem;
-        item6->setData(Qt::EditRole, queueListResponse.queueCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss"));
-        tableWidget->setItem(r, 6, item6);
-
-        auto *item7 = new QTableWidgetItem;
-        item7->setData(Qt::EditRole, queueListResponse.queueCounters.at(r).queueUrl);
-        tableWidget->setItem(r, 7, item7);
-
-        auto *item8 = new QTableWidgetItem;
-        item8->setData(Qt::EditRole, queueListResponse.queueCounters.at(r).queueArn);
-        tableWidget->setItem(r, 8, item8);
-        auto *checkItem = new QTableWidgetItem();
-
-        checkItem->setCheckState(queueListResponse.queueCounters.at(r).isDlq ? Qt::Checked : Qt::Unchecked);
-        checkItem->setFlags(checkItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-        tableWidget->setItem(r, 9, checkItem);
+        SetColumn(tableWidget, r, 0, queueListResponse.queueCounters.at(r).queueName);
+        SetColumn(tableWidget, r, 1, queueListResponse.queueCounters.at(r).available);
+        SetColumn(tableWidget, r, 2, queueListResponse.queueCounters.at(r).invisible);
+        SetColumn(tableWidget, r, 3, queueListResponse.queueCounters.at(r).delayed);
+        SetColumn(tableWidget, r, 4, queueListResponse.queueCounters.at(r).size);
+        SetColumn(tableWidget, r, 5, queueListResponse.queueCounters.at(r).created);
+        SetColumn(tableWidget, r, 6, queueListResponse.queueCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, 7, queueListResponse.queueCounters.at(r).queueUrl);
+        SetHiddenColumn(tableWidget, r, 8, queueListResponse.queueCounters.at(r).queueArn);
+        SetHiddenColumn(tableWidget, r, 9, queueListResponse.queueCounters.at(r).isDlq);
     }
     tableWidget->setRowCount(static_cast<int>(queueListResponse.queueCounters.count()));
     tableWidget->setSortingEnabled(true);

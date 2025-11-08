@@ -13,10 +13,12 @@ void SNSService::AddTopic(const QString &region, const QString &topicName) {
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "create-topic"},
-                       {"content-type", "application/json"}},
-                      [this](const bool success, const QByteArray& response, int status, const QString& error) {
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "create-topic"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
@@ -42,20 +44,20 @@ void SNSService::ListTopics(const QString &prefix) {
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "list-topic-counters"},
-                       {"content-type", "application/json"}},
-                      [this](const bool success, const QByteArray& response, int, const QString& error) {
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-topic-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-
                               // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SNSListTopicResult snsResponse;
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListTopicSignal(snsResponse);
-
                               } else {
-                                  QMessageBox::critical(nullptr,"Error", "Response is not an object!");
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
@@ -81,18 +83,18 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "list-message-counters"},
-                       {"content-type", "application/json"}},
-                      [this](const bool success, const QByteArray& response, int, const QString& error) {
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-message-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-
                               // The API returns an array of objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SNSListMessagesResult snsResponse;
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListMessagesSignal(snsResponse);
-
                               } else {
                                   //m_quoteLabel->setText("Error: Failed to parse API response.");
                               }
@@ -102,17 +104,18 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
                       });
 }
 
-void SNSService::PurgeTopic(const QString &topicArn)
-{
+void SNSService::PurgeTopic(const QString &topicArn) {
     QJsonObject jRequest;
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "list-message-counters"},
-                       {"content-type", "application/json"}},
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-message-counters"},
+                          {"content-type", "application/json"}
+                      },
                       [this](bool success, QByteArray response, int status, QString error) {
                           if (success) {
                               emit ReloadMessagesSignal();
@@ -122,12 +125,14 @@ void SNSService::PurgeTopic(const QString &topicArn)
                       });
 }
 
-void SNSService::PurgeAllTopics(){
+void SNSService::PurgeAllTopics() {
     _restManager.post(url,
                       nullptr,
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "purge-all-topics"},
-                       {"content-type", "application/json"}},
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "purge-all-topics"},
+                          {"content-type", "application/json"}
+                      },
                       [this](bool success, QByteArray response, int status, QString error) {
                           if (success) {
                               emit ReloadMessagesSignal();
@@ -137,16 +142,18 @@ void SNSService::PurgeAllTopics(){
                       });
 }
 
-void SNSService::GetTopicDetails(QString topicArn){
+void SNSService::GetTopicDetails(const QString &topicArn) {
     QJsonObject jRequest;
     jRequest["topicArn"] = topicArn;
     QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "get-topic-details"},
-                       {"content-type", "application/json"}},
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "get-topic-details"},
+                          {"content-type", "application/json"}
+                      },
                       [this](bool success, QByteArray response, int status, QString error) {
                           if (success) {
                               // The API returns an JSON document
@@ -161,16 +168,18 @@ void SNSService::GetTopicDetails(QString topicArn){
                       });
 }
 
-void SNSService::DeleteTopic(const QString &topicArn){
+void SNSService::DeleteTopic(const QString &topicArn) {
     QJsonObject jRequest;
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "delete-topic"},
-                       {"content-type", "application/json"}},
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "delete-topic"},
+                          {"content-type", "application/json"}
+                      },
                       [this](const bool success, QByteArray, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
@@ -180,16 +189,18 @@ void SNSService::DeleteTopic(const QString &topicArn){
                       });
 }
 
-void SNSService::GetSnsMessageDetails(QString messageId){
+void SNSService::GetSnsMessageDetails(const QString &messageId) {
     QJsonObject jRequest;
     jRequest["messageId"] = messageId;
     QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),
-                      {{"x-awsmock-target", "sns"},
-                       {"x-awsmock-action", "get-message-counters"},
-                       {"content-type", "application/json"}},
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "get-message-counters"},
+                          {"content-type", "application/json"}
+                      },
                       [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array containing one object

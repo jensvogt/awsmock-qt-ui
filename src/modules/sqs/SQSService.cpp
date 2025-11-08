@@ -6,7 +6,6 @@ SQSService::SQSService() {
 }
 
 void SQSService::ListQueues(const QString &prefix) {
-
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "attributes.approximateNumberOfMessages";
@@ -34,11 +33,9 @@ void SQSService::ListQueues(const QString &prefix) {
                                   SQSQueueListResponse sqsResponse;
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueuesSignal(sqsResponse);
-
                               } else {
-                                  QMessageBox::critical(nullptr,"Error", "Response is not an object!");
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }
-
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -201,7 +198,7 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                           {"x-awsmock-action", "get-message-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray& response, int status, const QString& error) {
+                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               // The API returns an JSON object
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
@@ -214,11 +211,7 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                       });
 }
 
-void SQSService::ListMessages(const QString &queueArn, const QString &prefix, QTableWidget *tableWidget) {
-
-    // Copy table widget
-    this->tableWidget = tableWidget;
-
+void SQSService::ListMessages(const QString &queueArn, const QString &prefix) {
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "created";
@@ -241,41 +234,13 @@ void SQSService::ListMessages(const QString &queueArn, const QString &prefix, QT
                           {"x-awsmock-action", "list-message-counters"},
                           {"content-type", "application/json"}
                       },
-                      [tableWidget](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-
-                              // The API returns an array containing one object
+                              // The API returns an array of objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  tableWidget->clearContents();
-                                  tableWidget->setRowCount(0);
-                                  tableWidget->setSortingEnabled(false); // stop sorting
-                                  tableWidget->sortItems(-1);
-                                  const QJsonArray counterArray = jsonDoc["messageCounters"].toArray();
-                                  for (auto r = 0; r < counterArray.count(); r++) {
-                                      tableWidget->insertRow(r);
-                                      tableWidget->setItem(
-                                          r, 0, new QTableWidgetItem(counterArray.at(r)["messageId"].toString()));
-                                      tableWidget->setItem(
-                                          r, 1, new QTableWidgetItem(counterArray.at(r)["contentType"].toString()));
-
-                                      auto *item1 = new QTableWidgetItem;
-                                      item1->setData(Qt::EditRole, counterArray.at(r)["size"].toInt());
-                                      tableWidget->setItem(r, 2, item1);
-
-                                      auto *item2 = new QTableWidgetItem;
-                                      item2->setData(Qt::EditRole, counterArray.at(r)["retires"].toInt());
-                                      tableWidget->setItem(r, 3, item2);
-
-                                      auto *item3 = new QTableWidgetItem;
-                                      item3->setData(Qt::EditRole, counterArray.at(r)["created"].toString());
-                                      tableWidget->setItem(r, 4, item3);
-
-                                      auto *item4 = new QTableWidgetItem;
-                                      item4->setData(Qt::EditRole, counterArray.at(r)["modified"].toString());
-                                      tableWidget->setItem(r, 5, item4);
-                                  }
-                                  tableWidget->setRowCount(static_cast<int>(counterArray.count()));
-                                  tableWidget->setSortingEnabled(true);
+                                  SQSListMessagesResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit ListMessagesSignal(sqsResponse);
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Failed to parse API response.");
                               }
@@ -286,7 +251,6 @@ void SQSService::ListMessages(const QString &queueArn, const QString &prefix, QT
 }
 
 void SQSService::PurgeAllMessages(const QString &QueueUrl) {
-
     QJsonObject jRequest;
     jRequest["QueueUrl"] = QueueUrl;
     const QJsonDocument requestDoc(jRequest);
@@ -298,7 +262,7 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                           {"x-awsmock-action", "purge-Queue"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray& response, int status, const QString& error) {
+                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {

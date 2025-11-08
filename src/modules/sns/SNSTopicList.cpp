@@ -2,8 +2,6 @@
 
 SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
 
-    setAttribute(Qt::WA_DeleteOnClose);
-
     // Set region
     _region = Configuration::instance().GetRegion();
 
@@ -27,7 +25,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setToolTip("Add a new Topic");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString topicName = QInputDialog::getText(0, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
+        if (const QString topicName = QInputDialog::getText(nullptr, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
             snsService->AddTopic(_region, topicName);
         }
     });
@@ -43,7 +41,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the Topiclist");
+    refreshButton->setToolTip("Refresh the topic list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
@@ -133,27 +131,14 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
     tableWidget->setSortingEnabled(false);
     for (auto r = 0; r < listTopicResult.topicCounters.count(); r++) {
         tableWidget->insertRow(r);
-        tableWidget->setItem(r, 0, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicName));
-
-        const auto item1 = new QTableWidgetItem();
-        item1->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).messages));
-        tableWidget->setItem(r, 1, item1);
-
-        const auto item2 = new QTableWidgetItem();
-        item2->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).messagesSend));
-        tableWidget->setItem(r, 2, item2);
-
-        const auto item3 = new QTableWidgetItem();
-        item3->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).messagesResend));
-        tableWidget->setItem(r, 3, item3);
-
-        const auto item4 = new QTableWidgetItem();
-        item4->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).size));
-        tableWidget->setItem(r, 4, item4);
-
-        tableWidget->setItem(r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss")));
-        tableWidget->setItem(r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss")));
-        tableWidget->setItem(r, 7, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicArn));
+        SetColumn(tableWidget, r, 0, listTopicResult.topicCounters.at(r).topicName);
+        SetColumn(tableWidget, r, 1, listTopicResult.topicCounters.at(r).messages);
+        SetColumn(tableWidget, r, 2, listTopicResult.topicCounters.at(r).messagesSend);
+        SetColumn(tableWidget, r, 3, listTopicResult.topicCounters.at(r).messagesResend);
+        SetColumn(tableWidget, r, 4, listTopicResult.topicCounters.at(r).size);
+        SetColumn(tableWidget, r, 5, listTopicResult.topicCounters.at(r).created);
+        SetColumn(tableWidget, r, 6, listTopicResult.topicCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, 7, listTopicResult.topicCounters.at(r).topicArn);
     }
     tableWidget->setRowCount(static_cast<int>(listTopicResult.topicCounters.count()));
     tableWidget->setSortingEnabled(true);

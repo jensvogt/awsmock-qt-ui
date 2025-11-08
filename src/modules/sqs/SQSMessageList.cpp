@@ -1,10 +1,14 @@
 #include <modules/sqs/SQSMessageList.h>
 
+#include <utility>
+
 #include "utils/IconUtils.h"
 
-SQSMessageList::SQSMessageList(const QString &title, const QString &queueArn, const QString &queueUrl,
-                               QWidget *parent) : BasePage(parent), _queueArn(queueArn), _queueUrl(queueUrl) {
-    m_netManager = new QNetworkAccessManager(this);
+SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl) {
+    // Connect table events
+    sqsService = new SQSService();
+    connect(sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
+    connect(sqsService, &SQSService::ReloadMessagesSignal, this, &SQSMessageList::HandleReloadMessageSignal);
 
     const auto toolBar = new QHBoxLayout();
     const auto spacer = new QWidget();
@@ -38,7 +42,7 @@ SQSMessageList::SQSMessageList(const QString &title, const QString &queueArn, co
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
     connect(purgeAllButton, &QPushButton::clicked, [&]() {
-        sqsService.PurgeAllMessages(queueUrl);
+        sqsService->PurgeAllMessages(queueUrl);
     });
 
     // Toolbar refresh action
@@ -76,7 +80,7 @@ SQSMessageList::SQSMessageList(const QString &title, const QString &queueArn, co
 
     tableWidget = new QTableWidget();
 
-    tableWidget->setColumnCount(headers.count());
+    tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -106,13 +110,18 @@ SQSMessageList::SQSMessageList(const QString &title, const QString &queueArn, co
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
 
+    // Save sort column
+    const QHeaderView *header = tableWidget->horizontalHeader();
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+        _sortColumn = column;
+        _sortOrder = order;
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
     layout->addWidget(prefixEdit, 1);
     layout->addWidget(tableWidget, 2);
-    layout->addStretch();
-    layout->stretch(1);
 }
 
 SQSMessageList::~SQSMessageList() {
@@ -120,8 +129,32 @@ SQSMessageList::~SQSMessageList() {
 }
 
 void SQSMessageList::LoadContent() {
-    sqsService.ListMessages(_queueArn, prefixValue, tableWidget);
+    sqsService->ListMessages(_queueArn, prefixValue);
+}
+
+void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) {
+    tableWidget->clearContents();
+    tableWidget->setRowCount(0);
+    tableWidget->setSortingEnabled(false); // stop sorting
+    tableWidget->sortItems(-1);
+
+    for (auto r = 0; r < listMessageResponse.messageCounters.count(); r++) {
+        tableWidget->insertRow(r);
+
+        SetColumn(tableWidget, r, 0, listMessageResponse.messageCounters.at(r).messageId);
+        SetColumn(tableWidget, r, 1, listMessageResponse.messageCounters.at(r).contentType);
+        SetColumn(tableWidget, r, 2, listMessageResponse.messageCounters.at(r).size);
+        SetColumn(tableWidget, r, 3, listMessageResponse.messageCounters.at(r).retries);
+        SetColumn(tableWidget, r, 4, listMessageResponse.messageCounters.at(r).created);
+        SetColumn(tableWidget, r, 5, listMessageResponse.messageCounters.at(r).modified);
+    }
+    tableWidget->setRowCount(static_cast<int>(listMessageResponse.messageCounters.count()));
+    tableWidget->setSortingEnabled(true);
     NotifyStatusBar();
+}
+
+void SQSMessageList::HandleReloadMessageSignal() const {
+    sqsService->ListMessages(_queueArn, prefixValue);
 }
 
 void SQSMessageList::ShowContextMenu(const QPoint &pos) const {

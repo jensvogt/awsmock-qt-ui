@@ -17,12 +17,10 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 
-class SNSService : public QObject
-{
+class SNSService : public QObject {
     Q_OBJECT
 
 public:
-
     /**
      * @brief SNSService
      */
@@ -68,14 +66,14 @@ public:
      *
      * @param topicArn topic ARN
      */
-    void GetTopicDetails(QString topicArn);
+    void GetTopicDetails(const QString &topicArn);
 
     /**
      * @brief Get message details response
      *
      * @param messageId message ID
      */
-    void GetSnsMessageDetails(QString messageId);
+    void GetSnsMessageDetails(const QString &messageId);
 
     /**
      * @brief Delete topic
@@ -86,11 +84,14 @@ public:
 
 signals:
     void ListTopicSignal(const SNSListTopicResult &listTopicResult);
-    void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
-    void GetTopicDetailsSignal(const SNSGetTopicDetailsResponse &response);
-    void GetMessageDetailsSignal(const SNSGetMessageDetailsResponse &response);
-    void ReloadMessagesSignal();
 
+    void GetTopicDetailsSignal(const SNSGetTopicDetailsResponse &response);
+
+    void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
+
+    void GetMessageDetailsSignal(const SNSGetMessageDetailsResponse &response);
+
+    void ReloadMessagesSignal();
 
 private:
     /**

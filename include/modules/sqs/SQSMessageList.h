@@ -30,8 +30,7 @@
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class SQSMessageList final : public BasePage
-{
+class SQSMessageList final : public BasePage {
     Q_OBJECT
 
 public:
@@ -43,7 +42,7 @@ public:
      * @param queueUrl queue URL
      * @param parent parent widget
      */
-    SQSMessageList(const QString& title, const QString& queueArn, const QString &queueUrl, QWidget *parent = nullptr);
+    SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -56,7 +55,6 @@ public:
     void LoadContent() override;
 
 signals:
-
     /**
      * @brief Sent a show SQS message to the main window
      *
@@ -70,7 +68,6 @@ signals:
     void BackToQueueList();
 
 private slots:
-
     /**
      * @brief Row context menu
      *
@@ -83,17 +80,55 @@ private slots:
         emit BackToQueueList();
     }
 
-private:
+    /**
+     * @brief Handle message list request
+     *
+     * @param listMessageResponse message counter list
+     */
+    void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse);
 
     /**
-     * @brief Qt network manager
+     * @brief Handle message reload
      */
-    QNetworkAccessManager *m_netManager;
-    QTableWidget* tableWidget;
-    SQSService sqsService;
+    void HandleReloadMessageSignal() const;
+
+private:
+    /**
+     * @brief QT table
+     */
+    QTableWidget *tableWidget;
+
+    /**
+     * @brief REST service handler
+     */
+    SQSService *sqsService;
+
+    /**
+     * @brief prefix search
+     */
     QString prefixValue = "";
+
+    /**
+     * @brief SQS queue ARN
+     */
     QString _queueArn;
+
+    /**
+     * @brief SQS queue URL
+     */
     QString _queueUrl;
+
+    /**
+     * @brief Sort column index
+     *
+     * @par Default sort column is 'Available', index=1
+     */
+    int _sortColumn = 1;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
 
 #endif // SQSMESSAGELIST_H

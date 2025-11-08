@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QTimer>
+#include <QTableWidgetItem>
 
 class BasePage : public QWidget {
     Q_OBJECT
@@ -17,6 +18,18 @@ public:
     void StopAutoUpdate() const;
 
     virtual void LoadContent() = 0;
+
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, const QString &value);
+
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, int value);
+
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, long value);
+
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, const QDateTime &value);
+
+    static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, const QString &value);
+
+    static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, bool value);
 
 signals:
     void StatusUpdateRequested(const QString &text);
