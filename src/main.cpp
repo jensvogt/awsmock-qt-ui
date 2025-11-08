@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
     darkPalette.setColor(QPalette::Highlight,QColor(42,130,218));
     darkPalette.setColor(QPalette::HighlightedText,Qt::white);
     darkPalette.setColor(QPalette::PlaceholderText,QColor(127,127,127));
+    darkPalette.setColor(QPalette::Midlight,QColor(0,0,0));
 
     QApplication::setPalette(darkPalette);
 

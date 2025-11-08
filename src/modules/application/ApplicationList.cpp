@@ -1,7 +1,5 @@
-#include <QMenu>
-#include <modules/application/ApplicationList.h>
 
-#include "../../../include/modules/application/ApplicationAddDialog.h"
+#include <modules/application/ApplicationList.h>
 
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -10,9 +8,9 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     _region = Configuration::instance().GetRegion();
 
     // Connect service
-    applicationService = new ApplicationService();
-    connect(applicationService, &ApplicationService::LoadAllApplications, this, &ApplicationList::LoadContent);
-    connect(applicationService, &ApplicationService::ReloadApplicationsSignal, this, &ApplicationList::HandleListApplicationsSignal);
+    _applicationService = new ApplicationService();
+    connect(_applicationService, &ApplicationService::LoadAllApplications, this, &ApplicationList::LoadContent);
+    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this, &ApplicationList::HandleListApplicationsSignal);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -38,7 +36,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Restart all applications");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
-        applicationService->RestartAllApplications();
+        _applicationService->RestartAllApplications();
     });
 
     // Toolbar refresh action
@@ -109,6 +107,15 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &ApplicationList::ShowContextMenu);
 
+    // Save sort column
+    const QHeaderView *header = tableWidget->horizontalHeader();
+
+    // 2. Connect the signal to your slot
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+        _sortColumn = column;
+        _sortOrder = order;
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
@@ -121,26 +128,31 @@ ApplicationList::~ApplicationList() {
 }
 
 void ApplicationList::LoadContent() {
-    applicationService->ListApplications(prefixValue);
+    _applicationService->ListApplications(prefixValue);
 }
 
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) {
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
-    tableWidget->sortItems(-1);
+//    tableWidget->sortItems(-1);
     for (auto r = 0; r < listApplicationResponse.applicationCounters.count(); r++) {
         tableWidget->insertRow(r);
         tableWidget->setItem(r, 0, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).name));
         tableWidget->setItem(r, 1, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).version));
+
         if (listApplicationResponse.applicationCounters.at(r).enabled) {
             auto *iconItem = new QTableWidgetItem();
             iconItem->setIcon(IconUtils::GetIcon("dark", "enabled"));
             iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+            iconItem->setData(Qt::DisplayRole, listApplicationResponse.applicationCounters.at(r).enabled ? 1 : 0);
+            iconItem->setText("");
             tableWidget->setItem(r, 2, iconItem);
         } else {
             auto *iconItem = new QTableWidgetItem();
             iconItem->setIcon(IconUtils::GetIcon("dark", "disabled"));
             iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+            iconItem->setData(Qt::DisplayRole, listApplicationResponse.applicationCounters.at(r).enabled ? 1 : 0);
+            iconItem->setText("");
             tableWidget->setItem(r, 2, iconItem);
         }
         tableWidget->setItem(r, 3, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).status));
@@ -152,6 +164,7 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
     }
     tableWidget->setRowCount(static_cast<int>(listApplicationResponse.applicationCounters.count()));
     tableWidget->setSortingEnabled(true);
+    tableWidget->sortItems(_sortColumn, _sortOrder);
     NotifyStatusBar();
 }
 
@@ -169,10 +182,21 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Application");
     editAction->setToolTip("Edit the Topic details");
 
-    /*menu.addSeparator();
+    menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Topic");
-    purgeAction->setToolTip("Purge the Topic");*/
+    QAction *startAction = menu.addAction(IconUtils::GetIcon("dark", "start"), "Start Application");
+    startAction->setToolTip("Start the application");
+
+    QAction *stopAction = menu.addAction(IconUtils::GetIcon("dark", "stop"), "Stop Application");
+    stopAction->setToolTip("Stop the application");
+
+    QAction *restartAction = menu.addAction(IconUtils::GetIcon("dark", "restart"), "Restart Application");
+    restartAction->setToolTip("Restart the application");
+
+    menu.addSeparator();
+
+    QAction *reloadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Reload Application");
+    reloadAction->setToolTip("Reload the application code");
 
     menu.addSeparator();
 
@@ -181,11 +205,19 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     const QString name = tableWidget->item(row, 0)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        /*if (ApplicationAddDialog dialog(name); dialog.exec() == QDialog::Accepted) {
+        if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
             qDebug() << "Application edit dialog exit";
-        }*/
+        }
+    } else if (selectedAction == startAction) {
+        _applicationService->StartApplication(name);
+    } else if (selectedAction == stopAction) {
+        _applicationService->StopApplication(name);
+    } else if (selectedAction == restartAction) {
+        _applicationService->RestartApplication(name);
+    } else if (selectedAction == reloadAction) {
+        _applicationService->ReloadApplication(name);
     } else if (selectedAction == deleteAction) {
-        applicationService->DeleteApplication(name);
+        _applicationService->DeleteApplication(name);
     } else if (selectedAction == editAction) {
         QString TopicArn = tableWidget->item(row, 7)->text();
         //SNSTopicDetailsDialog dialog(TopicArn);

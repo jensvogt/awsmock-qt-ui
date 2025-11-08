@@ -30,6 +30,11 @@ set(PROJECT_SOURCES
         include/dto/application/ApplicationUploadRequest.h
         include/dto/application/Application.h
         include/dto/application/ApplicationCreateRequest.h
+        src/modules/application/ApplicationEditDialog.cpp
+        include/modules/application/ApplicationEditDialog.h
+        src/modules/application/ApplicationEditDialog.ui
+        include/modules/application/ApplicationReloadDialog.h
+        src/modules/application/ApplicationReloadDialog.cpp
 )
 
 

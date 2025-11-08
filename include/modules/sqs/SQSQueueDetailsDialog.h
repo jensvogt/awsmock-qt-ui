@@ -9,13 +9,13 @@ namespace Ui {
 class SQSQueueDetailsDialog;
 }
 
-class SQSQueueDetailsDialog : public QDialog
+class SQSQueueDetailsDialog final : public QDialog
 {
     Q_OBJECT
 
 public:
     explicit SQSQueueDetailsDialog(const QString &queueArn, QWidget *parent = nullptr);
-    ~SQSQueueDetailsDialog();
+    ~SQSQueueDetailsDialog() override;
 
 private slots:
     void on_sqsQueueDetailsButtonBox_accepted();
@@ -28,7 +28,7 @@ private:
     Ui::SQSQueueDetailsDialog *ui;
     QString queueArn;
     SQSService* sqsService;
-    bool changed=false;
+    bool changed = false;
 };
 
 #endif // SQS_QUEUE_DETAILS_DIALOG_H

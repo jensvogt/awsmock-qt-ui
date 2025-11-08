@@ -168,14 +168,14 @@ void SNSService::GetTopicDetails(QString topicArn){
 void SNSService::DeleteTopic(const QString &topicArn){
     QJsonObject jRequest;
     jRequest["topicArn"] = topicArn;
-    QJsonDocument requestDoc(jRequest);
+    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),
                       {{"x-awsmock-target", "sns"},
                        {"x-awsmock-action", "delete-topic"},
                        {"content-type", "application/json"}},
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, QByteArray, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
@@ -194,13 +194,13 @@ void SNSService::GetSnsMessageDetails(QString messageId){
                       {{"x-awsmock-target", "sns"},
                        {"x-awsmock-action", "get-message-counters"},
                        {"content-type", "application/json"}},
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array containing one object
-                              QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-                              SNSGetMessageDetailsResponse response;
-                              response.FromJson(jsonDoc["message"].toObject());
-                              emit GetMessageDetailsSignal(response);
+                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              SNSGetMessageDetailsResponse snsResponse;
+                              snsResponse.FromJson(jsonDoc["message"].toObject());
+                              emit GetMessageDetailsSignal(snsResponse);
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

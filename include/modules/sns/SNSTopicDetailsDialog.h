@@ -15,13 +15,13 @@ class SNSTopicDetailsDialog : public QDialog
 
 public:
     explicit SNSTopicDetailsDialog(const QString &topicArn, QWidget *parent = nullptr);
-    ~SNSTopicDetailsDialog();
+    ~SNSTopicDetailsDialog() override;
 
 private slots:
-    void on_snsTopicDetailsButtonBox_accepted();
+    void on_snsTopicDetailsButtonBox_accepted() const;
 
 private:
-    void UpdateTopicDetails(const SNSGetTopicDetailsResponse &response);
+    void UpdateTopicDetails(const SNSGetTopicDetailsResponse &response) const;
 
     Ui::SNSTopicDetailsDialog *ui;
     QString topicArn;

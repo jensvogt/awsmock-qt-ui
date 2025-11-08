@@ -11,12 +11,16 @@
 #include <QInputDialog>
 #include <QPushButton>
 #include <QHeaderView>
+#include <QMenu>
+#include <QHeaderView>
 
 // Awsmock Qt includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <dto/sns/SNSListTopicResult.h>
 #include <modules/application/ApplicationService.h>
+#include <modules/application/ApplicationEditDialog.h>
+#include <modules/application/ApplicationAddDialog.h>
 
 /**
  * @brief Application list widget. The widget will be placed in the content pane.
@@ -72,7 +76,10 @@ private:
     /**
      * @brief Service
      */
-    ApplicationService *applicationService;
+    ApplicationService *_applicationService;
+
+    int _sortColumn{};
+    Qt::SortOrder _sortOrder{};
 };
 
 #endif //AWSMOCK_QT_UI_APPLICATION_LIST_H

@@ -46,7 +46,7 @@ void Dashboard::LoadContent() {
     config.xAxisText = "Time";
     config.xAxisFormat = "HH:mm";
     config.yAxisText = "% CPU";
-    config.yAxisFormat = ".1f";
+    config.yAxisFormat = "%.1f";
     config.row = 0;
     config.column = 0;
     config.start = start;

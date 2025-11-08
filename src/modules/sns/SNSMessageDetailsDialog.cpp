@@ -11,7 +11,7 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     _snsService->GetSnsMessageDetails(messageId);
     connect(_snsService, &SNSService::GetMessageDetailsSignal, this, &SNSMessageDetailsDialog::UpdateMessageDetails);
 
-    QStringList messageAttributeHeaders = QStringList() << tr("Key")
+    const QStringList messageAttributeHeaders = QStringList() << tr("Key")
                                                         << tr("Value");
 
     QStringList systemAttributeHeaders = QStringList() << tr("Key")
@@ -36,7 +36,7 @@ SNSMessageDetailsDialog::~SNSMessageDetailsDialog() {
     delete _ui;
 }
 
-void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsResponse &response) {
+void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsResponse &response) const {
     _ui->regionEdit->setText(response.region);
     _ui->messageIdEdit->setText(response.messageId);
     _ui->topicArnEdit->setText(response.topicArn);
@@ -58,16 +58,15 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     }
 }
 
-void SNSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked)
-{
+void SNSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked) const {
     if(checked) {
-        QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        QJsonDocument jDoc = QJsonDocument::fromJson(body);
+        const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
+        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
         _ui->bodyPlainTextEdit->clear();
         _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
     } else {
-        QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        QJsonDocument jDoc = QJsonDocument::fromJson(body);
+        const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
+        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
         _ui->bodyPlainTextEdit->clear();
         _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
     }

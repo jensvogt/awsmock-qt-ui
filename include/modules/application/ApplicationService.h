@@ -17,6 +17,7 @@
 #include <dto/application/ApplicationListResponse.h>
 #include <dto/application/ApplicationUploadRequest.h>
 #include <dto/application/ApplicationCreateRequest.h>
+#include <dto/application/ApplicationGetResponse.h>
 
 class ApplicationService final : public QObject {
     Q_OBJECT
@@ -49,9 +50,44 @@ public:
     void CreateApplication(const ApplicationCreateRequest &request);
 
     /**
+     * @brief Gets an application
+     *
+     * @param name application name
+     */
+    void GetApplication(const QString &name);
+
+    /**
+     * @brief Stop an applications
+     *
+     * @param name application name
+     */
+    void StartApplication(const QString &name);
+
+    /**
+     * @brief Start an applications
+     *
+     * @param name application name
+     */
+    void StopApplication(const QString &name);
+
+    /**
+     * @brief Restart an applications
+     *
+     * @param name application name
+     */
+    void RestartApplication(const QString &name);
+
+    /**
      * @brief Restart all applications
      */
     void RestartAllApplications();
+
+    /**
+     * @brief Reload the application code
+     *
+     * @param name application name
+     */
+    void ReloadApplication(const QString &name);
 
     /**
      * @brief Deletes new application
@@ -60,8 +96,9 @@ public:
      */
     void DeleteApplication(const QString &name);
 
-    signals:
+signals:
     void ReloadApplicationsSignal(const ApplicationListResponse &applicationListResponse);
+    void GetApplicationDetailsSignal(const ApplicationGetResponse &applicationGetResponse);
 
     void LoadAllApplications();
 

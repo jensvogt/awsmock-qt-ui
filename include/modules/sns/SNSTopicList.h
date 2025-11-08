@@ -71,7 +71,7 @@ private:
      */
     QTableWidget* tableWidget;
     QString prefixValue = "";
-    QTimer *autoUpdateTimer;
+    QTimer *autoUpdateTimer{};
     SNSService* snsService;
     QString _region;
 };

@@ -15,7 +15,7 @@ SNSTopicDetailsDialog::~SNSTopicDetailsDialog() {
     delete ui;
 }
 
-void SNSTopicDetailsDialog::UpdateTopicDetails(const SNSGetTopicDetailsResponse &response) {
+void SNSTopicDetailsDialog::UpdateTopicDetails(const SNSGetTopicDetailsResponse &response) const {
 
     ui->topicNameEdit->setText(response.topicName);
     ui->topicArnEdit->setText(response.topicArn);
@@ -25,8 +25,7 @@ void SNSTopicDetailsDialog::UpdateTopicDetails(const SNSGetTopicDetailsResponse 
     ui->modifiedEdit->setText(response.modified.toString());
 }
 
-void SNSTopicDetailsDialog::on_snsTopicDetailsButtonBox_accepted()
-{
+void SNSTopicDetailsDialog::on_snsTopicDetailsButtonBox_accepted() const {
     if(this->changed) {
         /*UpdateQueueRequest updateQueueRequest;
             updateQueueRequest.queueArn = queueArn;

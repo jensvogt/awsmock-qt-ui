@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1353</width>
-    <height>635</height>
+    <height>647</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,16 +17,13 @@
    <property name="geometry">
     <rect>
      <x>950</x>
-     <y>600</y>
+     <y>610</y>
      <width>391</width>
      <height>32</height>
     </rect>
    </property>
-   <property name="orientation">
-    <enum>Qt::Orientation::Horizontal</enum>
-   </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
@@ -35,7 +32,7 @@
      <x>10</x>
      <y>10</y>
      <width>1331</width>
-     <height>310</height>
+     <height>386</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" columnstretch="2,1,1">
@@ -125,9 +122,6 @@
     </item>
     <item row="12" column="1">
      <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Orientation::Vertical</enum>
-      </property>
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>

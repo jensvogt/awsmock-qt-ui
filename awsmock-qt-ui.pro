@@ -48,6 +48,7 @@ FORMS += src/modules/sqs/SQSQueueDetailsDialog.ui \
            src/modules/sqs/SQSMessageDetailsDialog.ui\
            src/modules/sns/SNSTopicDetailsDialog.ui \
            src/modules/sns/SNSMessageDetailsDialog.ui \
+           src/modules/application/ApplicationEditDialog.ui
            src/modules/dashboard/Dashboard.ui
 SOURCES += src/main.cpp \
            src/mainwindow.cpp \

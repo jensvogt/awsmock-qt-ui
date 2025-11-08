@@ -12,8 +12,12 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     connect(snsService, &SNSService::ListTopicSignal, this, &SNSTopicList::HandleListTopicSignal);
     connect(snsService, &SNSService::ReloadMessagesSignal, this, &SNSTopicList::LoadContent);
 
+    // Title label
+    const auto titleLabel = new QLabel(title, this);
+
     // Define toolbar
     const auto toolBar = new QHBoxLayout();
+    toolBar->addWidget(titleLabel);
     const auto spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
@@ -105,10 +109,8 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addWidget(prefixEdit, 0);
     layout->addWidget(tableWidget, 2);
-    layout->addStretch();
-    layout->stretch(1);
 }
 
 SNSTopicList::~SNSTopicList() {
@@ -180,8 +182,7 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
     } else if (selectedAction == deleteAction) {
         snsService->DeleteTopic(topicArn);
     } else if (selectedAction == editAction) {
-        const QString TopicArn = tableWidget->item(row, 7)->text();
-        if (SNSTopicDetailsDialog dialog(TopicArn); dialog.exec() == QDialog::Accepted) {
+        if (SNSTopicDetailsDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
             qDebug() << "SNS Topic edit dialog exit";
         }
     }

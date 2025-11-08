@@ -19,10 +19,10 @@ public:
 
 private slots:
 
-    void on_prettyPushButton_toggled(bool checked);
+    void on_prettyPushButton_toggled(bool checked) const;
 
 private:
-    void UpdateMessageDetails(const SNSGetMessageDetailsResponse &response);
+    void UpdateMessageDetails(const SNSGetMessageDetailsResponse &response) const;
 
     Ui::SNSMessageDetailsDialog *_ui;
     QString _messageId;
