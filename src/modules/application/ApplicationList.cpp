@@ -27,7 +27,6 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     addButton->setToolTip("Add a new application");
     connect(addButton, &QPushButton::clicked, []() {
         if (ApplicationAddDialog dialog; dialog.exec() == QDialog::Accepted) {
-            qDebug() << "Application edit dialog exit";
         }
     });
 
@@ -109,8 +108,6 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-
-    // 2. Connect the signal to your slot
     connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
         _sortColumn = column;
         _sortOrder = order;
@@ -134,7 +131,6 @@ void ApplicationList::LoadContent() {
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) {
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
-//    tableWidget->sortItems(-1);
     for (auto r = 0; r < listApplicationResponse.applicationCounters.count(); r++) {
         tableWidget->insertRow(r);
         tableWidget->setItem(r, 0, new QTableWidgetItem(listApplicationResponse.applicationCounters.at(r).name));
@@ -206,7 +202,6 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     const QString name = tableWidget->item(row, 0)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
-            qDebug() << "Application edit dialog exit";
         }
     } else if (selectedAction == startAction) {
         _applicationService->StartApplication(name);

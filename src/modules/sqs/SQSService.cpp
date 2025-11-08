@@ -1,11 +1,11 @@
+
 #include<modules/sqs/SQSService.h>
 
 SQSService::SQSService() {
     url = QUrl(Configuration::instance().GetBaseUrl());
 }
 
-void SQSService::ListQueues(const QString &prefix, QTableWidget *tableWidget) {
-    this->tableWidget = tableWidget;
+void SQSService::ListQueues(const QString &prefix) {
 
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
@@ -27,55 +27,18 @@ void SQSService::ListQueues(const QString &prefix, QTableWidget *tableWidget) {
                           {"x-awsmock-action", "list-queue-counters"},
                           {"content-type", "application/json"}
                       },
-                      [tableWidget](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array containing one object: [{"q":"quote text", "a":"author"}]
-
+                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  tableWidget->setRowCount(0);
-                                  tableWidget->setSortingEnabled(false); // stop sorting
-                                  tableWidget->sortItems(-1);
-                                  const QJsonArray counterArray = jsonDoc["queueCounters"].toArray();
-                                  for (auto r = 0; r < counterArray.count(); r++) {
-                                      tableWidget->insertRow(r);
-                                      tableWidget->setItem(
-                                          r, 0, new QTableWidgetItem(counterArray.at(r)["queueName"].toString()));
-                                      auto *item1 = new QTableWidgetItem;
-                                      item1->setData(Qt::EditRole, counterArray.at(r)["available"].toInt());
-                                      tableWidget->setItem(r, 1, item1);
-                                      auto *item2 = new QTableWidgetItem;
-                                      item2->setData(Qt::EditRole, counterArray.at(r)["invisible"].toInt());
-                                      tableWidget->setItem(r, 2, item2);
-                                      auto *item3 = new QTableWidgetItem;
-                                      item3->setData(Qt::EditRole, counterArray.at(r)["delayed"].toInt());
-                                      tableWidget->setItem(r, 3, item3);
-                                      auto *item4 = new QTableWidgetItem;
-                                      item4->setData(Qt::EditRole, counterArray.at(r)["size"].toDouble());
-                                      tableWidget->setItem(r, 4, item4);
-                                      auto *item5 = new QTableWidgetItem;
-                                      item5->setData(Qt::EditRole, counterArray.at(r)["created"].toString("yyyy-MM-dd hh:mm:ss"));
-                                      tableWidget->setItem(r, 5, item5);
-                                      auto *item6 = new QTableWidgetItem;
-                                      item6->setData(Qt::EditRole, counterArray.at(r)["modified"].toString("yyyy-MM-dd hh:mm:ss"));
-                                      tableWidget->setItem(r, 6, item6);
-                                      auto *item7 = new QTableWidgetItem;
-                                      item7->setData(Qt::EditRole, counterArray.at(r)["queueUrl"].toString());
-                                      tableWidget->setItem(r, 7, item7);
-                                      auto *item8 = new QTableWidgetItem;
-                                      item8->setData(Qt::EditRole, counterArray.at(r)["queueArn"].toString());
-                                      tableWidget->setItem(r, 8, item8);
-                                      auto *checkItem = new QTableWidgetItem();
-                                      checkItem->setCheckState(
-                                          counterArray.at(r)["isDlq"].toBool() ? Qt::Checked : Qt::Unchecked);
-                                      checkItem->setFlags(
-                                          checkItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-                                      tableWidget->setItem(r, 9, checkItem);
-                                  }
-                                  tableWidget->setRowCount(counterArray.count());
-                                  tableWidget->setSortingEnabled(true);
+                                  SQSQueueListResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit ListQueuesSignal(sqsResponse);
+
                               } else {
-                                  //m_quoteLabel->setText("Error: Failed to parse API response.");
+                                  QMessageBox::critical(nullptr,"Error", "Response is not an object!");
                               }
+
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -96,7 +59,7 @@ void SQSService::PurgeQueue(const QString &queueUrl) {
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -113,7 +76,7 @@ void SQSService::PurgeAllQueues() {
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -134,7 +97,7 @@ void SQSService::AddQueue(const QString &queueName) {
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -151,7 +114,7 @@ void SQSService::UpdateQueue(const UpdateQueueRequest &updateQueueRequest) {
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -172,7 +135,7 @@ void SQSService::DeleteQueue(const QString &queueUrl) {
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -193,7 +156,7 @@ void SQSService::RedriveQueue(const QString &queueArn) {
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -337,7 +300,7 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                       },
                       [this](const bool success, const QByteArray& response, int status, const QString& error) {
                           if (success) {
-                              emit LoadContent();
+                              emit ReloadQueuesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

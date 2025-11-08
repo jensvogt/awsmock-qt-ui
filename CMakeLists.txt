@@ -35,6 +35,8 @@ set(PROJECT_SOURCES
         src/modules/application/ApplicationEditDialog.ui
         include/modules/application/ApplicationReloadDialog.h
         src/modules/application/ApplicationReloadDialog.cpp
+        include/dto/sqs/SQSQueueCounter.h
+        include/dto/sqs/SQSListQueueResponse.h
 )
 
 

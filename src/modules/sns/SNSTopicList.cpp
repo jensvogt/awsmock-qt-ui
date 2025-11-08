@@ -74,7 +74,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
 
     tableWidget = new QTableWidget(this);
 
-    tableWidget->setColumnCount(headers.count());
+    tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -106,6 +106,13 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSTopicList::ShowContextMenu);
 
+    // Save sort column
+    const QHeaderView *header = tableWidget->horizontalHeader();
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+        _sortColumn = column;
+        _sortOrder = order;
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
@@ -124,7 +131,6 @@ void SNSTopicList::LoadContent() {
 void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult) {
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
-    tableWidget->sortItems(-1);
     for (auto r = 0; r < listTopicResult.topicCounters.count(); r++) {
         tableWidget->insertRow(r);
         tableWidget->setItem(r, 0, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicName));
@@ -145,14 +151,13 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
         item4->setData(Qt::EditRole, QVariant::fromValue(listTopicResult.topicCounters.at(r).size));
         tableWidget->setItem(r, 4, item4);
 
-        tableWidget->setItem(
-            r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss")));
-        tableWidget->setItem(
-            r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss")));
+        tableWidget->setItem(r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss")));
+        tableWidget->setItem(r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss")));
         tableWidget->setItem(r, 7, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicArn));
     }
-    tableWidget->setRowCount(listTopicResult.topicCounters.count());
+    tableWidget->setRowCount(static_cast<int>(listTopicResult.topicCounters.count()));
     tableWidget->setSortingEnabled(true);
+    tableWidget->sortItems(_sortColumn, _sortOrder);
     NotifyStatusBar();
 }
 

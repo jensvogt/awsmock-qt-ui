@@ -39,12 +39,12 @@ public:
      * @param title widget title
      * @param parent parent widget
      */
-    SNSTopicList(const QString& title, QWidget *parent = nullptr);
+    explicit SNSTopicList(const QString& title, QWidget *parent = nullptr);
 
     /**
      * Destructor
      */
-    ~SNSTopicList();
+    ~SNSTopicList() override;
 
     /**
      * @brief Load page content
@@ -67,13 +67,36 @@ private slots:
 private:
 
     /**
+     * @brief AWS region
+     */
+    QString _region;
+
+    /**
      * @brief Qt network manager
      */
     QTableWidget* tableWidget;
+
+    /**
+     * @brief Topic prefix search
+     */
     QString prefixValue = "";
-    QTimer *autoUpdateTimer{};
+
+    /**
+     * @brief REST service handler
+     */
     SNSService* snsService;
-    QString _region;
+
+    /**
+     * @brief Sort column index
+     *
+     * @par Default sort column is 'messages', index=1
+     */
+    int _sortColumn = 1;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
 
 #endif // SNS_TOPIC_LIST_H

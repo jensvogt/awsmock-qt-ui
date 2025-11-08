@@ -14,7 +14,7 @@ struct SNSListTopicResult {
 
     QList<SNSTopicCounter> topicCounters;
 
-    void FromJson(QJsonDocument jsonDoc) {
+    void FromJson(const QJsonDocument &jsonDoc) {
 
         QJsonArray jArray = jsonDoc["topicCounters"].toArray();
 

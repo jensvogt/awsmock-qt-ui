@@ -14,10 +14,9 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     _applicationService->GetApplication(name);
     connect(_applicationService, &ApplicationService::GetApplicationDetailsSignal, this, &ApplicationEditDialog::UpdateApplication);
 
+    _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationEditDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationEditDialog::HandleReject);
-
-    _ui->setupUi(this);
 }
 
 ApplicationEditDialog::~ApplicationEditDialog() {

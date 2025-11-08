@@ -55,9 +55,16 @@ public:
     void HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse);
 
 private slots:
+
+    /**
+     * @brief Show context menu
+     *
+     * @param pos table position
+     */
     void ShowContextMenu(const QPoint &pos);
 
 private:
+
     /**
      * AWS region
      */
@@ -78,7 +85,14 @@ private:
      */
     ApplicationService *_applicationService;
 
+    /**
+     * @brief Sort column index
+     */
     int _sortColumn{};
+
+    /**
+     * @brief Sort order
+     */
     Qt::SortOrder _sortOrder{};
 };
 

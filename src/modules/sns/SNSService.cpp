@@ -45,20 +45,17 @@ void SNSService::ListTopics(const QString &prefix) {
                       {{"x-awsmock-target", "sns"},
                        {"x-awsmock-action", "list-topic-counters"},
                        {"content-type", "application/json"}},
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, const QByteArray& response, int, const QString& error) {
                           if (success) {
-                              // The API returns an array containing one object: [{"q":"quote text", "a":"author"}]
-                              QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
 
-                              if (jsonDoc.isObject()) {
-                                  SNSListTopicResult response;
-                                  response.FromJson(jsonDoc);
-                                  emit ListTopicSignal(response);
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SNSListTopicResult snsResponse;
+                                  snsResponse.FromJson(jsonDoc);
+                                  emit ListTopicSignal(snsResponse);
 
                               } else {
-                                  QMessageBox::critical(nullptr,
-                                                        "Error",
-                                                        "Response is not an object!");
+                                  QMessageBox::critical(nullptr,"Error", "Response is not an object!");
                               }
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
@@ -87,15 +84,14 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
                       {{"x-awsmock-target", "sns"},
                        {"x-awsmock-action", "list-message-counters"},
                        {"content-type", "application/json"}},
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, const QByteArray& response, int, const QString& error) {
                           if (success) {
-                              // The API returns an array containing one object: [{"q":"quote text", "a":"author"}]
-                              QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
 
-                              if (jsonDoc.isObject()) {
-                                  SNSListMessagesResult response;
-                                  response.FromJson(jsonDoc);
-                                  emit ListMessagesSignal(response);
+                              // The API returns an array of objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SNSListMessagesResult snsResponse;
+                                  snsResponse.FromJson(jsonDoc);
+                                  emit ListMessagesSignal(snsResponse);
 
                               } else {
                                   //m_quoteLabel->setText("Error: Failed to parse API response.");
@@ -110,7 +106,7 @@ void SNSService::PurgeTopic(const QString &topicArn)
 {
     QJsonObject jRequest;
     jRequest["topicArn"] = topicArn;
-    QJsonDocument requestDoc(jRequest);
+    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
                       requestDoc.toJson(),

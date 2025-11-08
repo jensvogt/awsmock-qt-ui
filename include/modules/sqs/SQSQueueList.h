@@ -23,6 +23,8 @@
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 
+#include "dto/sqs/SQSListQueueResponse.h"
+
 /**
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
@@ -50,6 +52,13 @@ public:
      */
     void LoadContent() override;
 
+    /**
+     * @brief Load page content
+     *
+     * @param queueListResponse queue counter list
+     */
+    void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse);
+
 signals:
     void ShowMessages(const QString &QueueArn, const QString &QueueUrl);
 
@@ -62,9 +71,28 @@ private:
      * @brief Qt network manager
      */
     QTableWidget* tableWidget;
+
+    /**
+     * @brief Prefix suche
+     */
     QString prefixValue = "";
-    QTimer *autoUpdateTimer;
+
+    /**
+     * @brief REST service handler
+     */
     SQSService* sqsService;
+
+    /**
+     * @brief Sort column index
+     *
+     * @par Default sort column is 'Available', index=1
+     */
+    int _sortColumn = 1;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
 
 #endif // SQS_QUEUE_LIST_H

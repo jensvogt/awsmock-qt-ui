@@ -11,6 +11,7 @@
 #include <utils/BasePage.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <dto/sqs/SQSListQueueResponse.h>
 
 class SQSService final : public QObject
 {
@@ -27,9 +28,8 @@ public:
      * @brief List SQS Queues
      *
      * @param prefix Queue name prefix
-     * @param tableWidget table widget
      */
-    void ListQueues(const QString &prefix, QTableWidget* tableWidget);
+    void ListQueues(const QString &prefix);
 
     /**
      * @brief Purge Queue
@@ -102,9 +102,10 @@ public:
     void GetSqsMessageDetails(const QString& messageId);
 
 signals:
-    void LoadContent();
+    void ListQueuesSignal(const SQSQueueListResponse &listQueueResponse);
     void GetQueueDetailsSignal(const SQSGetQueueDetailsResponse &response);
     void GetSqsMessageDetailsSignal(const SQSGetMessageDetailsResponse &response);
+    void ReloadQueuesSignal();
 
 private:
 
