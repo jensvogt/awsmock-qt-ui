@@ -21,8 +21,8 @@ void SNSTopicDetailsDialog::UpdateTopicDetails(const SNSGetTopicDetailsResponse 
     ui->topicArnEdit->setText(response.topicArn);
     ui->messageCountEdit->setText(QString::number(response.messageCount));
     ui->messageSizeEdit->setText(QString::number(response.size/1024));
-    ui->createdEdit->setText(response.created.toString());
-    ui->modifiedEdit->setText(response.modified.toString());
+    ui->createdEdit->setText(response.created.toString("yyyy-MM-dd hh:mm:ss"));
+    ui->modifiedEdit->setText(response.modified.toString("yyyy-MM-dd hh:mm:ss"));
 }
 
 void SNSTopicDetailsDialog::on_snsTopicDetailsButtonBox_accepted() const {

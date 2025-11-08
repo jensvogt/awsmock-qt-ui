@@ -53,10 +53,10 @@ void SQSService::ListQueues(const QString &prefix, QTableWidget *tableWidget) {
                                       item4->setData(Qt::EditRole, counterArray.at(r)["size"].toDouble());
                                       tableWidget->setItem(r, 4, item4);
                                       auto *item5 = new QTableWidgetItem;
-                                      item5->setData(Qt::EditRole, counterArray.at(r)["created"].toString());
+                                      item5->setData(Qt::EditRole, counterArray.at(r)["created"].toString("yyyy-MM-dd hh:mm:ss"));
                                       tableWidget->setItem(r, 5, item5);
                                       auto *item6 = new QTableWidgetItem;
-                                      item6->setData(Qt::EditRole, counterArray.at(r)["modified"].toString());
+                                      item6->setData(Qt::EditRole, counterArray.at(r)["modified"].toString("yyyy-MM-dd hh:mm:ss"));
                                       tableWidget->setItem(r, 6, item6);
                                       auto *item7 = new QTableWidgetItem;
                                       item7->setData(Qt::EditRole, counterArray.at(r)["queueUrl"].toString());

@@ -86,8 +86,8 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(7, true);
 
     // Connect double-click
@@ -146,9 +146,9 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
         tableWidget->setItem(r, 4, item4);
 
         tableWidget->setItem(
-            r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString(Qt::ISODate)));
+            r, 5, new QTableWidgetItem(listTopicResult.topicCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss")));
         tableWidget->setItem(
-            r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString(Qt::ISODate)));
+            r, 6, new QTableWidgetItem(listTopicResult.topicCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss")));
         tableWidget->setItem(r, 7, new QTableWidgetItem(listTopicResult.topicCounters.at(r).topicArn));
     }
     tableWidget->setRowCount(listTopicResult.topicCounters.count());

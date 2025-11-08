@@ -38,9 +38,9 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->containerNameEdit->setText(applicationGetResponse.application.containerName);
     //_ui->statusEdit->setText(applicationGetResponse.application.status);
     _ui->enabledCheckBox->setChecked(applicationGetResponse.application.enabled);
-    _ui->lastStartedEdit->setText(applicationGetResponse.application.lastStarted.toString());
-    _ui->createdEdit->setText(applicationGetResponse.application.created.toString());
-    _ui->modifiedEdit->setText(applicationGetResponse.application.modified.toString());
+    _ui->lastStartedEdit->setText(applicationGetResponse.application.lastStarted.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->createdEdit->setText(applicationGetResponse.application.created.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->modifiedEdit->setText(applicationGetResponse.application.modified.toString("yyyy-MM-dd hh:mm:ss"));
 
     connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [&]() {this->_changed = true;});
 }

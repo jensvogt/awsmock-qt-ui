@@ -11,38 +11,37 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     connect(snsService, &SNSService::ReloadMessagesSignal, this, &SNSMessageList::HandleReloadMessageSignal);
 
     // Toolbar
-    QHBoxLayout *toolBar = new QHBoxLayout();
-    QWidget *spacer = new QWidget();
+    const auto toolBar = new QHBoxLayout();
+    const auto spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar back action
-    QPushButton *backButton = new QPushButton(IconUtils::GetIcon("dark", "back"),"");
+    const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"),"");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Add a new Queue");
-    QObject::connect(backButton, &QPushButton::clicked, [this](){
+    connect(backButton, &QPushButton::clicked, [this](){
         OnBackClicked();
     });
 
     // Toolbar label
-    QLabel* titleLabel = new QLabel(title);
+    const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    QPushButton *addButton = new QPushButton(IconUtils::GetIcon("dark", "add"),"");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"),"");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Queue");
-    QObject::connect(addButton, &QPushButton::clicked, [](){
+    connect(addButton, &QPushButton::clicked, [](){
         bool ok;
-        QString text = QInputDialog::getText(0, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok);
-        if (ok && !text.isEmpty()) {
+        if (const QString text = QInputDialog::getText(0, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
             // AddQueue(text);
         }
     });
 
     // Toolbar add action
-    QPushButton *purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"),"");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
-    QObject::connect(purgeAllButton, &QPushButton::clicked, [&](){
+    connect(purgeAllButton, &QPushButton::clicked, [&](){
         qDebug() << "Purge topic: "<<topicArn;
         snsService->PurgeTopic(topicArn);
     });
@@ -50,7 +49,7 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"),"");
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the Queuelist");
+    refreshButton->setToolTip("Refresh the queue list");
     connect(refreshButton, &QPushButton::clicked, [this](){
         LoadContent();
     });
@@ -75,9 +74,9 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
                                         << tr("ContentType")
                                         << tr("Size")
                                         << tr("Status")
+                                        << tr("LastSend")
                                         << tr("Created")
                                         << tr("Modified")
-                                        << tr("LastSend")
                                         << tr("TopicArn");
 
     tableWidget = new QTableWidget();
@@ -93,9 +92,9 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(7, true);
 
     // Connect double-click
@@ -119,8 +118,6 @@ SNSMessageList::SNSMessageList(const QString& title, const QString& topicArn, QW
     layout->addLayout(toolBar, 0);
     layout->addWidget(prefixEdit, 1);
     layout->addWidget(tableWidget, 2);
-    layout->addStretch();
-    layout->stretch(1);
 }
 
 SNSMessageList::~SNSMessageList(){
@@ -149,9 +146,9 @@ void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMe
 
         tableWidget->setItem(r, 3, new QTableWidgetItem(listMessageResult.messageCounters.at(r).messageStatus));
 
-        tableWidget->setItem(r, 4, new QTableWidgetItem(listMessageResult.messageCounters.at(r).created.toString(Qt::ISODate)));
-        tableWidget->setItem(r, 5, new QTableWidgetItem(listMessageResult.messageCounters.at(r).modified.toString(Qt::ISODate)));
-        tableWidget->setItem(r, 6, new QTableWidgetItem(listMessageResult.messageCounters.at(r).lastSend.toString(Qt::ISODate)));
+        tableWidget->setItem(r, 4, new QTableWidgetItem(listMessageResult.messageCounters.at(r).lastSend.toString("yyyy-MM-dd hh:mm:ss")));
+        tableWidget->setItem(r, 5, new QTableWidgetItem(listMessageResult.messageCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss")));
+        tableWidget->setItem(r, 6, new QTableWidgetItem(listMessageResult.messageCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss")));
         tableWidget->setItem(r, 7, new QTableWidgetItem(listMessageResult.messageCounters.at(r).topicArn));
     }
     tableWidget->setRowCount(listMessageResult.messageCounters.count());

@@ -85,8 +85,8 @@ SQSQueueList::SQSQueueList(const QString& title, QWidget *parent) : BasePage(par
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(7, true);
     tableWidget->setColumnHidden(8, true);
     tableWidget->setColumnHidden(9, true);
@@ -95,12 +95,11 @@ SQSQueueList::SQSQueueList(const QString& title, QWidget *parent) : BasePage(par
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
 
         // Get the position
-        int row = index.row();
-        int col = index.column();
+        const int row = index.row();
 
         // Extract ARN and URL
-        QString queueUrl = tableWidget->item(row, 7)->text();
-        QString queueArn = tableWidget->item(row, 8)->text();
+        const QString queueUrl = tableWidget->item(row, 7)->text();
+        const QString queueArn = tableWidget->item(row, 8)->text();
 
         // Send notification
         emit ShowMessages(queueArn, queueUrl);
@@ -115,8 +114,6 @@ SQSQueueList::SQSQueueList(const QString& title, QWidget *parent) : BasePage(par
     layout->addLayout(toolBar, 0);
     layout->addWidget(prefixEdit, 1);
     layout->addWidget(tableWidget, 2);
-    layout->addStretch();
-    layout->stretch(1);
 }
 
 SQSQueueList::~SQSQueueList(){
@@ -157,9 +154,9 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     // Conditional logic
     redriveAction->setEnabled(isDql);
 
-    QString queueUrl = tableWidget->item(row, 7)->text();
-    QString queueArn = tableWidget->item(row, 8)->text();
-    QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+    const QString queueUrl = tableWidget->item(row, 7)->text();
+    const QString queueArn = tableWidget->item(row, 8)->text();
+    const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
     if (selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == redriveAction) {

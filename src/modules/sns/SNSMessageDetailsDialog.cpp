@@ -41,8 +41,8 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     _ui->messageIdEdit->setText(response.messageId);
     _ui->topicArnEdit->setText(response.topicArn);
     _ui->contentTypeEdit->setText(response.contentType);
-    _ui->createdEdit->setText(response.created.toString());
-    _ui->modifiedEdit->setText(response.modified.toString());
+    _ui->createdEdit->setText(response.created.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->modifiedEdit->setText(response.modified.toString("yyyy-MM-dd hh:mm:ss"));
 
     // Body
     _ui->bodyPlainTextEdit->setPlainText(response.message);
