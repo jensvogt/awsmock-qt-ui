@@ -49,10 +49,10 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPUploadDialog.ui
         include/utils/NonEmptyValidator.h
         include/utils/NonEmptyValidator.h
-        src/modules/application/UploadApplicationCodeDialog.cpp
-        include/modules/application/UploadApplicationCodeDialog.h
-        src/modules/application/UploadApplicationCodeDialog.ui
-        src/modules/application/UploadApplicationCodeDialog.cpp
+        src/modules/application/ApplicationUploadCodeDialog.cpp
+        include/modules/application/ApplicationUploadCodeDialog.h
+        src/modules/application/ApplicationUploadCodeDialog.ui
+        src/modules/application/ApplicationUploadCodeDialog.cpp
 )
 
 qt6_add_statecharts(ftpclient simpleftp.scxml)
@@ -94,6 +94,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/modules/sns/SNSMessageDetailsDialog.h
             include/modules/application/ApplicationList.h
             include/modules/application/ApplicationService.h
+            include/modules/application/ApplicationUploadCodeDialog.h
             include/modules/infrastructure/InfrastructureService.h
             src/utils/BasePage.cpp
             src/utils/Configuration.cpp
@@ -118,6 +119,8 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/modules/sns/SNSMessageDetailsDialog.cpp
             src/modules/application/ApplicationList.cpp
             src/modules/application/ApplicationService.cpp
+            src/modules/application/ApplicationUploadCodeDialog.cpp
+            src/modules/application/ApplicationUploadCodeDialog.ui
             src/modules/infrastructure/InfrastructureService.cpp
     )
     # Define target properties for Android with Qt 6 as:

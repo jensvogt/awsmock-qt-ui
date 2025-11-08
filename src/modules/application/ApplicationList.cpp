@@ -178,7 +178,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     QAction *reloadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Reload Application");
     reloadAction->setToolTip("Reload the by creating a new container");
 
-    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("dark", "upload"), "Upload Application Code");
+    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
 
     menu.addSeparator();
@@ -200,7 +200,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == reloadAction) {
         //_applicationService->UploadApplicationCode(name, TODO, TODO);
     } else if (selectedAction == uploadAction) {
-        UploadApplicationCodeDialog dialog(name);
+        ApplicationUploadCodeDialog dialog(name);
         dialog.exec();
         //        _applicationService->UploadApplicationCode(name, version, "");
     } else if (selectedAction == deleteAction) {

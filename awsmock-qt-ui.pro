@@ -44,6 +44,7 @@ HEADERS += include/mainwindow.h \
            include/modules/application/ApplicationList.h \
            include/modules/application/ApplicationService.h \
            include/modules/application/ApplicationAddDialog.h \
+           include/modules/application/ApplicationUploadCodeDialog.h \
            include/modules/infrastructure/InfrastructureService.h
 FORMS += src/modules/sqs/SQSQueueDetailsDialog.ui \
            src/modules/sqs/SQSMessageDetailsDialog.ui\
@@ -73,5 +74,7 @@ SOURCES += src/main.cpp \
            src/modules/sns/ApplicationList.cpp \
            src/modules/sns/ApplicationService.cpp \
            src/modules/sns/ApplicationAddDialog.cpp \
+           src/modules/sns/ApplicationUploadCode.cpp \
+           src/modules/sns/ApplicationUploadCode.ui \
            src/modules/infrastructure/InfrastructureService.cpp \
 TRANSLATIONS += awsmock-qt-ui_en_150.ts
