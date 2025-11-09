@@ -135,7 +135,6 @@ struct Application {
                 dependencies.append(key.toString());
             }
         }
-        JsonUtils::WriteJsonString(jsonObject);
     }
 };
 

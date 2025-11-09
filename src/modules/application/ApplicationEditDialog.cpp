@@ -4,7 +4,6 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_ApplicationEditDIalog.h" resolved
 
-#include <QMenu>
 #include <modules/application/ApplicationEditDialog.h>
 #include "ui_ApplicationEditDialog.h"
 
@@ -30,6 +29,9 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
     // Setup environment tab
     SetupEnvironmentTab();
+
+    // Setup tags tab
+    SetupTagsTab();
 }
 
 ApplicationEditDialog::~ApplicationEditDialog() {
@@ -70,7 +72,21 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     }
     _ui->envTable->setRowCount(static_cast<int>(_application.environment.count()));
     _ui->envTable->setSortingEnabled(true);
-    _ui->envTable->sortItems(_sortColumn, _sortOrder);
+    _ui->envTable->sortItems(_sortColumnEnv, _sortOrderEnv);
+
+    // Update environment table
+    r = 0;
+    _ui->tagTable->setRowCount(0);
+    _ui->tagTable->setSortingEnabled(false);
+    for (auto [key, value]: _application.tags.asKeyValueRange()) {
+        _ui->tagTable->insertRow(r);
+        SetColumn(_ui->tagTable, r, 0, key);
+        SetColumn(_ui->tagTable, r, 1, value);
+        r++;
+    }
+    _ui->tagTable->setRowCount(static_cast<int>(_application.tags.count()));
+    _ui->tagTable->setSortingEnabled(true);
+    _ui->tagTable->sortItems(_sortColumnTag, _sortOrderTag);
 }
 
 void ApplicationEditDialog::SetupEnvironmentTab() {
@@ -78,10 +94,6 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
     // Add button
     _ui->envAddButton->setText("");
     _ui->envAddButton->setIcon(IconUtils::GetIcon("dark", "add"));
-
-    // Refresh button
-    _ui->envRefreshButton->setText("");
-    _ui->envRefreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
 
     // Table
     const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
@@ -134,6 +146,64 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
     });
 }
 
+void ApplicationEditDialog::SetupTagsTab() {
+
+    // Add button
+    _ui->tagAddButton->setText("");
+    _ui->tagAddButton->setIcon(IconUtils::GetIcon("dark", "add"));
+
+    // Table
+    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
+
+    _ui->tagTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->tagTable->setShowGrid(true);
+    _ui->tagTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->tagTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->tagTable->setHorizontalHeaderLabels(headers);
+    _ui->tagTable->setSortingEnabled(true);
+    _ui->tagTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->tagTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _ui->tagTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+    // Add tag context menu
+    _ui->tagTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->tagTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowTagsContextMenu);
+
+    // Connect double-click
+    connect(_ui->tagTable, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+
+        // Get the position
+        const int row = index.row();
+
+        // Extract ARN and URL
+        const QString key = _ui->tagTable->item(row, 0)->text();
+        const QString value = _ui->tagTable->item(row, 1)->text();
+
+        if (ApplicationTagDialog dialog(key, value, false, nullptr); dialog.exec() == Accepted) {
+            SetColumn(_ui->tagTable, row, 1, dialog.GetValue());
+            _application.tags[key] = dialog.GetValue();
+            _changed = true;
+        }
+    });
+
+    // Connect add button
+    connect(_ui->tagAddButton, &QPushButton::clicked, this, [=]() {
+
+        // Extract ARN and URL
+        const QString key;
+        const QString value;
+
+        if (ApplicationTagDialog dialog(key, value, true, nullptr); dialog.exec() == Accepted) {
+            const int newRowIndex = _ui->tagTable->rowCount();
+            _ui->tagTable->insertRow(newRowIndex);
+            SetColumn(_ui->tagTable, newRowIndex, 0, dialog.GetKey());
+            SetColumn(_ui->tagTable, newRowIndex, 1, dialog.GetValue());
+            _application.tags[dialog.GetKey()] = dialog.GetValue();
+            _changed = true;
+        }
+    });
+}
+
 void ApplicationEditDialog::ShowEnvironmentContextMenu(const QPoint &pos) {
 
     // Cell index
@@ -162,6 +232,37 @@ void ApplicationEditDialog::ShowEnvironmentContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         _application.environment.remove(key);
         _ui->envTable->removeRow(row);
+    }
+}
+
+void ApplicationEditDialog::ShowTagsContextMenu(const QPoint &pos) {
+
+    // Cell index
+    const QModelIndex index = _ui->tagTable->indexAt(pos);
+    if (!index.isValid()) return;
+
+    const int row = index.row();
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Tagironment Variable");
+    editAction->setToolTip("Edit the tagironment variable");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Tagironment Variable");
+    deleteAction->setToolTip("Delete the tagironment variable");
+
+    const QString key = _ui->tagTable->item(row, 0)->text();
+    const QString value = _ui->tagTable->item(row, 1)->text();
+    if (const QAction *selectedAction = menu.exec(_ui->tagTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        if (ApplicationTagDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
+            SetColumn(_ui->tagTable, row, 1, dialog.GetValue());
+            _application.tags[key] = dialog.GetValue();
+            _changed = true;
+        }
+    } else if (selectedAction == deleteAction) {
+        _application.tags.remove(key);
+        _ui->tagTable->removeRow(row);
     }
 }
 

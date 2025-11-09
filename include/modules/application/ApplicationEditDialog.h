@@ -6,10 +6,12 @@
 #define AWSMOCK_QT_UI_APPLICATION_EDIT_DIALOG_H
 
 #include <QDialog>
+#include <QMenu>
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
 #include <modules/application/ApplicationService.h>
+#include <modules/application/ApplicationTagDialog.h>
 #include <modules/application/ApplicationEnvironmentEditDialog.h>
 
 QT_BEGIN_NAMESPACE
@@ -38,7 +40,11 @@ private:
 
     void SetupEnvironmentTab();
 
+    void SetupTagsTab();
+
     void ShowEnvironmentContextMenu(const QPoint &pos);
+
+    void ShowTagsContextMenu(const QPoint &pos);
 
     /**
      * @brief UI components
@@ -61,14 +67,24 @@ private:
     bool _changed = false;
 
     /**
-     * @brief Sort column index
+     * @brief Sort column index environment table
      */
-    int _sortColumn = 1;
+    int _sortColumnEnv = 1;
 
     /**
-     * @brief Sort order
+     * @brief Sort order environment table
      */
-    Qt::SortOrder _sortOrder = Qt::AscendingOrder;
+    Qt::SortOrder _sortOrderEnv = Qt::AscendingOrder;
+
+    /**
+     * @brief Sort column index tags table
+     */
+    int _sortColumnTag = 1;
+
+    /**
+     * @brief Sort order tag table
+     */
+    Qt::SortOrder _sortOrderTag = Qt::AscendingOrder;
 };
 
 
