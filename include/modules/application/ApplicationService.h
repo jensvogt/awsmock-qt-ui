@@ -97,6 +97,8 @@ public:
      */
     void UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode);
 
+    void ListApplicationNames();
+
     /**
      * @brief Deletes new application
      *
@@ -106,7 +108,10 @@ public:
 
 signals:
     void ReloadApplicationsSignal(const ApplicationListResponse &applicationListResponse);
+
     void GetApplicationDetailsSignal(const ApplicationGetResponse &applicationGetResponse);
+
+    void ListApplicationNamedSignal(const QStringList &applicationNames);
 
     void LoadAllApplications();
 

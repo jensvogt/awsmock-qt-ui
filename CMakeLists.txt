@@ -64,6 +64,9 @@ set(PROJECT_SOURCES
         include/modules/application/ApplicationTagDialog.h
         src/modules/application/ApplicationTagDialog.ui
         include/modules/application/ApplicationTagDialog.h
+        src/modules/application/ApplicationDependencyDialog.cpp
+        include/modules/application/ApplicationDependencyDialog.h
+        src/modules/application/ApplicationDependencyDialog.ui
 )
 
 qt6_add_statecharts(ftpclient simpleftp.scxml)

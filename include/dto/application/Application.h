@@ -25,6 +25,12 @@ struct Application {
 
     QString imageId;
 
+    QString imageName;
+
+    long imageSize;
+
+    QString imageMd5;
+
     QString containerId;
 
     QString containerName;
@@ -58,6 +64,9 @@ struct Application {
         jsonObject["privatePort"] = static_cast<qint64>(privatePort);
         jsonObject["publicPort"] = static_cast<qint64>(publicPort);
         jsonObject["imageId"] = imageId;
+        jsonObject["imageName"] = imageName;
+        jsonObject["imageSize"] = static_cast<qint64>(imageSize);
+        jsonObject["imageMd5"] = imageMd5;
         jsonObject["containerId"] = containerId;
         jsonObject["containerName"] = containerName;
         jsonObject["status"] = status;
@@ -70,8 +79,8 @@ struct Application {
         // Environment
         if (!environment.isEmpty()) {
             QJsonObject jsonEnvironment;
-            for (const auto key: environment.keys()) {
-                jsonEnvironment.insert(key, environment[key]);
+            for (auto it = environment.cbegin(); it != environment.cend(); ++it) {
+                jsonEnvironment.insert(it.key(), it.value());
             }
             jsonObject["environment"] = jsonEnvironment;
         }
@@ -79,8 +88,8 @@ struct Application {
         // Tags
         if (!tags.isEmpty()) {
             QJsonObject jsonTags;
-            for (const auto key: tags.keys()) {
-                jsonTags.insert(key, tags[key]);
+            for (auto it = tags.cbegin(); it != tags.cend(); ++it) {
+                jsonTags.insert(it.key(), it.value());
             }
             jsonObject["tags"] = jsonTags;
         }
@@ -88,7 +97,7 @@ struct Application {
         // Dependencies
         if (!dependencies.isEmpty()) {
             QJsonArray jsonDependencies;
-            for (const auto key: dependencies) {
+            for (const auto &key: dependencies) {
                 jsonDependencies.append(key);
             }
             jsonObject["dependencies"] = jsonDependencies;
@@ -106,6 +115,9 @@ struct Application {
         publicPort = jsonObject["publicPort"].toInt();
         archive = jsonObject["archive"].toString();
         imageId = jsonObject["imageId"].toString();
+        imageName = jsonObject["imageName"].toString();
+        imageSize = jsonObject["imageSize"].toInteger();
+        imageMd5 = jsonObject["imageMd5"].toString();
         containerId = jsonObject["containerId"].toString();
         containerName = jsonObject["containerName"].toString();
         status = jsonObject["status"].toString();
@@ -117,21 +129,21 @@ struct Application {
 
         // Environment
         if (jsonObject.contains("environment")) {
-            for (const auto key: jsonObject["environment"].toObject().keys()) {
+            for (const auto &key: jsonObject["environment"].toObject().keys()) {
                 environment[key] = jsonObject["environment"][key].toString();
             }
         }
 
         // Tags
         if (jsonObject.contains("tags")) {
-            for (const auto key: jsonObject["tags"].toObject().keys()) {
+            for (const auto &key: jsonObject["tags"].toObject().keys()) {
                 tags[key] = jsonObject["tags"][key].toString();
             }
         }
 
         // Dependencies
         if (jsonObject.contains("dependencies")) {
-            for (const auto key: jsonObject["dependencies"].toArray()) {
+            for (const auto &key: jsonObject["dependencies"].toArray()) {
                 dependencies.append(key.toString());
             }
         }

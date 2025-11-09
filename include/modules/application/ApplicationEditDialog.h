@@ -13,6 +13,7 @@
 #include <modules/application/ApplicationService.h>
 #include <modules/application/ApplicationTagDialog.h>
 #include <modules/application/ApplicationEnvironmentEditDialog.h>
+#include <modules/application/ApplicationDependencyDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -42,9 +43,13 @@ private:
 
     void SetupTagsTab();
 
+    void SetupDependenciesTab();
+
     void ShowEnvironmentContextMenu(const QPoint &pos);
 
     void ShowTagsContextMenu(const QPoint &pos);
+
+    void ShowDependenciesContextMenu(const QPoint &pos);
 
     /**
      * @brief UI components

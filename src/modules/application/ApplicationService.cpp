@@ -301,6 +301,38 @@ void ApplicationService::UploadApplicationCode(const QString &applicationName, c
                       });
 }
 
+void ApplicationService::ListApplicationNames() {
+
+    QJsonObject jRequest;
+    jRequest["prefix"] = "";
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "application"},
+                          {"x-awsmock-action", "list-application-names"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isArray()) {
+                                  QList<QString> applicationList;
+                                  for (const auto &name: jsonDoc.array().toVariantList()) {
+                                      applicationList.append(name.toString());
+                                  }
+                                  emit ListApplicationNamedSignal(applicationList);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
 void ApplicationService::DeleteApplication(const QString &name) {
     QJsonObject jRequest;
     jRequest["name"] = name;

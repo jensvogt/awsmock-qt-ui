@@ -18,13 +18,16 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationEditDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationEditDialog::HandleReject);
 
+    // Connect enable check box
     connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [this]() {
-        if (_ui->enabledCheckBox->isChecked()) {
-            _applicationService->EnableApplication(_ui->nameEdit->text());
-        } else {
-            _applicationService->DisableApplication(_ui->nameEdit->text());
-        }
         _application.enabled = _ui->enabledCheckBox->isChecked();
+        _changed = true;
+    });
+
+    // Connect description test area
+    connect(_ui->descriptionEdit, &QTextEdit::textChanged, this, [this]() {
+        _application.description = _ui->descriptionEdit->toPlainText();
+        _changed = true;
     });
 
     // Setup environment tab
@@ -32,6 +35,11 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
     // Setup tags tab
     SetupTagsTab();
+
+    // Setup dependency tab
+    SetupDependenciesTab();
+
+    _ui->tabWidget->setCurrentIndex(0);
 }
 
 ApplicationEditDialog::~ApplicationEditDialog() {
@@ -52,8 +60,9 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->imageIdEdit->setText(_application.imageId);
     _ui->containerIdEdit->setText(_application.containerId);
     _ui->containerNameEdit->setText(_application.containerName);
-    //_ui->statusEdit->setText(_application.status);
+    _ui->statusEdit->setText(_application.status);
     _ui->enabledCheckBox->setChecked(_application.enabled);
+    _ui->descriptionEdit->setText(_application.description);
     _ui->lastStartedEdit->setText(_application.lastStarted.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->createdEdit->setText(_application.created.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->modifiedEdit->setText(_application.modified.toString("yyyy-MM-dd hh:mm:ss"));
@@ -204,6 +213,49 @@ void ApplicationEditDialog::SetupTagsTab() {
     });
 }
 
+void ApplicationEditDialog::SetupDependenciesTab() {
+
+    // Add button
+    _ui->dependencyAddButton->setText("");
+    _ui->dependencyAddButton->setIcon(IconUtils::GetIcon("dark", "add"));
+
+    QStringList dependenciesList;
+    for (const auto &dependency: _application.dependencies) {
+        dependenciesList.append(dependency);
+    }
+    _ui->dependencyList->addItems(dependenciesList);
+    /*    // Add dependency context menu
+        _ui->dependencyTable->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(_ui->dependencyTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowDependenciesContextMenu);
+
+        // Connect double-click
+        connect(_ui->dependencyTable, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+
+            // Get the position
+            const int row = index.row();
+
+            // Extract ARN and URL
+            const QString key = _ui->dependencyTable->item(row, 0)->text();
+            const QString value = _ui->dependencyTable->item(row, 1)->text();
+
+            // if (ApplicationDependencyDialog dialog(key, value, false, nullptr); dialog.exec() == Accepted) {
+            //     SetColumn(_ui->dependencyTable, row, 1, dialog.GetValue());
+            //     _application.dependencys[key] = dialog.GetValue();
+            //     _changed = true;
+            // }
+        });*/
+
+    // Connect add button
+    connect(_ui->dependencyAddButton, &QPushButton::clicked, this, [=]() {
+
+        if (ApplicationDependencyDialog dialog(true, nullptr); dialog.exec() == Accepted) {
+            _ui->dependencyList->addItems(QStringList(dialog.GetName()));
+            _application.dependencies.append(dialog.GetName());
+            _changed = true;
+        }
+    });
+}
+
 void ApplicationEditDialog::ShowEnvironmentContextMenu(const QPoint &pos) {
 
     // Cell index
@@ -244,13 +296,13 @@ void ApplicationEditDialog::ShowTagsContextMenu(const QPoint &pos) {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Tagironment Variable");
-    editAction->setToolTip("Edit the tagironment variable");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Tag");
+    editAction->setToolTip("Edit the tag");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Tagironment Variable");
-    deleteAction->setToolTip("Delete the tagironment variable");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Tag");
+    deleteAction->setToolTip("Delete the tag");
 
     const QString key = _ui->tagTable->item(row, 0)->text();
     const QString value = _ui->tagTable->item(row, 1)->text();
@@ -264,6 +316,36 @@ void ApplicationEditDialog::ShowTagsContextMenu(const QPoint &pos) {
         _application.tags.remove(key);
         _ui->tagTable->removeRow(row);
     }
+}
+
+void ApplicationEditDialog::ShowDependenciesContextMenu(const QPoint &pos) {
+
+    // Cell index
+    const QModelIndex index = _ui->dependencyList->indexAt(pos);
+    if (!index.isValid()) return;
+
+    const int row = index.row();
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Dependency");
+    editAction->setToolTip("Edit the dependency");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Dependency");
+    deleteAction->setToolTip("Delete the dependency");
+
+    const QString dependency = _ui->dependencyList->item(row)->text();
+    // if (const QAction *selectedAction = menu.exec(_ui->dependencyTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+    //     if (ApplicationDependencyDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
+    //         SetColumn(_ui->dependencyTable, row, 1, dialog.GetValue());
+    //         _application.dependencys[key] = dialog.GetValue();
+    //         _changed = true;
+    //     }
+    // } else if (selectedAction == deleteAction) {
+    //     _application.dependencys.remove(key);
+    //     _ui->dependencyTable->removeRow(row);
+    // }
 }
 
 void ApplicationEditDialog::HandleAccept() {
