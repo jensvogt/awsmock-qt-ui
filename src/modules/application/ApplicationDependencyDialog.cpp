@@ -8,7 +8,7 @@
 #include "ui_ApplicationDependencyDialog.h"
 
 
-ApplicationDependencyDialog::ApplicationDependencyDialog(bool add, QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationDependencyDialog) {
+ApplicationDependencyDialog::ApplicationDependencyDialog(const QString &name, const bool add, QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationDependencyDialog) {
 
     _applicationService = new ApplicationService();
 
@@ -27,6 +27,10 @@ ApplicationDependencyDialog::ApplicationDependencyDialog(bool add, QWidget *pare
     connect(_ui->comboBox, &QComboBox::currentTextChanged, this, [this](const QString &name) {
         _name = name;
     });
+
+    if (!add) {
+        _ui->comboBox->setCurrentText(name);
+    }
 }
 
 ApplicationDependencyDialog::~ApplicationDependencyDialog() {

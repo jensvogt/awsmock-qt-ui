@@ -83,7 +83,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->envTable->setSortingEnabled(true);
     _ui->envTable->sortItems(_sortColumnEnv, _sortOrderEnv);
 
-    // Update environment table
+    // Update tag table
     r = 0;
     _ui->tagTable->setRowCount(0);
     _ui->tagTable->setSortingEnabled(false);
@@ -96,6 +96,14 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->tagTable->setRowCount(static_cast<int>(_application.tags.count()));
     _ui->tagTable->setSortingEnabled(true);
     _ui->tagTable->sortItems(_sortColumnTag, _sortOrderTag);
+
+    // Update dependencies tab
+    r = 0;
+    _ui->dependencyList->clear();
+    for (const auto &name: _application.dependencies) {
+        _ui->dependencyList->insertItem(r, name);
+        r++;
+    }
 }
 
 void ApplicationEditDialog::SetupEnvironmentTab() {
@@ -224,34 +232,32 @@ void ApplicationEditDialog::SetupDependenciesTab() {
         dependenciesList.append(dependency);
     }
     _ui->dependencyList->addItems(dependenciesList);
-    /*    // Add dependency context menu
-        _ui->dependencyTable->setContextMenuPolicy(Qt::CustomContextMenu);
-        connect(_ui->dependencyTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowDependenciesContextMenu);
 
-        // Connect double-click
-        connect(_ui->dependencyTable, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    // Add dependency context menu
+    _ui->dependencyList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->dependencyList, &QListWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowDependenciesContextMenu);
 
-            // Get the position
-            const int row = index.row();
+    // Connect double-click
+    connect(_ui->dependencyList, &QListWidget::doubleClicked, this, [=](const QModelIndex &index) {
 
-            // Extract ARN and URL
-            const QString key = _ui->dependencyTable->item(row, 0)->text();
-            const QString value = _ui->dependencyTable->item(row, 1)->text();
+        // Extract ARN and URL
+        const QString name = _ui->dependencyList->currentItem()->text();
 
-            // if (ApplicationDependencyDialog dialog(key, value, false, nullptr); dialog.exec() == Accepted) {
-            //     SetColumn(_ui->dependencyTable, row, 1, dialog.GetValue());
-            //     _application.dependencys[key] = dialog.GetValue();
-            //     _changed = true;
-            // }
-        });*/
+        if (ApplicationDependencyDialog dialog(name, false, nullptr); dialog.exec() == Accepted) {
+            _application.dependencies[index.row()] = dialog.GetName();
+            _changed = true;
+        }
+    });
 
     // Connect add button
     connect(_ui->dependencyAddButton, &QPushButton::clicked, this, [=]() {
 
-        if (ApplicationDependencyDialog dialog(true, nullptr); dialog.exec() == Accepted) {
-            _ui->dependencyList->addItems(QStringList(dialog.GetName()));
-            _application.dependencies.append(dialog.GetName());
-            _changed = true;
+        if (ApplicationDependencyDialog dialog(nullptr, true, nullptr); dialog.exec() == Accepted) {
+            if (!_application.dependencies.contains(dialog.GetName())) {
+                _ui->dependencyList->addItems(QStringList(dialog.GetName()));
+                _application.dependencies.append(dialog.GetName());
+                _changed = true;
+            }
         }
     });
 }
@@ -335,17 +341,19 @@ void ApplicationEditDialog::ShowDependenciesContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Dependency");
     deleteAction->setToolTip("Delete the dependency");
 
-    const QString dependency = _ui->dependencyList->item(row)->text();
-    // if (const QAction *selectedAction = menu.exec(_ui->dependencyTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-    //     if (ApplicationDependencyDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
-    //         SetColumn(_ui->dependencyTable, row, 1, dialog.GetValue());
-    //         _application.dependencys[key] = dialog.GetValue();
-    //         _changed = true;
-    //     }
-    // } else if (selectedAction == deleteAction) {
-    //     _application.dependencys.remove(key);
-    //     _ui->dependencyTable->removeRow(row);
-    // }
+    const QString name = _ui->dependencyList->item(row)->text();
+    if (const QAction *selectedAction = menu.exec(_ui->dependencyList->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        if (ApplicationDependencyDialog dialog(name, false); dialog.exec() == Accepted) {
+            if (!_application.dependencies.contains(dialog.GetName())) {
+                _ui->dependencyList->addItems(QStringList(dialog.GetName()));
+                _application.dependencies.append(dialog.GetName());
+                _changed = true;
+            }
+        }
+    } else if (selectedAction == deleteAction) {
+        _application.dependencies.remove(row);
+        delete _ui->dependencyList->takeItem(row);
+    }
 }
 
 void ApplicationEditDialog::HandleAccept() {

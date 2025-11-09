@@ -21,7 +21,7 @@ class ApplicationDependencyDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit ApplicationDependencyDialog(bool add, QWidget *parent = nullptr);
+    explicit ApplicationDependencyDialog(const QString &name, bool add, QWidget *parent = nullptr);
 
     ~ApplicationDependencyDialog() override;
 
