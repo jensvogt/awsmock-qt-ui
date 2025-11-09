@@ -45,11 +45,12 @@ private Q_SLOTS:
      * Launches a QFileDialog to select multiple files.
      */
     void OpenFilesDialog();
+
     void VerifyAllInputs();
+
     void UpdateLineEditStyle(const QString &text) const;
 
 private:
-
     /**
      * @brief Line edit editor
      */

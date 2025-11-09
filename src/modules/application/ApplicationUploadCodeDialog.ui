@@ -59,8 +59,11 @@
     </item>
     <item row="8" column="0">
      <widget class="QLabel" name="dropLabel">
+      <property name="styleSheet">
+       <string notr="true">QLabel { color: #999; font-size: 16px; padding: 10px; border: 2px dashed #999; }</string>
+      </property>
       <property name="text">
-       <string>TextLabel</string>
+       <string>Drag the file here.</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

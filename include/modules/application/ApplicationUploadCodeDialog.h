@@ -6,6 +6,13 @@
 #define AWSMOCK_QT_UI_APPLICATION_UPLOAD_CODE_DIALOG_H
 
 #include <QDialog>
+#include <QDropEvent>
+#include <QFileInfo>
+#include <QMimeData>
+#include <QFileDialog>
+
+#include <utils/FileUtils.h>
+#include <modules/application/ApplicationService.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -23,12 +30,31 @@ public:
 
     ~ApplicationUploadCodeDialog() override;
 
+    void dragEnterEvent(QDragEnterEvent *event) override;
+
+    void dropEvent(QDropEvent *event) override;
+
+    void HandleBrowse();
+
     void HandleAccept();
 
     void HandleReject();
 
 private:
+    /**
+     * UI connection
+     */
     Ui::ApplicationUploadCodeDialog *ui;
+
+    /**
+    * @brief Service
+    */
+    ApplicationService *_applicationService;
+
+    /**
+     * @brief File information about the application code file to upload
+     */
+    QFileInfo _fileInfo;
 };
 
 

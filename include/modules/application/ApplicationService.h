@@ -56,6 +56,8 @@ public:
      */
     void GetApplication(const QString &name);
 
+    void UpdateApplication(const Application &application);
+
     void EnableApplication(const QString &name);
 
     void DisableApplication(const QString &name);

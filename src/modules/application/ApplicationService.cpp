@@ -52,12 +52,7 @@ void ApplicationService::UploadApplication(const ApplicationUploadRequest &reque
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  QMessageBox::information(nullptr, "Information", "Application uploaded!");
-                                  emit LoadAllApplications();
-                              } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
-                              }
+                              emit LoadAllApplications();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -108,6 +103,28 @@ void ApplicationService::GetApplication(const QString &name) {
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void ApplicationService::UpdateApplication(const Application &application) {
+
+    QJsonObject jRequest;
+    jRequest["application"] = application.ToJsonObject();
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "application"},
+                          {"x-awsmock-action", "update-application"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllApplications();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

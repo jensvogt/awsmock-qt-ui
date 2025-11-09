@@ -53,6 +53,13 @@ set(PROJECT_SOURCES
         include/modules/application/ApplicationUploadCodeDialog.h
         src/modules/application/ApplicationUploadCodeDialog.ui
         src/modules/application/ApplicationUploadCodeDialog.cpp
+        include/utils/TableUtils.h
+        src/utils/TableUtils.cpp
+        src/utils/BaseDialog.cpp
+        src/utils/BasePage.cpp
+        src/modules/application/ApplicationEnvironmentEditDialog.cpp
+        include/modules/application/ApplicationEnvironmentEditDialog.h
+        src/modules/application/ApplicationEnvironmentEditDialog.ui
 )
 
 qt6_add_statecharts(ftpclient simpleftp.scxml)
@@ -64,6 +71,8 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             resources/awsmock-qt-ui.qrc
             include/mainwindow.h
             include/utils/BasePage.h
+            include/utils/BaseDialog.h
+            include/utils/TableUtils.h
             include/utils/Configuration.h
             include/utils/EditPreferencesDialog.h
             include/utils/RestManager.h
@@ -97,9 +106,11 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/modules/application/ApplicationUploadCodeDialog.h
             include/modules/infrastructure/InfrastructureService.h
             src/utils/BasePage.cpp
+            src/utils/BaseDialog.cpp
             src/utils/Configuration.cpp
             src/utils/EditPreferencesDialog.cpp
             src/utils/RestManager.cpp
+            src/utils/TableUtils.cpp
             src/modules/dashboard/Dashboard.cpp
             src/modules/dashboard/Dashboard.ui
             src/modules/dashboard/DashboardService.cpp
