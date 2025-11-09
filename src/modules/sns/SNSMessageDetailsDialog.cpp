@@ -2,7 +2,7 @@
 #include <modules/sns/SNSMessageDetailsDialog.h>
 #include "ui_SNSMessageDetailsDialog.h"
 
-SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent): QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
+SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
 
     _ui->setupUi(this);
 
@@ -12,13 +12,10 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     connect(_snsService, &SNSService::GetMessageDetailsSignal, this, &SNSMessageDetailsDialog::UpdateMessageDetails);
 
     const QStringList messageAttributeHeaders = QStringList() << tr("Key")
-                                                        << tr("Value");
-
-    QStringList systemAttributeHeaders = QStringList() << tr("Key")
-                                                       << tr("Value");
+                                                << tr("Value");
 
     // Message attribute table
-    _ui->attributeTable->setColumnCount(messageAttributeHeaders.count());
+    _ui->attributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
     _ui->attributeTable->setShowGrid(true);
     _ui->attributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->attributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -30,6 +27,10 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Set body tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    // Pretty print
+    _ui->prettyPushButton->setText(nullptr);
+    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
 }
 
 SNSMessageDetailsDialog::~SNSMessageDetailsDialog() {
@@ -51,7 +52,7 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     _ui->attributeTable->setRowCount(0);
     _ui->attributeTable->setSortingEnabled(false); // stop sorting
     _ui->attributeTable->sortItems(-1);
-    for(int r = 0; r < response.messageAttributes.count(); r++) {
+    for (int r = 0; r < response.messageAttributes.count(); r++) {
         _ui->attributeTable->insertRow(r);
         _ui->attributeTable->setItem(r, 0, new QTableWidgetItem(response.messageAttributes.at(r).name));
         _ui->attributeTable->setItem(r, 1, new QTableWidgetItem(response.messageAttributes.at(r).stringValue));
@@ -59,7 +60,7 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
 }
 
 void SNSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked) const {
-    if(checked) {
+    if (checked) {
         const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
         const QJsonDocument jDoc = QJsonDocument::fromJson(body);
         _ui->bodyPlainTextEdit->clear();

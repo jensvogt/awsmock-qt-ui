@@ -8,6 +8,7 @@
 #include <QIODevice>
 
 // Awsmock includes
+#include <QDir>
 #include <utils/JsonUtils.h>
 
 #ifdef _WIN32
@@ -56,6 +57,10 @@ public:
      */
     void WriteConfigurationFile(const QString &filePath);
 
+    QString GetCurrentDirectory();
+
+    void SetCurrentDirectory(const QString &currentdirectory);
+
     /**
      * @brief Write a JSON configuration file
      *
@@ -94,6 +99,11 @@ private:
      * @brief Base URL
      */
     QString baseUrl = "http://localhost:4566";
+
+    /**
+     * @brief Current directory
+     */
+    QString currentDirectory = QDir::homePath();
 };
 
 #endif // CONFIGURATION_H

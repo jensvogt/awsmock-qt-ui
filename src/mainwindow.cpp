@@ -146,7 +146,7 @@ void MainWindow::ImportInfrastructure() const {
 
     // Create a QFileDialog set to select existing files
     const QString filter = "JSON Files (*.json);;All Files (*.*)";
-    const QString defaultDir = QDir::homePath();
+    const QString defaultDir = Configuration::instance().GetCurrentDirectory();
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -159,6 +159,7 @@ void MainWindow::ImportInfrastructure() const {
         file.close();
 
         _infraStructureService->ImportInfrastructure(jsonData);
+        Configuration::instance().SetCurrentDirectory(QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -170,16 +171,16 @@ void MainWindow::ExportInfrastructure() const {
 
     // Create a QFileDialog set to select existing files
     const QString filter = "JSON Files (*.json);;All Files (*.*)";
-    const QString defaultDir = QDir::homePath();
+    const QString defaultDir = Configuration::instance().GetCurrentDirectory();
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         _infraStructureService->ExportInfrastructure(filePath);
+        Configuration::instance().SetCurrentDirectory(QFileInfo(filePath).absolutePath());
     }
 }
 
 void MainWindow::WriteInfrastructureExport(const QString &filename, const QString &exportResponse) {
 
-    qDebug() << filename;
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(nullptr, "Warning", "Couldn't open file for writing: " + file.fileName());

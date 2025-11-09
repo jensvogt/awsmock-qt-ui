@@ -59,3 +59,11 @@ void Configuration::WriteConfigurationFile(const QString &filePath) {
 
     qDebug() << "JSON written to" << filePath;
 }
+
+QString Configuration::GetCurrentDirectory() {
+    return currentDirectory;
+}
+
+void Configuration::SetCurrentDirectory(const QString &currentdirectory) {
+    this->currentDirectory = currentdirectory;
+}

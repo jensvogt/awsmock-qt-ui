@@ -87,7 +87,7 @@ private:
     /**
      * @brief Sort column index
      */
-    int _sortColumn = 1;
+    int _sortColumn = 0;
 
     /**
      * @brief Sort order

@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include <modules/sns/SNSService.h>
+#include <utils/IconUtils.h>
 
 namespace Ui {
     class SNSMessageDetailsDialog;

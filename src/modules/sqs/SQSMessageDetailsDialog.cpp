@@ -1,8 +1,9 @@
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include "ui_SQSMessageDetailsDialog.h"
+#include "utils/IconUtils.h"
 
 SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent),
-    _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
+                                                                                              _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
     _ui->setupUi(this);
 
     _sqsService = new SQSService();
@@ -17,7 +18,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
                                                << tr("Value");
 
     // Message attribute table
-    _ui->messageAttributeTable->setColumnCount(messageAttributeHeaders.count());
+    _ui->messageAttributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
     _ui->messageAttributeTable->setShowGrid(true);
     _ui->messageAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->messageAttributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -28,7 +29,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
     // System attribute table
-    _ui->systemAttributeTable->setColumnCount(systemAttributeHeaders.count());
+    _ui->systemAttributeTable->setColumnCount(static_cast<int>(systemAttributeHeaders.count()));
     _ui->systemAttributeTable->setShowGrid(true);
     _ui->systemAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->systemAttributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -40,6 +41,10 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Set body tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    // Pretty print
+    _ui->prettyPushButton->setText(nullptr);
+    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
 }
 
 SQSMessageDetailsDialog::~SQSMessageDetailsDialog() {
@@ -79,7 +84,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     }
 }
 
-void SQSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked) const {
+void SQSMessageDetailsDialog::on_prettyPushButton_toggled(const bool checked) const {
     if (checked) {
         const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
         const QJsonDocument jDoc = QJsonDocument::fromJson(body);

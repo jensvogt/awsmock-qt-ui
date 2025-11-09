@@ -18,6 +18,31 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationEditDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationEditDialog::HandleReject);
 
+    // Connect start button
+    _ui->startButton->setText(nullptr);
+    _ui->startButton->setIcon(IconUtils::GetIcon("dark", "start"));
+    _ui->startButton->setEnabled(false);
+    connect(_ui->startButton, &QPushButton::clicked, this, [this,name]() {
+        _applicationService->StartApplication(name);
+        _applicationService->GetApplication(name);
+    });
+
+    // Connect stop button
+    _ui->stopButton->setText(nullptr);
+    _ui->stopButton->setIcon(IconUtils::GetIcon("dark", "stop"));
+    _ui->stopButton->setEnabled(false);
+    connect(_ui->stopButton, &QPushButton::clicked, this, [this,name]() {
+        _applicationService->StopApplication(name);
+        _applicationService->GetApplication(name);
+    });
+
+    // Connect refresh button
+    _ui->refreshButton->setText(nullptr);
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this,name]() {
+        _applicationService->GetApplication(name);
+    });
+
     // Connect enable check box
     connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [this]() {
         _application.enabled = _ui->enabledCheckBox->isChecked();
@@ -104,6 +129,10 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
         _ui->dependencyList->insertItem(r, name);
         r++;
     }
+
+    // Set start button
+    _ui->startButton->setDisabled(_application.status == "RUNNING");
+    _ui->stopButton->setDisabled(_application.status != "RUNNING");
 }
 
 void ApplicationEditDialog::SetupEnvironmentTab() {

@@ -75,7 +75,7 @@ void ApplicationUploadCodeDialog::HandleBrowse() {
 
     // Create a QFileDialog set to select existing files
     const QString filter = "All Files (*.*)";
-    const QString defaultDir = QDir::homePath();
+    const QString defaultDir = Configuration::instance().GetCurrentDirectory();
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open application code file", defaultDir, filter); !filePath.isEmpty()) {
         const QString version = FileUtils::ExtractVersionFromFileName(filePath);

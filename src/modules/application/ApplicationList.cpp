@@ -136,7 +136,8 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
         SetColumn(tableWidget, r, 0, listApplicationResponse.applicationCounters.at(r).name);
         SetColumn(tableWidget, r, 1, listApplicationResponse.applicationCounters.at(r).version);
         SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("dark", "enabled"), IconUtils::GetIcon("dark", "disabled"));
-        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
+        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING", IconUtils::GetIcon("dark", "running"), IconUtils::GetIcon("dark", "stopped"));
+        //SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
         SetColumn(tableWidget, r, 4, listApplicationResponse.applicationCounters.at(r).privatePort);
         SetColumn(tableWidget, r, 5, listApplicationResponse.applicationCounters.at(r).publicPort);
         SetColumn(tableWidget, r, 6, listApplicationResponse.applicationCounters.at(r).lastStarted);
