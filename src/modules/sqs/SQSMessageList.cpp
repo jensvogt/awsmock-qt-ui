@@ -1,7 +1,5 @@
-#include <modules/sqs/SQSMessageList.h>
 
-#include <utility>
-
+#include "modules/sqs/SQSMessageAddDialog.h"
 #include "utils/IconUtils.h"
 
 SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl) {
@@ -26,16 +24,15 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     // Toolbar label
     const auto titleLabel = new QLabel(title);
 
-    // Toolbar add action
+    // Toolbar add message action
     const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
     addButton->setIconSize(QSize(16, 16));
-    addButton->setToolTip("Add a new Queue");
+    addButton->setToolTip("Add a new SQS message");
     connect(addButton, &QPushButton::clicked, []() {
-        bool ok;
-        if (const QString text = QInputDialog::getText(0, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok);
-            ok && !text.isEmpty()) {
-            // AddQueue(text);
+        if (SQSMessageAddDialog dialog; dialog.exec() == QDialog::Accepted) {
+            qDebug() << "SQS Queue edit dialog exit";
         }
+
     });
 
     // Toolbar add action
