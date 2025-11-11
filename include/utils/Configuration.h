@@ -6,9 +6,9 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QIODevice>
+#include <QDir>
 
 // Awsmock includes
-#include <QDir>
 #include <utils/JsonUtils.h>
 
 #ifdef _WIN32
@@ -17,8 +17,7 @@
 #define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/etc/awsmock-qt-ui.json")
 #endif
 
-class Configuration final : public QObject {
-    Q_OBJECT
+class Configuration final {
 
 public:
     /**
@@ -57,9 +56,13 @@ public:
      */
     void WriteConfigurationFile(const QString &filePath);
 
-    QString GetCurrentDirectory();
+    QString GetDefaultDirectory() {
+        return defaultDirectory;
+    }
 
-    void SetCurrentDirectory(const QString &currentdirectory);
+    void SetDefaultDirectory(const QString &defaultDir) {
+        this->defaultDirectory = defaultDir;
+    }
 
     /**
      * @brief Write a JSON configuration file
@@ -103,7 +106,7 @@ private:
     /**
      * @brief Current directory
      */
-    QString currentDirectory = QDir::homePath();
+    QString defaultDirectory = QDir::homePath();
 };
 
 #endif // CONFIGURATION_H

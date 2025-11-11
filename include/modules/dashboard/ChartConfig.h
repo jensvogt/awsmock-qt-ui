@@ -9,6 +9,7 @@
 #include <QDateTime>
 
 struct ChartConfig {
+
     QString region;
 
     QString title;

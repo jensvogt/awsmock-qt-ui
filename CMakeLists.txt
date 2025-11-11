@@ -6,11 +6,25 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(MSVC)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CURL_INCLUDE_DIRS "C:\\work\\private\\extern\\curl\\include")
+    set(CURL_LIB_DIRS "C:\\work\\private\\extern\\curl\\lib\\Release")
+    set(FTP_INCLUDE_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\include")
+    set(FTP_LIB_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Release")
+    add_compile_options(/Zc:__cplusplus)
+else ()
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CURL_INCLUDE_DIRS "")
+    set(CURL_LIB_DIRS "")
+endif()
 
-find_package(QT NAMES Qt6 6.10 REQUIRED COMPONENTS Core Widgets Linguist Network Charts Scxml)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Linguist Network Charts Scxml)
+find_package(QT NAMES Qt6 6.10 REQUIRED COMPONENTS Core Widgets Linguist Network Charts)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Linguist Network Charts)
+# Ensure MSVC defines __cplusplus correctly
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 
@@ -72,8 +86,6 @@ set(PROJECT_SOURCES
         src/modules/sqs/SQSMessageAddDialog.ui
 )
 
-qt6_add_statecharts(ftpclient simpleftp.scxml)
-
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(awsmock-qt-ui
             MANUAL_FINALIZATION
@@ -121,6 +133,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/utils/EditPreferencesDialog.cpp
             src/utils/RestManager.cpp
             src/utils/TableUtils.cpp
+            src/utils/IconUtils.cpp
             src/modules/dashboard/Dashboard.cpp
             src/modules/dashboard/Dashboard.ui
             src/modules/dashboard/DashboardService.cpp
@@ -166,14 +179,20 @@ else ()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif ()
 
-add_subdirectory(src/utils)
-add_subdirectory(src/modules/sqs)
-add_subdirectory(src/modules/sns)
+#add_subdirectory(src/utils)
+#add_subdirectory(src/modules/sqs)
+#add_subdirectory(src/modules/sns)
 
-target_include_directories(awsmock-qt-ui PRIVATE ./include)
+target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS} ${FTP_INCLUDE_DIRS})
 target_sources(awsmock-qt-ui PRIVATE src/main.cpp src/mainwindow.cpp)
-target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
-        Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Scxml ftpclient curl)
+if(MSVC)
+    target_link_directories(awsmock-qt-ui PRIVATE ${CURL_LIB_DIRS} ${FTP_LIB_DIRS})
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
+            Qt${QT_VERSION_MAJOR}::Charts ftpclient libcurl_imp)
+else()
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
+            Qt${QT_VERSION_MAJOR}::Charts ftpclient curl)
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

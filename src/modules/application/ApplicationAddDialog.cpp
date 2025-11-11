@@ -168,8 +168,7 @@ void ApplicationAddDialog::dragEnterEvent(QDragEnterEvent *event) {
 void ApplicationAddDialog::dropEvent(QDropEvent *event) {
     // Ensure the data is file URLs
     if (event->mimeData()->hasUrls()) {
-        QList<QUrl> urls = event->mimeData()->urls();
-        for (const QUrl &url: urls) {
+        for (QList<QUrl> urls = event->mimeData()->urls(); const QUrl &url: urls) {
             // Check if the URL is a local file
             if (url.isLocalFile()) {
                 QString localFile = url.toLocalFile();
@@ -199,8 +198,7 @@ void ApplicationAddDialog::OpenFilesDialog() {
 
     // Show the dialog and check if the user clicked OK
     if (dialog.exec()) {
-        QStringList filePaths = dialog.selectedFiles();
-        for (const QString &f: filePaths) {
+        for (QStringList filePaths = dialog.selectedFiles(); const QString &f: filePaths) {
             QString version = FileUtils::ExtractVersionFromFileName(f);
             fileNameEdit->setText(QFileInfo(f).fileName());
             versionEdit->setText(version);

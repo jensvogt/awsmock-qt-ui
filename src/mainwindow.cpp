@@ -146,7 +146,7 @@ void MainWindow::ImportInfrastructure() const {
 
     // Create a QFileDialog set to select existing files
     const QString filter = "JSON Files (*.json);;All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetCurrentDirectory();
+    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -159,7 +159,7 @@ void MainWindow::ImportInfrastructure() const {
         file.close();
 
         _infraStructureService->ImportInfrastructure(jsonData);
-        Configuration::instance().SetCurrentDirectory(QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetDefaultDirectory(QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -171,11 +171,11 @@ void MainWindow::ExportInfrastructure() const {
 
     // Create a QFileDialog set to select existing files
     const QString filter = "JSON Files (*.json);;All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetCurrentDirectory();
+    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         _infraStructureService->ExportInfrastructure(filePath);
-        Configuration::instance().SetCurrentDirectory(QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetDefaultDirectory(QFileInfo(filePath).absolutePath());
     }
 }
 
