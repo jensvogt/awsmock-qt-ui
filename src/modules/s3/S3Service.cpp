@@ -88,27 +88,49 @@ void S3Service::PurgeBucket(const QString &bucketName) {
                       });
 }
 
-void S3Service::DeleteBucket(const QString &bucketName) {
+void S3Service::AddBucket(const QString &bucketName) {
 
-    QUrlQuery query;
-    query.addQueryItem("region", Configuration::instance().GetRegion());
-    query.addQueryItem("bucketName", bucketName);
+    QJsonObject jRequest;
+    jRequest["Name"] = bucketName;
+    const QJsonDocument requestDoc(jRequest);
 
-    url.setQuery(query);
-
-    _restManager.Delete(url,
-                        {
-                            {"x-awsmock-target", "s3"},
-                        },
-                        [this](const bool success, QByteArray, int, const QString &error) {
-                            if (success) {
-                                emit ReloadBucketListSignal();
-                            } else {
-                                QMessageBox::critical(nullptr, "Error", error);
-                            }
-                        });
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "AddBucketCounter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, QByteArray, int, const QString &error) {
+                          if (success) {
+                              emit ReloadBucketListSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
 }
 
+void S3Service::DeleteBucket(const QString &bucketName) {
+
+    QJsonObject jRequest;
+    jRequest["Bucket"] = bucketName;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "DeleteBucketCounter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, QByteArray, int, const QString &error) {
+                          if (success) {
+                              emit ReloadBucketListSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
 
 // void S3Service::ListMessages(const QString &topicArn, const QString &prefix) {
 //     QJsonObject jSorting;

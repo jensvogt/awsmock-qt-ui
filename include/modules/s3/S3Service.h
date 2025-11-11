@@ -38,6 +38,8 @@ public:
      */
     void PurgeBucket(const QString &bucketName);
 
+    void AddBucket(const QString &bucketName);
+
     void DeleteBucket(const QString &bucketName);
 
 signals:

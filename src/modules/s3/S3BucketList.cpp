@@ -26,7 +26,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
         if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal, "", &ok); ok && !bucketName.isEmpty()) {
-            //        _s3Service->AddBucket(_region, bucketName);
+            _s3Service->AddBucket(bucketName);
         }
     });
 
@@ -86,11 +86,12 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+
         // Get the position
         const int row = index.row();
 
         // Extract ARN and URL
-        const QString bucketArn = tableWidget->item(row, 7)->text();
+        const QString bucketArn = tableWidget->item(row, 5)->text();
 
         // Send notification
         //emit ShowSnsMessages(bucketArn);
@@ -164,11 +165,12 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Bucket");
     deleteAction->setToolTip("Delete the Bucket");
 
+    const QString bucketName = tableWidget->item(row, 0)->text();
     const QString bucketArn = tableWidget->item(row, 5)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
         _s3Service->PurgeBucket(bucketArn);
     } else if (selectedAction == deleteAction) {
-        _s3Service->DeleteBucket(bucketArn);
+        _s3Service->DeleteBucket(bucketName);
     } else if (selectedAction == editAction) {
         // if (SNSBucketDetailsDialog dialog(bucketArn); dialog.exec() == QDialog::Accepted) {
         //     qDebug() << "SNS Bucket edit dialog exit";
