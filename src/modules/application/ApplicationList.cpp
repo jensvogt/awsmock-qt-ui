@@ -125,7 +125,11 @@ ApplicationList::~ApplicationList() {
 }
 
 void ApplicationList::LoadContent() {
-    _applicationService->ListApplications(prefixValue);
+    if (Configuration::instance().GetConnectionState()) {
+        _applicationService->ListApplications(prefixValue);
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
+    }
 }
 
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) {

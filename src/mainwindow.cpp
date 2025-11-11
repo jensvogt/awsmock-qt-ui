@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "modules/ftp/FTPUploadDialog.h"
+#include "modules/s3/S3BucketList.h"
 
 /**
  * @brief Helper widget for the content area.
@@ -240,6 +241,7 @@ void MainWindow::UpdateStatusBar(const QString &text) const {
 
 BasePage *MainWindow::CreatePage(const int currentRow) {
     switch (currentRow) {
+
         case 0: {
             const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
 
@@ -248,6 +250,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
 
             return dashboardPage;
         }
+
         case 1: {
             const auto queueListPage = new SQSQueueList("SQS Queue List");
 
@@ -284,6 +287,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
                     });
             return queueListPage;
         }
+
         case 2: {
             const auto topicListPage = new SNSTopicList("SNS Topic List");
 
@@ -318,8 +322,41 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
 
             return topicListPage;
         }
-        case 3:
-            return new ContentPage("S3");
+
+        case 3: {
+            const auto bucketListPage = new S3BucketList("S3 Bucket List");
+
+            // Connect child's signal to update status bar
+            connect(bucketListPage, &S3BucketList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            // Route to the message list
+            // connect(bucketListPage, &S3BucketList::ShowS3Messages, this, [=](const QString &bucketArn) {
+            //     // Stop the auto updater
+            //     bucketListPage->StopAutoUpdate();
+            //
+            //     // Get the Queue name
+            //     const QString bucketName = bucketArn.mid(bucketArn.lastIndexOf(":") + 1);
+            //
+            //     // Create the message list page
+            //     const auto messageListPage = new S3MessageList("S3 Message List: " + bucketName, bucketArn, nullptr);
+            //
+            //     // Add it to the loaded pages list
+            //     m_contentPane->addWidget(messageListPage);
+            //     m_contentPane->setCurrentWidget(messageListPage);
+            //
+            //     connect(messageListPage, &S3MessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+            //
+            //     // Connect the back button
+            //     connect(messageListPage, &S3MessageList::BackToBucketList, this, [&]() {
+            //         NavigationSelectionChanged(2);
+            //     });
+            //
+            //     // Start auto updater
+            //     messageListPage->StartAutoUpdate();
+            // });
+
+            return bucketListPage;
+        }
 
         case 4: {
             const auto applicationPage = new ApplicationList("Applications", m_contentPane);
@@ -329,6 +366,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
 
             return applicationPage;
         }
+
         default:
             return nullptr;
     }

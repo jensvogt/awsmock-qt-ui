@@ -72,6 +72,8 @@ int main(int argc, char *argv[]) {
     // Retrieve values
     if (const QString configPath = parser.value(configOption); !configPath.isEmpty()) {
         Configuration::instance().SetFilePath(configPath);
+    } else {
+        Configuration::instance().SetFilePath(DEFAULT_CONFIGURATION_FILE_PATH);
     }
 
     MainWindow w;

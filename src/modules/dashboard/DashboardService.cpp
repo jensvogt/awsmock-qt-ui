@@ -1,7 +1,7 @@
 
 #include <modules/dashboard/DashboardService.h>
 
-DashboardService::DashboardService() {
+DashboardService::DashboardService() : BaseService() {
     url = QUrl(Configuration::instance().GetBaseUrl());
 }
 
@@ -26,6 +26,8 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                       },
                       [this, config](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
+
+                              Configuration::instance().SetConnectionState(true);
 
                               // The API returns an array of values
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {

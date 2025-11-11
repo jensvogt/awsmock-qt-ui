@@ -1,23 +1,26 @@
 #include <utils/BasePage.h>
 
-BasePage::BasePage(QWidget *parent) : QWidget(parent), autoUpdateTimer(nullptr) {
+#include "utils/Configuration.h"
+
+BasePage::BasePage(QWidget *parent) : QWidget(parent), _autoUpdateTimer(nullptr) {
 }
 
 void BasePage::StartAutoUpdate() {
+
     // Initial load
     LoadContent();
 
     // Create a QTimer
-    autoUpdateTimer = new QTimer(this);
+    _autoUpdateTimer = new QTimer(this);
 
     // Connect its timeout signal to a slot/lambda
-    connect(autoUpdateTimer, &QTimer::timeout, this, &BasePage::LoadContent);
+    connect(_autoUpdateTimer, &QTimer::timeout, this, &BasePage::LoadContent);
 
     // Set the refresh interval (e.g., every 5 seconds)
-    autoUpdateTimer->start(10000);
+    _autoUpdateTimer->start(Configuration::instance().GetAUtoUpdatePeriod() * 1000);
 }
 
 void BasePage::StopAutoUpdate() const {
     // Stop the auto updater
-    autoUpdateTimer->stop();
+    _autoUpdateTimer->stop();
 }

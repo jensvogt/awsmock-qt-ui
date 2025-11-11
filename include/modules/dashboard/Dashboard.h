@@ -37,15 +37,39 @@ public:
 
     ~Dashboard() override;
 
+    void Initialize();
+
+    ChartConfig CreateChart(ChartConfig &chartConfig);
+
 private:
     void LoadContent() override;
 
-    void CounterArrived(const DashboardCounter &dashboardCounters);
+    static void CounterArrived(const DashboardCounter &dashboardCounters);
 
+    /**
+     * @brief UI components
+     */
     Ui::Dashboard *ui;
+
+    /**
+     * @brief Parent widget
+     */
     QWidget *parent;
+
+    /**
+     * @brief Toolbar
+     */
     QHBoxLayout toolBar;
+
+    /**
+     * @brief REST service
+     */
     DashboardService *dashboardService;
+
+    /**
+     * @brief Charts configuration map
+     */
+    QMap<QString, ChartConfig> chartConfigs;
 };
 
 

@@ -131,7 +131,11 @@ SNSMessageList::~SNSMessageList() {
 }
 
 void SNSMessageList::LoadContent() {
-    _snsService->ListMessages(topicArn, prefixValue);
+    if (Configuration::instance().GetConnectionState()) {
+        _snsService->ListMessages(topicArn, prefixValue);
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
+    }
 }
 
 void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) {

@@ -25,13 +25,16 @@ signals:
     void StatusUpdateRequested(const QString &text);
 
 public slots:
+    /**
+     * @brief Notify the status bar that the auto update finished
+     */
     virtual void NotifyStatusBar() {
         const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");
         emit StatusUpdateRequested(msg);
     }
 
 private:
-    QTimer *autoUpdateTimer;
+    QTimer *_autoUpdateTimer;
 };
 
 #endif // AWSMOCK_QT_UI_UTILS_BASE_PAGE_H

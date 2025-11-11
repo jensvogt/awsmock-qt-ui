@@ -29,8 +29,9 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
         return;
     }
 
-    region = doc.object()["Region"].toString();
-    baseUrl = doc.object()["BaseUrl"].toString();
+    region = doc.object()["region"].toString();
+    baseUrl = doc.object()["baseUrl"].toString();
+    autoUpdatePeriod = doc.object()["auto-update-period"].toInt();
 }
 
 void Configuration::WriteConfigurationFile(const QString &filePath) {

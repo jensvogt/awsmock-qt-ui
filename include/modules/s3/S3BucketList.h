@@ -1,5 +1,5 @@
-#ifndef SNS_TOPIC_LIST_H
-#define SNS_TOPIC_LIST_H
+#ifndef AWSMOCK_QT_UI_S3_BUCKET_LIST_H
+#define AWSMOCK_QT_UI_S3_BUCKET_LIST_H
 
 #include <QLabel>
 #include <QMenu>
@@ -20,31 +20,26 @@
 #include <QTimer>
 
 #include <utils/BasePage.h>
-#include <modules/sns/SNSService.h>
-#include <modules/sns/SNSTopicDetailsDialog.h>
 #include <utils/IconUtils.h>
+#include <modules/s3/S3Service.h>
+#include <dto/s3/S3ListBucketResult.h>
 
-/**
- * @brief Helper widget for the content area.
- * Displays a simple message based on the section selected.
- */
-class SNSTopicList : public BasePage
-{
+class S3BucketList final : public BasePage {
     Q_OBJECT
 
 public:
     /**
-     * @brief SQSQueueList
+     * @brief S3 bucket list
      *
      * @param title widget title
      * @param parent parent widget
      */
-    explicit SNSTopicList(const QString& title, QWidget *parent = nullptr);
+    explicit S3BucketList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * Destructor
      */
-    ~SNSTopicList() override;
+    ~S3BucketList() override;
 
     /**
      * @brief Load page content
@@ -54,18 +49,20 @@ public:
     /**
      * @brief Load page content
      *
-     * @param listTopicResult topic counter list
+     * @param listBucketResult bucket counter list
      */
-    void HandleListTopicSignal(const SNSListTopicResult &listTopicResult);
+    void HandleListBucketSignal(const S3ListBucketResult &listBucketResult);
 
 signals:
-    void ShowSnsMessages(const QString &topicArn);
+    //void ShowSnsMessages(const QString &topicArn);
 
 private slots:
+    /**
+     * @brief Context menu callback
+     */
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
-
     /**
      * @brief AWS region
      */
@@ -74,7 +71,7 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget* tableWidget;
+    QTableWidget *tableWidget;
 
     /**
      * @brief Topic prefix search
@@ -84,7 +81,7 @@ private:
     /**
      * @brief REST service handler
      */
-    SNSService* _snsService;
+    S3Service *_s3Service;
 
     /**
      * @brief Sort column index
@@ -99,4 +96,4 @@ private:
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
 
-#endif // SNS_TOPIC_LIST_H
+#endif // AWSMOCK_QT_UI_S3_BUCKET_LIST_H

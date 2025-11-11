@@ -129,7 +129,11 @@ SQSMessageList::~SQSMessageList() {
 }
 
 void SQSMessageList::LoadContent() {
-    _sqsService->ListMessages(_queueArn, prefixValue);
+    if (Configuration::instance().GetConnectionState()) {
+        _sqsService->ListMessages(_queueArn, prefixValue);
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
+    }
 }
 
 void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) {

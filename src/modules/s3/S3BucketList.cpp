@@ -1,14 +1,14 @@
-#include <modules/sns/SNSTopicList.h>
+#include <modules/s3/S3BucketList.h>
 
-SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
+S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
     _region = Configuration::instance().GetRegion();
 
     // Connect service
-    _snsService = new SNSService();
-    connect(_snsService, &SNSService::ListTopicSignal, this, &SNSTopicList::HandleListTopicSignal);
-    connect(_snsService, &SNSService::ReloadMessagesSignal, this, &SNSTopicList::LoadContent);
+    _s3Service = new S3Service();
+    connect(_s3Service, &S3Service::ListBucketSignal, this, &S3BucketList::HandleListBucketSignal);
+    connect(_s3Service, &S3Service::ReloadBucketListSignal, this, &S3BucketList::LoadContent);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -22,26 +22,26 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
     addButton->setIconSize(QSize(16, 16));
-    addButton->setToolTip("Add a new Topic");
+    addButton->setToolTip("Add a new Bucket");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString topicName = QInputDialog::getText(nullptr, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
-            _snsService->AddTopic(_region, topicName);
+        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal, "", &ok); ok && !bucketName.isEmpty()) {
+            //        _s3Service->AddBucket(_region, bucketName);
         }
     });
 
     // Toolbar add action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
-    purgeAllButton->setToolTip("Purge all Topics");
+    purgeAllButton->setToolTip("Purge all Buckets");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
-        _snsService->PurgeAllTopics();
+        //  _s3Service->PurgeAllBuckets();
     });
 
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the topic list");
+    refreshButton->setToolTip("Refresh the bucket list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
@@ -62,13 +62,11 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
 
     // Table
     const QStringList headers = QStringList() << tr("Name")
-                                << tr("Available")
-                                << tr("Send")
-                                << tr("Resend")
+                                << tr("Keys")
                                 << tr("Size")
                                 << tr("Created")
                                 << tr("Modified")
-                                << tr("TopicArn");
+                                << tr("BucketArn");
 
     tableWidget = new QTableWidget(this);
 
@@ -82,11 +80,9 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(7, true);
+    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableWidget->setColumnHidden(5, true);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
@@ -94,15 +90,15 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
         const int row = index.row();
 
         // Extract ARN and URL
-        const QString topicArn = tableWidget->item(row, 7)->text();
+        const QString bucketArn = tableWidget->item(row, 7)->text();
 
         // Send notification
-        emit ShowSnsMessages(topicArn);
+        //emit ShowSnsMessages(bucketArn);
     });
 
     // Add context menu
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSTopicList::ShowContextMenu);
+    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &S3BucketList::ShowContextMenu);
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
@@ -118,66 +114,64 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     layout->addWidget(tableWidget, 2);
 }
 
-SNSTopicList::~SNSTopicList() {
+S3BucketList::~S3BucketList() {
     StopAutoUpdate();
 }
 
-void SNSTopicList::LoadContent() {
+void S3BucketList::LoadContent() {
     if (Configuration::instance().GetConnectionState()) {
-        _snsService->ListTopics(prefixValue);
+        _s3Service->ListBuckets(prefixValue);
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
     }
 }
 
-void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult) {
+void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) {
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
-    for (auto r = 0; r < listTopicResult.topicCounters.count(); r++) {
+    for (auto r = 0, c = 0; r < listBucketResult.bucketCounters.count(); r++, c = 0) {
         tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, 0, listTopicResult.topicCounters.at(r).topicName);
-        SetColumn(tableWidget, r, 1, listTopicResult.topicCounters.at(r).messages);
-        SetColumn(tableWidget, r, 2, listTopicResult.topicCounters.at(r).messagesSend);
-        SetColumn(tableWidget, r, 3, listTopicResult.topicCounters.at(r).messagesResend);
-        SetColumn(tableWidget, r, 4, listTopicResult.topicCounters.at(r).size);
-        SetColumn(tableWidget, r, 5, listTopicResult.topicCounters.at(r).created);
-        SetColumn(tableWidget, r, 6, listTopicResult.topicCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, 7, listTopicResult.topicCounters.at(r).topicArn);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketName);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).objectCount);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).size);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).created);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketArn);
     }
-    tableWidget->setRowCount(static_cast<int>(listTopicResult.topicCounters.count()));
+    tableWidget->setRowCount(static_cast<int>(listBucketResult.bucketCounters.count()));
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
     NotifyStatusBar();
 }
 
-void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
+void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(QIcon(":/icons/edit.png"), "Edit Topic");
-    editAction->setToolTip("Edit the Topic details");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Bucket");
+    editAction->setToolTip("Edit the bucket details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Topic");
-    purgeAction->setToolTip("Purge the Topic");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Bucket");
+    purgeAction->setToolTip("Purge the bucket");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Topic");
-    deleteAction->setToolTip("Delete the Topic");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Bucket");
+    deleteAction->setToolTip("Delete the Bucket");
 
-    const QString topicArn = tableWidget->item(row, 7)->text();
+    const QString bucketArn = tableWidget->item(row, 5)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
-        _snsService->PurgeTopic(topicArn);
+        _s3Service->PurgeBucket(bucketArn);
     } else if (selectedAction == deleteAction) {
-        _snsService->DeleteTopic(topicArn);
+        _s3Service->DeleteBucket(bucketArn);
     } else if (selectedAction == editAction) {
-        if (SNSTopicDetailsDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
-            qDebug() << "SNS Topic edit dialog exit";
-        }
+        // if (SNSBucketDetailsDialog dialog(bucketArn); dialog.exec() == QDialog::Accepted) {
+        //     qDebug() << "SNS Bucket edit dialog exit";
+        // }
     }
 }

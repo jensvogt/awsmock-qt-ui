@@ -14,11 +14,10 @@
 #ifdef _WIN32
 #define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files (x86)\\awsmock-qt-ui\\etc\\awsmock-qt-ui.json")
 #else
-#define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/etc/awsmock-qt-ui.json")
+#define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/awsmock/etc/awsmock-qt-ui.json")
 #endif
 
 class Configuration final {
-
 public:
     /**
      * @brief Constructor
@@ -50,18 +49,53 @@ public:
     QString GetRegion() { return region; }
 
     /**
+     * @brief Returns the auto update period
+     *
+     * @return auto update period
+     */
+    [[nodiscard]] int GetAUtoUpdatePeriod() const { return autoUpdatePeriod; }
+
+    /**
      * @brief Write a JSON configuration file
      *
      * @param filePath absolute file path of the configuration file
      */
     void WriteConfigurationFile(const QString &filePath);
 
+    /**
+     * @brief Returns the default directory.
+     *
+     * @return default directory.
+     */
     QString GetDefaultDirectory() {
         return defaultDirectory;
     }
 
+    /**
+     * @brief Sets the default directory.
+     *
+     * @param defaultDir
+     */
     void SetDefaultDirectory(const QString &defaultDir) {
         this->defaultDirectory = defaultDir;
+    }
+
+    /**
+     * @brief Sets the connection state
+     *
+     * @param connected connection state.
+     */
+    void SetConnectionState(bool connected) {
+        this->connected = connected;
+    }
+
+    /**
+     * @brief Sets the default directory.
+     *
+     * @return connection state
+     */
+    bool GetConnectionState() const {
+        return this->connected;
     }
 
     /**
@@ -107,6 +141,16 @@ private:
      * @brief Current directory
      */
     QString defaultDirectory = QDir::homePath();
+
+    /**
+     * @brief Default auto update period in seconds.
+     */
+    int autoUpdatePeriod = 10;
+
+    /**
+     * @brief Connection flag
+     */
+    bool connected = true;
 };
 
 #endif // CONFIGURATION_H

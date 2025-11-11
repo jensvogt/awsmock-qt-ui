@@ -7,15 +7,14 @@
 #include <utils/RestManager.h>
 #include <utils/JsonUtils.h>
 
+#include <utils/BaseService.h>
 #include <dto/dashboard/DashboardCounterResult.h>
 #include <modules/dashboard/ChartConfig.h>
 
-class DashboardService final : public QObject
-{
+class DashboardService final : public BaseService {
     Q_OBJECT
 
 public:
-
     /**
      * @brief SNSService
      */
@@ -32,7 +31,6 @@ signals:
     void ReloadMonitoringSignal(const DashboardCounter &result);
 
 private:
-
     /**
      * @brief HTTP REST manager
      */

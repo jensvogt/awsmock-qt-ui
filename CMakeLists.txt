@@ -5,8 +5,9 @@ project(awsmock-qt-ui VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.0/gcc_64")
 
-if(MSVC)
+if (MSVC)
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
@@ -20,10 +21,11 @@ else ()
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CURL_INCLUDE_DIRS "")
     set(CURL_LIB_DIRS "")
-endif()
+endif ()
 
-find_package(QT NAMES Qt6 6.10 REQUIRED COMPONENTS Core Widgets Linguist Network Charts)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Linguist Network Charts)
+find_package(QT NAMES Qt6 6.10 REQUIRED COMPONENTS Core Widgets Linguist Network Charts Quick Graphs)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Linguist Network Charts Quick Graphs)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Linguist Network Charts Quick Graphs)
 # Ensure MSVC defines __cplusplus correctly
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
@@ -84,6 +86,13 @@ set(PROJECT_SOURCES
         src/modules/sqs/SQSMessageAddDialog.cpp
         include/modules/sqs/SQSMessageAddDialog.h
         src/modules/sqs/SQSMessageAddDialog.ui
+        include/utils/BaseService.h
+        include/modules/s3/S3Service.h
+        include/modules/s3/S3BucketList.h
+        include/dto/s3/S3BucketCounter.h
+        include/dto/s3/S3ListBucketResult.h
+        src/modules/s3/S3BucketList.cpp
+        src/modules/s3/S3Service.cpp
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -185,14 +194,14 @@ endif ()
 
 target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS} ${FTP_INCLUDE_DIRS})
 target_sources(awsmock-qt-ui PRIVATE src/main.cpp src/mainwindow.cpp)
-if(MSVC)
+if (MSVC)
     target_link_directories(awsmock-qt-ui PRIVATE ${CURL_LIB_DIRS} ${FTP_LIB_DIRS})
     target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
             Qt${QT_VERSION_MAJOR}::Charts ftpclient libcurl_imp)
-else()
+else ()
     target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
             Qt${QT_VERSION_MAJOR}::Charts ftpclient curl)
-endif()
+endif ()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

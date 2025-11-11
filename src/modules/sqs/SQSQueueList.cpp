@@ -128,7 +128,11 @@ SQSQueueList::~SQSQueueList() {
 }
 
 void SQSQueueList::LoadContent() {
-    sqsService->ListQueues(prefixValue);
+    if (Configuration::instance().GetConnectionState()) {
+        sqsService->ListQueues(prefixValue);
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
+    }
 }
 
 void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) {

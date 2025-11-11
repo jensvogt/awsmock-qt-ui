@@ -7,9 +7,9 @@
 
 #include <QString>
 #include <QDateTime>
+#include <QChart>
 
 struct ChartConfig {
-
     QString region;
 
     QString title;
@@ -39,6 +39,10 @@ struct ChartConfig {
     int step = 5;
 
     int scale = -1;
+
+    QStringList seriesNames;
+
+    QChart *chart = nullptr;
 };
 
 #endif //AWSMOCK_QT_CHART_CONFIG_H

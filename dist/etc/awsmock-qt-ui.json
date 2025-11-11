@@ -1,0 +1,5 @@
+{
+  "region": "eu-central-1",
+  "baseUrl": "http://localhost:4566",
+  "auto-update-period": 10
+}
