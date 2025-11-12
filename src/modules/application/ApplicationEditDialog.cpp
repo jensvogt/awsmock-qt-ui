@@ -47,6 +47,11 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [this]() {
         _application.enabled = _ui->enabledCheckBox->isChecked();
         _changed = true;
+        if (_application.enabled) {
+            _applicationService->EnableApplication(_application.name);
+        } else {
+            _applicationService->DisableApplication(_application.name);
+        }
     });
 
     // Connect description test area

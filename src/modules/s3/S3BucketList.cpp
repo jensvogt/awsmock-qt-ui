@@ -1,4 +1,7 @@
+#include <ui_S3BucketEditDialog.h>
 #include <modules/s3/S3BucketList.h>
+
+#include "modules/s3/S3BucketEditDialog.h"
 
 S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(parent) {
 
@@ -172,8 +175,7 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     } else if (selectedAction == deleteAction) {
         _s3Service->DeleteBucket(bucketName);
     } else if (selectedAction == editAction) {
-        // if (SNSBucketDetailsDialog dialog(bucketArn); dialog.exec() == QDialog::Accepted) {
-        //     qDebug() << "SNS Bucket edit dialog exit";
-        // }
+        S3BucketEditDialog dialog(bucketName);
+        dialog.exec();
     }
 }

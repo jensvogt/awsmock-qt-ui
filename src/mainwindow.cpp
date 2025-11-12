@@ -8,38 +8,6 @@
 #include "modules/ftp/FTPUploadDialog.h"
 #include "modules/s3/S3BucketList.h"
 
-/**
- * @brief Helper widget for the content area.
- * Displays a simple message based on the section selected.
- */
-class ContentPage final : public BasePage {
-public:
-    explicit ContentPage(QString title, QWidget *parent = nullptr) : BasePage(parent), title(std::move(title)) {
-    }
-
-    void LoadContent() override {
-        // Set up the layout for the individual content pages
-        const auto layout = new QVBoxLayout(this);
-
-        const auto titleLabel = new QLabel(QString("<h1>%1</h1>").arg(title), this);
-        titleLabel->setAlignment(Qt::AlignCenter);
-
-        const auto detailLabel = new QLabel(
-            QString("<p>This is the detailed content for the <b>%1</b> section.</p>").arg(title), this);
-        detailLabel->setAlignment(Qt::AlignCenter);
-
-        layout->addWidget(titleLabel);
-        layout->addWidget(detailLabel);
-        layout->addStretch(); // Push content to the top
-    }
-
-private:
-    /**
-     * Page title
-     */
-    QString title;
-};
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // Connect infrastructure signals

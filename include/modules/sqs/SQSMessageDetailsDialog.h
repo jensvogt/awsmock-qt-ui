@@ -6,19 +6,18 @@
 #include <modules/sqs/SQSService.h>
 
 namespace Ui {
-class SQSMessageDetailsDialog;
+    class SQSMessageDetailsDialog;
 }
 
-class SQSMessageDetailsDialog : public QDialog
-{
+class SQSMessageDetailsDialog : public QDialog {
     Q_OBJECT
 
 public:
     explicit SQSMessageDetailsDialog(const QString &messageId, QWidget *parent = nullptr);
-    ~SQSMessageDetailsDialog();
+
+    ~SQSMessageDetailsDialog() override;
 
 private slots:
-
     void on_prettyPushButton_toggled(bool checked) const;
 
 private:
@@ -26,8 +25,8 @@ private:
 
     Ui::SQSMessageDetailsDialog *_ui;
     QString _messageId;
-    SQSService* _sqsService;
-    bool _changed=false;
+    SQSService *_sqsService;
+    bool _changed = false;
 };
 
 #endif // SQS_MESSAGE_DETAILS_DIALOG_H

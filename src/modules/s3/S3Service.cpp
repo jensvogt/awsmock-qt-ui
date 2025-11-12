@@ -132,6 +132,34 @@ void S3Service::DeleteBucket(const QString &bucketName) {
                       });
 }
 
+void S3Service::GetBucketDetails(const QString &bucketName) {
+    QJsonObject jRequest;
+    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["bucketName"] = bucketName;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "GetBucket"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+
+                              // The API returns an JSON document
+                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              JsonUtils::WriteJsonString(jsonDoc.object());
+                              S3GetBucketDetailsResponse bucketResponse;
+                              bucketResponse.FromJson(jsonDoc);
+                              emit GetBucketDetailsSignal(bucketResponse);
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
 // void S3Service::ListMessages(const QString &topicArn, const QString &prefix) {
 //     QJsonObject jSorting;
 //     jSorting["sortDirection"] = -1;

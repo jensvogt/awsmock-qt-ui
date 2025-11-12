@@ -93,6 +93,9 @@ set(PROJECT_SOURCES
         include/dto/s3/S3ListBucketResult.h
         src/modules/s3/S3BucketList.cpp
         src/modules/s3/S3Service.cpp
+        src/modules/s3/S3BucketEditDialog.cpp
+        include/modules/s3/S3BucketEditDialog.h
+        src/modules/s3/S3BucketEditDialog.ui
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
