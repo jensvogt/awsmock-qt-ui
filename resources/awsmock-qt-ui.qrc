@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/icons">
         <file>common/awsmock.png</file>
+        <file>common/awsmock.ico</file>
         <file>light/add.png</file>
         <file>light/back.png</file>
         <file>light/clean.png</file>

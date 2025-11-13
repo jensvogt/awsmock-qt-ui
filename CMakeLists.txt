@@ -16,6 +16,8 @@ if (MSVC)
     set(FTP_INCLUDE_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\include")
     set(FTP_LIB_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Release")
     add_compile_options(/Zc:__cplusplus)
+    set(WINDOWS_ICON ${CMAKE_SOURCE_DIR}/appicon.rc)
+    set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -187,9 +189,7 @@ else ()
         # Define properties for Android with Qt 5 after find_package() calls as:
         #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else ()
-        add_executable(awsmock-qt-ui
-                ${PROJECT_SOURCES}
-        )
+        add_executable(awsmock-qt-ui ${PROJECT_SOURCES})
     endif ()
 
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
@@ -225,11 +225,13 @@ set_target_properties(awsmock-qt-ui PROPERTIES
 )
 
 include(GNUInstallDirs)
-install(TARGETS awsmock-qt-ui
-        BUNDLE DESTINATION .
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+if(MSVC)
+    install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_DIR})
+else()
+    install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
 
 if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(awsmock-qt-ui)

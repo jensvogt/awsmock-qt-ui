@@ -12,7 +12,7 @@
 #include <utils/JsonUtils.h>
 
 #ifdef _WIN32
-#define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files (x86)\\awsmock-qt-ui\\etc\\awsmock-qt-ui.json")
+#define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files (x86)\\awsmock-qt-ui\\awsmock-qt-ui.json")
 #else
 #define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/awsmock/etc/awsmock-qt-ui.json")
 #endif
