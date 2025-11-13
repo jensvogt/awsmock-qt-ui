@@ -54,7 +54,7 @@ public:
     void HandleListBucketSignal(const S3ListBucketResult &listBucketResult);
 
 signals:
-    //void ShowSnsMessages(const QString &topicArn);
+    void ShowS3Objects(const QString &bucketName);
 
 private slots:
     /**

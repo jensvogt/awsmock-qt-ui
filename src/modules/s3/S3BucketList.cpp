@@ -94,10 +94,10 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
         const int row = index.row();
 
         // Extract ARN and URL
-        const QString bucketArn = tableWidget->item(row, 5)->text();
+        const QString bucketName = tableWidget->item(row, 0)->text();
 
         // Send notification
-        //emit ShowSnsMessages(bucketArn);
+        emit ShowS3Objects(bucketName);
     });
 
     // Add context menu

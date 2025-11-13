@@ -7,6 +7,7 @@
 
 #include "modules/ftp/FTPUploadDialog.h"
 #include "modules/s3/S3BucketList.h"
+#include "modules/s3/S3ObjectList.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
@@ -297,31 +298,27 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             // Connect child's signal to update status bar
             connect(bucketListPage, &S3BucketList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
-            // Route to the message list
-            // connect(bucketListPage, &S3BucketList::ShowS3Messages, this, [=](const QString &bucketArn) {
-            //     // Stop the auto updater
-            //     bucketListPage->StopAutoUpdate();
-            //
-            //     // Get the Queue name
-            //     const QString bucketName = bucketArn.mid(bucketArn.lastIndexOf(":") + 1);
-            //
-            //     // Create the message list page
-            //     const auto messageListPage = new S3MessageList("S3 Message List: " + bucketName, bucketArn, nullptr);
-            //
-            //     // Add it to the loaded pages list
-            //     m_contentPane->addWidget(messageListPage);
-            //     m_contentPane->setCurrentWidget(messageListPage);
-            //
-            //     connect(messageListPage, &S3MessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-            //
-            //     // Connect the back button
-            //     connect(messageListPage, &S3MessageList::BackToBucketList, this, [&]() {
-            //         NavigationSelectionChanged(2);
-            //     });
-            //
-            //     // Start auto updater
-            //     messageListPage->StartAutoUpdate();
-            // });
+            // Route to the S3 object list
+            connect(bucketListPage, &S3BucketList::ShowS3Objects, this, [=](const QString &bucketName) {
+                // Stop the auto updater
+                bucketListPage->StopAutoUpdate();
+
+                // Create the message list page
+                const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName, nullptr);
+
+                // Add it to the loaded pages list
+                m_contentPane->addWidget(objectListPage);
+                m_contentPane->setCurrentWidget(objectListPage);
+                connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+                // Connect the back button
+                connect(objectListPage, &S3ObjectList::BackToBucketList, this, [&]() {
+                    NavigationSelectionChanged(3);
+                });
+
+                // Start auto updater
+                objectListPage->StartAutoUpdate();
+            });
 
             return bucketListPage;
         }

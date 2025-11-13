@@ -10,6 +10,8 @@
 #include <dto/s3/S3ListBucketResult.h>
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 
+#include "dto/s3/S3ListObjectResponse.h"
+
 class S3Service final : public QObject {
     Q_OBJECT
 
@@ -57,6 +59,18 @@ signals:
      * @brief Get bucket details response
      */
     void GetBucketDetailsSignal(const S3GetBucketDetailsResponse &getBucketDetailsResponse);
+
+    /**
+     * @brief List S3 object signal
+     *
+     * @param response
+     */
+    void ListObjectsSignal(const S3ListObjectsResult &response);
+
+    /**
+     * @brief Reload object list signal
+     */
+    void ReloadObjectsSignal();
 
 private:
     /**

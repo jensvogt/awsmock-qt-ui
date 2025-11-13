@@ -26,13 +26,13 @@
 #include <dto/sns/SNSListMessagesResult.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSMessageDetailsDialog.h>
+#include <utils/IconUtils.h>
 
 /**
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class SNSMessageList : public BasePage
-{
+class SNSMessageList : public BasePage {
     Q_OBJECT
 
 public:
@@ -43,7 +43,7 @@ public:
      * @param topicArn ARN of the parent topic
      * @param parent parent widget
      */
-    SNSMessageList(const QString& title, const QString& topicArn, QWidget *parent = nullptr);
+    SNSMessageList(const QString &title, const QString &topicArn, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -68,7 +68,6 @@ public:
     void HandleReloadMessageSignal();
 
 signals:
-
     /**
      * @brief Sent a show SNS message to the main window
      *
@@ -82,7 +81,6 @@ signals:
     void BackToTopicList();
 
 private slots:
-
     /**
      * @brief Row context menu
      *
@@ -96,7 +94,6 @@ private slots:
     }
 
 private:
-
     /**
      * @brief Parent topic ARN
      */
@@ -105,12 +102,12 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget* tableWidget;
+    QTableWidget *tableWidget;
 
     /**
      * @brief REST service handler
      */
-    SNSService* _snsService;
+    SNSService *_snsService;
 
     /**
      * @brief Prefix search
