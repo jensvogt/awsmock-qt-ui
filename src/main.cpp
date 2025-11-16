@@ -15,7 +15,9 @@
 
 int main(int argc, char *argv[]) {
     const QApplication app(argc, argv);
-    QApplication::setWindowIcon(IconUtils::GetCommonIcon("awsmock.png"));
+
+    // Set icon
+    QApplication::setWindowIcon(IconUtils::GetCommonIcon("awsmock"));
 
     // set style
     QApplication::setStyle(QStyleFactory::create("Fusion"));
@@ -55,8 +57,7 @@ int main(int argc, char *argv[]) {
     parser.addVersionOption();
 
     QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale: uiLanguages) {
+    for (const QStringList uiLanguages = QLocale::system().uiLanguages(); const QString &locale: uiLanguages) {
         if (const QString baseName = "awsmock-qt-ui_" + QLocale(locale).name(); translator.load(":/i18n/" + baseName)) {
             QApplication::installTranslator(&translator);
             break;

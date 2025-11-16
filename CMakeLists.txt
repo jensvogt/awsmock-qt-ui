@@ -5,18 +5,23 @@ project(awsmock-qt-ui VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.0/gcc_64")
 
 if (MSVC)
+    set(CMAKE_PREFIX_PATH "c:\\work\\Qt\\6.10.0\\msvc2022_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
     set(CURL_INCLUDE_DIRS "C:\\work\\private\\extern\\curl\\include")
-    set(CURL_LIB_DIRS "C:\\work\\private\\extern\\curl\\lib\\Release")
+    set(CURL_LIB "$<$<CONFIG:RELEASE>:C:\\work\\private\\extern\\curl\\lib\\Release\\libcurl_imp.lib>"
+            "$<$<CONFIG:DEBUG>:C:\\work\\private\\extern\\curl\\lib\\Debug\\libcurl-d_imp.lib>")
     set(FTP_INCLUDE_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\include")
-    set(FTP_LIB_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Release")
+    set(FTP_LIB "$<$<CONFIG:RELEASE>:C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Release\\ftpclient.lib>"
+            "$<$<CONFIG:DEBUG>:C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Debug\\ftpclient.lib>")
     add_compile_options(/Zc:__cplusplus)
+    set(WINDOWS_ICON ${CMAKE_SOURCE_DIR}/appicon.rc)
+    set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
+    set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.0/gcc_64")
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CURL_INCLUDE_DIRS "")
@@ -176,6 +181,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/modules/application/ApplicationUploadCodeDialog.cpp
             src/modules/application/ApplicationUploadCodeDialog.ui
             src/modules/infrastructure/InfrastructureService.cpp
+            ${APP_ICON_RESOURCE_WINDOWS}
     )
     # Define target properties for Android with Qt 6 as:
     #    set_property(TARGET awsmock-qt-ui APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -185,30 +191,21 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else ()
     if (ANDROID)
-        add_library(awsmock-qt-ui SHARED
-                ${PROJECT_SOURCES}
-        )
+        add_library(awsmock-qt-ui SHARED ${PROJECT_SOURCES})
         # Define properties for Android with Qt 5 after find_package() calls as:
         #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else ()
-        add_executable(awsmock-qt-ui
-                ${PROJECT_SOURCES}
-        )
+        add_executable(awsmock-qt-ui ${PROJECT_SOURCES})
     endif ()
 
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif ()
 
-#add_subdirectory(src/utils)
-#add_subdirectory(src/modules/sqs)
-#add_subdirectory(src/modules/sns)
-
 target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS} ${FTP_INCLUDE_DIRS})
 target_sources(awsmock-qt-ui PRIVATE src/main.cpp src/mainwindow.cpp)
 if (MSVC)
-    target_link_directories(awsmock-qt-ui PRIVATE ${CURL_LIB_DIRS} ${FTP_LIB_DIRS})
     target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
-            Qt${QT_VERSION_MAJOR}::Charts ftpclient libcurl_imp)
+            Qt${QT_VERSION_MAJOR}::Charts ${FTP_LIB} ${CURL_LIB})
 else ()
     target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
             Qt${QT_VERSION_MAJOR}::Charts ftpclient curl)
@@ -229,11 +226,13 @@ set_target_properties(awsmock-qt-ui PROPERTIES
 )
 
 include(GNUInstallDirs)
-install(TARGETS awsmock-qt-ui
-        BUNDLE DESTINATION .
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+if(MSVC)
+    install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_DIR})
+else()
+    install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
 
 if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(awsmock-qt-ui)

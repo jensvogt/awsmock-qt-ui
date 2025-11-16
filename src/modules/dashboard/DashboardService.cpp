@@ -37,7 +37,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                                   emit ReloadMonitoringSignal(counter);
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              QMessageBox::critical(nullptr, "Error", error + ", status: " + QString::number(status));
                           }
                       });
 }
