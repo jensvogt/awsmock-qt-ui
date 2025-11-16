@@ -11,6 +11,7 @@
 // Awsmock includes
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <dto/gateway/GatewayConfig.h>
 
 class InfraStructureService final : public QObject {
     Q_OBJECT
@@ -45,12 +46,21 @@ public:
      */
     void CleanInfrastructure();
 
+    /**
+     * @brief Get server config
+     *
+     * @return server configuration DTO
+     */
+    void GetServerConfig();
+
 signals:
     void ImportResponseSignal();
 
     void ExportResponseSignal(const QString &exportFile, const QString &exportResponse);
 
     void CleanResponseSignal();
+
+    void GetServerConfigSignal(const GatewayConfig &serverConfig);
 
 private:
     /**

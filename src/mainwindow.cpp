@@ -8,6 +8,7 @@
 #include "modules/ftp/FTPUploadDialog.h"
 #include "modules/s3/S3BucketList.h"
 #include "modules/s3/S3ObjectList.h"
+#include "utils/About.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
@@ -109,7 +110,15 @@ void MainWindow::SetupMenuBar() {
     // Help Menu
     const auto helpAction = new QAction(IconUtils::GetIcon("dark", "help"), tr("&Help"), this);
     connect(helpAction, &QAction::triggered, this, &MainWindow::EditPreferences);
-    editMenu->addAction(helpAction);
+    helpMenu->addAction(helpAction);
+
+    // About
+    const auto aboutAction = new QAction(IconUtils::GetIcon("dark", "about"), tr("&About"), this);
+    connect(aboutAction, &QAction::triggered, this, [this]() {
+        About aboutDialog;
+        aboutDialog.exec();
+    });
+    helpMenu->addAction(aboutAction);
 }
 
 void MainWindow::ImportInfrastructure() const {

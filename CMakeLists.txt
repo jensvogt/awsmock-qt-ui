@@ -65,6 +65,10 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPUploadDialog.ui
         include/utils/NonEmptyValidator.h
         include/utils/NonEmptyValidator.h
+        include/modules/s3/S3ObjectList.h
+        include/dto/s3/S3ListObjectResponse.h
+        include/dto/s3/S3ObjectCounter.h
+        include/utils/About.h
         src/modules/application/ApplicationUploadCodeDialog.cpp
         include/modules/application/ApplicationUploadCodeDialog.h
         src/modules/application/ApplicationUploadCodeDialog.ui
@@ -96,10 +100,10 @@ set(PROJECT_SOURCES
         src/modules/s3/S3BucketEditDialog.cpp
         include/modules/s3/S3BucketEditDialog.h
         src/modules/s3/S3BucketEditDialog.ui
-        include/modules/s3/S3ObjectList.h
         src/modules/s3/S3ObjectList.cpp
-        include/dto/s3/S3ListObjectResponse.h
-        include/dto/s3/S3ObjectCounter.h
+        src/utils/About.cpp
+        src/utils/About.ui
+        include/dto/gateway/GatewayConfig.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

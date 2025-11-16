@@ -94,3 +94,24 @@ void InfraStructureService::CleanInfrastructure() {
                           }
                       });
 }
+
+void InfraStructureService::GetServerConfig() {
+
+    _restManager.get(url,
+                     {
+                         {"x-awsmock-target", "module"},
+                         {"x-awsmock-action", "get-config"},
+                         {"content-type", "application/json"}
+                     },
+                     [this](const bool success, const QByteArray &response, int, const QString &error) {
+                         if (success) {
+                             // The API returns an infrastructure object
+                             const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                             GatewayConfig serverConfig;
+                             serverConfig.FromJson(jsonDoc.object());
+                             emit GetServerConfigSignal(serverConfig);
+                         } else {
+                             QMessageBox::critical(nullptr, "Error", error);
+                         }
+                     });
+}

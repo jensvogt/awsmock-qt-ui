@@ -76,27 +76,35 @@ public:
      *
      * @param defaultDir
      */
-    void SetDefaultDirectory(const QString &defaultDir) {
-        this->defaultDirectory = defaultDir;
-    }
+    void SetDefaultDirectory(const QString &defaultDir) { this->defaultDirectory = defaultDir; }
 
     /**
      * @brief Sets the connection state
      *
      * @param connected connection state.
      */
-    void SetConnectionState(bool connected) {
-        this->connected = connected;
-    }
+    void SetConnectionState(bool connected) { this->connected = connected; }
 
     /**
      * @brief Sets the default directory.
      *
      * @return connection state
      */
-    bool GetConnectionState() const {
-        return this->connected;
-    }
+    bool GetConnectionState() const { return this->connected; }
+
+    /**
+     * @brief Returns the current version
+     *
+     * @return current version
+     */
+    QString GetVersion() const { return this->version; }
+
+    /**
+     * @brief Returns the current Qt version
+     *
+     * @return current Qt version
+     */
+    QString GetQtVersion() const { return this->qtVersion; }
 
     /**
      * @brief Write a JSON configuration file
@@ -151,6 +159,16 @@ private:
      * @brief Connection flag
      */
     bool connected = true;
+
+    /**
+     * @brief Version
+     */
+    QString version = QString("1.0.0");
+
+    /**
+     * @brief QT Version
+     */
+    QString qtVersion = QString(qVersion());
 };
 
 #endif // CONFIGURATION_H

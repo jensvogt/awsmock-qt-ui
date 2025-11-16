@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/icons">
         <file>common/awsmock.png</file>
+        <file>light/about.png</file>
         <file>light/add.png</file>
         <file>light/back.png</file>
         <file>light/clean.png</file>
@@ -24,6 +25,7 @@
         <file>light/start.png</file>
         <file>light/stop.png</file>
         <file>light/stopped.png</file>
+        <file>dark/about.png</file>
         <file>dark/add.png</file>
         <file>dark/back.png</file>
         <file>dark/clean.png</file>
