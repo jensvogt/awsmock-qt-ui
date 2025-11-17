@@ -35,11 +35,11 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
 
     });
 
-    // Toolbar add action
+    // Toolbar purge action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
-    connect(purgeAllButton, &QPushButton::clicked, [&]() {
+    connect(purgeAllButton, &QPushButton::clicked, [this,queueUrl]() {
         _sqsService->PurgeAllMessages(queueUrl);
     });
 

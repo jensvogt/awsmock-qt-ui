@@ -8,6 +8,7 @@
 #include "ui_Dashboard.h"
 
 #include <QGuiApplication>
+#include <thread>
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), ui(new Ui::Dashboard), parent(parent) {
     // Connect service
@@ -117,7 +118,6 @@ void Dashboard::Initialize() {
     config.row = 1;
     config.column = 2;
     config.limit = 5;
-    config.seriesNames = {"GET", "PUT", "POST", "DELETE", "HEAD"};
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Gateway Requests";
@@ -131,7 +131,6 @@ void Dashboard::Initialize() {
     config.row = 2;
     config.column = 0;
     config.limit = 5;
-    config.seriesNames = {"GET", "PUT", "POST", "DELETE", "HEAD"};
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Docker CPU";
@@ -145,7 +144,6 @@ void Dashboard::Initialize() {
     config.row = 2;
     config.column = 1;
     config.limit = 5;
-    config.seriesNames = {"GET", "PUT", "POST", "DELETE", "HEAD"};
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Docker Memory";
@@ -159,7 +157,6 @@ void Dashboard::Initialize() {
     config.row = 2;
     config.column = 2;
     config.limit = 5;
-    config.seriesNames = {"GET", "PUT", "POST", "DELETE", "HEAD"};
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);
 }
 

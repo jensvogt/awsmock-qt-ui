@@ -53,7 +53,7 @@ public:
      *
      * @return auto update period
      */
-    [[nodiscard]] int GetAUtoUpdatePeriod() const { return autoUpdatePeriod; }
+    [[nodiscard]] int GetAutoUpdatePeriod() const { return autoUpdatePeriod; }
 
     /**
      * @brief Write a JSON configuration file
@@ -90,35 +90,35 @@ public:
      *
      * @return connection state
      */
-    bool GetConnectionState() const { return this->connected; }
+    [[nodiscard]] bool GetConnectionState() const { return this->connected; }
 
     /**
      * @brief Returns the current version
      *
      * @return current version
      */
-    QString GetVersion() const { return this->version; }
+    [[nodiscard]] QString GetVersion() const { return this->version; }
 
     /**
      * @brief Returns the current Qt version
      *
      * @return current Qt version
      */
-    QString GetQtVersion() const { return this->qtVersion; }
+    [[nodiscard]] QString GetQtVersion() const { return this->qtVersion; }
 
     /**
      * @brief Returns the current default FTP user
      *
      * @return current FTP user
      */
-    QString GetDefaultFtpUser() const { return this->defaultFtpUser; }
+    [[nodiscard]] QString GetDefaultFtpUser() const { return this->defaultFtpUser; }
 
     /**
      * @brief Returns the current default FTP password
      *
      * @return current FTP password
      */
-    QString GetDefaultFtpPassword() const { return this->defaultFtpPassword; }
+    [[nodiscard]] QString GetDefaultFtpPassword() const { return this->defaultFtpPassword; }
 
     /**
      * @brief Write a JSON configuration file

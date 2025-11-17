@@ -109,6 +109,9 @@ set(PROJECT_SOURCES
         src/utils/About.cpp
         src/utils/About.ui
         include/dto/gateway/GatewayConfig.h
+        src/utils/EditConfigDialog.cpp
+        include/utils/EditConfigDialog.h
+        src/utils/EditConfigDialog.ui
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -148,6 +151,10 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/modules/sns/SNSMessageList.h
             include/modules/sns/SNSTopicDetailsDialog.h
             include/modules/sns/SNSMessageDetailsDialog.h
+            include/modules/s3/S3ObjectList.h
+            include/modules/s3/S3BucketList.h
+            include/modules/s3/S3Service.h
+            include/modules/s3/S3BucketEditDialog.h
             include/modules/application/ApplicationList.h
             include/modules/application/ApplicationService.h
             include/modules/application/ApplicationUploadCodeDialog.h
@@ -176,6 +183,11 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/modules/sns/SNSTopicDetailsDialog.cpp
             src/modules/sns/SNSMessageDetailsDialog.ui
             src/modules/sns/SNSMessageDetailsDialog.cpp
+            src/modules/s3/S3BucketList.cpp
+            src/modules/s3/S3ObjectList.cpp
+            src/modules/s3/S3Service.cpp
+            src/modules/s3/S3BucketEditDialog.cpp
+            src/modules/s3/S3BucketEditDialog.ui
             src/modules/application/ApplicationList.cpp
             src/modules/application/ApplicationService.cpp
             src/modules/application/ApplicationUploadCodeDialog.cpp

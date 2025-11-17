@@ -44,7 +44,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     });
 
     // Connect enable check box
-    connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [this]() {
+    connect(_ui->enabledCheckBox, &QCheckBox::checkStateChanged, this, [this]() {
         _application.enabled = _ui->enabledCheckBox->isChecked();
         _changed = true;
         if (_application.enabled) {
@@ -97,7 +97,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->createdEdit->setText(_application.created.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->modifiedEdit->setText(_application.modified.toString("yyyy-MM-dd hh:mm:ss"));
 
-    connect(_ui->enabledCheckBox, &QCheckBox::stateChanged, this, [&]() { this->_changed = true; });
+    connect(_ui->enabledCheckBox, &QCheckBox::checkStateChanged, this, [&]() { this->_changed = true; });
 
     // Update environment table
     int r = 0;

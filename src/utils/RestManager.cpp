@@ -33,7 +33,7 @@ std::function<void()> RestManager::post(const QUrl &url, const QByteArray &body,
 
         // read body
         const QByteArray resp = reply->readAll();
-        // extract HTTP status code (may be invalid if not set)
+        // extract HTTP status code (maybe invalid if not set)
         const QVariant statusAttr = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
         const int status = statusAttr.isValid() ? statusAttr.toInt() : 0;
 

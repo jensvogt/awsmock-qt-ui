@@ -44,9 +44,9 @@ public:
     /**
      * @brief Handle object list request
      *
-     * @param listObjectResult object counter list
+     * @param listObjectResponse object counter list
      */
-    void HandleListObjectSignal(const S3ListObjectsResult &listObjectResult);
+    void HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse);
 
     /**
      * @brief Handle object reload

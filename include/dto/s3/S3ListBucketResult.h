@@ -15,9 +15,7 @@ struct S3ListBucketResult {
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
-        QJsonArray jArray = jsonDoc["bucketCounters"].toArray();
-
-        for (const auto &element: jArray) {
+        for (QJsonArray jArray = jsonDoc["bucketCounters"].toArray(); const auto &element: jArray) {
             S3BucketCounter bucketCounter;
             bucketCounter.FromJson(element.toObject());
             bucketCounters.append(bucketCounter);

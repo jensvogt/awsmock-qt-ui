@@ -7,7 +7,6 @@
 #include <utils/About.h>
 #include "ui_About.h"
 
-
 About::About(QWidget *parent) : QDialog(parent), _ui(new Ui::About) {
 
     _infraStructureService = new InfraStructureService();

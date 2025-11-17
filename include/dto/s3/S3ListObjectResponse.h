@@ -8,16 +8,16 @@
 
 #include <dto/s3/S3ObjectCounter.h>
 
-struct S3ListObjectsResult {
+struct S3ListObjectsResponse {
     long total{};
 
     QList<S3ObjectCounter> objectCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
-        QJsonArray jArray = jsonDoc["objects"].toArray();
+        //JsonUtils::WriteJsonString(jsonDoc.object());
 
-        for (const auto &element: jArray) {
+        for (QJsonArray jArray = jsonDoc["objectCounters"].toArray(); const auto &element: jArray) {
             S3ObjectCounter objectCounter;
             objectCounter.FromJson(element.toObject());
             objectCounters.append(objectCounter);

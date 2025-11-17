@@ -61,6 +61,8 @@ public:
      */
     void PurgeAllTopics();
 
+    void PurgeMessages(const QString &topicArn);
+
     /**
      * @brief Get topic details
      *

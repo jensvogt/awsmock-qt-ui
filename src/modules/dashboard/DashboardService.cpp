@@ -1,7 +1,7 @@
 
 #include <modules/dashboard/DashboardService.h>
 
-DashboardService::DashboardService() : BaseService() {
+DashboardService::DashboardService() {
     url = QUrl(Configuration::instance().GetBaseUrl());
 }
 
@@ -10,7 +10,6 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
     jRequest["region"] = config.region;
     jRequest["name"] = config.name;
     jRequest["labelName"] = config.series;
-    jRequest["labelValue"] = "";
     jRequest["step"] = config.step;
     jRequest["limit"] = config.limit;
     jRequest["start"] = config.start.toMSecsSinceEpoch();
@@ -24,7 +23,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                           {"x-awsmock-action", "get-multi-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this, config](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, config](const bool success, const QByteArray &response, const int status, const QString &error) {
                           if (success) {
 
                               Configuration::instance().SetConnectionState(true);
@@ -37,7 +36,9 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                                   emit ReloadMonitoringSignal(counter);
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error + ", status: " + QString::number(status));
+                              qDebug() << " status: " + QString::number(status) + ", config: " + config.name + "/" + config.series;
+
+                              //QMessageBox::critical(nullptr, "Error", error + ", status: " + QString::number(status) + ", config: " + config.name + "/" + config.series);
                           }
                       });
 }

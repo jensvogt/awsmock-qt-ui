@@ -93,7 +93,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->setColumnHidden(9, true);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
@@ -111,7 +111,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder &order) {
         _sortColumn = column;
         _sortOrder = order;
     });

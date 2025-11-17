@@ -88,7 +88,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->setColumnHidden(5, true);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
 
         // Get the position
         const int row = index.row();

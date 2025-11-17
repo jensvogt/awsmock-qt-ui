@@ -1,5 +1,5 @@
 
-#include<modules/sqs/SQSService.h>
+#include <modules/sqs/SQSService.h>
 
 SQSService::SQSService() {
     url = QUrl(Configuration::instance().GetBaseUrl());
@@ -259,12 +259,12 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sqs"},
-                          {"x-awsmock-action", "purge-Queue"},
+                          {"x-awsmock-action", "purge-queue"},
                           {"content-type", "application/json"}
                       },
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              emit ReloadQueuesSignal();
+                              emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

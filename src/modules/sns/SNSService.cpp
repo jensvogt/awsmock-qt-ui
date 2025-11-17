@@ -113,10 +113,10 @@ void SNSService::PurgeTopic(const QString &topicArn) {
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
-                          {"x-awsmock-action", "list-message-counters"},
+                          {"x-awsmock-action", "purge-topic"},
                           {"content-type", "application/json"}
                       },
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
@@ -133,7 +133,28 @@ void SNSService::PurgeAllTopics() {
                           {"x-awsmock-action", "purge-all-topics"},
                           {"content-type", "application/json"}
                       },
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadMessagesSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void SNSService::PurgeMessages(const QString &topicArn) {
+    QJsonObject jRequest;
+    jRequest["topicArn"] = topicArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "purge-topic"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {

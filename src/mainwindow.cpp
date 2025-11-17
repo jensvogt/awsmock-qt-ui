@@ -9,6 +9,7 @@
 #include "modules/s3/S3BucketList.h"
 #include "modules/s3/S3ObjectList.h"
 #include "utils/About.h"
+#include "utils/EditConfigDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
@@ -194,11 +195,8 @@ void MainWindow::FtpUpload() {
 }
 
 void MainWindow::EditPreferences() {
-    if (EditPreferencesDialog dialog; dialog.exec() == QDialog::Accepted) {
-        const QString info = QString("BaseUrl: %1").arg(dialog.GetBaseUrl());
-
-        QMessageBox::information(nullptr, "User Info", info);
-    }
+    EditConfigDialog dialog;
+    dialog.exec();
 }
 
 void MainWindow::NavigationSelectionChanged(const int currentRow) {

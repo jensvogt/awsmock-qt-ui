@@ -41,6 +41,10 @@ public:
 
     void GetBucketDetails(const QString &bucketName);
 
+    void ListObjects(const QString &bucketName, const QString &prefix);
+
+    void DeleteObject(const QString &bucketName, const QString &key);
+
 signals:
     /**
      * @brief Signaled when a bucket is available
@@ -65,7 +69,7 @@ signals:
      *
      * @param response
      */
-    void ListObjectsSignal(const S3ListObjectsResult &response);
+    void ListObjectsSignal(const S3ListObjectsResponse &response);
 
     /**
      * @brief Reload object list signal

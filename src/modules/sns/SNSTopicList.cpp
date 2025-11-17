@@ -22,7 +22,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
     addButton->setIconSize(QSize(16, 16));
-    addButton->setToolTip("Add a new Topic");
+    addButton->setToolTip("Add a new topic");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
         if (const QString topicName = QInputDialog::getText(nullptr, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
@@ -33,7 +33,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Toolbar add action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
-    purgeAllButton->setToolTip("Purge all Topics");
+    purgeAllButton->setToolTip("Purge all topics");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _snsService->PurgeAllTopics();
     });
@@ -89,7 +89,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->setColumnHidden(7, true);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
@@ -106,7 +106,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
         _sortColumn = column;
         _sortOrder = order;
     });
@@ -157,12 +157,12 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(QIcon(":/icons/edit.png"), "Edit Topic");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Topic");
     editAction->setToolTip("Edit the Topic details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Topic");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Topic");
     purgeAction->setToolTip("Purge the Topic");
 
     menu.addSeparator();

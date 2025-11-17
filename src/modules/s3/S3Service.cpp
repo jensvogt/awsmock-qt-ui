@@ -159,174 +159,66 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       });
 }
 
-// void S3Service::ListMessages(const QString &topicArn, const QString &prefix) {
-//     QJsonObject jSorting;
-//     jSorting["sortDirection"] = -1;
-//     jSorting["column"] = "created";
-//
-//     QJsonArray jSortingArray;
-//     jSortingArray.append(jSorting);
-//
-//     QJsonObject jRequest;
-//     jRequest["topicArn"] = topicArn;
-//     jRequest["prefix"] = prefix;
-//     jRequest["pageSize"] = -1;
-//     jRequest["pageIndex"] = -1;
-//     jRequest["sortColumns"] = jSortingArray;
-//     const QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "list-message-counters"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](const bool success, const QByteArray &response, int, const QString &error) {
-//                           if (success) {
-//                               // The API returns an array of objects
-//                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-//                                   S3ListMessagesResult s3Response;
-//                                   s3Response.FromJson(jsonDoc);
-//                                   emit ListMessagesSignal(s3Response);
-//                               } else {
-//                                   //m_quoteLabel->setText("Error: Failed to parse API response.");
-//                               }
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-//
-// void S3Service::PurgeTopic(const QString &topicArn) {
-//     QJsonObject jRequest;
-//     jRequest["topicArn"] = topicArn;
-//     const QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "list-message-counters"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](bool success, QByteArray response, int status, QString error) {
-//                           if (success) {
-//                               emit ReloadMessagesSignal();
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-//
-// void S3Service::PurgeAllTopics() {
-//     _restManager.post(url,
-//                       nullptr,
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "purge-all-topics"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](bool success, QByteArray response, int status, QString error) {
-//                           if (success) {
-//                               emit ReloadMessagesSignal();
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-//
-// void S3Service::GetTopicDetails(const QString &topicArn) {
-//     QJsonObject jRequest;
-//     jRequest["topicArn"] = topicArn;
-//     QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "get-topic-details"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](bool success, QByteArray response, int status, QString error) {
-//                           if (success) {
-//                               // The API returns an JSON document
-//                               QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-//                               S3GetTopicDetailsResponse response;
-//                               response.FromJson(jsonDoc);
-//
-//                               emit GetTopicDetailsSignal(response);
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-//
-// void S3Service::DeleteTopic(const QString &topicArn) {
-//     QJsonObject jRequest;
-//     jRequest["topicArn"] = topicArn;
-//     const QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "delete-topic"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](const bool success, QByteArray, int, const QString &error) {
-//                           if (success) {
-//                               emit ReloadMessagesSignal();
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-//
-// void S3Service::GetS3MessageDetails(const QString &messageId) {
-//     QJsonObject jRequest;
-//     jRequest["messageId"] = messageId;
-//     QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "get-message-counters"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](const bool success, const QByteArray &response, int, const QString &error) {
-//                           if (success) {
-//                               // The API returns an array containing one object
-//                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-//                               S3GetMessageDetailsResponse s3Response;
-//                               s3Response.FromJson(jsonDoc["message"].toObject());
-//                               emit GetMessageDetailsSignal(s3Response);
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-//
-// void S3Service::DeleteMessage(const QString &topicArn, const QString &messageId) {
-//
-//     QJsonObject jRequest;
-//     jRequest["topicArn"] = topicArn;
-//     jRequest["messageId"] = messageId;
-//     const QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "delete-message"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](const bool success, QByteArray, int, const QString &error) {
-//                           if (success) {
-//                               emit ReloadMessagesSignal();
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
+void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "messages";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["bucket"] = bucketName;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "ListObjectCounters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  S3ListObjectsResponse s3Response;
+                                  s3Response.FromJson(jsonDoc);
+                                  emit ListObjectsSignal(s3Response);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
+
+    QJsonObject jRequest;
+    jRequest["Bucket"] = bucketName;
+    jRequest["Key"] = key;
+    jRequest["VersionId"] = "";
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "DeleteObjectCounter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadObjectsSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}

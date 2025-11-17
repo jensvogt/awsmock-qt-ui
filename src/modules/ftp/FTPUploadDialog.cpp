@@ -4,10 +4,8 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_FTPUploadDialog.h" resolved
 
-#include <QFileDialog>
 #include <modules/ftp/FTPUploadDialog.h>
 #include "ui_FTPUploadDialog.h"
-#include "utils/Configuration.h"
 
 FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::FTPUploadDialog) {
 

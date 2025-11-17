@@ -1,5 +1,5 @@
-#ifndef EDITPREFERENCESDIALOG_H
-#define EDITPREFERENCESDIALOG_H
+#ifndef AWSMOCK_QT_UI_EDIT_PREFERENCES_DIALOG_H
+#define AWSMOCK_QT_UI_EDIT_PREFERENCES_DIALOG_H
 
 
 #include <QDialog>
@@ -10,13 +10,13 @@
 
 #include <utils/Configuration.h>
 
-class EditPreferencesDialog : public QDialog {
-
+class EditPreferencesDialog final : public QDialog {
     Q_OBJECT
 
 public:
     explicit EditPreferencesDialog(QWidget *parent = nullptr);
-    QString GetBaseUrl() const {return baseUrlEdit->text();};
+
+    QString GetBaseUrl() const { return baseUrlEdit->text(); };
 
 signals:
     /**
@@ -32,4 +32,4 @@ private:
     QDialogButtonBox *buttonBox;
 };
 
-#endif // EDITPREFERENCESDIALOG_H
+#endif // AWSMOCK_QT_UI_EDIT_PREFERENCES_DIALOG_H
