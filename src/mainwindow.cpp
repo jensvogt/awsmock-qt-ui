@@ -237,7 +237,8 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
 
             // Route to the message list
             connect(queueListPage, &SQSQueueList::ShowMessages, this,
-                    [=](const QString &queueArn, const QString &queueUrl) {
+                    [this, queueListPage](const QString &queueArn, const QString &queueUrl) {
+
                         // Stop the auto updater
                         queueListPage->StopAutoUpdate();
 
@@ -245,15 +246,13 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
                         const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
 
                         // Create the message list page
-                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn,
-                                                                        queueUrl, nullptr);
+                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, nullptr);
 
                         // Add it to the loaded pages list
                         m_contentPane->addWidget(messageListPage);
                         m_contentPane->setCurrentWidget(messageListPage);
 
-                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
+                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
                         // Connect the back button
                         connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&]() {
@@ -273,7 +272,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
             // Route to the message list
-            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this, [=](const QString &topicArn) {
+            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this, [this, topicListPage](const QString &topicArn) {
                 // Stop the auto updater
                 topicListPage->StopAutoUpdate();
 
@@ -308,7 +307,8 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             connect(bucketListPage, &S3BucketList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
             // Route to the S3 object list
-            connect(bucketListPage, &S3BucketList::ShowS3Objects, this, [=](const QString &bucketName) {
+            connect(bucketListPage, &S3BucketList::ShowS3Objects, this, [this,bucketListPage](const QString &bucketName) {
+
                 // Stop the auto updater
                 bucketListPage->StopAutoUpdate();
 

@@ -1,5 +1,7 @@
 {
   "region": "eu-central-1",
   "baseUrl": "http://localhost:4566",
-  "auto-update-period": 10
+  "auto-update-period": 10,
+  "default-ftp-user": "DEMODLI",
+  "default-ftp-password": "Tg/}2e0m.>_s"
 }

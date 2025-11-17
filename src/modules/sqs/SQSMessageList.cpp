@@ -96,7 +96,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     tableWidget->setColumnHidden(8, true);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
@@ -112,7 +112,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [=](const int column, const Qt::SortOrder order) {
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
         _sortColumn = column;
         _sortOrder = order;
     });

@@ -32,6 +32,8 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
     region = doc.object()["region"].toString();
     baseUrl = doc.object()["baseUrl"].toString();
     autoUpdatePeriod = doc.object()["auto-update-period"].toInt();
+    defaultFtpUser = doc.object()["default-ftp-user"].toString();
+    defaultFtpPassword = doc.object()["default-ftp-password"].toString();
 }
 
 void Configuration::WriteConfigurationFile(const QString &filePath) {

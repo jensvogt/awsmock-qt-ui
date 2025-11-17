@@ -53,6 +53,8 @@ private:
 
     void HandleAccept();
 
+    void BrowseSourceFile();
+
     Ui::FTPUploadDialog *ui;
     QFileInfo sourceFileInfo;
     embeddedmz::CFTPClient *ftpClient;

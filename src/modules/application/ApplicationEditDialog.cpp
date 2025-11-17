@@ -164,7 +164,7 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
     connect(_ui->envTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowEnvironmentContextMenu);
 
     // Connect double-click
-    connect(_ui->envTable, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(_ui->envTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
@@ -180,7 +180,7 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
     });
 
     // Connect add button
-    connect(_ui->envAddButton, &QPushButton::clicked, this, [=]() {
+    connect(_ui->envAddButton, &QPushButton::clicked, this, [this]() {
 
         // Extract ARN and URL
         const QString key;
@@ -221,7 +221,7 @@ void ApplicationEditDialog::SetupTagsTab() {
     connect(_ui->tagTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowTagsContextMenu);
 
     // Connect double-click
-    connect(_ui->tagTable, &QTableView::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(_ui->tagTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
 
         // Get the position
         const int row = index.row();
@@ -238,7 +238,7 @@ void ApplicationEditDialog::SetupTagsTab() {
     });
 
     // Connect add button
-    connect(_ui->tagAddButton, &QPushButton::clicked, this, [=]() {
+    connect(_ui->tagAddButton, &QPushButton::clicked, this, [this]() {
 
         // Extract ARN and URL
         const QString key;
@@ -272,7 +272,7 @@ void ApplicationEditDialog::SetupDependenciesTab() {
     connect(_ui->dependencyList, &QListWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowDependenciesContextMenu);
 
     // Connect double-click
-    connect(_ui->dependencyList, &QListWidget::doubleClicked, this, [=](const QModelIndex &index) {
+    connect(_ui->dependencyList, &QListWidget::doubleClicked, this, [this](const QModelIndex &index) {
 
         // Extract ARN and URL
         const QString name = _ui->dependencyList->currentItem()->text();
@@ -284,7 +284,7 @@ void ApplicationEditDialog::SetupDependenciesTab() {
     });
 
     // Connect add button
-    connect(_ui->dependencyAddButton, &QPushButton::clicked, this, [=]() {
+    connect(_ui->dependencyAddButton, &QPushButton::clicked, this, [this]() {
 
         if (ApplicationDependencyDialog dialog(nullptr, true, nullptr); dialog.exec() == Accepted) {
             if (!_application.dependencies.contains(dialog.GetName())) {

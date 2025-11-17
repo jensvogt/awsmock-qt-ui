@@ -22,7 +22,7 @@ if (MSVC)
     set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
     set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.0/gcc_64")
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CURL_INCLUDE_DIRS "")
     set(CURL_LIB_DIRS "")
@@ -226,13 +226,13 @@ set_target_properties(awsmock-qt-ui PROPERTIES
 )
 
 include(GNUInstallDirs)
-if(MSVC)
+if (MSVC)
     install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_DIR})
-else()
+else ()
     install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif()
+endif ()
 
 if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(awsmock-qt-ui)

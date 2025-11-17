@@ -4,8 +4,10 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_FTPUploadDialog.h" resolved
 
+#include <QFileDialog>
 #include <modules/ftp/FTPUploadDialog.h>
 #include "ui_FTPUploadDialog.h"
+#include "utils/Configuration.h"
 
 FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::FTPUploadDialog) {
 
@@ -19,6 +21,7 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     // Name validator
     const NotEmptyValidator *nameValidator = new NotEmptyValidator(this);
     ui->serverEdit->setValidator(nameValidator);
+    ui->serverEdit->setPlaceholderText("Server hostname");
     connect(ui->serverEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
 
     // Port validator
@@ -40,12 +43,17 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     // Source validator
     const NotEmptyValidator *sourceValidator = new NotEmptyValidator(this);
     ui->sourceEdit->setValidator(sourceValidator);
+    ui->sourceEdit->setPlaceholderText("Source filename");
     connect(ui->sourceEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
 
     // Target validator
     const NotEmptyValidator *targetValidator = new NotEmptyValidator(this);
     ui->targetEdit->setValidator(targetValidator);
+    ui->targetEdit->setPlaceholderText("Target filename");
     connect(ui->targetEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
+
+    // Connect source browse button
+    connect(ui->sourceBrowseButton, &QPushButton::clicked, this, &FTPUploadDialog::BrowseSourceFile);
 
     // Disable browse buttons
     ui->sourceBrowseButton->setDisabled(true);
@@ -61,12 +69,36 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     UpdateLineEditStyle(ui->userEdit->text());
     UpdateLineEditStyle(ui->passwordEdit->text());
 
+    // Set defaults
+    if (!Configuration::instance().GetDefaultFtpUser().isEmpty()) {
+        ui->userEdit->setText(Configuration::instance().GetDefaultFtpUser());
+    }
+    if (!Configuration::instance().GetDefaultFtpPassword().isEmpty()) {
+        ui->passwordEdit->setText(Configuration::instance().GetDefaultFtpPassword());
+    }
     // Enable Drop Events for this widget
     setAcceptDrops(false);
 }
 
 FTPUploadDialog::~FTPUploadDialog() {
     delete ui;
+}
+
+void FTPUploadDialog::BrowseSourceFile() {
+
+    // Create a QFileDialog set to select existing files
+    const QString filter = "All Files (*.*)";
+    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
+
+    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
+            return;
+        }
+        ui->sourceEdit->setText(file.fileName());
+        sourceFileInfo = QFileInfo(file.fileName());
+    }
 }
 
 void FTPUploadDialog::UpdateLineEditStyle(const QString &text) const {
@@ -173,8 +205,7 @@ void FTPUploadDialog::InitFtpClient() {
     const int port = ui->portEdit->text().toInt();
     const std::string stdServer = ui->serverEdit->text().toStdString();
     const std::string stdUser = ui->userEdit->text().toStdString();
-    const std::string stdPassword = ui->passwordEdit->text().toStdString();
-    if (!ftpClient->InitSession(stdServer, port, stdUser, stdPassword)) {
+    if (const std::string stdPassword = ui->passwordEdit->text().toStdString(); !ftpClient->InitSession(stdServer, port, stdUser, stdPassword)) {
         QMessageBox::warning(nullptr, "Error", ("Could not connect to FTP server: " + stdServer).data());
     }
 
@@ -185,9 +216,13 @@ void FTPUploadDialog::InitFtpClient() {
 
     // Enable Drop Events for this widget
     setAcceptDrops(true);
+
+    // Set status
+    ui->statusText->setText("Connected: " + QString::fromStdString(stdServer) + ":" + QString::number(port));
 }
 
 void FTPUploadDialog::dragEnterEvent(QDragEnterEvent *event) {
+
     // Check if the data being dragged contains file URLs
     if (event->mimeData()->hasUrls()) {
         // Accept the proposed action (copy, move, or link)

@@ -107,6 +107,20 @@ public:
     QString GetQtVersion() const { return this->qtVersion; }
 
     /**
+     * @brief Returns the current default FTP user
+     *
+     * @return current FTP user
+     */
+    QString GetDefaultFtpUser() const { return this->defaultFtpUser; }
+
+    /**
+     * @brief Returns the current default FTP password
+     *
+     * @return current FTP password
+     */
+    QString GetDefaultFtpPassword() const { return this->defaultFtpPassword; }
+
+    /**
      * @brief Write a JSON configuration file
      *
      * @param filePath absolute file path of the configuration file
@@ -169,6 +183,16 @@ private:
      * @brief QT Version
      */
     QString qtVersion = QString(qVersion());
+
+    /**
+     * @brief Default FTP user
+     */
+    QString defaultFtpUser = QString("DEMODLI");
+
+    /**
+     * @brief Default FTP user password
+     */
+    QString defaultFtpPassword = QString("Tg/}2e0m.>_s");
 };
 
 #endif // CONFIGURATION_H
