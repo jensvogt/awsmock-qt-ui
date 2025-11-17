@@ -173,21 +173,9 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    /*    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
-    purgeAction->setToolTip("Purge the Queue");
-    QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
-    redriveAction->setToolTip("Redrive all messages");*/
-    menu.addSeparator();
+    //    menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
-
-    /*if (selectedAction == purgeAction) {
-        QString QueueUrl = tableWidget->item(row, 7)->text();
-//        PurgeQueue(QueueUrl);
-    } else if (selectedAction == redriveAction) {
-        QString QueueUrl = tableWidget->item(row, 7)->text();
-//        DeleteQueue(QueueUrl);
-    } else*/
     if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
         const QString messageId = tableWidget->item(row, 0)->text();
         _snsService->DeleteMessage(topicArn, messageId);

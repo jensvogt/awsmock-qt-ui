@@ -25,6 +25,7 @@
         <file>light/start.png</file>
         <file>light/stop.png</file>
         <file>light/stopped.png</file>
+        <file>light/touch.png</file>
         <file>dark/about.png</file>
         <file>dark/add.png</file>
         <file>dark/back.png</file>
@@ -48,5 +49,6 @@
         <file>dark/start.png</file>
         <file>dark/stop.png</file>
         <file>dark/stopped.png</file>
+        <file>dark/touch.png</file>
     </qresource>
 </RCC>

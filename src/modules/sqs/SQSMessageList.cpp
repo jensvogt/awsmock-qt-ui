@@ -175,17 +175,10 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
         purgeAction->setToolTip("Purge the Queue");
         QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
         redriveAction->setToolTip("Redrive all messages");*/
-    menu.addSeparator();
+    //menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    /*if (selectedAction == purgeAction) {
-        QString QueueUrl = tableWidget->item(row, 7)->text();
-//        PurgeQueue(QueueUrl);
-    } else if (selectedAction == redriveAction) {
-        QString QueueUrl = tableWidget->item(row, 7)->text();
-//        DeleteQueue(QueueUrl);
-    } else*/
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
         const QString queueUrl = tableWidget->item(row, 6)->text();
         const QString receiptHandle = tableWidget->item(row, 8)->text();

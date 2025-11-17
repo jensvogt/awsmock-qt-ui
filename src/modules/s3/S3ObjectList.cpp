@@ -166,23 +166,20 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
-    purgeAction->setToolTip("Purge the bucket");
+    //QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
+    //purgeAction->setToolTip("Purge the bucket");
     /*QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all objects");*/
+    QAction *touchAction = menu.addAction(IconUtils::GetIcon("dark", "touch"), "Touch Object");
+    touchAction->setToolTip("Touch the object");
     menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Object");
     deleteAction->setToolTip("Delete the object");
 
-    /*if (selectedAction == purgeAction) {
-        QString QueueUrl = tableWidget->item(row, 7)->text();
-//        PurgeQueue(QueueUrl);
-    } else if (selectedAction == redriveAction) {
-        QString QueueUrl = tableWidget->item(row, 7)->text();
-//        DeleteQueue(QueueUrl);
-    } else*/
-    QString key = tableWidget->item(row, 0)->text();
+    const QString key = tableWidget->item(row, 0)->text();
     if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+        _s3Service->DeleteObject(bucketName, key);
+    } else if (selectedAction == touchAction) {
         _s3Service->DeleteObject(bucketName, key);
     }
 }

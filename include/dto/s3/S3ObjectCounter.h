@@ -28,7 +28,7 @@ struct S3ObjectCounter {
     QDateTime modified;
 
     void FromJson(const QJsonObject &jsonObject) {
-        JsonUtils::WriteJsonString(jsonObject);
+        //JsonUtils::WriteJsonString(jsonObject);
         oid = jsonObject["oid"].toString();
         region = jsonObject["region"].toString();
         bucket = jsonObject["bucketName"].toString();
