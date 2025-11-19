@@ -1,7 +1,4 @@
 #include <modules/dashboard/DashboardService.h>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <utils/Configuration.h>
 
 DashboardService::DashboardService() {
     _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
@@ -20,6 +17,8 @@ DashboardService::~DashboardService() {
 
 
 void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
+    QElapsedTimer timer;
+    timer.start();
     const QJsonObject jRequest{
         {"region", config.region},
         {"name", config.name},
@@ -35,7 +34,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
     // MUST capture explicitly in C++20
     QMetaObject::invokeMethod(
         this,
-        [this, config, json = requestDoc.toJson()]() {
+        [this, config, json = requestDoc.toJson(), timer]() {
             _restManager = new RestManager();
             _restManager->post(
                 _url,
@@ -45,7 +44,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                     {"x-awsmock-action", "get-multi-counters"},
                     {"content-type", "application/json"}
                 },
-                [this, config](const bool success, const QByteArray &response, const int status, const QString &error) {
+                [this, config, timer](const bool success, const QByteArray &response, const int status, const QString &error) {
                     if (!success) {
                         qDebug() << "Status:" << status
                                 << "Config:" << config.name << "/" << config.series
@@ -63,6 +62,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                     counter.FromJson(jsonDoc.object());
                     counter.chartConfig = config;
 
+                    emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
                     emit ReloadMonitoringSignal(counter);
                 }
             );

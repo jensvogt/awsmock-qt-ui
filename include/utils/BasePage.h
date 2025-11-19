@@ -30,7 +30,7 @@ public slots:
      */
     virtual void NotifyStatusBar() {
         const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss");
-        emit StatusUpdateRequested(msg);
+        //emit StatusUpdateRequested(msg);
     }
 
 private:

@@ -3,7 +3,12 @@
 
 #include <QObject>
 #include <QThread>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QElapsedTimer>
 
+#include <utils/Configuration.h>
+#include <utils/ScopedTimer.h>
 #include <utils/RestManager.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <dto/dashboard/DashboardCounterResult.h>

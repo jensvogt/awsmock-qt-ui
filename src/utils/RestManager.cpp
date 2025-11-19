@@ -1,6 +1,4 @@
 #include <utils/RestManager.h>
-#include <QNetworkReply>
-#include <QTimer>
 
 RestManager::RestManager(QObject *parent)
     : QObject(parent) {
@@ -13,7 +11,7 @@ RestManager::~RestManager() = default;
 
 static std::function<void()> makeRequest(
     QNetworkAccessManager &mgr,
-    QNetworkAccessManager::Operation op,
+    const QNetworkAccessManager::Operation op,
     const QUrl &url,
     const QByteArray &body,
     const QMap<QString, QString> &headers,

@@ -25,12 +25,6 @@ public:
 
     ~EditConfigDialog() override;
 
-signals:
-    /**
-     * @brief Sends a config change signal
-     */
-    void ConfigChangedSignal();
-
 private slots:
     void HandleAccept();
 

@@ -125,6 +125,8 @@ set(PROJECT_SOURCES
         src/modules/sqs/SQSMessageAddDialog.cpp
         include/utils/JsonUtils.h
         include/utils/JsonUtils.h
+        include/utils/ScopedTimer.h
+        include/utils/EventBus.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

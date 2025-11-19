@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QTableWidget>
+#include <QElapsedTimer>
 
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <dto/sqs/SQSGetQueueDetailsResponse.h>

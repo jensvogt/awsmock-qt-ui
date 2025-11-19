@@ -7,7 +7,9 @@
 #include <QObject>
 #include <QPointer>
 #include <QUrl>
+#include <QTimer>
 #include <QNetworkRequest>
+#include <QNetworkReply>
 #include <functional>
 
 class RestManager final : public QObject {

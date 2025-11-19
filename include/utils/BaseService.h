@@ -7,7 +7,7 @@
 
 #include <QTimer>
 
-class BaseService : public QObject {
+class BaseService final : public QObject {
     Q_OBJECT
 
 public:
@@ -28,8 +28,7 @@ public:
         _timer->start(5000);
     }
 
-    ~BaseService() override {
-    }
+    ~BaseService() override = default;
 
 private slots:
     void HandleTimer() const {

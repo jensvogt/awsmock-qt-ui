@@ -22,5 +22,7 @@ void BasePage::StartAutoUpdate() {
 
 void BasePage::StopAutoUpdate() const {
     // Stop the auto updater
-    _autoUpdateTimer->stop();
+    if (_autoUpdateTimer) {
+        _autoUpdateTimer->stop();
+    }
 }

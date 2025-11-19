@@ -5,6 +5,9 @@ ApplicationService::ApplicationService() {
 }
 
 void ApplicationService::ListApplications(const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "name";
@@ -26,7 +29,7 @@ void ApplicationService::ListApplications(const QString &prefix) {
                           {"x-awsmock-action", "list-applications"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               // The API returns an array containing one object: [{"q":"quote text", "a":"author"}]
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
@@ -39,6 +42,7 @@ void ApplicationService::ListApplications(const QString &prefix) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
                       });
 }
 

@@ -25,6 +25,8 @@
 #include <utils/BasePage.h>
 #include <modules/infrastructure/InfrastructureService.h>
 
+#include "utils/ScopedTimer.h"
+
 class MainWindow final : public QMainWindow {
     Q_OBJECT
 
@@ -62,13 +64,29 @@ private:
 
     void Exit();
 
+    /**
+     * @brief Main menu bar
+     */
     QMenuBar *mainMenuBar{};
-    QListWidget *m_navPane;
-    QStackedWidget *m_contentPane;
-    QMap<int, BasePage *> loadedPages;
-    QLabel *myStatusBar{};
-    QLabel *timeLabel{};
 
+    /**
+     * @brief Navigation pane
+     */
+    QListWidget *m_navPane;
+
+    /**
+     * @brief Content pane
+     */
+    QStackedWidget *m_contentPane;
+
+    /**
+     * @brief List of loaded pages
+     */
+    QMap<int, BasePage *> loadedPages;
+
+    /**
+     * @brief Current widget shown in the content pane
+     */
     int currentWidgetIndex = 0;
 
     /**
@@ -77,8 +95,23 @@ private:
     InfraStructureService *_infraStructureService{};
 
     /**
+     * @brief Status bar
+     */
+    QStatusBar *_statusBar{};
+
+    /**
      * @brief Server label in status bar
      */
-    QLabel *serverName;
+    QLabel *_serverName{};
+
+    /**
+     * Scoped timer
+     */
+    ScopeTimer *_timer;
+
+    /**
+     * @brief Server label in status bar
+     */
+    QLabel *_timerLabel{};
 };
 #endif // MAINWINDOW_H

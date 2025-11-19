@@ -214,6 +214,7 @@ void Dashboard::LoadContent() {
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
     }
+    NotifyStatusBar();
 }
 
 void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
@@ -258,7 +259,7 @@ void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
         for (const auto &[timestamp, value]: val) {
             double scaled = dashboardCounters.chartConfig.scale > 0 ? value / dashboardCounters.chartConfig.scale : value;
             maxValue = std::max(maxValue, scaled);
-            series->append(timestamp.toMSecsSinceEpoch(), scaled);
+            series->append(static_cast<qreal>(timestamp.toMSecsSinceEpoch()), scaled);
         }
 
         chart->addSeries(series);

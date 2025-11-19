@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QObject>
+#include <QElapsedTimer>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
@@ -14,6 +15,7 @@
 // Awsmock Qt includes
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <utils/EventBus.h>
 #include <dto/application/ApplicationListResponse.h>
 #include <dto/application/ApplicationUploadRequest.h>
 #include <dto/application/ApplicationCreateRequest.h>

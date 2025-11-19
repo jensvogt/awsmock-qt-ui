@@ -10,6 +10,7 @@
 #include "modules/s3/S3ObjectList.h"
 #include "utils/About.h"
 #include "utils/EditConfigDialog.h"
+#include "utils/EventBus.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
@@ -68,14 +69,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     NavigationSelectionChanged(0);
 
     // "Status bar" at the bottom
-    statusBar()->showMessage("Ready");
-    serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""), this);
-    statusBar()->addPermanentWidget(serverName);
+    _serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""), this);
+    _statusBar = new QStatusBar(this);
+    _statusBar->showMessage("Ready");
+    _statusBar->addPermanentWidget(_serverName);
     connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
         if (key == "server.base-url") {
-            serverName->setText(Configuration::instance().GetValue<QString>("server.base-url", ""));
+            _serverName->setText(value);
         }
     });
+
+    _timerLabel = new QLabel("", this);
+    _statusBar->addWidget(_timerLabel);
+    connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &name, qint64 elapsed) {
+        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
+        _statusBar->showMessage(msg);
+    });
+    setStatusBar(_statusBar);
 }
 
 MainWindow::~MainWindow() = default;
@@ -196,9 +206,8 @@ void MainWindow::CleanInfrastructureResponse() {
 }
 
 void MainWindow::FtpUpload() {
-    if (FTPUploadDialog dialog; dialog.exec() == QDialog::Accepted) {
-        //QMessageBox::information(nullptr, "User Info", "info");
-    }
+    FTPUploadDialog dialog;
+    dialog.exec();
 }
 
 void MainWindow::EditPreferences() {
@@ -214,12 +223,18 @@ void MainWindow::NavigationSelectionChanged(const int currentRow) {
         loadedPages[currentRow] = page;
         m_contentPane->addWidget(page);
     }
-    m_contentPane->setCurrentWidget(loadedPages[currentRow]);
+    for (const auto &loadedPage: loadedPages) {
+        if (loadedPage) {
+            loadedPage->StopAutoUpdate();
+        }
+    }
     loadedPages[currentRow]->StartAutoUpdate();
+    m_contentPane->setCurrentWidget(loadedPages[currentRow]);
 }
 
 void MainWindow::UpdateStatusBar(const QString &text) const {
-    statusBar()->showMessage(text);
+    if (_statusBar)
+        _statusBar->showMessage(text);
 }
 
 BasePage *MainWindow::CreatePage(const int currentRow) {
