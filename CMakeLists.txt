@@ -118,6 +118,9 @@ set(PROJECT_SOURCES
         include/dto/sqs/SQSListQueueAttributesResponse.h
         include/dto/sqs/SQSListQueueLambdaTriggersResponse.h
         include/dto/sqs/SQSQueueLambdaTriggerCounter.h
+        include/dto/sqs/SQSSendMessageRequest.h
+        include/dto/sqs/SQSMessageAttribute.h
+        include/dto/sqs/SQSMessageAttributeDataType.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

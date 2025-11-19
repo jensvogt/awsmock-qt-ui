@@ -65,7 +65,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
                                 << tr("Available")
                                 << tr("InFlight")
                                 << tr("Delayed")
-                                << tr("Size")
+                                << tr("Size [kb]")
                                 << tr("Created")
                                 << tr("Modified")
                                 << tr("QueueUrl")
@@ -145,7 +145,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
         SetColumn(tableWidget, r, 1, queueListResponse.queueCounters.at(r).available);
         SetColumn(tableWidget, r, 2, queueListResponse.queueCounters.at(r).invisible);
         SetColumn(tableWidget, r, 3, queueListResponse.queueCounters.at(r).delayed);
-        SetColumn(tableWidget, r, 4, queueListResponse.queueCounters.at(r).size);
+        SetColumn(tableWidget, r, 4, queueListResponse.queueCounters.at(r).size / 1024);
         SetColumn(tableWidget, r, 5, queueListResponse.queueCounters.at(r).created);
         SetColumn(tableWidget, r, 6, queueListResponse.queueCounters.at(r).modified);
         SetHiddenColumn(tableWidget, r, 7, queueListResponse.queueCounters.at(r).queueUrl);

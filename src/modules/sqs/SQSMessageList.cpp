@@ -1,5 +1,5 @@
 
-#include "modules/sqs/SQSMessageAddDialog.h"
+#include <modules/sqs/SQSMessageAddDialog.h>
 #include "utils/IconUtils.h"
 
 SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl) {
@@ -16,7 +16,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     // Toolbar back action
     const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
     backButton->setIconSize(QSize(16, 16));
-    backButton->setToolTip("Add a new Queue");
+    backButton->setToolTip("Go back to the queue list");
     connect(backButton, &QPushButton::clicked, [this]() {
         OnBackClicked();
     });
@@ -29,10 +29,8 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new SQS message");
     connect(addButton, &QPushButton::clicked, []() {
-        if (SQSMessageAddDialog dialog; dialog.exec() == QDialog::Accepted) {
-            qDebug() << "SQS Queue edit dialog exit";
-        }
-
+        SQSMessageAddDialog dialog;
+        dialog.exec();
     });
 
     // Toolbar purge action

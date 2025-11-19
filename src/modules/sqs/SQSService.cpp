@@ -101,7 +101,7 @@ void SQSService::AddQueue(const QString &queueName) {
                       });
 }
 
-void SQSService::UpdateQueue(const UpdateQueueRequest &updateQueueRequest) {
+void SQSService::UpdateQueue(const SQSQueueUpdateRequest &updateQueueRequest) {
     _restManager.post(url,
                       updateQueueRequest.ToJson(),
                       {

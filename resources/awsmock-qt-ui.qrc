@@ -4,6 +4,7 @@
         <file>light/about.png</file>
         <file>light/add.png</file>
         <file>light/back.png</file>
+        <file>light/browse.png</file>
         <file>light/clean.png</file>
         <file>light/delete.png</file>
         <file>light/disabled.png</file>
@@ -29,6 +30,7 @@
         <file>dark/about.png</file>
         <file>dark/add.png</file>
         <file>dark/back.png</file>
+        <file>dark/browse.png</file>
         <file>dark/clean.png</file>
         <file>dark/delete.png</file>
         <file>dark/disabled.png</file>

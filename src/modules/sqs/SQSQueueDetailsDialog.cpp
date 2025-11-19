@@ -53,7 +53,7 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
 
 void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_accepted() {
     if (this->changed) {
-        UpdateQueueRequest updateQueueRequest;
+        SQSQueueUpdateRequest updateQueueRequest;
         updateQueueRequest.queueArn = _queueArn;
         updateQueueRequest.delay = _ui->delayEdit->text().toLong();
         updateQueueRequest.retentionPeriod = _ui->retentionPeriodEdit->text().toLong();

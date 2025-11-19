@@ -1,11 +1,11 @@
-#ifndef UPDATE_QUEUE_REQUEST_H
-#define UPDATE_QUEUE_REQUEST_H
+#ifndef AWSMOC_QT_UI_QUEUE_UPDATE_REQUEST_H
+#define AWSMOC_QT_UI_QUEUE_UPDATE_REQUEST_H
 
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 
-struct UpdateQueueRequest {
+struct SQSQueueUpdateRequest {
 
 public:
 
@@ -37,4 +37,4 @@ public:
     }
 };
 
-#endif // UPDATE_QUEUE_REQUEST_H
+#endif // AWSMOC_QT_UI_QUEUE_UPDATE_REQUEST_H

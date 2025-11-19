@@ -7,7 +7,7 @@
 
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <dto/sqs/SQSGetQueueDetailsResponse.h>
-#include <dto/sqs/UpdateQueueRequest.h>
+#include <dto/sqs/SQSQueueUpdateRequest.h>
 #include <utils/BasePage.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
@@ -70,7 +70,7 @@ public:
      *
      * @param updateQueueRequest update request
      */
-    void UpdateQueue(const UpdateQueueRequest &updateQueueRequest);
+    void UpdateQueue(const SQSQueueUpdateRequest &updateQueueRequest);
 
     /**
      * @brief List SQS queue attributes

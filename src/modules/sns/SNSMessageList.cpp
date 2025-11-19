@@ -18,7 +18,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     // Toolbar back action
     const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
     backButton->setIconSize(QSize(16, 16));
-    backButton->setToolTip("Add a new Queue");
+    backButton->setToolTip("Go back to the topic list");
     connect(backButton, &QPushButton::clicked, [this]() {
         OnBackClicked();
     });
