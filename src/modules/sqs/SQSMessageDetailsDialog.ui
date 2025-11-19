@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1070</width>
-    <height>830</height>
+    <height>845</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,13 +17,13 @@
    <property name="geometry">
     <rect>
      <x>720</x>
-     <y>790</y>
+     <y>810</y>
      <width>341</width>
      <height>32</height>
     </rect>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::NoButton</set>
+    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
@@ -35,11 +35,32 @@
      <height>338</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout" columnstretch="2,1">
+   <layout class="QGridLayout" name="gridLayout" columnstretch="2,0">
     <item row="3" column="0">
      <widget class="QLineEdit" name="messageIdEdit">
       <property name="enabled">
        <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="md5AttributesLabel">
+      <property name="text">
+       <string>MD5 Attributes:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="md5AttributesEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="modifiedLabel">
+      <property name="text">
+       <string>Modified:</string>
       </property>
      </widget>
     </item>
@@ -50,37 +71,34 @@
       </property>
      </widget>
     </item>
-    <item row="10" column="0">
-     <widget class="QLabel" name="receiptHandleLabel">
-      <property name="text">
-       <string>ReceiptHandle:</string>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="regionEdit"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="createdEdit">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="md5BodyLabel">
+    <item row="0" column="1">
+     <widget class="QLabel" name="createdLabel">
       <property name="text">
-       <string>MD5 Body</string>
+       <string>Created:</string>
       </property>
      </widget>
-    </item>
-    <item row="12" column="0">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="regionLabel">
       <property name="text">
        <string>Region:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="messageIdLabel">
+      <property name="text">
+       <string>Message ID:</string>
       </property>
      </widget>
     </item>
@@ -94,34 +112,10 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="messageIdLabel">
+    <item row="10" column="0">
+     <widget class="QLabel" name="receiptHandleLabel">
       <property name="text">
-       <string>Message ID:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="regionEdit"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="createdLabel">
-      <property name="text">
-       <string>Created:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="createdEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="modifiedLabel">
-      <property name="text">
-       <string>Modified:</string>
+       <string>ReceiptHandle:</string>
       </property>
      </widget>
     </item>
@@ -132,17 +126,10 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="1">
-     <widget class="QLineEdit" name="md5AttributesEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="md5AttributesLabel">
+    <item row="4" column="0">
+     <widget class="QLabel" name="md5BodyLabel">
       <property name="text">
-       <string>MD5 Attributes:</string>
+       <string>MD5 Body</string>
       </property>
      </widget>
     </item>
@@ -152,7 +139,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>340</y>
+     <y>360</y>
      <width>1051</width>
      <height>441</height>
     </rect>
@@ -164,37 +151,62 @@
     <attribute name="title">
      <string>Body</string>
     </attribute>
-    <widget class="QPlainTextEdit" name="bodyPlainTextEdit">
+    <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>40</y>
-       <width>1051</width>
-       <height>481</height>
+       <y>0</y>
+       <width>1041</width>
+       <height>411</height>
       </rect>
      </property>
-    </widget>
-    <widget class="QPushButton" name="prettyPushButton">
-     <property name="geometry">
-      <rect>
-       <x>1014</x>
-       <y>10</y>
-       <width>21</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string notr="true"/>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="prettyPushButton">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="bodyPlainTextEdit"/>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QWidget" name="messageAttributeTab">

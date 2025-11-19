@@ -133,6 +133,7 @@ void ApplicationList::LoadContent() {
 }
 
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) {
+    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
     for (auto r = 0; r < listApplicationResponse.applicationCounters.count(); r++) {
@@ -151,6 +152,7 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
     tableWidget->setRowCount(static_cast<int>(listApplicationResponse.applicationCounters.count()));
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
+    tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 

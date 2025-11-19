@@ -23,6 +23,13 @@ private slots:
 
 private:
     /**
+     * @brief Update SQS queue details
+     *
+     * @param response update queue details response DTO
+     */
+    void UpdateQueueDetails(const SQSGetQueueDetailsResponse &response);
+
+    /**
      * @brief Setup of the attributes tab
      */
     void SetupAttributesTab() const;
@@ -45,13 +52,6 @@ private:
      * @param response list lambda triggers response DTO
      */
     void UpdateQueueLambdaTriggers(const SQSListQueueLambdaTriggersResponse &response) const;
-
-    /**
-     * @brief Update SQS queue details
-     *
-     * @param response
-     */
-    void UpdateQueueDetails(const SQSGetQueueDetailsResponse &response);
 
     /**
      * @brief UI components

@@ -131,6 +131,7 @@ void S3BucketList::LoadContent() {
 }
 
 void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) {
+    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
     for (auto r = 0, c = 0; r < listBucketResult.bucketCounters.count(); r++, c = 0) {
@@ -145,6 +146,7 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
     tableWidget->setRowCount(static_cast<int>(listBucketResult.bucketCounters.count()));
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
+    tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 

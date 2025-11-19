@@ -45,6 +45,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     // Pretty print
     _ui->prettyPushButton->setText(nullptr);
     _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
+    connect(_ui->prettyPushButton, &QPushButton::toggled, this, &SQSMessageDetailsDialog::PrettyPrintClicked);
 }
 
 SQSMessageDetailsDialog::~SQSMessageDetailsDialog() {
@@ -84,7 +85,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     }
 }
 
-void SQSMessageDetailsDialog::on_prettyPushButton_toggled(const bool checked) const {
+void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
     if (checked) {
         const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
         const QJsonDocument jDoc = QJsonDocument::fromJson(body);

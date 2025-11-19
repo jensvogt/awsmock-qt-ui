@@ -54,9 +54,9 @@ public:
     /**
      * @brief Redrive Queue
      *
-     * @param queueUrl Queue URL
+     * @param queueArn Queue URL
      */
-    void RedriveQueue(const QString &queueUrl);
+    void RedriveQueue(const QString &queueArn);
 
     /**
      * @brief GetQueueDetails Queue

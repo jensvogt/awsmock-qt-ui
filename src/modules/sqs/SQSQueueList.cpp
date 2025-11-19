@@ -136,6 +136,7 @@ void SQSQueueList::LoadContent() {
 }
 
 void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) {
+    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false); // stop sorting
     for (auto r = 0; r < queueListResponse.queueCounters.count(); r++) {
@@ -154,6 +155,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
     tableWidget->setRowCount(static_cast<int>(queueListResponse.queueCounters.count()));
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
+    tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 
@@ -190,7 +192,7 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == redriveAction) {
-        sqsService->DeleteQueue(queueUrl);
+        sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {
         sqsService->DeleteQueue(queueUrl);
     } else if (selectedAction == editAction) {

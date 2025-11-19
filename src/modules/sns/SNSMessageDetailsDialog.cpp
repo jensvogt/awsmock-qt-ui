@@ -31,6 +31,7 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     // Pretty print
     _ui->prettyPushButton->setText(nullptr);
     _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
+    //connect(_ui->prettyPushButton, &QPushButton::toggled)
 }
 
 SNSMessageDetailsDialog::~SNSMessageDetailsDialog() {

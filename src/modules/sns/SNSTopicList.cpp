@@ -131,22 +131,24 @@ void SNSTopicList::LoadContent() {
 }
 
 void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult) {
+    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
-    for (auto r = 0; r < listTopicResult.topicCounters.count(); r++) {
+    for (auto r = 0, c = 0; r < listTopicResult.topicCounters.count(); r++, c = 0) {
         tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, 0, listTopicResult.topicCounters.at(r).topicName);
-        SetColumn(tableWidget, r, 1, listTopicResult.topicCounters.at(r).messages);
-        SetColumn(tableWidget, r, 2, listTopicResult.topicCounters.at(r).messagesSend);
-        SetColumn(tableWidget, r, 3, listTopicResult.topicCounters.at(r).messagesResend);
-        SetColumn(tableWidget, r, 4, listTopicResult.topicCounters.at(r).size);
-        SetColumn(tableWidget, r, 5, listTopicResult.topicCounters.at(r).created);
-        SetColumn(tableWidget, r, 6, listTopicResult.topicCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, 7, listTopicResult.topicCounters.at(r).topicArn);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).topicName);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).messages);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).messagesSend);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).messagesResend);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).size);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).created);
+        SetColumn(tableWidget, r, c++, listTopicResult.topicCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, c, listTopicResult.topicCounters.at(r).topicArn);
     }
     tableWidget->setRowCount(static_cast<int>(listTopicResult.topicCounters.count()));
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
+    tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 

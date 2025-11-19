@@ -9,16 +9,15 @@
 #include <dto/sns/SNSTopicCounter.h>
 
 struct SNSListTopicResult {
-
-    long total;
+    long total{};
 
     QList<SNSTopicCounter> topicCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
-        QJsonArray jArray = jsonDoc["topicCounters"].toArray();
+        total = jsonDoc.object()["total"].toInt();
 
-        for(const auto &element : jArray) {
+        for (QJsonArray jArray = jsonDoc["topicCounters"].toArray(); const auto &element: jArray) {
             SNSTopicCounter topicCounter;
             topicCounter.FromJson(element.toObject());
             topicCounters.append(topicCounter);

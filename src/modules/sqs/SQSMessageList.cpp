@@ -137,26 +137,27 @@ void SQSMessageList::LoadContent() {
 }
 
 void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) {
+    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->clearContents();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false); // stop sorting
     tableWidget->sortItems(-1);
 
-    for (auto r = 0; r < listMessageResponse.messageCounters.count(); r++) {
+    for (auto r = 0, c = 0; r < listMessageResponse.messageCounters.count(); r++, c = 0) {
         tableWidget->insertRow(r);
-
-        SetColumn(tableWidget, r, 0, listMessageResponse.messageCounters.at(r).messageId);
-        SetColumn(tableWidget, r, 1, listMessageResponse.messageCounters.at(r).contentType);
-        SetColumn(tableWidget, r, 2, listMessageResponse.messageCounters.at(r).size);
-        SetColumn(tableWidget, r, 3, listMessageResponse.messageCounters.at(r).retries);
-        SetColumn(tableWidget, r, 4, listMessageResponse.messageCounters.at(r).created);
-        SetColumn(tableWidget, r, 5, listMessageResponse.messageCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, 6, listMessageResponse.messageCounters.at(r).queueUrl);
-        SetHiddenColumn(tableWidget, r, 7, listMessageResponse.messageCounters.at(r).queueArn);
-        SetHiddenColumn(tableWidget, r, 8, listMessageResponse.messageCounters.at(r).receiptHandle);
+        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).messageId);
+        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).contentType);
+        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).size);
+        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).retries);
+        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).created);
+        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).modified);
+        SetHiddenColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).queueUrl);
+        SetHiddenColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).queueArn);
+        SetHiddenColumn(tableWidget, r, c, listMessageResponse.messageCounters.at(r).receiptHandle);
     }
     tableWidget->setRowCount(static_cast<int>(listMessageResponse.messageCounters.count()));
     tableWidget->setSortingEnabled(true);
+    tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 

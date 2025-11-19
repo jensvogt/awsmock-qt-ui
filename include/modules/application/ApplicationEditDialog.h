@@ -74,7 +74,7 @@ private:
     /**
      * @brief Sort column index environment table
      */
-    int _sortColumnEnv = 1;
+    int _sortColumnEnv = 0;
 
     /**
      * @brief Sort order environment table

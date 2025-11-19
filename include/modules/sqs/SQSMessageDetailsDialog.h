@@ -18,7 +18,7 @@ public:
     ~SQSMessageDetailsDialog() override;
 
 private slots:
-    void on_prettyPushButton_toggled(bool checked) const;
+    void PrettyPrintClicked(bool checked) const;
 
 private:
     void UpdateMessageDetails(const SQSGetMessageDetailsResponse &response) const;

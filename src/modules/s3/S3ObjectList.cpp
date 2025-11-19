@@ -135,6 +135,7 @@ void S3ObjectList::LoadContent() {
 
 void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse) {
 
+    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
     for (auto r = 0, c = 0; r < listObjectResponse.objectCounters.count(); r++, c = 0) {
@@ -150,6 +151,7 @@ void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjec
     tableWidget->setRowCount(static_cast<int>(listObjectResponse.objectCounters.count()));
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
+    tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 
