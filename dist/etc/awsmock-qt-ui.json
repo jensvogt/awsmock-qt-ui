@@ -1,9 +1,9 @@
 {
   "aws": {
     "region": "eu-central-1",
-    "user": "none",
+    "user": "jvo",
     "client-id": "00000000",
-    "account-id": "00000000"
+    "account-id": "000000000000"
   },
   "server": {
     "base-url": "http://localhost:4566",

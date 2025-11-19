@@ -69,6 +69,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // "Status bar" at the bottom
     statusBar()->showMessage("Ready");
+    serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""), this);
+    statusBar()->addPermanentWidget(serverName);
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
+        if (key == "server.base-url") {
+            serverName->setText(Configuration::instance().GetValue<QString>("server.base-url", ""));
+        }
+    });
 }
 
 MainWindow::~MainWindow() = default;

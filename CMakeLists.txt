@@ -137,7 +137,6 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             include/utils/BaseDialog.h
             include/utils/TableUtils.h
             include/utils/Configuration.h
-            include/utils/EditPreferencesDialog.h
             include/utils/RestManager.h
             include/utils/JsonUtils.h
             include/dto/sns/SNSListTopicResult.h
@@ -175,7 +174,6 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/utils/BasePage.cpp
             src/utils/BaseDialog.cpp
             src/utils/Configuration.cpp
-            src/utils/EditPreferencesDialog.cpp
             src/utils/RestManager.cpp
             src/utils/TableUtils.cpp
             src/utils/IconUtils.cpp

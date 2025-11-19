@@ -7,6 +7,7 @@
 
 #include <QDialog>
 
+#include <utils/Configuration.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -24,13 +25,27 @@ public:
 
     ~EditConfigDialog() override;
 
+signals:
+    /**
+     * @brief Sends a config change signal
+     */
+    void ConfigChangedSignal();
+
 private slots:
     void HandleAccept();
 
     void HandleReject();
 
 private:
+    /**
+     * @brief UI components
+     */
     Ui::EditConfigDialog *_ui;
+
+    /**
+     * @brief changed flag
+     */
+    bool _changed = false;
 };
 
 

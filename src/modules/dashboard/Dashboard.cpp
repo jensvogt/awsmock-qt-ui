@@ -6,6 +6,7 @@
 
 #include <modules/dashboard/Dashboard.h>
 #include "ui_Dashboard.h"
+#include "utils/EditConfigDialog.h"
 
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), ui(new Ui::Dashboard), parent(parent) {
@@ -30,6 +31,15 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
 
     // Initialize charts
     Initialize();
+
+    // Edit config dialog
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
+        if (key == "server.base-url") {
+            chartConfigs.clear();
+            Initialize();
+            LoadContent();
+        }
+    });
 }
 
 Dashboard::~Dashboard() {

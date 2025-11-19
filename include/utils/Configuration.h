@@ -17,7 +17,9 @@
 #define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui.json")
 #endif
 
-class Configuration final {
+class Configuration final : public QObject {
+    Q_OBJECT
+
 public:
     /**
      * @brief Constructor
@@ -60,6 +62,7 @@ public:
     void SetValue(const QString &path, T value) {
         JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
         WriteConfigurationFile(filePath);
+        emit ConfigurationChanged(path, value);
     }
 
     /**

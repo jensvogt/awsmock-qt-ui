@@ -52,5 +52,4 @@ void Configuration::WriteConfigurationFile(const QString &filePath) {
     // Write formatted (pretty-printed) JSON
     file.write(doc.toJson(QJsonDocument::Indented));
     file.close();
-    qDebug() << "JSON written to" << filePath;
 }

@@ -23,9 +23,7 @@
 #include <modules/sqs/SQSQueueList.h>
 #include <modules/sqs/SQSMessageList.h>
 #include <utils/BasePage.h>
-#include <utils/EditPreferencesDialog.h>
-
-#include "modules/infrastructure/InfrastructureService.h"
+#include <modules/infrastructure/InfrastructureService.h>
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT
@@ -77,5 +75,10 @@ private:
      * @brief Infrastructure service
      */
     InfraStructureService *_infraStructureService{};
+
+    /**
+     * @brief Server label in status bar
+     */
+    QLabel *serverName;
 };
 #endif // MAINWINDOW_H

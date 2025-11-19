@@ -42,7 +42,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -65,7 +65,7 @@
        <number>0</number>
       </property>
       <item>
-       <layout class="QGridLayout" name="gridLayout" columnstretch="1,2,0">
+       <layout class="QGridLayout" name="gridLayout" columnstretch="1,2">
         <item row="1" column="0">
          <widget class="QLabel" name="baseUrlLabel">
           <property name="text">
@@ -84,7 +84,7 @@
          <widget class="QLineEdit" name="regionEdit"/>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="baseUrlEdit"/>
+         <widget class="QComboBox" name="baseUrlComboBox"/>
         </item>
        </layout>
       </item>
