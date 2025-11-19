@@ -7,7 +7,6 @@
 #include <modules/sqs/SQSMessageAddDialog.h>
 
 #include <utility>
-#include <sys/socket.h>
 
 #include "ui_SQSMessageAddDialog.h"
 
