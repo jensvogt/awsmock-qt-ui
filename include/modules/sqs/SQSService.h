@@ -15,6 +15,9 @@
 #include <dto/sqs/SQSListMessagesResponse.h>
 #include <dto/sqs/SQSListQueueAttributesResponse.h>
 #include <dto/sqs/SQSListQueueLambdaTriggersResponse.h>
+#include <dto/sqs/SQSSendMessageResponse.h>
+
+#include "dto/sqs/SQSSendMessageRequest.h"
 
 class SQSService final : public QObject {
     Q_OBJECT
@@ -118,6 +121,13 @@ public:
     void GetSqsMessageDetails(const QString &messageId);
 
     /**
+     * @brief Send a new message to a SQS queue
+     *
+     * @param request send message request
+     */
+    void SendMessage(const SQSSendMessageRequest &request);
+
+    /**
      * @brief Delete a message
      *
      * @param queueUrl message ID
@@ -141,6 +151,8 @@ signals:
     void ReloadQueuesSignal();
 
     void ReloadMessagesSignal();
+
+    void SendMessagesSignal(const SQSSendMessageResponse &response);
 
 private:
     /**

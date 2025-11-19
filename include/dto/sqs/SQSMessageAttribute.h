@@ -3,7 +3,6 @@
 
 // C++ standard includes
 #include <string>
-#include <vector>
 
 #include <dto/sqs/SQSMessageAttributeDataType.h>
 
@@ -11,12 +10,12 @@ struct MessageAttribute final {
     /**
      * Message attribute string value
      */
-    std::string stringValue = {};
+    QString stringValue = {};
 
     /**
      * Message attribute number value
      */
-    std::vector<std::string> stringListValues = {};
+    QList<QString> stringListValues = {};
 
     /**
      * Message attribute binary value
@@ -26,7 +25,21 @@ struct MessageAttribute final {
     /**
      * Logical data type
      */
-    AwsMock::Dto::SQS::MessageAttributeDataType dataType{};
+    MessageAttributeDataType dataType{};
+
+    void FromJson(const QJsonDocument &jsonDoc) {
+        stringValue = jsonDoc["stringValue"].toString();
+        dataType = MessageAttributeDataTypeFromString(jsonDoc["stringListValues"].toString().toStdString());
+        //binaryValue = (jsonDoc["binaryValue"].toString()..c_str();
+    }
+
+    [[nodiscard]] QByteArray ToJson() const {
+        QJsonObject jObject;
+        jObject["stringValue"] = stringValue;
+        jObject["dataType"] = QString::fromStdString(MessageAttributeDataTypeToString(dataType));
+        const QJsonDocument jDoc(jObject);
+        return jDoc.toJson();
+    }
 };
 
 #endif// AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_H

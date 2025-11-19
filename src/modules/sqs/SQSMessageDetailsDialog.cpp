@@ -88,13 +88,24 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
 void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
     if (checked) {
         const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyPlainTextEdit->clear();
-        _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
+        QJsonParseError error;
+        const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
+        if (error.error == QJsonParseError::NoError) {
+            _ui->bodyPlainTextEdit->clear();
+            qDebug() << jDoc.toJson(QJsonDocument::Indented);
+            _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
+        } else {
+            QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
+        }
     } else {
         const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyPlainTextEdit->clear();
-        _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
+        QJsonParseError error;
+        const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
+        if (error.error == QJsonParseError::NoError) {
+            _ui->bodyPlainTextEdit->clear();
+            _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
+        } else {
+            QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
+        }
     }
 }

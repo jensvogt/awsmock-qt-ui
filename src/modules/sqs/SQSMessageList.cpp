@@ -28,8 +28,8 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new SQS message");
-    connect(addButton, &QPushButton::clicked, []() {
-        SQSMessageAddDialog dialog;
+    connect(addButton, &QPushButton::clicked, [this]() {
+        SQSMessageAddDialog dialog(_queueUrl);
         dialog.exec();
     });
 

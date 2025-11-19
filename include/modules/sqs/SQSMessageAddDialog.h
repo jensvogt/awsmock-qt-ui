@@ -13,6 +13,7 @@
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 #include <modules/sqs/SQSMessageList.h>
+#include <dto/sqs/SQSSendMessageRequest.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -26,11 +27,13 @@ class SQSMessageAddDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit SQSMessageAddDialog(QWidget *parent = nullptr);
+    explicit SQSMessageAddDialog(QString queueUrl, QWidget *parent = nullptr);
 
     ~SQSMessageAddDialog() override;
 
-    void HandleAccept();
+    void HandleAccept() const;
+
+    void HandleSendMessageSignal(const SQSSendMessageResponse &response);
 
     void HandleReject();
 
@@ -50,6 +53,11 @@ private:
      * @brief SQS REST service
      */
     SQSService *_sqsService{};
+
+    /**
+     * @brief Queue URL
+     */
+    QString _queueUrl;
 };
 
 

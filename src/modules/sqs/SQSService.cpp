@@ -227,7 +227,7 @@ void SQSService::RedriveQueue(const QString &queueArn) {
                           {"x-awsmock-action", "redrive-messages"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
@@ -341,6 +341,31 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void SQSService::SendMessage(const SQSSendMessageRequest &request) {
+
+    _restManager.post(url,
+                      request.ToJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "send-message"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SQSSendMessageResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit SendMessagesSignal(sqsResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

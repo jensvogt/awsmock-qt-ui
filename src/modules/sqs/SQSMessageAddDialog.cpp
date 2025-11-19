@@ -5,14 +5,17 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_SQSMessageAddDialog.h" resolved
 
 #include <modules/sqs/SQSMessageAddDialog.h>
+
+#include <utility>
+#include <sys/socket.h>
+
 #include "ui_SQSMessageAddDialog.h"
 
-SQSMessageAddDialog::SQSMessageAddDialog(QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog) {
+SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog), _queueUrl(std::move(queueUrl)) {
 
     // Connect service events
     _sqsService = new SQSService();
-    //connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
-    //connect(_sqsService, &SQSService::ReloadMessagesSignal, this, &SQSMessageList::HandleReloadMessageSignal);
+    connect(_sqsService, &SQSService::SendMessagesSignal, this, &SQSMessageAddDialog::HandleSendMessageSignal);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SQSMessageAddDialog::HandleAccept);
@@ -55,10 +58,29 @@ SQSMessageAddDialog::~SQSMessageAddDialog() {
     delete _ui;
 }
 
-void SQSMessageAddDialog::HandleAccept() {
-    /*if (this->_changed) {
-        _sqsService->UpdateApplication(_application);
-    }*/
+void SQSMessageAddDialog::HandleAccept() const {
+    SQSSendMessageRequest request;
+    request.region = Configuration::instance().GetRegion();
+    request.queueUrl = _queueUrl;
+    request.body = _ui->bodyEdit->toPlainText().toUtf8();
+
+    const int rows = _ui->tableWidget->rowCount();
+
+    for (int r = 0; r < rows; ++r) {
+        MessageAttribute messageAttribute;
+        messageAttribute.dataType = STRING;
+
+        const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
+        const QTableWidgetItem *value = _ui->tableWidget->item(r, 1);
+        messageAttribute.stringValue = value->text().toUtf8();
+        request.messageAttributes[key->text().toStdString()] = messageAttribute;
+    }
+    _sqsService->SendMessage(request);
+}
+
+void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
+
+    QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
     accept();
 }
 
@@ -67,7 +89,6 @@ void SQSMessageAddDialog::HandleReject() {
 }
 
 void SQSMessageAddDialog::HandleBrowseButton() const {
-
 
     // Create a QFileDialog set to select existing files
     const QString filter = "All Files (*.*)";
