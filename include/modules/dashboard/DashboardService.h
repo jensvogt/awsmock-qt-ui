@@ -1,46 +1,30 @@
 #ifndef DASHBOARD_SERVICE_H
 #define DASHBOARD_SERVICE_H
 
-#include <QMessageBox>
 #include <QObject>
-#include <utils/Configuration.h>
+#include <QThread>
+
 #include <utils/RestManager.h>
-#include <utils/JsonUtils.h>
-
-#include <utils/BaseService.h>
-#include <dto/dashboard/DashboardCounterResult.h>
 #include <modules/dashboard/ChartConfig.h>
+#include <dto/dashboard/DashboardCounterResult.h>
 
-class DashboardService final : public BaseService {
+class DashboardService : public QObject {
     Q_OBJECT
 
 public:
-    /**
-     * @brief SNSService
-     */
     DashboardService();
 
-    /**
-     * @brief Get a multi series counters
-     *
-     * @param config chart configuration
-     */
+    ~DashboardService() override;
+
     void GetMultiSeriesCounter(const ChartConfig &config);
 
 signals:
-    void ReloadMonitoringSignal(const DashboardCounter &result);
+    void ReloadMonitoringSignal(const DashboardCounter &counter);
 
 private:
-    /**
-     * @brief HTTP REST manager
-     */
-    RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl url;
+    QUrl _url;
+    RestManager *_restManager = nullptr;
+    QThread _networkThread;
 };
-
 
 #endif // DASHBOARD_SERVICE_H

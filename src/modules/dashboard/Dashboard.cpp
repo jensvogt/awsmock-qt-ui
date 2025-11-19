@@ -7,8 +7,6 @@
 #include <modules/dashboard/Dashboard.h>
 #include "ui_Dashboard.h"
 
-#include <QGuiApplication>
-#include <thread>
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), ui(new Ui::Dashboard), parent(parent) {
     // Connect service
@@ -41,8 +39,8 @@ Dashboard::~Dashboard() {
 void Dashboard::Initialize() {
 
     ChartConfig config;
-    config.title = "Total CPU";
     config.region = Configuration::instance().GetRegion();
+    config.title = "Total CPU";
     config.name = "cpu_usage_total";
     config.series = "cpu_type";
     config.xAxisText = "Time";
@@ -55,7 +53,6 @@ void Dashboard::Initialize() {
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "AwsMock CPU";
-    config.region = Configuration::instance().GetRegion();
     config.name = "cpu_usage_awsmock";
     config.series = "cpu_type";
     config.xAxisText = "Time";
@@ -65,10 +62,10 @@ void Dashboard::Initialize() {
     config.row = 0;
     config.column = 1;
     config.seriesNames = {"total", "system", "user"};
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Total Memory";
-    config.region = Configuration::instance().GetRegion();
     config.name = "memory_usage_total";
     config.series = "mem_type";
     config.xAxisText = "Time";
@@ -78,16 +75,16 @@ void Dashboard::Initialize() {
     config.row = 0;
     config.column = 2;
     config.seriesNames = {"total"};
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "AwsMock Memory";
-    config.region = Configuration::instance().GetRegion();
     config.name = "memory_usage_awsmock";
     config.series = "mem_type";
     config.xAxisText = "Time";
     config.xAxisFormat = "HH:mm";
     config.yAxisText = "Memory [MB]";
-    config.yAxisFormat = "%.1f";
+    config.yAxisFormat = "%d";
     config.row = 1;
     config.scale = 1024 * 1024;
     config.column = 0;
@@ -95,20 +92,19 @@ void Dashboard::Initialize() {
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Total threads";
-    config.region = Configuration::instance().GetRegion();
     config.name = "total_threads";
     config.series = "";
     config.xAxisText = "Time";
     config.xAxisFormat = "HH:mm";
     config.yAxisText = "Threads";
-    config.yAxisFormat = "%.0f";
+    config.yAxisFormat = "%d";
     config.row = 1;
     config.column = 1;
     config.seriesNames = {"total"};
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Gateway Response Time";
-    config.region = Configuration::instance().GetRegion();
     config.name = "gateway_http_timer";
     config.series = "method";
     config.xAxisText = "Time";
@@ -118,10 +114,10 @@ void Dashboard::Initialize() {
     config.row = 1;
     config.column = 2;
     config.limit = 5;
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Gateway Requests";
-    config.region = Configuration::instance().GetRegion();
     config.name = "gateway_http_counter";
     config.series = "method";
     config.xAxisText = "Time";
@@ -131,23 +127,23 @@ void Dashboard::Initialize() {
     config.row = 2;
     config.column = 0;
     config.limit = 5;
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Docker CPU";
-    config.region = Configuration::instance().GetRegion();
     config.name = "docker_cpu_total_counter";
     config.series = "container";
     config.xAxisText = "Time";
     config.xAxisFormat = "HH:mm";
     config.yAxisText = "% CPU";
-    config.yAxisFormat = "%.1f";
+    config.yAxisFormat = "%.3f";
     config.row = 2;
     config.column = 1;
     config.limit = 5;
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Docker Memory";
-    config.region = Configuration::instance().GetRegion();
     config.name = "docker_memory_counter";
     config.series = "container";
     config.xAxisText = "Time";
@@ -157,6 +153,7 @@ void Dashboard::Initialize() {
     config.row = 2;
     config.column = 2;
     config.limit = 5;
+    config.scale = -1;
     chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);
 }
 
@@ -178,10 +175,6 @@ ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
     axisY->setLabelFormat(chartConfig.yAxisFormat);
     axisY->setTitleText(chartConfig.yAxisText);
     chart->addAxis(axisY, Qt::AlignLeft);
-
-    // Auto-range axes to series range
-    axisX->setRange(chartConfig.start, chartConfig.end);
-
     chart->setAnimationOptions(QChart::NoAnimation);
 
     const auto chartView = new CrosshairChartView(chart, this);
@@ -217,36 +210,55 @@ void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
 
     const auto chart = dashboardCounters.chartConfig.chart;
 
-    // Set legends
+    // Reset chart
+    chart->removeAllSeries();
+    chart->removeAxis(chart->axes(Qt::Horizontal).value(0));
+    chart->removeAxis(chart->axes(Qt::Vertical).value(0));
+
+    // Hide legend when single series
     if (dashboardCounters.valueMap.size() == 1) {
         chart->legend()->hide();
+    } else {
+        chart->legend()->show();
     }
 
-    double max = 0;
-    chart->removeAllSeries();
+    // X AXIS (DateTime)
+    auto *axisX = new QDateTimeAxis(chart);
+    axisX->setFormat(dashboardCounters.chartConfig.xAxisFormat);
+    axisX->setTitleText(dashboardCounters.chartConfig.xAxisText);
+    axisX->setTickCount(6);
+    axisX->setRange(dashboardCounters.chartConfig.start, dashboardCounters.chartConfig.end);
+    chart->addAxis(axisX, Qt::AlignBottom);
+
+    // Y AXIS (Numeric)
+    auto *axisY = new QValueAxis(chart);
+    axisY->setLabelFormat(dashboardCounters.chartConfig.yAxisFormat);
+    axisY->setTitleText(dashboardCounters.chartConfig.yAxisText);
+    chart->addAxis(axisY, Qt::AlignLeft);
+
+    chart->setAnimationOptions(QChart::NoAnimation);
+
+    // Build series
+    double maxValue = 0;
     for (auto const &[key, val]: dashboardCounters.valueMap) {
 
-        const auto series = new QLineSeries();
-        for (const auto &[timestamp, value]: val) {
-            if (dashboardCounters.chartConfig.scale > 0) {
-                max = std::max(value / dashboardCounters.chartConfig.scale, max);
-                series->append(static_cast<qreal>(timestamp.toMSecsSinceEpoch()), value / dashboardCounters.chartConfig.scale);
-            } else {
-                max = std::max(value, max);
-                series->append(static_cast<qreal>(timestamp.toMSecsSinceEpoch()), value);
-            }
-        }
+        auto *series = new QLineSeries(chart);
         series->setName(key);
+
+        for (const auto &[timestamp, value]: val) {
+            double scaled = dashboardCounters.chartConfig.scale > 0 ? value / dashboardCounters.chartConfig.scale : value;
+            maxValue = std::max(maxValue, scaled);
+            series->append(timestamp.toMSecsSinceEpoch(), scaled);
+        }
+
         chart->addSeries(series);
+
+        // Attach after addSeries
+        series->attachAxis(axisX);
+        series->attachAxis(axisY);
     }
 
-    if (auto xAxis = chart->axes(Qt::Vertical); !xAxis.isEmpty()) {
-        const auto axisX = qobject_cast<QValueAxis *>(xAxis.first());
-        axisX->setRange(static_cast<qreal>(dashboardCounters.chartConfig.start.toMSecsSinceEpoch()), static_cast<qreal>(dashboardCounters.chartConfig.end.toMSecsSinceEpoch()));
-    }
-    if (auto yAxis = chart->axes(Qt::Vertical); !yAxis.isEmpty()) {
-        const auto axisY = qobject_cast<QValueAxis *>(yAxis.first());
-        axisY->setRange(0, max + 0.5 * max);
-    }
+    axisY->setRange(0, maxValue);
+
     chart->update();
 }

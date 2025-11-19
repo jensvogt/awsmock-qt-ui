@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1353</width>
-    <height>647</height>
+    <height>750</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,13 +17,13 @@
    <property name="geometry">
     <rect>
      <x>950</x>
-     <y>610</y>
+     <y>710</y>
      <width>391</width>
      <height>32</height>
     </rect>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
@@ -32,7 +32,7 @@
      <x>10</x>
      <y>10</y>
      <width>1331</width>
-     <height>386</height>
+     <height>341</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" columnstretch="2,1,1">
@@ -48,13 +48,27 @@
     <property name="bottomMargin">
      <number>5</number>
     </property>
-    <item row="5" column="0">
-     <widget class="QLineEdit" name="queueUrlEdit">
-      <property name="enabled">
-       <bool>false</bool>
+    <item row="10" column="1">
+     <widget class="QLabel" name="delayedLabel">
+      <property name="text">
+       <string>Delayed:</string>
       </property>
-      <property name="readOnly">
-       <bool>true</bool>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="retentionPeriodEdit"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="dlqArnLabel">
+      <property name="text">
+       <string>DLQ ARN:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="ownerLabel">
+      <property name="text">
+       <string>Owner:</string>
       </property>
      </widget>
     </item>
@@ -65,6 +79,16 @@
       </property>
      </widget>
     </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="maxMessageSizeEditLabel">
+      <property name="text">
+       <string>Max Message Size (kB):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="visibilityEdit"/>
+    </item>
     <item row="2" column="1">
      <widget class="QLabel" name="delayLabel">
       <property name="text">
@@ -72,34 +96,17 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="1">
-     <widget class="QLabel" name="availableLabel">
-      <property name="text">
-       <string>Available:</string>
+    <item row="9" column="0">
+     <widget class="QLineEdit" name="dlqMaxReceiveEdit">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="queueUrlLabel">
-      <property name="text">
-       <string>Queue URL:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="queueNameLabel">
-      <property name="text">
-       <string>Queue Name:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLineEdit" name="retentionPeriodEdit"/>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="retentionPeriodLabel">
-      <property name="text">
-       <string>RetentionPeriod (s):</string>
+    <item row="9" column="2">
+     <widget class="QLineEdit" name="modifiedEdit">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -110,8 +117,12 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="delayEdit"/>
+    <item row="2" column="2">
+     <widget class="QLabel" name="messageCountLabel">
+      <property name="text">
+       <string>Message Count:</string>
+      </property>
+     </widget>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="queueArnLabel">
@@ -120,27 +131,10 @@
       </property>
      </widget>
     </item>
-    <item row="12" column="1">
-     <spacer name="verticalSpacer">
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="visibilityLabel">
+    <item row="8" column="2">
+     <widget class="QLabel" name="modifiedLabel">
       <property name="text">
-       <string>Visibility (s):</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="1">
-     <widget class="QLabel" name="delayedLabel">
-      <property name="text">
-       <string>Delayed:</string>
+       <string>Modified:</string>
       </property>
      </widget>
     </item>
@@ -154,31 +148,17 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="maxMessageSizeEditLabel">
+    <item row="0" column="2">
+     <widget class="QLabel" name="retentionPeriodLabel">
       <property name="text">
-       <string>Max Message Size (kB):</string>
+       <string>RetentionPeriod (s):</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QLabel" name="messageCountLabel">
+    <item row="6" column="2">
+     <widget class="QLabel" name="createdLabel">
       <property name="text">
-       <string>Message Count:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
-     <widget class="QLabel" name="invisibleLbel">
-      <property name="text">
-       <string>Invisible:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QLabel" name="messageSizeLabel">
-      <property name="text">
-       <string>Total Size (kB):</string>
+       <string>Created:</string>
       </property>
      </widget>
     </item>
@@ -192,23 +172,27 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="visibilityEdit"/>
+    <item row="7" column="0">
+     <widget class="QLineEdit" name="dlqArnEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="queueNameEdit">
+    <item row="4" column="0">
+     <widget class="QLabel" name="queueUrlLabel">
+      <property name="text">
+       <string>Queue URL:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLineEdit" name="queueUrlEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="readOnly">
        <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="1">
-     <widget class="QLineEdit" name="invisibleEdit">
-      <property name="enabled">
-       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -222,22 +206,60 @@
       </property>
      </widget>
     </item>
-    <item row="11" column="1">
-     <widget class="QLineEdit" name="delayedEdit">
+    <item row="0" column="0">
+     <widget class="QLabel" name="queueNameLabel">
+      <property name="text">
+       <string>Queue Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="delayEdit"/>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLineEdit" name="createdEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="dlqArnLabel">
+    <item row="6" column="1">
+     <widget class="QLabel" name="availableLabel">
       <property name="text">
-       <string>DLQ ARN:</string>
+       <string>Available:</string>
       </property>
      </widget>
     </item>
-    <item row="7" column="0">
-     <widget class="QLineEdit" name="dlqArnEdit">
+    <item row="8" column="0">
+     <widget class="QLabel" name="dlqMacReceivedLabel">
+      <property name="text">
+       <string>DLQ Max Receive:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="visibilityLabel">
+      <property name="text">
+       <string>Visibility (s):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLabel" name="messageSizeLabel">
+      <property name="text">
+       <string>Total Size (kB):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLabel" name="invisibleLbel">
+      <property name="text">
+       <string>Invisible:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QLineEdit" name="invisibleEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -250,52 +272,20 @@
       </property>
      </widget>
     </item>
-    <item row="10" column="0">
-     <widget class="QLabel" name="ownerLabel">
-      <property name="text">
-       <string>Owner:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="dlqMacReceivedLabel">
-      <property name="text">
-       <string>DLQ Max Receive:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="0">
-     <widget class="QLineEdit" name="dlqMaxReceiveEdit">
+    <item row="11" column="1">
+     <widget class="QLineEdit" name="delayedEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="6" column="2">
-     <widget class="QLabel" name="createdLabel">
-      <property name="text">
-       <string>Created:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="2">
-     <widget class="QLineEdit" name="createdEdit">
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="queueNameEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
-     </widget>
-    </item>
-    <item row="8" column="2">
-     <widget class="QLabel" name="modifiedLabel">
-      <property name="text">
-       <string>Modified:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="2">
-     <widget class="QLineEdit" name="modifiedEdit">
-      <property name="enabled">
-       <bool>false</bool>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -305,22 +295,141 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>330</y>
+     <y>360</y>
      <width>1331</width>
-     <height>271</height>
+     <height>341</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
-   <widget class="QWidget" name="tab">
+   <widget class="QWidget" name="attributesTab">
     <attribute name="title">
-     <string>Tab 1</string>
+     <string>Attributes</string>
     </attribute>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1331</width>
+       <height>311</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="attributeRefreshButton">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="attributesTable"/>
+      </item>
+     </layout>
+    </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="lambdaTriggerTab">
     <attribute name="title">
-     <string>Tab 2</string>
+     <string>Lambda Triggers</string>
+    </attribute>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1331</width>
+       <height>311</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="lambdaRefreshButton">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="lambdaTable"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tagsTab">
+    <attribute name="title">
+     <string>Tags</string>
     </attribute>
    </widget>
   </widget>

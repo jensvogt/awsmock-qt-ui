@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1353</width>
-    <height>674</height>
+    <height>707</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,10 @@
      <x>10</x>
      <y>10</y>
      <width>1331</width>
-     <height>287</height>
+     <height>262</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0" columnstretch="2,1,1,1">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0" columnstretch="2,1,1,1">
     <property name="leftMargin">
      <number>5</number>
     </property>
@@ -35,29 +35,29 @@
     <property name="bottomMargin">
      <number>5</number>
     </property>
-    <item row="6" column="3">
-     <widget class="QLabel" name="modifiedLabel">
-      <property name="text">
-       <string>Modified:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="3">
-     <widget class="QLineEdit" name="createdEdit">
+    <item row="9" column="3">
+     <widget class="QLineEdit" name="statusEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="3" column="3">
-     <widget class="QLabel" name="createdLabel">
+    <item row="8" column="1">
+     <widget class="QLabel" name="enabledLabel">
       <property name="text">
-       <string>Created:</string>
+       <string>Enabled:</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="2">
-     <widget class="QLineEdit" name="privatePortEdit">
+    <item row="9" column="0">
+     <widget class="QLineEdit" name="containerNameEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <widget class="QLineEdit" name="lastStartedEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -70,17 +70,17 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="1">
-     <widget class="QLabel" name="enabledLabel">
+    <item row="3" column="0">
+     <widget class="QLabel" name="archiveLabel">
       <property name="text">
-       <string>Enabled:</string>
+       <string>Archive:</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="2">
-     <widget class="QLabel" name="imageIdLabel">
+    <item row="3" column="3">
+     <widget class="QLabel" name="createdLabel">
       <property name="text">
-       <string>Image ID:</string>
+       <string>Created:</string>
       </property>
      </widget>
     </item>
@@ -91,75 +91,6 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="3">
-     <widget class="QLineEdit" name="lastStartedEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLabel" name="publicPortLabel">
-      <property name="text">
-       <string>Public Port:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="3">
-     <widget class="QLabel" name="statusLabel">
-      <property name="text">
-       <string>Status:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="0">
-     <widget class="QLineEdit" name="containerNameEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="3">
-     <widget class="QLineEdit" name="statusEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLineEdit" name="archiveEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="2">
-     <widget class="QLineEdit" name="imageIdEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="runtimeEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="3">
-     <widget class="QLineEdit" name="modifiedEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
     <item row="7" column="0">
      <widget class="QLineEdit" name="runTypeEdit">
       <property name="enabled">
@@ -167,10 +98,17 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="userLabel">
+    <item row="4" column="2">
+     <widget class="QLineEdit" name="privatePortEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QCheckBox" name="enabledCheckBox">
       <property name="text">
-       <string>User:</string>
+       <string/>
       </property>
      </widget>
     </item>
@@ -181,17 +119,10 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="runTypeLabel">
-      <property name="text">
-       <string>Type:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="privatePortLabel">
-      <property name="text">
-       <string>Private Port:</string>
+    <item row="7" column="3">
+     <widget class="QLineEdit" name="modifiedEdit">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -199,47 +130,6 @@
      <widget class="QLabel" name="lastStartedLabel">
       <property name="text">
        <string>Last Started:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QLineEdit" name="publicPortEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="archiveLabel">
-      <property name="text">
-       <string>Archive:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="2">
-     <widget class="QLabel" name="containerIdLabel">
-      <property name="text">
-       <string>Container ID:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="9" column="1">
-     <widget class="QCheckBox" name="enabledCheckBox">
-      <property name="text">
-       <string/>
       </property>
      </widget>
     </item>
@@ -253,15 +143,8 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="2">
-     <widget class="QLineEdit" name="containerIdEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="userEdit">
+    <item row="4" column="0">
+     <widget class="QLineEdit" name="archiveEdit">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -284,6 +167,103 @@
       </property>
      </widget>
     </item>
+    <item row="6" column="3">
+     <widget class="QLabel" name="modifiedLabel">
+      <property name="text">
+       <string>Modified:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="runTypeLabel">
+      <property name="text">
+       <string>Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="runtimeEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLineEdit" name="imageIdEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QLineEdit" name="containerIdEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="userEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="3">
+     <widget class="QLineEdit" name="createdEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="3">
+     <widget class="QLabel" name="statusLabel">
+      <property name="text">
+       <string>Status:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QLabel" name="imageIdLabel">
+      <property name="text">
+       <string>Image ID:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="privatePortLabel">
+      <property name="text">
+       <string>Private Port:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="publicPortLabel">
+      <property name="text">
+       <string>Public Port:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLineEdit" name="publicPortEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QLabel" name="containerIdLabel">
+      <property name="text">
+       <string>Container ID:</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0" colspan="4">
      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0">
       <property name="topMargin">
@@ -295,7 +275,7 @@
       <item>
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -334,13 +314,20 @@
       </item>
      </layout>
     </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="userLabel">
+      <property name="text">
+       <string>User:</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>250</y>
+     <y>280</y>
      <width>1331</width>
      <height>381</height>
     </rect>
@@ -382,7 +369,7 @@
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -438,7 +425,7 @@
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -503,7 +490,7 @@
         <item>
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -532,14 +519,14 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>915</x>
-     <y>640</y>
+     <x>920</x>
+     <y>670</y>
      <width>421</width>
      <height>26</height>
     </rect>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
  </widget>

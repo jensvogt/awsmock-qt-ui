@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <QBoxLayout>
 #include <QLabel>
+#include <QMessageBox>
 #include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChartView>
@@ -15,7 +16,7 @@
 
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-
+#include <utils/Configuration.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/DashboardService.h>
 #include <modules/dashboard/ChartConfig.h>

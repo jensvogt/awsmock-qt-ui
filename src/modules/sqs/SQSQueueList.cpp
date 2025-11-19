@@ -166,15 +166,15 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
 
-    QAction *editAction = menu.addAction(QIcon(":/icons/edit.png"), "Edit Queue");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Queue");
     purgeAction->setToolTip("Purge the Queue");
 
-    QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
+    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("dark", "redrive"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages");
 
     menu.addSeparator();
@@ -195,8 +195,6 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
         sqsService->DeleteQueue(queueUrl);
     } else if (selectedAction == editAction) {
         SQSQueueDetailsDialog dialog(queueArn);
-        if (dialog.exec() == QDialog::Accepted) {
-            qDebug() << "SQS Queue edit dialog exit";
-        }
+        dialog.exec();
     }
 }

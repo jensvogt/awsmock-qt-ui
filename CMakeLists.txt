@@ -112,6 +112,12 @@ set(PROJECT_SOURCES
         src/utils/EditConfigDialog.cpp
         include/utils/EditConfigDialog.h
         src/utils/EditConfigDialog.ui
+        src/utils/RestManager.cpp
+        include/dto/sqs/SQSQueueAttributeCounter.h
+        include/dto/sqs/SQSQueueAttributeCounter.h
+        include/dto/sqs/SQSListQueueAttributesResponse.h
+        include/dto/sqs/SQSListQueueLambdaTriggersResponse.h
+        include/dto/sqs/SQSQueueLambdaTriggerCounter.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -244,6 +250,12 @@ if (MSVC)
 else ()
     install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    # Generate the deployment script for the target MyApp.
+    qt_generate_deploy_app_script(
+            TARGET awsmock-qt-ui
+            OUTPUT_SCRIPT deploy_script
+            NO_UNSUPPORTED_PLATFORM_ERROR)
+    install(SCRIPT ${deploy_script})
 endif ()
 
 if (QT_VERSION_MAJOR EQUAL 6)

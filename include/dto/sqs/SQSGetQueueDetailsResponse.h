@@ -6,9 +6,6 @@
 #include <QJsonArray>
 
 struct SQSGetQueueDetailsResponse {
-
-public:
-
     QString queueName;
 
     QString queueUrl;

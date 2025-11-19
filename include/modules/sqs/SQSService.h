@@ -13,6 +13,8 @@
 #include <utils/RestManager.h>
 #include <dto/sqs/SQSListQueueResponse.h>
 #include <dto/sqs/SQSListMessagesResponse.h>
+#include <dto/sqs/SQSListQueueAttributesResponse.h>
+#include <dto/sqs/SQSListQueueLambdaTriggersResponse.h>
 
 class SQSService final : public QObject {
     Q_OBJECT
@@ -71,6 +73,22 @@ public:
     void UpdateQueue(const UpdateQueueRequest &updateQueueRequest);
 
     /**
+     * @brief List SQS queue attributes
+     *
+     * @param queueArn ARN of the Queue
+     * @param prefix attribute prefix
+     */
+    void ListQueueAttributes(const QString &queueArn, const QString &prefix);
+
+    /**
+     * @brief List SQS queue lambda triggers
+     *
+     * @param queueArn queue ARN
+     * @param prefix uuid prefix
+     */
+    void ListQueueLambdaTriggers(const QString &queueArn, const QString &prefix);
+
+    /**
      * @brief Delete Queue
      *
      * @param queueUrl Queue URL
@@ -111,6 +129,10 @@ signals:
     void ListQueuesSignal(const SQSQueueListResponse &listQueueResponse);
 
     void GetQueueDetailsSignal(const SQSGetQueueDetailsResponse &response);
+
+    void ListQueueAttributesSignal(const SQSQueueAttributeListResponse &listQueueAttributeResponse);
+
+    void ListQueueLambdaTriggersSignal(const SQSListQueueLambdaTriggersResponse &listQueueLambdaTriggersResponse);
 
     void ListMessagesSignal(const SQSListMessagesResponse &listMessagesResponse);
 

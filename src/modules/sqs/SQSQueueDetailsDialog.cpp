@@ -1,61 +1,148 @@
-
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 #include "ui_SQSQueueDetailsDialog.h"
+#include "utils/IconUtils.h"
 
-SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *parent): QDialog(parent), ui(new Ui::SQSQueueDetailsDialog), queueArn(queueArn) {
+SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSQueueDetailsDialog), _queueArn(queueArn) {
 
-    ui->setupUi(this);
+    _ui->setupUi(this);
 
-    sqsService = new SQSService();
+    _sqsService = new SQSService();
 
-    sqsService->GetQueueDetails(queueArn);
-    connect(sqsService, &SQSService::GetQueueDetailsSignal, this, &SQSQueueDetailsDialog::UpdateQueueDetails);
+    // Connect service
+    _sqsService->GetQueueDetails(queueArn);
+    connect(_sqsService, &SQSService::GetQueueDetailsSignal, this, &SQSQueueDetailsDialog::UpdateQueueDetails);
+    connect(_sqsService, &SQSService::ListQueueAttributesSignal, this, &SQSQueueDetailsDialog::UpdateQueueAttributes);
+
+    // Setup attributes tab
+    SetupAttributesTab();
+
+    // Setup lambda triggers tab
+    SetupLambdaTriggersTab();
+
+    // Set default tab
+    _ui->tabWidget->setCurrentIndex(0);
 }
 
 SQSQueueDetailsDialog::~SQSQueueDetailsDialog() {
-    delete ui;
+    delete _ui;
 }
 
 void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse &response) {
 
-    ui->queueNameEdit->setText(response.queueName);
-    ui->queueArnEdit->setText(response.queueArn);
-    ui->queueUrlEdit->setText(response.queueUrl);
-    ui->dlqArnEdit->setText(response.dlqArn);
-    ui->dlqMaxReceiveEdit->setText(QString::number(response.dlqMaxReceived));
-    ui->visibilityEdit->setText(QString::number(response.visibilityTimeout));
-    ui->delayEdit->setText(QString::number(response.delay));
-    ui->maxMessageSizeEdit->setText(QString::number(response.maxMessageSize/1024));
-    ui->availableEdit->setText(QString::number(response.available));
-    ui->invisibleEdit->setText(QString::number(response.invisible));
-    ui->delayedEdit->setText(QString::number(response.delayed));
-    ui->retentionPeriodEdit->setText(QString::number(response.retentionPeriod));
-    ui->messageCountEdit->setText(QString::number(response.messageCount));
-    ui->messageSizeEdit->setText(QString::number(response.size/1024));
-    ui->createdEdit->setText(response.created.toString());
-    ui->modifiedEdit->setText(response.modified.toString());
+    _ui->queueNameEdit->setText(response.queueName);
+    _ui->queueArnEdit->setText(response.queueArn);
+    _ui->queueUrlEdit->setText(response.queueUrl);
+    _ui->dlqArnEdit->setText(response.dlqArn);
+    _ui->dlqMaxReceiveEdit->setText(QString::number(response.dlqMaxReceived));
+    _ui->visibilityEdit->setText(QString::number(response.visibilityTimeout));
+    _ui->delayEdit->setText(QString::number(response.delay));
+    _ui->maxMessageSizeEdit->setText(QString::number(response.maxMessageSize / 1024));
+    _ui->availableEdit->setText(QString::number(response.available));
+    _ui->invisibleEdit->setText(QString::number(response.invisible));
+    _ui->delayedEdit->setText(QString::number(response.delayed));
+    _ui->retentionPeriodEdit->setText(QString::number(response.retentionPeriod));
+    _ui->messageCountEdit->setText(QString::number(response.messageCount));
+    _ui->messageSizeEdit->setText(QString::number(response.size / 1024));
+    _ui->createdEdit->setText(response.created.toString());
+    _ui->modifiedEdit->setText(response.modified.toString());
 
-    connect(ui->delayEdit, &QLineEdit::editingFinished, this, [&]() {this->changed=true;});
-    connect(ui->retentionPeriodEdit, &QLineEdit::editingFinished, this, [&]() {this->changed=true;});
-    connect(ui->visibilityEdit, &QLineEdit::editingFinished, this, [&]() {this->changed=true;});
+    connect(_ui->delayEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
+    connect(_ui->retentionPeriodEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
+    connect(_ui->visibilityEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
 }
 
-void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_accepted()
-{
-    if(this->changed) {
+void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_accepted() {
+    if (this->changed) {
         UpdateQueueRequest updateQueueRequest;
-        updateQueueRequest.queueArn = queueArn;
-        updateQueueRequest.delay = ui->delayEdit->text().toLong();
-        updateQueueRequest.retentionPeriod = ui->retentionPeriodEdit->text().toLong();
-        updateQueueRequest.visibilityTimeout = ui->visibilityEdit->text().toLong();
-        sqsService->UpdateQueue(updateQueueRequest);
+        updateQueueRequest.queueArn = _queueArn;
+        updateQueueRequest.delay = _ui->delayEdit->text().toLong();
+        updateQueueRequest.retentionPeriod = _ui->retentionPeriodEdit->text().toLong();
+        updateQueueRequest.visibilityTimeout = _ui->visibilityEdit->text().toLong();
+        _sqsService->UpdateQueue(updateQueueRequest);
     }
     accept();
 }
 
-
-void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_rejected()
-{
+void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_rejected() {
     accept();
 }
 
+void SQSQueueDetailsDialog::SetupAttributesTab() const {
+
+    // Refresh button
+    _ui->attributeRefreshButton->setText(nullptr);
+    _ui->attributeRefreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->attributeRefreshButton->setToolTip(tr("Refresh attribute list"));
+    connect(_ui->attributeRefreshButton, &QPushButton::clicked, [this]() {
+        _sqsService->ListQueueAttributes(_queueArn, "");
+    });
+
+    // Table
+    const QStringList headers = QStringList() << tr("Name")
+                                << tr("Value");
+
+    _ui->attributesTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->attributesTable->setShowGrid(true);
+    _ui->attributesTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->attributesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->attributesTable->setHorizontalHeaderLabels(headers);
+    _ui->attributesTable->setSortingEnabled(true);
+    _ui->attributesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->attributesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->attributesTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _sqsService->ListQueueAttributes(_queueArn, "");
+}
+
+void SQSQueueDetailsDialog::UpdateQueueAttributes(const SQSQueueAttributeListResponse &response) const {
+    _ui->attributesTable->setRowCount(0);
+    _ui->attributesTable->setSortingEnabled(false); // stop sorting
+    for (auto r = 0, c = 0; r < response.queueAttributeCounters.count(); r++, c = 0) {
+        _ui->attributesTable->insertRow(r);
+        SetColumn(_ui->attributesTable, r, c++, response.queueAttributeCounters.at(r).key);
+        SetColumn(_ui->attributesTable, r, c, response.queueAttributeCounters.at(r).value);
+    }
+    _ui->attributesTable->setRowCount(static_cast<int>(response.queueAttributeCounters.count()));
+    _ui->attributesTable->setSortingEnabled(true);
+    _ui->attributesTable->sortItems(_attributesSortColumn, _attributesSortOrder);
+}
+
+void SQSQueueDetailsDialog::SetupLambdaTriggersTab() const {
+
+    // Refresh button
+    _ui->lambdaRefreshButton->setText(nullptr);
+    _ui->lambdaRefreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->lambdaRefreshButton->setToolTip(tr("Refresh lambda trigger list"));
+    connect(_ui->lambdaRefreshButton, &QPushButton::clicked, [this]() {
+        _sqsService->ListQueueLambdaTriggers(_queueArn, "");
+    });
+
+    // Table
+    const QStringList headers = QStringList() = {tr("UUID"), tr("Arn"), tr("Enabled")};
+
+    _ui->lambdaTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->lambdaTable->setShowGrid(true);
+    _ui->lambdaTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->lambdaTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->lambdaTable->setHorizontalHeaderLabels(headers);
+    _ui->lambdaTable->setSortingEnabled(true);
+    _ui->lambdaTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->lambdaTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->lambdaTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _ui->lambdaTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _sqsService->ListQueueLambdaTriggers(_queueArn, "");
+}
+
+
+void SQSQueueDetailsDialog::UpdateQueueLambdaTriggers(const SQSListQueueLambdaTriggersResponse &response) const {
+    _ui->lambdaTable->setRowCount(0);
+    _ui->lambdaTable->setSortingEnabled(false); // stop sorting
+    for (auto r = 0, c = 0; r < response.queueLambdaTriggerCounters.count(); r++, c = 0) {
+        _ui->lambdaTable->insertRow(r);
+        SetColumn(_ui->lambdaTable, r, c++, response.queueLambdaTriggerCounters.at(r).uuid);
+        SetColumn(_ui->lambdaTable, r, c++, response.queueLambdaTriggerCounters.at(r).arn);
+        SetColumn(_ui->lambdaTable, r, c, response.queueLambdaTriggerCounters.at(r).enabled);
+    }
+    _ui->lambdaTable->setRowCount(static_cast<int>(response.queueLambdaTriggerCounters.count()));
+    _ui->lambdaTable->setSortingEnabled(true);
+    _ui->lambdaTable->sortItems(_lambdaTriggerSortColumn, _lambdaTriggerSortOrder);
+}
