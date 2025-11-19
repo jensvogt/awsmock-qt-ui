@@ -75,7 +75,7 @@ void ApplicationUploadCodeDialog::HandleBrowse() {
 
     // Create a QFileDialog set to select existing files
     const QString filter = "All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
+    const QString defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open application code file", defaultDir, filter); !filePath.isEmpty()) {
         const QString version = FileUtils::ExtractVersionFromFileName(filePath);
@@ -97,7 +97,7 @@ void ApplicationUploadCodeDialog::HandleAccept() {
     file.close();
 
     ApplicationUploadRequest request;
-    request.region = Configuration::instance().GetRegion();
+    request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     request.applicationName = ui->nameEdit->text();
     request.version = ui->versionEdit->text();
     request.applicationCode = binaryData.toBase64();

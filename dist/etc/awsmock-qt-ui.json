@@ -1,7 +1,23 @@
 {
-  "region": "eu-central-1",
-  "baseUrl": "http://localhost:4566",
-  "auto-update-period": 10,
-  "default-ftp-user": "DEMODLI",
-  "default-ftp-password": "Tg/}2e0m.>_s"
+  "aws": {
+    "region": "eu-central-1",
+    "user": "none",
+    "client-id": "00000000",
+    "account-id": "00000000"
+  },
+  "server": {
+    "base-url": "http://localhost:4566",
+    "base-urls": [
+      "http://localhost:4566",
+      "http://vogje01-nuc:4566"
+    ]
+  },
+  "ui": {
+    "version": "1.0",
+    "qt-version": "10.6.0",
+    "auto-update-period": 10,
+    "default-ftp-user": "DEMODLI",
+    "default-ftp-password": "Tg/}2e0m.>_s",
+    "default-directory": "/usr/local/awsmock-qt-ui"
+  }
 }

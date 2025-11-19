@@ -1,13 +1,12 @@
 
 #include <utils/EditPreferencesDialog.h>
 
-EditPreferencesDialog::EditPreferencesDialog(QWidget *parent) : QDialog(parent)
-{
+EditPreferencesDialog::EditPreferencesDialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle("Preferences");
     setMinimumSize(400, 200);
 
     baseUrlEdit = new QLineEdit(this);
-    baseUrlEdit->setText(Configuration::instance().GetBaseUrl());
+    baseUrlEdit->setText(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 
     auto *formLayout = new QFormLayout;
     formLayout->addRow("BaseURL:", baseUrlEdit);

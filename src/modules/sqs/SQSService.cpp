@@ -2,7 +2,7 @@
 #include <modules/sqs/SQSService.h>
 
 SQSService::SQSService() {
-    url = QUrl(Configuration::instance().GetBaseUrl());
+    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
 void SQSService::ListQueues(const QString &prefix) {

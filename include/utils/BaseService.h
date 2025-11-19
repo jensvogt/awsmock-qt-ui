@@ -34,7 +34,7 @@ public:
 private slots:
     void HandleTimer() const {
 
-        _restManager->get(Configuration::instance().GetBaseUrl(),
+        _restManager->get(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"),
                           {
                               {"x-awsmock-target", "module"},
                               {"x-awsmock-action", "ping"}

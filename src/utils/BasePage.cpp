@@ -17,7 +17,7 @@ void BasePage::StartAutoUpdate() {
     connect(_autoUpdateTimer, &QTimer::timeout, this, &BasePage::LoadContent);
 
     // Set the refresh interval (e.g., every 5 seconds)
-    _autoUpdateTimer->start(Configuration::instance().GetAutoUpdatePeriod() * 1000);
+    _autoUpdateTimer->start(Configuration::instance().GetValue<int>("ui.auto-update-period", 10) * 1000);
 }
 
 void BasePage::StopAutoUpdate() const {

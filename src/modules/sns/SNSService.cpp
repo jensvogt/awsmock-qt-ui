@@ -2,7 +2,7 @@
 #include <modules/sns/SNSService.h>
 
 SNSService::SNSService() {
-    url = QUrl(Configuration::instance().GetBaseUrl());
+    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
 void SNSService::AddTopic(const QString &region, const QString &topicName) {

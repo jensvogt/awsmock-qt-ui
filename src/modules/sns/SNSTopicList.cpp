@@ -3,7 +3,7 @@
 SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
-    _region = Configuration::instance().GetRegion();
+    _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
 
     // Connect service
     _snsService = new SNSService();

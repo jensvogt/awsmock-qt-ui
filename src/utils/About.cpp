@@ -17,8 +17,8 @@ About::About(QWidget *parent) : QDialog(parent), _ui(new Ui::About) {
         this->accept();
     });
 
-    _ui->versionText->setText(Configuration::instance().GetVersion());
-    _ui->qtVersionText->setText(Configuration::instance().GetQtVersion());
+    _ui->versionText->setText(Configuration::instance().GetValue<QString>("ui.version", "1.0"));
+    _ui->qtVersionText->setText(Configuration::instance().GetValue<QString>("ui.qt-version", "6.10.0"));
 
     _ui->tabWidget->setCurrentIndex(0);
 

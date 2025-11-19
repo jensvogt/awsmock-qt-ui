@@ -39,7 +39,7 @@ Dashboard::~Dashboard() {
 void Dashboard::Initialize() {
 
     ChartConfig config;
-    config.region = Configuration::instance().GetRegion();
+    config.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     config.title = "Total CPU";
     config.name = "cpu_usage_total";
     config.series = "cpu_type";

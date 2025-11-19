@@ -6,7 +6,7 @@
 S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
-    _region = Configuration::instance().GetRegion();
+    _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
 
     // Connect service
     _s3Service = new S3Service();

@@ -14,7 +14,7 @@
 #ifdef _WIN32
 #define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files (x86)\\awsmock-qt-ui\\awsmock-qt-ui.json")
 #else
-#define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/awsmock/etc/awsmock-qt-ui.json")
+#define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui.json")
 #endif
 
 class Configuration final {
@@ -34,26 +34,33 @@ public:
         return instance;
     }
 
-    /**
-     * @brief Returns the base URL
-     *
-     * @return base URL
-     */
-    QString GetBaseUrl() { return baseUrl; }
+    template<class T>
+    T GetValue(const QString &path, T defaultValue) {
+        const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
+        if constexpr (std::is_same_v<T, int>) {
+            return v.isDouble() ? static_cast<T>(v.toInt()) : defaultValue;
+        } else if constexpr (std::is_same_v<T, long>) {
+            return v.isDouble() ? static_cast<T>(v.toInteger()) : defaultValue;
+        } else if constexpr (std::is_same_v<T, double>) {
+            return v.isDouble() ? static_cast<T>(v.toDouble()) : defaultValue;
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return v.isString() ? static_cast<T>(v.toString()) : defaultValue;
+        } else if constexpr (std::is_same_v<T, bool>) {
+            return v.isBool() ? static_cast<T>(v.toBool()) : defaultValue;
+        } else if constexpr (std::is_same_v<T, QJsonObject>) {
+            return v.isObject() ? static_cast<T>(v.toObject()) : defaultValue;
+        } else if constexpr (std::is_same_v<T, QJsonArray>) {
+            return v.isArray() ? static_cast<T>(v.toArray()) : defaultValue;
+        } else {
+            return defaultValue;
+        }
+    }
 
-    /**
-     * @brief Returns the region
-     *
-     * @return region
-     */
-    QString GetRegion() { return region; }
-
-    /**
-     * @brief Returns the auto update period
-     *
-     * @return auto update period
-     */
-    [[nodiscard]] int GetAutoUpdatePeriod() const { return autoUpdatePeriod; }
+    template<class T>
+    void SetValue(const QString &path, T value) {
+        JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
+        WriteConfigurationFile(filePath);
+    }
 
     /**
      * @brief Write a JSON configuration file
@@ -61,64 +68,6 @@ public:
      * @param filePath absolute file path of the configuration file
      */
     void WriteConfigurationFile(const QString &filePath);
-
-    /**
-     * @brief Returns the default directory.
-     *
-     * @return default directory.
-     */
-    QString GetDefaultDirectory() {
-        return defaultDirectory;
-    }
-
-    /**
-     * @brief Sets the default directory.
-     *
-     * @param defaultDir
-     */
-    void SetDefaultDirectory(const QString &defaultDir) { this->defaultDirectory = defaultDir; }
-
-    /**
-     * @brief Sets the connection state
-     *
-     * @param connected connection state.
-     */
-    void SetConnectionState(bool connected) { this->connected = connected; }
-
-    /**
-     * @brief Sets the default directory.
-     *
-     * @return connection state
-     */
-    [[nodiscard]] bool GetConnectionState() const { return this->connected; }
-
-    /**
-     * @brief Returns the current version
-     *
-     * @return current version
-     */
-    [[nodiscard]] QString GetVersion() const { return this->version; }
-
-    /**
-     * @brief Returns the current Qt version
-     *
-     * @return current Qt version
-     */
-    [[nodiscard]] QString GetQtVersion() const { return this->qtVersion; }
-
-    /**
-     * @brief Returns the current default FTP user
-     *
-     * @return current FTP user
-     */
-    [[nodiscard]] QString GetDefaultFtpUser() const { return this->defaultFtpUser; }
-
-    /**
-     * @brief Returns the current default FTP password
-     *
-     * @return current FTP password
-     */
-    [[nodiscard]] QString GetDefaultFtpPassword() const { return this->defaultFtpPassword; }
 
     /**
      * @brief Write a JSON configuration file
@@ -134,6 +83,20 @@ public:
      */
     void SetFilePath(const QString &filePath);
 
+    /**
+     * @brief Sets the connection state
+     *
+     * @param connected connection state.
+     */
+    void SetConnectionState(bool connected) { this->connected = connected; }
+
+    /**
+     * @brief Sets the default directory.
+     *
+     * @return connection state
+     */
+    [[nodiscard]] bool GetConnectionState() const { return this->connected; }
+
 signals:
     /**
      * @brief Send when a preferences changed
@@ -145,54 +108,19 @@ signals:
 
 private:
     /**
+     * @brief Configuration root
+     */
+    QJsonObject _configurationRoot{};
+
+    /**
      * @brief File path
      */
     QString filePath = DEFAULT_CONFIGURATION_FILE_PATH;
 
     /**
-     * @brief Base URL
-     */
-    QString region = "eu-central-1";
-
-    /**
-     * @brief Base URL
-     */
-    QString baseUrl = "http://localhost:4566";
-
-    /**
-     * @brief Current directory
-     */
-    QString defaultDirectory = QDir::homePath();
-
-    /**
-     * @brief Default auto update period in seconds.
-     */
-    int autoUpdatePeriod = 10;
-
-    /**
      * @brief Connection flag
      */
     bool connected = true;
-
-    /**
-     * @brief Version
-     */
-    QString version = QString("1.0.0");
-
-    /**
-     * @brief QT Version
-     */
-    QString qtVersion = QString(qVersion());
-
-    /**
-     * @brief Default FTP user
-     */
-    QString defaultFtpUser = QString("DEMODLI");
-
-    /**
-     * @brief Default FTP user password
-     */
-    QString defaultFtpPassword = QString("Tg/}2e0m.>_s");
 };
 
 #endif // CONFIGURATION_H

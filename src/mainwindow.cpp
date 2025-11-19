@@ -115,7 +115,7 @@ void MainWindow::SetupMenuBar() {
 
     // About
     const auto aboutAction = new QAction(IconUtils::GetIcon("dark", "about"), tr("&About"), this);
-    connect(aboutAction, &QAction::triggered, this, [this]() {
+    connect(aboutAction, &QAction::triggered, this, []() {
         About aboutDialog;
         aboutDialog.exec();
     });
@@ -125,8 +125,8 @@ void MainWindow::SetupMenuBar() {
 void MainWindow::ImportInfrastructure() const {
 
     // Create a QFileDialog set to select existing files
-    const QString filter = "JSON Files (*.json);;All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
+    const auto filter = "JSON Files (*.json);;All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -139,7 +139,7 @@ void MainWindow::ImportInfrastructure() const {
         file.close();
 
         _infraStructureService->ImportInfrastructure(jsonData);
-        Configuration::instance().SetDefaultDirectory(QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -150,12 +150,12 @@ void MainWindow::ImportInfrastructureResponse() {
 void MainWindow::ExportInfrastructure() const {
 
     // Create a QFileDialog set to select existing files
-    const QString filter = "JSON Files (*.json);;All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
+    const auto filter = "JSON Files (*.json);;All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         _infraStructureService->ExportInfrastructure(filePath);
-        Configuration::instance().SetDefaultDirectory(QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
     }
 }
 

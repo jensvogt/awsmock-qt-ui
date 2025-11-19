@@ -300,7 +300,7 @@ void ApplicationAddDialog::UploadFile(const QFileInfo &fileInfo) {
     const QByteArray fileData = file.readAll();
 
     ApplicationCreateRequest request;
-    request.region = Configuration::instance().GetRegion();
+    request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     request.application.name = nameEdit->text();
     request.application.privatePort = privatePortEdit->text().toInt();
     request.application.publicPort = publicPortEdit->text().toInt();

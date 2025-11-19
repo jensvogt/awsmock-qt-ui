@@ -5,7 +5,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     setAttribute(Qt::WA_DeleteOnClose);
 
     // Set region
-    _region = Configuration::instance().GetRegion();
+    _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
 
     // Connect service
     _applicationService = new ApplicationService();

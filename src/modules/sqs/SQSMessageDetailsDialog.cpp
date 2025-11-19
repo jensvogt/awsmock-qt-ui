@@ -92,7 +92,6 @@ void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
         const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
         if (error.error == QJsonParseError::NoError) {
             _ui->bodyPlainTextEdit->clear();
-            qDebug() << jDoc.toJson(QJsonDocument::Indented);
             _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
         } else {
             QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());

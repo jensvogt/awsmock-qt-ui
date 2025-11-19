@@ -68,11 +68,11 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     UpdateLineEditStyle(ui->passwordEdit->text());
 
     // Set defaults
-    if (!Configuration::instance().GetDefaultFtpUser().isEmpty()) {
-        ui->userEdit->setText(Configuration::instance().GetDefaultFtpUser());
+    if (!Configuration::instance().GetValue<QString>("ui.default-ftp-user", "").isEmpty()) {
+        ui->userEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-user", ""));
     }
-    if (!Configuration::instance().GetDefaultFtpPassword().isEmpty()) {
-        ui->passwordEdit->setText(Configuration::instance().GetDefaultFtpPassword());
+    if (!Configuration::instance().GetValue<QString>("ui.default-ftp-password", "").isEmpty()) {
+        ui->passwordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", ""));
     }
     // Enable Drop Events for this widget
     setAcceptDrops(false);
@@ -85,8 +85,8 @@ FTPUploadDialog::~FTPUploadDialog() {
 void FTPUploadDialog::BrowseSourceFile() {
 
     // Create a QFileDialog set to select existing files
-    const QString filter = "All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
+    const auto filter = "All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -96,6 +96,7 @@ void FTPUploadDialog::BrowseSourceFile() {
         }
         ui->sourceEdit->setText(file.fileName());
         sourceFileInfo = QFileInfo(file.fileName());
+        Configuration::instance().SetValue<QString>("ui.default-directory", sourceFileInfo.absolutePath());
     }
 }
 

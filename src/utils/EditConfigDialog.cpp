@@ -16,12 +16,12 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &EditConfigDialog::HandleReject);
 
     // Client settings
-    _ui->regionEdit->setText(Configuration::instance().GetRegion());
-    _ui->baseUrlEdit->setText(Configuration::instance().GetBaseUrl());
+    _ui->regionEdit->setText(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"));
+    _ui->baseUrlEdit->setText(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 
     // FTP settings
-    _ui->ftpUserEdit->setText(Configuration::instance().GetDefaultFtpUser());
-    _ui->ftpPasswordEdit->setText(Configuration::instance().GetDefaultFtpPassword());
+    _ui->ftpUserEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-user", "none"));
+    _ui->ftpPasswordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", "none"));
 
     // Default tab
     _ui->tabWidget->setCurrentIndex(0);

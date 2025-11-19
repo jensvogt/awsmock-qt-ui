@@ -123,6 +123,8 @@ set(PROJECT_SOURCES
         include/dto/sqs/SQSMessageAttributeDataType.h
         include/dto/sqs/SQSSendMessageResponse.h
         src/modules/sqs/SQSMessageAddDialog.cpp
+        include/utils/JsonUtils.h
+        include/utils/JsonUtils.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

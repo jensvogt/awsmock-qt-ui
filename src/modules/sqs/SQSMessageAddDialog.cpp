@@ -59,7 +59,7 @@ SQSMessageAddDialog::~SQSMessageAddDialog() {
 
 void SQSMessageAddDialog::HandleAccept() const {
     SQSSendMessageRequest request;
-    request.region = Configuration::instance().GetRegion();
+    request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     request.queueUrl = _queueUrl;
     request.body = _ui->bodyEdit->toPlainText().toUtf8();
 
@@ -90,8 +90,8 @@ void SQSMessageAddDialog::HandleReject() {
 void SQSMessageAddDialog::HandleBrowseButton() const {
 
     // Create a QFileDialog set to select existing files
-    const QString filter = "All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetDefaultDirectory();
+    const auto filter = "All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Input File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -105,7 +105,7 @@ void SQSMessageAddDialog::HandleBrowseButton() const {
 
         // Set the body
         _ui->bodyEdit->setText(QString::fromUtf8(jsonData));
-        Configuration::instance().SetDefaultDirectory(QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
     }
 }
 

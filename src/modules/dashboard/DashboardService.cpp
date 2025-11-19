@@ -4,7 +4,7 @@
 #include <utils/Configuration.h>
 
 DashboardService::DashboardService() {
-    _url = QUrl(Configuration::instance().GetBaseUrl());
+    _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 
     // Create RestManager in its own thread
     _restManager = new RestManager();
@@ -55,7 +55,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
 
                     Configuration::instance().SetConnectionState(true);
 
-                    QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                    const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                     if (!jsonDoc.isObject())
                         return;
 

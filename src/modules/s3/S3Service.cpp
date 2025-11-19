@@ -2,7 +2,7 @@
 #include <modules/s3/S3Service.h>
 
 S3Service::S3Service() {
-    url = QUrl(Configuration::instance().GetBaseUrl());
+    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
 // void S3Service::AddTopic(const QString &region, const QString &topicName) {
@@ -68,7 +68,7 @@ void S3Service::ListBuckets(const QString &prefix) {
 void S3Service::PurgeBucket(const QString &bucketName) {
 
     QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
@@ -134,7 +134,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
 
 void S3Service::GetBucketDetails(const QString &bucketName) {
     QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 

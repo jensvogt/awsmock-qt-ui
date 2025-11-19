@@ -3,7 +3,7 @@
 #include <modules/infrastructure/InfrastructureService.h>
 
 InfraStructureService::InfraStructureService() {
-    url = QUrl(Configuration::instance().GetBaseUrl());
+    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 }
 
 void InfraStructureService::ExportInfrastructure(const QString &exportFilename) {

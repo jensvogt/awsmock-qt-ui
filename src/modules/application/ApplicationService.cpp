@@ -1,7 +1,7 @@
 #include <modules/application/ApplicationService.h>
 
 ApplicationService::ApplicationService() {
-    url = QUrl(Configuration::instance().GetBaseUrl());
+    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
 void ApplicationService::ListApplications(const QString &prefix) {
@@ -134,11 +134,11 @@ void ApplicationService::UpdateApplication(const Application &application) {
 void ApplicationService::EnableApplication(const QString &name) {
 
     QJsonObject jApplication;
-    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
 
     QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
@@ -161,11 +161,11 @@ void ApplicationService::EnableApplication(const QString &name) {
 void ApplicationService::DisableApplication(const QString &name) {
 
     QJsonObject jApplication;
-    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
 
     QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetRegion();
+    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
@@ -187,7 +187,7 @@ void ApplicationService::DisableApplication(const QString &name) {
 
 void ApplicationService::StartApplication(const QString &name) {
     QJsonObject jApplication;
-    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
 
     QJsonObject jRequest;
@@ -212,7 +212,7 @@ void ApplicationService::StartApplication(const QString &name) {
 
 void ApplicationService::StopApplication(const QString &name) {
     QJsonObject jApplication;
-    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
 
     QJsonObject jRequest;
@@ -237,7 +237,7 @@ void ApplicationService::StopApplication(const QString &name) {
 
 void ApplicationService::RestartApplication(const QString &name) {
     QJsonObject jApplication;
-    jApplication["region"] = Configuration::instance().GetRegion();
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
 
     QJsonObject jRequest;

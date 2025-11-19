@@ -29,11 +29,8 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
         return;
     }
 
-    region = doc.object()["region"].toString();
-    baseUrl = doc.object()["baseUrl"].toString();
-    autoUpdatePeriod = doc.object()["auto-update-period"].toInt();
-    defaultFtpUser = doc.object()["default-ftp-user"].toString();
-    defaultFtpPassword = doc.object()["default-ftp-password"].toString();
+    // Root
+    _configurationRoot = doc.object();
 }
 
 void Configuration::WriteConfigurationFile(const QString &filePath) {
@@ -42,12 +39,8 @@ void Configuration::WriteConfigurationFile(const QString &filePath) {
         this->filePath = filePath;
     }
 
-    // Create your JSON object
-    QJsonObject configurationObject;
-    configurationObject["BaseUrl"] = baseUrl;
-
     // Wrap it in a QJsonDocument
-    const QJsonDocument doc(configurationObject);
+    const QJsonDocument doc(_configurationRoot);
 
     // Open the file for writing
     QFile file(filePath);
@@ -59,6 +52,5 @@ void Configuration::WriteConfigurationFile(const QString &filePath) {
     // Write formatted (pretty-printed) JSON
     file.write(doc.toJson(QJsonDocument::Indented));
     file.close();
-
     qDebug() << "JSON written to" << filePath;
 }
