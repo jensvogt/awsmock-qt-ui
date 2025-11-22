@@ -206,8 +206,10 @@ void MainWindow::CleanInfrastructureResponse() {
 }
 
 void MainWindow::FtpUpload() {
-    FTPUploadDialog dialog;
-    dialog.exec();
+    const auto dialog = new FTPUploadDialog(this);
+    dialog->setModal(false);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
 }
 
 void MainWindow::EditPreferences() {

@@ -170,7 +170,7 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
 
         // Extract ARN and URL
         const QString key = _ui->envTable->item(row, 0)->text();
-        const QString value = _ui->envTable->item(row, 1)->text();
+        const QString value = _ui->envTable->item(row, 1) ? _ui->envTable->item(row, 1)->text() : "";
 
         if (ApplicationEnvironmentEditDialog dialog(key, value, false, nullptr); dialog.exec() == Accepted) {
             SetColumn(_ui->envTable, row, 1, dialog.GetValue());

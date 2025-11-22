@@ -13,8 +13,10 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->setupUi(this);
 
     // Connect button box
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &FTPUploadDialog::HandleAccept);
+    //connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &FTPUploadDialog::HandleAccept);
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPUploadDialog::HandleReject);
+    //const auto applyBtn = ui->buttonBox->button(QDialogButtonBox::Apply);
+    connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &FTPUploadDialog::HandleAccept);
 
     // Name validator
     const NotEmptyValidator *nameValidator = new NotEmptyValidator(this);
@@ -191,7 +193,7 @@ void FTPUploadDialog::VerifyFileInputs() {
 
     if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().toStdString(); ftpClient->UploadFile(sourceFileInfo.absoluteFilePath().toStdString(), targetFilename)) {
         QMessageBox::information(this, "Information", "Upload successful.");
-        accept();
+        //accept();
     } else {
         QMessageBox::warning(this, "Warning", "Upload not successful.");
     }
@@ -237,8 +239,7 @@ void FTPUploadDialog::dragEnterEvent(QDragEnterEvent *event) {
 void FTPUploadDialog::dropEvent(QDropEvent *event) {
     // Ensure the data is file URLs
     if (event->mimeData()->hasUrls()) {
-        QList<QUrl> urls = event->mimeData()->urls();
-        for (const QUrl &url: urls) {
+        for (QList<QUrl> urls = event->mimeData()->urls(); const QUrl &url: urls) {
             // Check if the URL is a local file
             if (url.isLocalFile()) {
                 QString localFile = url.toLocalFile();

@@ -28,8 +28,7 @@
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class SNSTopicList : public BasePage
-{
+class SNSTopicList : public BasePage {
     Q_OBJECT
 
 public:
@@ -39,7 +38,7 @@ public:
      * @param title widget title
      * @param parent parent widget
      */
-    explicit SNSTopicList(const QString& title, QWidget *parent = nullptr);
+    explicit SNSTopicList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * Destructor
@@ -65,7 +64,6 @@ private slots:
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
-
     /**
      * @brief AWS region
      */
@@ -74,7 +72,7 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget* tableWidget;
+    QTableWidget *tableWidget;
 
     /**
      * @brief Topic prefix search
@@ -84,7 +82,7 @@ private:
     /**
      * @brief REST service handler
      */
-    SNSService* _snsService;
+    SNSService *_snsService;
 
     /**
      * @brief Sort column index
@@ -97,6 +95,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
 };
 
 #endif // SNS_TOPIC_LIST_H

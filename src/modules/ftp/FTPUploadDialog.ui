@@ -14,7 +14,7 @@
    <string>FTP Upload Dialog</string>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -239,7 +239,7 @@
     </rect>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close</set>
    </property>
   </widget>
   <widget class="QLabel" name="statusText">

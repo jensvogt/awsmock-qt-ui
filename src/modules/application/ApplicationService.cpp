@@ -281,6 +281,31 @@ void ApplicationService::RestartAllApplications() {
                       });
 }
 
+void ApplicationService::RebuildApplication(const QString &name) {
+    QJsonObject jApplication;
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    jApplication["name"] = name;
+
+    QJsonObject jRequest;
+    jRequest["application"] = jApplication;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "application"},
+                          {"x-awsmock-action", "rebuild-application"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllApplications();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
 void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
 
     QJsonObject jRequest;

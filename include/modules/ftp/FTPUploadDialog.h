@@ -72,10 +72,13 @@ protected:
      */
     void dropEvent(QDropEvent *event) override;
 
-private Q_SLOTS:
+private
+    Q_SLOTS:
     /**
      * @brief Verification of the connect input fields
      */
+    
+
     void VerifyConnectInputs();
 
     /**
@@ -117,7 +120,7 @@ private:
     /**
      * @brief FTP client using CURL FTP client
      */
-    embeddedmz::CFTPClient *ftpClient;
+    embeddedmz::CFTPClient *ftpClient{};
 };
 
 

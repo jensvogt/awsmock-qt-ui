@@ -64,15 +64,8 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Keys")
-                                << tr("Size")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("BucketArn");
-
+    const QStringList headers = QStringList() = {tr("Name"), tr("Keys"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("BucketArn")};
     tableWidget = new QTableWidget(this);
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -138,7 +131,7 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketName);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).objectCount);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).size);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).size / 1024);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).created);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).modified);
         SetHiddenColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketArn);

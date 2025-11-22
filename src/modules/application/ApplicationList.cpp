@@ -167,7 +167,15 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Application");
-    editAction->setToolTip("Edit the Topic details");
+    editAction->setToolTip("Edit the application details.");
+
+    menu.addSeparator();
+
+    QAction *enableAction = menu.addAction(IconUtils::GetIcon("dark", "enabled"), "Enable Application");
+    enableAction->setToolTip("Enable the application.");
+
+    QAction *disableAction = menu.addAction(IconUtils::GetIcon("dark", "disabled"), "Disable Application");
+    disableAction->setToolTip("Disable the application.");
 
     menu.addSeparator();
 
@@ -182,8 +190,8 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     menu.addSeparator();
 
-    QAction *reloadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Reload Application");
-    reloadAction->setToolTip("Reload the by creating a new container");
+    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Rebuild Application");
+    rebuildAction->setToolTip("Rebuild the application by creating a new image and container.");
 
     QAction *uploadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
@@ -200,21 +208,25 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
         }
     } else if (selectedAction == startAction) {
         _applicationService->StartApplication(name);
+    } else if (selectedAction == enableAction) {
+        _applicationService->EnableApplication(name);
+    } else if (selectedAction == disableAction) {
+        _applicationService->DisableApplication(name);
     } else if (selectedAction == stopAction) {
         _applicationService->StopApplication(name);
     } else if (selectedAction == restartAction) {
         _applicationService->RestartApplication(name);
-    } else if (selectedAction == reloadAction) {
-        //_applicationService->UploadApplicationCode(name, TODO, TODO);
+    } else if (selectedAction == rebuildAction) {
+        _applicationService->RebuildApplication(name);
     } else if (selectedAction == uploadAction) {
         ApplicationUploadCodeDialog dialog(name);
         dialog.exec();
-        //        _applicationService->UploadApplicationCode(name, version, "");
     } else if (selectedAction == deleteAction) {
         _applicationService->DeleteApplication(name);
     } else if (selectedAction == editAction) {
         ApplicationEditDialog dialog(name);
         dialog.exec();
     }
+    LoadContent();
     StartAutoUpdate();
 }

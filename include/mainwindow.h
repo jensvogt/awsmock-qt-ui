@@ -56,7 +56,7 @@ private:
 
     static void CleanInfrastructureResponse();
 
-    static void FtpUpload();
+    void FtpUpload();
 
     static void EditPreferences();
 

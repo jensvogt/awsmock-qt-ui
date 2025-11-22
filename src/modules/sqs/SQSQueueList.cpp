@@ -38,7 +38,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    auto *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
+    auto *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
@@ -53,27 +53,30 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
+    auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("dark", "clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Available")
-                                << tr("InFlight")
-                                << tr("Delayed")
-                                << tr("Size [kb]")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("QueueUrl")
-                                << tr("QueueArn")
-                                << tr("IsDLQ");
+    const QStringList headers = QStringList() = {
+                                    tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
+                                };
 
     tableWidget = new QTableWidget();
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -110,8 +113,8 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
 
     // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder &order) {
+    _tableHeader = tableWidget->horizontalHeader();
+    connect(_tableHeader, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder &order) {
         _sortColumn = column;
         _sortOrder = order;
     });
@@ -119,7 +122,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addLayout(prefixLayout, 0);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -129,7 +132,7 @@ SQSQueueList::~SQSQueueList() {
 
 void SQSQueueList::LoadContent() {
     if (Configuration::instance().GetConnectionState()) {
-        sqsService->ListQueues(prefixValue);
+        sqsService->ListQueues(prefixValue, _sortOrder);
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
     }

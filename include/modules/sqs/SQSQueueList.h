@@ -29,8 +29,7 @@
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
  */
-class SQSQueueList final : public BasePage
-{
+class SQSQueueList final : public BasePage {
     Q_OBJECT
 
 public:
@@ -40,7 +39,7 @@ public:
      * @param title widget title
      * @param parent parent widget
      */
-    explicit SQSQueueList(const QString& title, QWidget *parent = nullptr);
+    explicit SQSQueueList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * Destructor
@@ -66,11 +65,10 @@ private slots:
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
-
     /**
      * @brief Qt network manager
      */
-    QTableWidget* tableWidget;
+    QTableWidget *tableWidget;
 
     /**
      * @brief Prefix suche
@@ -80,7 +78,7 @@ private:
     /**
      * @brief REST service handler
      */
-    SQSService* sqsService;
+    SQSService *sqsService;
 
     /**
      * @brief Sort column index
@@ -93,6 +91,15 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-};
 
+    /**
+     * @brief Table header
+     */
+    QHeaderView *_tableHeader;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
+};
 #endif // SQS_QUEUE_LIST_H

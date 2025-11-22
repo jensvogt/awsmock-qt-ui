@@ -85,10 +85,11 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     tableWidget->setSortingEnabled(true);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(6, true);
     tableWidget->setColumnHidden(7, true);
     tableWidget->setColumnHidden(8, true);

@@ -14,7 +14,7 @@
 #define INITIAL_HEIGHT 1200
 
 int main(int argc, char *argv[]) {
-    const QApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     // Set icon
     QApplication::setWindowIcon(IconUtils::GetCommonIcon("awsmock"));
@@ -63,7 +63,9 @@ int main(int argc, char *argv[]) {
             break;
         }
     }
+    app.setStyleSheet("QMenu::separator { height: 2px; background: #7f7f7f; }");
 
+    // Command line options
     const QCommandLineOption configOption(QStringList() << "c" << "config", "Path to config file.", "file");
     parser.addOption(configOption);
 

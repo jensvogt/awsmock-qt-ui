@@ -90,6 +90,8 @@ public:
      */
     void RestartAllApplications();
 
+    void RebuildApplication(const QString &name);
+
     /**
      * @brief Reload the application code
      *

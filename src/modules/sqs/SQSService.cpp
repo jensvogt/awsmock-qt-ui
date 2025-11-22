@@ -7,12 +7,12 @@ SQSService::SQSService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
-void SQSService::ListQueues(const QString &prefix) {
+void SQSService::ListQueues(const QString &prefix, Qt::SortOrder sortOrder) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
+    jSorting["sortDirection"] = sortOrder == Qt::DescendingOrder ? 1 : -1;
     jSorting["column"] = "attributes.approximateNumberOfMessages";
 
     QJsonArray jSortingArray;
@@ -59,7 +59,7 @@ void SQSService::PurgeQueue(const QString &queueUrl) {
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "purge-queue"},
                           {"content-type", "application/json"}
                       },
@@ -79,7 +79,7 @@ void SQSService::PurgeAllQueues() {
     _restManager.post(url,
                       nullptr,
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "purge-all-queues"},
                           {"content-type", "application/json"}
                       },
@@ -104,7 +104,7 @@ void SQSService::AddQueue(const QString &queueName) {
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "create-queue"},
                           {"content-type", "application/json"}
                       },
@@ -125,7 +125,7 @@ void SQSService::UpdateQueue(const SQSQueueUpdateRequest &updateQueueRequest) {
     _restManager.post(url,
                       updateQueueRequest.ToJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "update-queue"},
                           {"content-type", "application/json"}
                       },
@@ -234,7 +234,7 @@ void SQSService::DeleteQueue(const QString &queueUrl) {
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "delete-queue"},
                           {"content-type", "application/json"}
                       },

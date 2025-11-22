@@ -33,8 +33,9 @@ public:
      * @brief List SQS Queues
      *
      * @param prefix Queue name prefix
+     * @param
      */
-    void ListQueues(const QString &prefix);
+    void ListQueues(const QString &prefix, Qt::SortOrder);
 
     /**
      * @brief Purge Queue
