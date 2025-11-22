@@ -56,4 +56,7 @@
         <file>dark/stopped.png</file>
         <file>dark/touch.png</file>
     </qresource>
+    <qresource prefix="/styles">
+        <file>styles/dark.qss</file>
+    </qresource>
 </RCC>

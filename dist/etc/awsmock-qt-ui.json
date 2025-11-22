@@ -20,6 +20,8 @@
     "default-ftp-password": "Tg/}2e0m.>_s",
     "default-ftp-server": "localhost",
     "default-ftp-port": 2121,
-    "default-directory": "/usr/local/awsmock-qt-ui"
+    "default-directory": "/usr/local/awsmock-qt-ui",
+    "style": "Fusion",
+    "style-type": "Dark"
   }
 }

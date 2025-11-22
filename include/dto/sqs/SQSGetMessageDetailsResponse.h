@@ -8,7 +8,6 @@
 #include <utils/JsonUtils.h>
 
 struct SQSMessageAttribute {
-
     QString name;
 
     QString stringValue;
@@ -26,15 +25,12 @@ struct SQSMessageAttribute {
 };
 
 struct SQSAttribute {
-
     QString key;
 
     QString value;
 };
 
 struct SQSGetMessageDetailsResponse {
-
-public:
     QString region;
 
     QString messageId;
@@ -69,7 +65,7 @@ public:
         modified = QDateTime::fromString(jsonObject["Modified"].toString(), Qt::ISODate);
 
         // Message attributes
-        for(const QString &key : jsonObject["MessageAttributes"].toObject().keys()) {
+        for (const QString &key: jsonObject["MessageAttributes"].toObject().keys()) {
 
             SQSMessageAttribute messageAttribute;
             messageAttribute.FromJson(key, jsonObject["MessageAttributes"].toObject().value(key).toObject());
@@ -77,11 +73,11 @@ public:
         }
 
         // System attributes
-        for(const QString &key : jsonObject["Attributes"].toObject().keys()) {
+        for (const QString &key: jsonObject["Attributes"].toObject().keys()) {
 
             SQSAttribute attribute;
             attribute.key = key;
-            attribute.value =  jsonObject["Attributes"].toObject().value(key).toString();
+            attribute.value = jsonObject["Attributes"].toObject().value(key).toString();
             attributes.append(attribute);
         }
     }

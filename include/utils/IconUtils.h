@@ -10,10 +10,10 @@
 #include <QStyle>
 #include <QApplication>
 
+#include <utils/Configuration.h>
+
 class IconUtils {
-
-    public:
-
+public:
     IconUtils() = delete;
 
     static QIcon GetIcon(const QString &name);

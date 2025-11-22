@@ -23,17 +23,17 @@ SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : Ba
     // Pretty print button
     _ui->prettyButton->setCheckable(true);
     _ui->prettyButton->setText(nullptr);
-    _ui->prettyButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
+    _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
     connect(_ui->prettyButton, &QPushButton::toggled, this, &SQSMessageAddDialog::HandlePrettyButton);
 
     // Browse button
     _ui->browseButton->setText(nullptr);
-    _ui->browseButton->setIcon(IconUtils::GetIcon("dark", "browse"));
+    _ui->browseButton->setIcon(IconUtils::GetIcon("browse"));
     connect(_ui->browseButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleBrowseButton);
 
     // Add attribute button
     _ui->addAttributeButton->setText(nullptr);
-    _ui->addAttributeButton->setIcon(IconUtils::GetIcon("dark", "add"));
+    _ui->addAttributeButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->addAttributeButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleAddAttributeButton);
 
     // Attribute table

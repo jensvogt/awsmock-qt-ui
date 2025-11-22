@@ -17,7 +17,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     const QStringList systemAttributeHeaders = QStringList() << tr("Key")
                                                << tr("Value");
 
-    // Message attribute table
+    // Message attributes table
     _ui->messageAttributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
     _ui->messageAttributeTable->setShowGrid(true);
     _ui->messageAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -28,7 +28,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
     _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
-    // System attribute table
+    // System attributes table
     _ui->systemAttributeTable->setColumnCount(static_cast<int>(systemAttributeHeaders.count()));
     _ui->systemAttributeTable->setShowGrid(true);
     _ui->systemAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);

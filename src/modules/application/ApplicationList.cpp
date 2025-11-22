@@ -22,7 +22,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new application");
     connect(addButton, &QPushButton::clicked, []() {
@@ -31,7 +31,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "restart"), "", this);
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Restart all applications");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -39,7 +39,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the application list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
@@ -62,7 +62,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
         LoadContent();
     });
     prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("dark", "clear"), "", this);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
@@ -72,15 +72,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Version")
-                                << tr("Enabled")
-                                << tr("Status")
-                                << tr("Private Port")
-                                << tr("Public Port")
-                                << tr("Last Started")
-                                << tr("Created")
-                                << tr("Modified");
+    const QStringList headers = QStringList() = {tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Private Port"), tr("Public Port"), tr("Last Started"), tr("Created"), tr("Modified")};
 
     tableWidget = new QTableWidget(this);
 
@@ -151,8 +143,8 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, 0, listApplicationResponse.applicationCounters.at(r).name);
         SetColumn(tableWidget, r, 1, listApplicationResponse.applicationCounters.at(r).version);
-        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("dark", "enabled"), IconUtils::GetIcon("dark", "disabled"));
-        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING", IconUtils::GetIcon("dark", "running"), IconUtils::GetIcon("dark", "stopped"));
+        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
+        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         //SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
         SetColumn(tableWidget, r, 4, listApplicationResponse.applicationCounters.at(r).privatePort);
         SetColumn(tableWidget, r, 5, listApplicationResponse.applicationCounters.at(r).publicPort);
@@ -177,39 +169,39 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Application");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
 
     menu.addSeparator();
 
-    QAction *enableAction = menu.addAction(IconUtils::GetIcon("dark", "enabled"), "Enable Application");
+    QAction *enableAction = menu.addAction(IconUtils::GetIcon("enabled"), "Enable Application");
     enableAction->setToolTip("Enable the application.");
 
-    QAction *disableAction = menu.addAction(IconUtils::GetIcon("dark", "disabled"), "Disable Application");
+    QAction *disableAction = menu.addAction(IconUtils::GetIcon("disabled"), "Disable Application");
     disableAction->setToolTip("Disable the application.");
 
     menu.addSeparator();
 
-    QAction *startAction = menu.addAction(IconUtils::GetIcon("dark", "start"), "Start Application");
+    QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Application");
     startAction->setToolTip("Start the application");
 
-    QAction *stopAction = menu.addAction(IconUtils::GetIcon("dark", "stop"), "Stop Application");
+    QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Application");
     stopAction->setToolTip("Stop the application");
 
-    QAction *restartAction = menu.addAction(IconUtils::GetIcon("dark", "restart"), "Restart Application");
+    QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Application");
     restartAction->setToolTip("Restart the application");
 
     menu.addSeparator();
 
-    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Rebuild Application");
+    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("reload"), "Rebuild Application");
     rebuildAction->setToolTip("Rebuild the application by creating a new image and container.");
 
-    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Upload Application Code");
+    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("reload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Application");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Application");
     deleteAction->setToolTip("Delete the Topic");
 
     const QString name = tableWidget->item(row, 0)->text();

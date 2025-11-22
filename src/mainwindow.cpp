@@ -1,4 +1,5 @@
 #include <mainwindow.h>
+#include <QStyleFactory>
 
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
@@ -86,6 +87,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         _statusBar->showMessage(msg);
     });
     setStatusBar(_statusBar);
+
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, [&](const QString &key, const QString &value) {
+        if (key == "ui.style") {
+            qApp->setStyle(QStyleFactory::create(value));
+        }
+        if (key == "ui.style-type") {
+            if (value == "Dark") {
+                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+                if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
+                    qApp->setStyleSheet(f.readAll());
+                }
+            } else {
+                qApp->setStyleSheet("");
+                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+            }
+        }
+    });
 }
 
 MainWindow::~MainWindow() = default;

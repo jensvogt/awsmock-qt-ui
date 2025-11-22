@@ -100,7 +100,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Close, this);
 
     // Create the custom "Open" button
-    const auto openButton = new QPushButton(IconUtils::GetIcon("dark", "fileexplorer"), "Open", this);
+    const auto openButton = new QPushButton(IconUtils::GetIcon("fileexplorer"), "Open", this);
 
     // Add the "Open" button with ActionRole. This role ensures the button
     // performs an action without automatically closing the dialog.

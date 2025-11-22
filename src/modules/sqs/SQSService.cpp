@@ -367,6 +367,7 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               SQSGetMessageDetailsResponse sqsResponse;
                               sqsResponse.FromJson(jsonDoc["message"].toObject());
+                              sqsResponse.region = jsonDoc.object()["region"].toString();
                               emit GetSqsMessageDetailsSignal(sqsResponse);
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);

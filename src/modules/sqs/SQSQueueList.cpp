@@ -19,7 +19,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     auto *titleLabel = new QLabel(title);
 
     // Toolbar add action
-    auto *addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
+    auto *addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Queue");
     connect(addButton, &QPushButton::clicked, [this]() {
@@ -30,7 +30,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar add action
-    auto *purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
+    auto *purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -38,7 +38,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    auto *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
+    auto *refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
@@ -62,7 +62,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
         LoadContent();
     });
     prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("dark", "clear"), "", this);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
@@ -171,20 +171,20 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
 
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Queue");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Queue");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Queue");
     purgeAction->setToolTip("Purge the Queue");
 
-    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("dark", "redrive"), "Redrive Queue");
+    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Queue");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Queue");
     deleteAction->setToolTip("Delete the Queue");
 
     // Conditional logic

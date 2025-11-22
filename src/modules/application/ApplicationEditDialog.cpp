@@ -20,7 +20,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
     // Connect start button
     _ui->startButton->setText(nullptr);
-    _ui->startButton->setIcon(IconUtils::GetIcon("dark", "start"));
+    _ui->startButton->setIcon(IconUtils::GetIcon("start"));
     _ui->startButton->setEnabled(false);
     connect(_ui->startButton, &QPushButton::clicked, this, [this,name]() {
         _applicationService->StartApplication(name);
@@ -29,7 +29,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
     // Connect stop button
     _ui->stopButton->setText(nullptr);
-    _ui->stopButton->setIcon(IconUtils::GetIcon("dark", "stop"));
+    _ui->stopButton->setIcon(IconUtils::GetIcon("stop"));
     _ui->stopButton->setEnabled(false);
     connect(_ui->stopButton, &QPushButton::clicked, this, [this,name]() {
         _applicationService->StopApplication(name);
@@ -38,7 +38,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
     // Connect refresh button
     _ui->refreshButton->setText(nullptr);
-    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->refreshButton, &QPushButton::clicked, this, [this,name]() {
         _applicationService->GetApplication(name);
     });
@@ -144,7 +144,7 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
 
     // Add button
     _ui->envAddButton->setText("");
-    _ui->envAddButton->setIcon(IconUtils::GetIcon("dark", "add"));
+    _ui->envAddButton->setIcon(IconUtils::GetIcon("add"));
 
     // Table
     const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
@@ -201,7 +201,7 @@ void ApplicationEditDialog::SetupTagsTab() {
 
     // Add button
     _ui->tagAddButton->setText("");
-    _ui->tagAddButton->setIcon(IconUtils::GetIcon("dark", "add"));
+    _ui->tagAddButton->setIcon(IconUtils::GetIcon("add"));
 
     // Table
     const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
@@ -259,7 +259,7 @@ void ApplicationEditDialog::SetupDependenciesTab() {
 
     // Add button
     _ui->dependencyAddButton->setText("");
-    _ui->dependencyAddButton->setIcon(IconUtils::GetIcon("dark", "add"));
+    _ui->dependencyAddButton->setIcon(IconUtils::GetIcon("add"));
 
     QStringList dependenciesList;
     for (const auto &dependency: _application.dependencies) {
@@ -305,12 +305,12 @@ void ApplicationEditDialog::ShowEnvironmentContextMenu(const QPoint &pos) {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Environment Variable");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Environment Variable");
     editAction->setToolTip("Edit the environment variable");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Environment Variable");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Environment Variable");
     deleteAction->setToolTip("Delete the environment variable");
 
     const QString key = _ui->envTable->item(row, 0)->text();
@@ -336,12 +336,12 @@ void ApplicationEditDialog::ShowTagsContextMenu(const QPoint &pos) {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Tag");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Tag");
     editAction->setToolTip("Edit the tag");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Tag");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Tag");
     deleteAction->setToolTip("Delete the tag");
 
     const QString key = _ui->tagTable->item(row, 0)->text();
@@ -367,12 +367,12 @@ void ApplicationEditDialog::ShowDependenciesContextMenu(const QPoint &pos) {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Dependency");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Dependency");
     editAction->setToolTip("Edit the dependency");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Dependency");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Dependency");
     deleteAction->setToolTip("Delete the dependency");
 
     const QString name = _ui->dependencyList->item(row)->text();

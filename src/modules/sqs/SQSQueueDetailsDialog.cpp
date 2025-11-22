@@ -77,7 +77,7 @@ void SQSQueueDetailsDialog::SetupAttributesTab() const {
 
     // Refresh button
     _ui->attributeRefreshButton->setText(nullptr);
-    _ui->attributeRefreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->attributeRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
     _ui->attributeRefreshButton->setToolTip(tr("Refresh attribute list"));
     connect(_ui->attributeRefreshButton, &QPushButton::clicked, [this]() {
         _sqsService->ListQueueAttributes(_queueArn, "");
@@ -116,7 +116,7 @@ void SQSQueueDetailsDialog::SetupLambdaTriggersTab() const {
 
     // Refresh button
     _ui->lambdaRefreshButton->setText(nullptr);
-    _ui->lambdaRefreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->lambdaRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
     _ui->lambdaRefreshButton->setToolTip(tr("Refresh lambda trigger list"));
     connect(_ui->lambdaRefreshButton, &QPushButton::clicked, [this]() {
         _sqsService->ListQueueLambdaTriggers(_queueArn, "");
@@ -156,7 +156,7 @@ void SQSQueueDetailsDialog::SetupDefaultAttributesTab() const {
 
     // Add button
     _ui->addDefaultAttributeButton->setText(nullptr);
-    _ui->addDefaultAttributeButton->setIcon(IconUtils::GetIcon("dark", "add"));
+    _ui->addDefaultAttributeButton->setIcon(IconUtils::GetIcon("add"));
     _ui->addDefaultAttributeButton->setToolTip(tr("Add default attributes"));
     connect(_ui->addDefaultAttributeButton, &QPushButton::clicked, [this]() {
         _sqsService->ListQueueDefaultAttributes(_queueArn, "");

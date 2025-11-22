@@ -23,7 +23,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Bucket");
     connect(addButton, &QPushButton::clicked, [this]() {
@@ -34,7 +34,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "", this);
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Buckets");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -42,7 +42,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the bucket list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
@@ -65,7 +65,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
         LoadContent();
     });
     prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("dark", "clear"), "", this);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
@@ -161,23 +161,23 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Bucket");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
     editAction->setToolTip("Edit the bucket details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Bucket");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Bucket");
     purgeAction->setToolTip("Purge the bucket");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Bucket");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Bucket");
     deleteAction->setToolTip("Delete the Bucket");
 
     const QString bucketName = tableWidget->item(row, 0)->text();
     const QString bucketArn = tableWidget->item(row, 5)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
-        _s3Service->PurgeBucket(bucketArn);
+        _s3Service->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {
         _s3Service->DeleteBucket(bucketName);
     } else if (selectedAction == editAction) {

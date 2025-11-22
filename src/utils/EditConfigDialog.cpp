@@ -56,6 +56,21 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
         Configuration::instance().SetValue("aws.account-id", _ui->accountIdEdit->text());
     });
 
+    // UI settings
+    const QStringList styles = {"Fusion", "Universal", "Material", "Basic", "Windows"};
+    _ui->styleCombo->addItems(styles);
+    _ui->styleCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.style", ""));
+    connect(_ui->styleCombo, &QComboBox::currentTextChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.style", _ui->styleCombo->currentText());
+
+    });
+    const QStringList styleTypes = {"Dark", "Light"};
+    _ui->styleTypeCombo->addItems(styleTypes);
+    _ui->styleCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.style-type", ""));
+    connect(_ui->styleTypeCombo, &QComboBox::currentTextChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.style-type", _ui->styleTypeCombo->currentText());
+    });
+
     // Default tab
     _ui->tabWidget->setCurrentIndex(0);
 }

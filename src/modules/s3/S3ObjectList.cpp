@@ -14,7 +14,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar back action
-    const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
+    const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Add a new object");
     connect(backButton, &QPushButton::clicked, [this]() {
@@ -26,7 +26,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new object");
     connect(addButton, &QPushButton::clicked, []() {
@@ -37,7 +37,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all objects");
     connect(purgeAllButton, &QPushButton::clicked, [this,bucketName]() {
@@ -45,7 +45,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
@@ -69,7 +69,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
         LoadContent();
     });
     prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("dark", "clear"), "", this);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
@@ -177,10 +177,10 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
     //purgeAction->setToolTip("Purge the bucket");
     /*QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all objects");*/
-    QAction *touchAction = menu.addAction(IconUtils::GetIcon("dark", "touch"), "Touch Object");
+    QAction *touchAction = menu.addAction(IconUtils::GetIcon("touch"), "Touch Object");
     touchAction->setToolTip("Touch the object");
     menu.addSeparator();
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Object");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Object");
     deleteAction->setToolTip("Delete the object");
 
     const QString key = tableWidget->item(row, 0)->text();

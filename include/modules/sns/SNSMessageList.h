@@ -125,6 +125,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
 };
 
 #endif // SNS_MESSAGE_LIST_H

@@ -5,7 +5,8 @@
 #include <utils/IconUtils.h>
 
 QIcon IconUtils::GetIcon(const QString &name) {
-    return GetIcon("light", name);
+    const auto style = Configuration::instance().GetValue<QString>("ui.style-type", "");
+    return GetIcon(style.toLower(), name);
 }
 
 QIcon IconUtils::GetIcon(const QString &type, const QString &name) {
