@@ -1,6 +1,7 @@
 
 #include <modules/sqs/SQSService.h>
 
+#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
 #include "utils/EventBus.h"
 
 SQSService::SQSService() {
@@ -213,6 +214,48 @@ void SQSService::ListQueueLambdaTriggers(const QString &queueArn, const QString 
                                   SQSListQueueLambdaTriggersResponse sqsResponse;
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueueLambdaTriggersSignal(sqsResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                      });
+}
+
+void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "name";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["queueArn"] = queueArn;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "list-default-message-attribute-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SQSListQueueDefaultAttributesResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit ListQueueDefaultAttributesSignal(sqsResponse);
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }

@@ -94,6 +94,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_S3_BUCKET_LIST_H

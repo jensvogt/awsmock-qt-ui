@@ -93,6 +93,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
 };
 
 #endif //AWSMOCK_QT_UI_APPLICATION_LIST_H

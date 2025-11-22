@@ -60,24 +60,29 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    const auto prefixEdit = new QLineEdit(this);
+    auto *prefixLayout = new QHBoxLayout();
+    auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("dark", "clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Key")
-                                << tr("ContentType")
-                                << tr("Size")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("Oid");
+    const QStringList headers = QStringList() = {tr("Key"), tr("ContentType"), tr("Size"), tr("Created"), tr("Modified"), tr("Oid")};
 
     tableWidget = new QTableWidget();
-
-    tableWidget->setColumnCount(headers.count());
+    tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -98,9 +103,9 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
         const int row = index.row();
 
         const QString objectId = tableWidget->item(row, 0)->text();
-        /* if (S3ObjectDetailsDialog dialog(objectId); dialog.exec() == QDialog::Accepted) {
-             qDebug() << "SQS Queue edit dialog exit";
-         }*/
+        // TODO: add object details dialog
+        //S3ObjectDetailsDialog dialog(objectId);
+        //dialog.exec();
     });
 
     // Add context menu
@@ -117,7 +122,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addLayout(prefixLayout, 0);
     layout->addWidget(tableWidget, 2);
 }
 

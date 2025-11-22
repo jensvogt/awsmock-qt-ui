@@ -127,6 +127,7 @@ set(PROJECT_SOURCES
         include/utils/JsonUtils.h
         include/utils/ScopedTimer.h
         include/utils/EventBus.h
+        include/dto/sqs/SQSListQueueDefaultAttribtesResponse.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

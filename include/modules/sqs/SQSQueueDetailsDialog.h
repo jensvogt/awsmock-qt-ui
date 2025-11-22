@@ -4,6 +4,8 @@
 #include <modules/sqs/SQSService.h>
 #include <utils/BaseDialog.h>
 
+#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
+
 namespace Ui {
     class SQSQueueDetailsDialog;
 }
@@ -45,6 +47,10 @@ private:
     * @brief Setup of the lambda triggers tab
     */
     void SetupLambdaTriggersTab() const;
+
+    void SetupDefaultAttributesTab() const;
+
+    void UpdateDefaultAttributes(const SQSListQueueDefaultAttributesResponse &response) const;
 
     /**
      * @brief Update the lambda trigger tab
@@ -96,6 +102,18 @@ private:
      * @brief Lambda trigger sort order
      */
     Qt::SortOrder _lambdaTriggerSortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Default attribute sort column index
+     *
+     * @par Default sort column is 'key', index=0
+     */
+    int _defaultAttributeSortColumn = 0;
+
+    /**
+     * @brief Default attribute sort order
+     */
+    Qt::SortOrder _defaultAttributeSortOrder = Qt::DescendingOrder;
 
     /**
      * @brief Tags sort column index

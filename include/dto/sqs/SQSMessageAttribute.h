@@ -29,14 +29,20 @@ struct MessageAttribute final {
 
     void FromJson(const QJsonDocument &jsonDoc) {
         stringValue = jsonDoc["stringValue"].toString();
-        dataType = MessageAttributeDataTypeFromString(jsonDoc["stringListValues"].toString().toStdString());
+        dataType = MessageAttributeDataTypeFromString(jsonDoc["DataType"].toString().toStdString());
+        //binaryValue = (jsonDoc["binaryValue"].toString()..c_str();
+    }
+
+    void FromJson(const QJsonObject &jsonObject) {
+        stringValue = jsonObject["StringValue"].toString();
+        dataType = MessageAttributeDataTypeFromString(jsonObject["DataType"].toString().toStdString());
         //binaryValue = (jsonDoc["binaryValue"].toString()..c_str();
     }
 
     [[nodiscard]] QByteArray ToJson() const {
         QJsonObject jObject;
-        jObject["stringValue"] = stringValue;
-        jObject["dataType"] = QString::fromStdString(MessageAttributeDataTypeToString(dataType));
+        jObject["StringValue"] = stringValue;
+        jObject["DataType"] = QString::fromStdString(MessageAttributeDataTypeToString(dataType));
         const QJsonDocument jDoc(jObject);
         return jDoc.toJson();
     }

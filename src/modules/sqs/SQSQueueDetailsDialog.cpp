@@ -1,5 +1,6 @@
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 #include "ui_SQSQueueDetailsDialog.h"
+#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
 #include "utils/IconUtils.h"
 
 SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSQueueDetailsDialog), _queueArn(queueArn) {
@@ -12,12 +13,17 @@ SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *p
     _sqsService->GetQueueDetails(queueArn);
     connect(_sqsService, &SQSService::GetQueueDetailsSignal, this, &SQSQueueDetailsDialog::UpdateQueueDetails);
     connect(_sqsService, &SQSService::ListQueueAttributesSignal, this, &SQSQueueDetailsDialog::UpdateQueueAttributes);
+    connect(_sqsService, &SQSService::ListQueueLambdaTriggersSignal, this, &SQSQueueDetailsDialog::UpdateQueueLambdaTriggers);
+    connect(_sqsService, &SQSService::ListQueueDefaultAttributesSignal, this, &SQSQueueDetailsDialog::UpdateDefaultAttributes);
 
     // Setup attributes tab
     SetupAttributesTab();
 
     // Setup lambda triggers tab
     SetupLambdaTriggersTab();
+
+    // Setup default attributes tab
+    SetupDefaultAttributesTab();
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
@@ -132,7 +138,6 @@ void SQSQueueDetailsDialog::SetupLambdaTriggersTab() const {
     _sqsService->ListQueueLambdaTriggers(_queueArn, "");
 }
 
-
 void SQSQueueDetailsDialog::UpdateQueueLambdaTriggers(const SQSListQueueLambdaTriggersResponse &response) const {
     _ui->lambdaTable->setRowCount(0);
     _ui->lambdaTable->setSortingEnabled(false); // stop sorting
@@ -145,4 +150,47 @@ void SQSQueueDetailsDialog::UpdateQueueLambdaTriggers(const SQSListQueueLambdaTr
     _ui->lambdaTable->setRowCount(static_cast<int>(response.queueLambdaTriggerCounters.count()));
     _ui->lambdaTable->setSortingEnabled(true);
     _ui->lambdaTable->sortItems(_lambdaTriggerSortColumn, _lambdaTriggerSortOrder);
+}
+
+void SQSQueueDetailsDialog::SetupDefaultAttributesTab() const {
+
+    // Add button
+    _ui->addDefaultAttributeButton->setText(nullptr);
+    _ui->addDefaultAttributeButton->setIcon(IconUtils::GetIcon("dark", "add"));
+    _ui->addDefaultAttributeButton->setToolTip(tr("Add default attributes"));
+    connect(_ui->addDefaultAttributeButton, &QPushButton::clicked, [this]() {
+        _sqsService->ListQueueDefaultAttributes(_queueArn, "");
+    });
+
+    // Table
+    const QStringList headers = QStringList() = {tr("Key"), tr("Data Type"), tr("Value")};
+
+    _ui->defaultAttributeTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->defaultAttributeTable->setShowGrid(true);
+    _ui->defaultAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->defaultAttributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->defaultAttributeTable->setHorizontalHeaderLabels(headers);
+    _ui->defaultAttributeTable->setSortingEnabled(true);
+    _ui->defaultAttributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    _sqsService->ListQueueDefaultAttributes(_queueArn, "");
+}
+
+void SQSQueueDetailsDialog::UpdateDefaultAttributes(const SQSListQueueDefaultAttributesResponse &response) const {
+    _ui->defaultAttributeTable->setRowCount(0);
+    _ui->defaultAttributeTable->setSortingEnabled(false); // stop sorting
+    int r = 0;
+    for (const auto &key: response.defaultAttributesCounters.keys()) {
+        _ui->defaultAttributeTable->insertRow(r);
+        MessageAttribute defaultAttribute = response.defaultAttributesCounters[key];
+        SetColumn(_ui->defaultAttributeTable, r, 0, key);
+        SetColumn(_ui->defaultAttributeTable, r, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType).data());
+        SetColumn(_ui->defaultAttributeTable, r, 2, response.defaultAttributesCounters[key].stringValue);
+        r++;
+    }
+    _ui->defaultAttributeTable->setRowCount(r);
+    _ui->defaultAttributeTable->setSortingEnabled(true);
+    _ui->defaultAttributeTable->sortItems(_defaultAttributeSortColumn, _defaultAttributeSortOrder);
 }
