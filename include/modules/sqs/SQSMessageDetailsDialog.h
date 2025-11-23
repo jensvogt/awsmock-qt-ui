@@ -4,6 +4,8 @@
 #include <QDialog>
 
 #include <modules/sqs/SQSService.h>
+#include <utils/WordHIghLighter.h>
+#include <utils/IconUtils.h>
 
 namespace Ui {
     class SQSMessageDetailsDialog;
@@ -27,6 +29,7 @@ private:
     QString _messageId;
     SQSService *_sqsService;
     bool _changed = false;
+    WordHighlighter *_wordHighlighter;
 };
 
 #endif // SQS_MESSAGE_DETAILS_DIALOG_H

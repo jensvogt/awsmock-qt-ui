@@ -26,7 +26,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     _ui->logsButton->setEnabled(false);
     connect(_ui->logsButton, &QPushButton::clicked, this, [this,name]() {
         if (!_containerId.isEmpty()) {
-            _applicationLogsDialog = new ApplicationLogsDialog(name, _containerId);
+            _applicationLogsDialog = new ApplicationLogsDialog(name, _containerId, this);
             _applicationLogsDialog->setModal(false);
             _applicationLogsDialog->setAttribute(Qt::WA_DeleteOnClose);
             _applicationLogsDialog->show();
@@ -89,7 +89,6 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
 ApplicationEditDialog::~ApplicationEditDialog() {
     delete _ui;
-    delete _applicationLogsDialog;
 }
 
 void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &applicationGetResponse) {
@@ -110,8 +109,6 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->lastStartedEdit->setText(_application.lastStarted.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->createdEdit->setText(_application.created.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->modifiedEdit->setText(_application.modified.toString("yyyy-MM-dd hh:mm:ss"));
-
-    connect(_ui->enabledCheckBox, &QCheckBox::checkStateChanged, this, [&]() { this->_changed = true; });
 
     // Update environment table
     int r = 0;

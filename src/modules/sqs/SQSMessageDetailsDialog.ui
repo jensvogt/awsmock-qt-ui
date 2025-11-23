@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit SQS Queue</string>
+   <string>SQS Message Details</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -145,7 +145,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="bodyTab">
     <attribute name="title">
@@ -156,41 +156,59 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>1041</width>
+       <width>1051</width>
        <height>411</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>3</number>
+      </property>
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
         <property name="topMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>5</number>
+         <number>3</number>
         </property>
         <property name="bottomMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
+         <widget class="QLineEdit" name="searchEdit">
+          <property name="toolTip">
+           <string>Search the body for a word</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="placeholderText">
+           <string>Search...</string>
           </property>
-         </spacer>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="prettyPushButton">
           <property name="maximumSize">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>20</width>
+            <height>20</height>
            </size>
           </property>
           <property name="text">

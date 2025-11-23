@@ -133,6 +133,8 @@ set(PROJECT_SOURCES
         src/modules/application/ApplicationLogsDialog.cpp
         include/modules/application/ApplicationLogsDialog.h
         src/modules/application/ApplicationLogsDialog.ui
+        include/utils/WordHIghLighter.h
+        include/utils/WordHIghLighter.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

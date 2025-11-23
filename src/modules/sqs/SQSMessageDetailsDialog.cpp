@@ -1,9 +1,10 @@
+#include "modules/sqs/SQSMessageDetailsDialog.h"
+
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include "ui_SQSMessageDetailsDialog.h"
-#include "utils/IconUtils.h"
 
 SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent),
-                                                                                              _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
+    _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
     _ui->setupUi(this);
 
     _sqsService = new SQSService();
@@ -44,8 +45,21 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Pretty print
     _ui->prettyPushButton->setText(nullptr);
-    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
+    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("pretty"));
     connect(_ui->prettyPushButton, &QPushButton::toggled, this, &SQSMessageDetailsDialog::PrettyPrintClicked);
+
+    // Word highlighter
+    _wordHighlighter = new WordHighlighter(_ui->bodyPlainTextEdit->document());
+    connect(_ui->searchEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        _wordHighlighter->word = text;
+        _wordHighlighter->format.setBackground(Qt::yellow);
+        _wordHighlighter->format.setForeground(Qt::black);
+        _wordHighlighter->rehighlight();
+        QTextCursor cursor(_ui->bodyPlainTextEdit->document());
+        cursor.movePosition(QTextCursor::Start);
+        _ui->bodyPlainTextEdit->setTextCursor(cursor);
+        _ui->bodyPlainTextEdit->find(text, QTextDocument::FindWholeWords);
+    });
 }
 
 SQSMessageDetailsDialog::~SQSMessageDetailsDialog() {
@@ -106,5 +120,12 @@ void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
         } else {
             QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
         }
+    }
+    if (!_ui->searchEdit->text().isEmpty()) {
+        QString text = _ui->searchEdit->text();
+        QTextCursor cursor(_ui->bodyPlainTextEdit->document());
+        cursor.movePosition(QTextCursor::Start);
+        _ui->bodyPlainTextEdit->setTextCursor(cursor);
+        _ui->bodyPlainTextEdit->find(text, QTextDocument::FindWholeWords);
     }
 }
