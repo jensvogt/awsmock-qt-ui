@@ -66,7 +66,7 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     });
     const QStringList styleTypes = {"Dark", "Light"};
     _ui->styleTypeCombo->addItems(styleTypes);
-    _ui->styleCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.style-type", ""));
+    _ui->styleTypeCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.style-type", ""));
     connect(_ui->styleTypeCombo, &QComboBox::currentTextChanged, this, [this]() {
         Configuration::instance().SetValue("ui.style-type", _ui->styleTypeCombo->currentText());
     });

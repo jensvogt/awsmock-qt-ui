@@ -11,16 +11,12 @@
 #include <dto/application/ApplicationCounter.h>
 
 struct ApplicationListResponse {
-
     long total{};
 
     QList<ApplicationCounter> applicationCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
-
-        QJsonArray jArray = jsonDoc["applications"].toArray();
-
-        for(const auto &element : jArray) {
+        for (QJsonArray jArray = jsonDoc["applications"].toArray(); const auto &element: jArray) {
             ApplicationCounter applicationCounter;
             applicationCounter.FromJson(element.toObject());
             applicationCounters.append(applicationCounter);

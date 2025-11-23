@@ -18,14 +18,28 @@ QLineEdit, QTextEdit, QPlainTextEdit {
     border: 1px solid #767676;
 }
 
+/* ============================================================================= */
+/* Menu                                                                          */
+/* ============================================================================= */
 QMenuBar, QMenu {
     background-color: #2b2b2b;
 }
 
-QMenu::item:selected {
-    background-color: #505354;
+QMenuBar::selected, QMenu::selected {
+    background-color: #3478f6;
 }
 
+QMenu::item:selected {
+    background-color: #3478f6;
+}
+
+QMenu::item:disabled {
+    color: #afafaf;
+}
+
+/* ============================================================================= */
+/* Scrollbar horizontal                                                          */
+/* ============================================================================= */
 QScrollBar::handle:horizontal {
     background: #666;
     min-width: 20px;
@@ -37,16 +51,29 @@ QScrollBar:horizontal {
     background: #2b2b2b;
 }
 
-QScrollBar:vertical {
-    width: 12px;
-    background: #2b2b2b;
-    margin: 0px;
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    background: #444;
+    height: 0px;
 }
 
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/* ============================================================================= */
+/* Scrollbar horizontal                                                          */
+/* ============================================================================= */
 QScrollBar::handle:vertical {
     background: #666;
     min-height: 20px;
     border-radius: 5px;
+}
+
+QScrollBar:vertical {
+    width: 12px;
+    background: #2b2b2b;
+    margin: 0px;
 }
 
 QScrollBar::add-line:vertical,
@@ -55,6 +82,13 @@ QScrollBar::sub-line:vertical {
     height: 0px;
 }
 
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+/* ============================================================================= */
+/* Table view                                                                    */
+/* ============================================================================= */
 QTableView::item {
     padding: 6px;
 }
@@ -65,6 +99,16 @@ QTableView::item:selected {
 }
 
 QListWidget::item:selected {
-    background: #3478f6;   /* highlight background */
-    color: white;          /* text color */
+    background: #3478f6;
+    color: white;
+}
+
+QListView::item:selected {
+    background: #3478f6;
+    color: white;
+}
+
+QChart {
+    background-color: #3c3f41;
+    border: 1px solid #5c5c5c;
 }

@@ -128,6 +128,11 @@ set(PROJECT_SOURCES
         include/utils/ScopedTimer.h
         include/utils/EventBus.h
         include/dto/sqs/SQSListQueueDefaultAttribtesResponse.h
+        include/modules/docker/DockerLogClient.h
+        src/modules/docker/DockerLogClient.cpp
+        src/modules/application/ApplicationLogsDialog.cpp
+        include/modules/application/ApplicationLogsDialog.h
+        src/modules/application/ApplicationLogsDialog.ui
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -207,6 +212,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             src/modules/application/ApplicationUploadCodeDialog.cpp
             src/modules/application/ApplicationUploadCodeDialog.ui
             src/modules/infrastructure/InfrastructureService.cpp
+            src/modules/docker/DockerLogClient.cpp
             ${APP_ICON_RESOURCE_WINDOWS}
     )
     # Define target properties for Android with Qt 6 as:

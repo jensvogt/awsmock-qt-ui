@@ -1,6 +1,8 @@
 
 #include <modules/application/ApplicationList.h>
 
+#include "modules/application/ApplicationLogsDialog.h"
+
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -10,7 +12,8 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     // Connect service
     _applicationService = new ApplicationService();
     connect(_applicationService, &ApplicationService::LoadAllApplications, this, &ApplicationList::LoadContent);
-    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this, &ApplicationList::HandleListApplicationsSignal);
+    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this,
+            &ApplicationList::HandleListApplicationsSignal);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -72,10 +75,13 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() = {tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Private Port"), tr("Public Port"), tr("Last Started"), tr("Created"), tr("Modified")};
+    const QStringList headers = QStringList() = {
+                                    tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Private Port"),
+                                    tr("Public Port"), tr("Last Started"), tr("Created"), tr("Modified"),
+                                    tr("ContainerId")
+                                };
 
     tableWidget = new QTableWidget(this);
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -92,6 +98,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
+    tableWidget->setColumnHidden(9, true);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
@@ -143,14 +150,17 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, 0, listApplicationResponse.applicationCounters.at(r).name);
         SetColumn(tableWidget, r, 1, listApplicationResponse.applicationCounters.at(r).version);
-        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
-        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
+        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled,
+                  IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
+        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING",
+                  IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         //SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
         SetColumn(tableWidget, r, 4, listApplicationResponse.applicationCounters.at(r).privatePort);
         SetColumn(tableWidget, r, 5, listApplicationResponse.applicationCounters.at(r).publicPort);
         SetColumn(tableWidget, r, 6, listApplicationResponse.applicationCounters.at(r).lastStarted);
         SetColumn(tableWidget, r, 7, listApplicationResponse.applicationCounters.at(r).created);
         SetColumn(tableWidget, r, 8, listApplicationResponse.applicationCounters.at(r).modified);
+        SetColumn(tableWidget, r, 9, listApplicationResponse.applicationCounters.at(r).containerId);
     }
     tableWidget->setRowCount(static_cast<int>(listApplicationResponse.applicationCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -168,9 +178,18 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     const int row = index.row();
 
+    const QString name = tableWidget->item(row, 0)->text();
+    const QString containerId = tableWidget->item(row, 9)->text();
+
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
+
+    QAction *logsAction = menu.addAction(IconUtils::GetIcon("edit"), "Show the application logs");
+    logsAction->setToolTip("Show the application logs");
+    if (containerId.isEmpty()) {
+        logsAction->setDisabled(true);
+    }
 
     menu.addSeparator();
 
@@ -204,11 +223,15 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Application");
     deleteAction->setToolTip("Delete the Topic");
 
-    const QString name = tableWidget->item(row, 0)->text();
-    const QString version = tableWidget->item(row, 1)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
-        }
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == editAction) {
+        ApplicationEditDialog dialog(name);
+        dialog.exec();
+    } else if (selectedAction == logsAction) {
+        auto *dialog = new ApplicationLogsDialog(name, containerId);
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
     } else if (selectedAction == startAction) {
         _applicationService->StartApplication(name);
     } else if (selectedAction == enableAction) {

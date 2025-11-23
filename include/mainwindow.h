@@ -62,7 +62,7 @@ private:
 
     BasePage *CreatePage(int currentRow);
 
-    void Exit();
+    static void Exit();
 
     /**
      * @brief Main menu bar
@@ -107,7 +107,7 @@ private:
     /**
      * Scoped timer
      */
-    ScopeTimer *_timer;
+    ScopeTimer *_timer{};
 
     /**
      * @brief Server label in status bar

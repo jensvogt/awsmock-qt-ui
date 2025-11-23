@@ -14,7 +14,6 @@
 #include "utils/EventBus.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-
     // Connect infrastructure signals
     _infraStructureService = new InfraStructureService();
     connect(_infraStructureService, &InfraStructureService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -22,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(_infraStructureService, &InfraStructureService::CleanResponseSignal, this, &CleanInfrastructureResponse);
 
     setWindowTitle("AwsMock UI");
-    resize(1200, 800);
+    resize(1600, 900);
 
     // Setup menu bar
     SetupMenuBar();
@@ -70,40 +69,46 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     NavigationSelectionChanged(0);
 
     // "Status bar" at the bottom
-    _serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""), this);
+    _serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""),
+                             this);
     _statusBar = new QStatusBar(this);
     _statusBar->showMessage("Ready");
     _statusBar->addPermanentWidget(_serverName);
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
-        if (key == "server.base-url") {
-            _serverName->setText(value);
-        }
-    });
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this,
+            [this](const QString &key, const QString &value) {
+                if (key == "server.base-url") {
+                    _serverName->setText(value);
+                }
+            });
 
     _timerLabel = new QLabel("", this);
     _statusBar->addWidget(_timerLabel);
     connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &name, qint64 elapsed) {
-        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
+        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" +
+                            QString::number(elapsed) + "ms]";
         _statusBar->showMessage(msg);
     });
     setStatusBar(_statusBar);
 
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, [&](const QString &key, const QString &value) {
-        if (key == "ui.style") {
-            qApp->setStyle(QStyleFactory::create(value));
-        }
-        if (key == "ui.style-type") {
-            if (value == "Dark") {
-                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
-                if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
-                    qApp->setStyleSheet(f.readAll());
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged,
+            [&](const QString &key, const QString &value) {
+                if (key == "ui.style") {
+                    qApp->setStyle(QStyleFactory::create(value));
                 }
-            } else {
-                qApp->setStyleSheet("");
-                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
-            }
-        }
-    });
+                if (key == "ui.style-type") {
+                    if (value == "Dark") {
+                        qApp->setStyle(
+                            QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+                        if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
+                            qApp->setStyleSheet(f.readAll());
+                        }
+                    } else {
+                        qApp->setStyleSheet("");
+                        qApp->setStyle(
+                            QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+                    }
+                }
+            });
 }
 
 MainWindow::~MainWindow() = default;
@@ -158,12 +163,13 @@ void MainWindow::SetupMenuBar() {
 }
 
 void MainWindow::ImportInfrastructure() const {
-
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>(
+        "ui.default-directory", "/usr/local/awsmock-qt-ui");
 
-    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir,
+                                                              filter); !filePath.isEmpty()) {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
             QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
@@ -183,19 +189,19 @@ void MainWindow::ImportInfrastructureResponse() {
 }
 
 void MainWindow::ExportInfrastructure() const {
-
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>(
+        "ui.default-directory", "/usr/local/awsmock-qt-ui");
 
-    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
+                                                              filter); !filePath.isEmpty()) {
         _infraStructureService->ExportInfrastructure(filePath);
         Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
     }
 }
 
 void MainWindow::WriteInfrastructureExport(const QString &filename, const QString &exportResponse) {
-
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(nullptr, "Warning", "Couldn't open file for writing: " + file.fileName());
@@ -259,7 +265,6 @@ void MainWindow::UpdateStatusBar(const QString &text) const {
 
 BasePage *MainWindow::CreatePage(const int currentRow) {
     switch (currentRow) {
-
         case 0: {
             const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
 
@@ -278,7 +283,6 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             // Route to the message list
             connect(queueListPage, &SQSQueueList::ShowMessages, this,
                     [this, queueListPage](const QString &queueArn, const QString &queueUrl) {
-
                         // Stop the auto updater
                         queueListPage->StopAutoUpdate();
 
@@ -286,13 +290,15 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
                         const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
 
                         // Create the message list page
-                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, nullptr);
+                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn,
+                                                                        queueUrl, nullptr);
 
                         // Add it to the loaded pages list
                         m_contentPane->addWidget(messageListPage);
                         m_contentPane->setCurrentWidget(messageListPage);
 
-                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this,
+                                &MainWindow::UpdateStatusBar);
 
                         // Connect the back button
                         connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&]() {
@@ -312,30 +318,33 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
             // Route to the message list
-            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this, [this, topicListPage](const QString &topicArn) {
-                // Stop the auto updater
-                topicListPage->StopAutoUpdate();
+            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this,
+                    [this, topicListPage](const QString &topicArn) {
+                        // Stop the auto updater
+                        topicListPage->StopAutoUpdate();
 
-                // Get the Queue name
-                const QString topicName = topicArn.mid(topicArn.lastIndexOf(":") + 1);
+                        // Get the Queue name
+                        const QString topicName = topicArn.mid(topicArn.lastIndexOf(":") + 1);
 
-                // Create the message list page
-                const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn, nullptr);
+                        // Create the message list page
+                        const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn,
+                                                                        nullptr);
 
-                // Add it to the loaded pages list
-                m_contentPane->addWidget(messageListPage);
-                m_contentPane->setCurrentWidget(messageListPage);
+                        // Add it to the loaded pages list
+                        m_contentPane->addWidget(messageListPage);
+                        m_contentPane->setCurrentWidget(messageListPage);
 
-                connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+                        connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this,
+                                &MainWindow::UpdateStatusBar);
 
-                // Connect the back button
-                connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&]() {
-                    NavigationSelectionChanged(2);
-                });
+                        // Connect the back button
+                        connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&]() {
+                            NavigationSelectionChanged(2);
+                        });
 
-                // Start auto updater
-                messageListPage->StartAutoUpdate();
-            });
+                        // Start auto updater
+                        messageListPage->StartAutoUpdate();
+                    });
 
             return topicListPage;
         }
@@ -347,27 +356,29 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             connect(bucketListPage, &S3BucketList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
             // Route to the S3 object list
-            connect(bucketListPage, &S3BucketList::ShowS3Objects, this, [this,bucketListPage](const QString &bucketName) {
+            connect(bucketListPage, &S3BucketList::ShowS3Objects, this,
+                    [this,bucketListPage](const QString &bucketName) {
+                        // Stop the auto updater
+                        bucketListPage->StopAutoUpdate();
 
-                // Stop the auto updater
-                bucketListPage->StopAutoUpdate();
+                        // Create the message list page
+                        const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName,
+                                                                     nullptr);
 
-                // Create the message list page
-                const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName, nullptr);
+                        // Add it to the loaded pages list
+                        m_contentPane->addWidget(objectListPage);
+                        m_contentPane->setCurrentWidget(objectListPage);
+                        connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this,
+                                &MainWindow::UpdateStatusBar);
 
-                // Add it to the loaded pages list
-                m_contentPane->addWidget(objectListPage);
-                m_contentPane->setCurrentWidget(objectListPage);
-                connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+                        // Connect the back button
+                        connect(objectListPage, &S3ObjectList::BackToBucketList, this, [&]() {
+                            NavigationSelectionChanged(3);
+                        });
 
-                // Connect the back button
-                connect(objectListPage, &S3ObjectList::BackToBucketList, this, [&]() {
-                    NavigationSelectionChanged(3);
-                });
-
-                // Start auto updater
-                objectListPage->StartAutoUpdate();
-            });
+                        // Start auto updater
+                        objectListPage->StartAutoUpdate();
+                    });
 
             return bucketListPage;
         }
