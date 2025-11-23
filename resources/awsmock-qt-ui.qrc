@@ -16,6 +16,7 @@
         <file>light/fileexplorer.png</file>
         <file>light/help.png</file>
         <file>light/import.png</file>
+        <file>light/logs.png</file>
         <file>light/pretty.png</file>
         <file>light/preferences.png</file>
         <file>light/purge.png</file>
@@ -43,6 +44,7 @@
         <file>dark/fileexplorer.png</file>
         <file>dark/help.png</file>
         <file>dark/import.png</file>
+        <file>dark/logs.png</file>
         <file>dark/preferences.png</file>
         <file>dark/pretty.png</file>
         <file>dark/purge.png</file>

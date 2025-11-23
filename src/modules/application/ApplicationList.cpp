@@ -185,7 +185,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
 
-    QAction *logsAction = menu.addAction(IconUtils::GetIcon("edit"), "Show the application logs");
+    QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the application logs");
     logsAction->setToolTip("Show the application logs");
     if (containerId.isEmpty()) {
         logsAction->setDisabled(true);
