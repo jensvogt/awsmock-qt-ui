@@ -5,28 +5,6 @@ S3Service::S3Service() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
-// void S3Service::AddTopic(const QString &region, const QString &topicName) {
-//     QJsonObject jRequest;
-//     jRequest["region"] = region;
-//     jRequest["topicName"] = topicName;
-//     const QJsonDocument requestDoc(jRequest);
-//
-//     _restManager.post(url,
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "s3"},
-//                           {"x-awsmock-action", "create-topic"},
-//                           {"content-type", "application/json"}
-//                       },
-//                       [this](const bool success, const QByteArray &response, int status, const QString &error) {
-//                           if (success) {
-//                               emit ReloadMessagesSignal();
-//                           } else {
-//                               QMessageBox::critical(nullptr, "Error", error);
-//                           }
-//                       });
-// }
-
 void S3Service::ListBuckets(const QString &prefix) {
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
@@ -66,7 +44,6 @@ void S3Service::ListBuckets(const QString &prefix) {
 }
 
 void S3Service::PurgeBucket(const QString &bucketName) {
-
     QJsonObject jRequest;
     jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jRequest["bucketName"] = bucketName;
@@ -89,7 +66,6 @@ void S3Service::PurgeBucket(const QString &bucketName) {
 }
 
 void S3Service::AddBucket(const QString &bucketName) {
-
     QJsonObject jRequest;
     jRequest["Name"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
@@ -111,7 +87,6 @@ void S3Service::AddBucket(const QString &bucketName) {
 }
 
 void S3Service::DeleteBucket(const QString &bucketName) {
-
     QJsonObject jRequest;
     jRequest["Bucket"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
@@ -147,7 +122,6 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       },
                       [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-
                               // The API returns an JSON document
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               S3GetBucketDetailsResponse bucketResponse;
@@ -160,7 +134,6 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
 }
 
 void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
-
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "messages";
@@ -199,8 +172,33 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
                       });
 }
 
-void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
+void S3Service::GetObjectDetails(const QString &objectId) {
+    QJsonObject jRequest;
+    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    jRequest["oid"] = objectId;
+    const QJsonDocument requestDoc(jRequest);
 
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "GetObjectCounter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an JSON document
+                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              S3GetObjectDetailsResponse objectDetailsResponse;
+                              objectDetailsResponse.FromJson(jsonDoc["objectCounter"].toObject());
+                              emit GetObjectDetailsSignal(objectDetailsResponse);
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
     QJsonObject jRequest;
     jRequest["Bucket"] = bucketName;
     jRequest["Key"] = key;

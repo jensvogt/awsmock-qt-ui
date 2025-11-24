@@ -135,6 +135,10 @@ set(PROJECT_SOURCES
         src/modules/application/ApplicationLogsDialog.ui
         include/utils/WordHIghLighter.h
         include/utils/WordHIghLighter.h
+        src/modules/s3/S3ObjectEditDialog.cpp
+        include/modules/s3/S3ObjectEditDialog.h
+        src/modules/s3/S3ObjectEditDialog.ui
+        include/dto/s3/S3GetObjectDetailsResponse.h
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

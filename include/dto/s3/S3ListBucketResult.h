@@ -1,5 +1,5 @@
-#ifndef AWSMOCK_QT_UI_LIST_BUCKET_RESULT_H
-#define AWSMOCK_QT_UI_LIST_BUCKET_RESULT_H
+#ifndef AWSMOCK_QT_UI_S3_LIST_BUCKET_RESULT_H
+#define AWSMOCK_QT_UI_S3_LIST_BUCKET_RESULT_H
 
 #include <QList>
 #include <QJsonArray>
@@ -14,7 +14,6 @@ struct S3ListBucketResult {
     QList<S3BucketCounter> bucketCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
-
         for (QJsonArray jArray = jsonDoc["bucketCounters"].toArray(); const auto &element: jArray) {
             S3BucketCounter bucketCounter;
             bucketCounter.FromJson(element.toObject());
@@ -23,4 +22,4 @@ struct S3ListBucketResult {
     }
 };
 
-#endif // AWSMOCK_QT_UI_LIST_BUCKET_RESULT_H
+#endif // AWSMOCK_QT_UI_S3_LIST_BUCKET_RESULT_H

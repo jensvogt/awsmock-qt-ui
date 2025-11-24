@@ -4,9 +4,6 @@
 
 
 #include <modules/docker/DockerLogClient.h>
-#include <QDebug>
-
-#include "dto/dashboard/DashboardCounterResult.h"
 
 DockerLogClient::DockerLogClient(const QString &containerId, const Mode mode, const QString &endpoint,
                                  QObject *parent) : QObject(parent), m_containerId(containerId), m_endpoint(endpoint),
@@ -27,7 +24,7 @@ DockerLogClient::DockerLogClient(const QString &containerId, const Mode mode, co
 void DockerLogClient::ConnectToDocker() const {
     if (m_mode == Mode::Tcp) {
         QStringList parts = m_endpoint.split(':');
-        const QString host = parts[0];
+        const QString &host = parts[0];
         const quint16 port = parts[1].toUInt();
         m_tcpSocket->connectToHost(host, port);
     } else {
@@ -71,7 +68,7 @@ void DockerLogClient::onReadyRead() {
 
     // Step 1: parse HTTP headers once
     if (!headersParsed) {
-        const int headerEnd = buffer.indexOf("\r\n\r\n");
+        const int headerEnd = static_cast<int>(buffer.indexOf("\r\n\r\n"));
         if (headerEnd == -1) return;
 
         buffer.remove(0, headerEnd + 4);
@@ -82,14 +79,11 @@ void DockerLogClient::onReadyRead() {
     // Each frame: [stream][0][0][0][size1][size2][size3][size4][payload]
     while (buffer.size() >= 8) {
         uchar stream = buffer[0];
-        quint32 size =
-                ((quint8) buffer[4] << 24) |
-                ((quint8) buffer[5] << 16) |
-                ((quint8) buffer[6] << 8) |
-                ((quint8) buffer[7]);
-
-        //if (buffer.size() < 8 + size)
-        //    return; // Not enough data yet
+        const quint32 size =
+                static_cast<quint8>(buffer[4]) << 24 |
+                static_cast<quint8>(buffer[5]) << 16 |
+                static_cast<quint8>(buffer[6]) << 8 |
+                static_cast<quint8>(buffer[7]);
 
         QByteArray msg = buffer.mid(8, size);
 
@@ -117,18 +111,20 @@ QStringList DockerLogClient::SanitizeString(const QString &input) {
 
     // Regex for lines that contain only a hexadecimal number
     const QRegularExpression hexLine("^[0-9a-fA-F]+$");
+    const QRegularExpression colorCoding("[^\\x20-\\x7E]");
+    const QRegularExpression lineEndings("[\\r\\n]");
 
     for (QString line: lines) {
         // Remove unprintable characters
-        line.remove(QRegularExpression("[^\\x20-\\x7E]"));
+        line.remove(colorCoding);
 
         // Skip lines that are just a hex number
         if (hexLine.match(line.trimmed()).hasMatch()) {
             continue;
         }
-        line.remove(QRegularExpression("[\\r\\n]"));
+        line.remove(lineEndings);
         if (!line.trimmed().isEmpty()) {
-            cleaned.append(line);
+            cleaned.append(line.toUtf8());
         }
     }
 

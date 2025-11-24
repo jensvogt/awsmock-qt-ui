@@ -8,6 +8,8 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QLocalSocket>
+#include <QDebug>
+#include <QRegularExpression>
 
 class DockerLogClient final : public QObject {
     Q_OBJECT

@@ -4,7 +4,6 @@
 #include "modules/s3/S3BucketEditDialog.h"
 
 S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(parent) {
-
     // Set region
     _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
 
@@ -28,7 +27,8 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setToolTip("Add a new Bucket");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal, "", &ok); ok && !bucketName.isEmpty()) {
+        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal,
+                                                             "", &ok); ok && !bucketName.isEmpty()) {
             _s3Service->AddBucket(bucketName);
         }
     });
@@ -44,7 +44,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the bucket list");
+    refreshButton->setToolTip("Refresh the S3 bucket list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
@@ -75,7 +75,10 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() = {tr("Name"), tr("Keys"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("BucketArn")};
+    const QStringList headers = QStringList() = {
+                                    tr("Name"), tr("Keys"), tr("Size [kb]"), tr("Created"), tr("Modified"),
+                                    tr("BucketArn")
+                                };
     tableWidget = new QTableWidget(this);
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
@@ -93,7 +96,6 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-
         // Get the position
         const int row = index.row();
 
@@ -176,7 +178,8 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
 
     const QString bucketName = tableWidget->item(row, 0)->text();
     const QString bucketArn = tableWidget->item(row, 5)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == purgeAction) {
         _s3Service->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {
         _s3Service->DeleteBucket(bucketName);
