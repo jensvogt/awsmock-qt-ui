@@ -1,10 +1,7 @@
 #include <modules/sqs/SQSQueueList.h>
-
-#include "dto/sqs/SQSListQueueResponse.h"
 #include "utils/IconUtils.h"
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
-
     // Connect service
     sqsService = new SQSService();
     connect(sqsService, &SQSService::ListQueuesSignal, this, &SQSQueueList::HandleListQueueSignal);
@@ -24,7 +21,8 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setToolTip("Add a new Queue");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
+        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
+            ; ok && !text.isEmpty()) {
             sqsService->AddQueue(text);
         }
     });
@@ -73,7 +71,8 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Table
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
+                                    tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"),
+                                    tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
                                 };
 
     tableWidget = new QTableWidget();
@@ -114,10 +113,11 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Save sort column
     _tableHeader = tableWidget->horizontalHeader();
-    connect(_tableHeader, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder &order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    connect(_tableHeader, &QHeaderView::sortIndicatorChanged, this,
+            [this](const int column, const Qt::SortOrder &order) {
+                _sortColumn = column;
+                _sortOrder = order;
+            });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
@@ -192,7 +192,8 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     const QString queueUrl = tableWidget->item(row, 7)->text();
     const QString queueArn = tableWidget->item(row, 8)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == redriveAction) {
         sqsService->RedriveQueue(queueArn);

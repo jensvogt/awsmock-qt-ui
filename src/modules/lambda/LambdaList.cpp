@@ -1,5 +1,7 @@
-
+#include <ui_LambdaDetailsDialog.h>
 #include <modules/lambda/LambdaList.h>
+
+#include "modules/lambda/LambdaDetailsDialog.h"
 
 //#include "modules/lambda/LambdaLogsDialog.h"
 
@@ -76,8 +78,8 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Table
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Private Port"),
-                                    tr("Public Port"), tr("Last Started"), tr("Created"), tr("Modified"),
+                                    tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Instances"),
+                                    tr("Invocations"), tr("Avg. Execution Time"), tr("Created"), tr("Modified"),
                                     tr("ContainerId")
                                 };
 
@@ -105,11 +107,11 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
         // Get the position
         const int row = index.row();
 
-        // Extract ARN and URL
-        const QString name = tableWidget->item(row, 0)->text();
+        // Extract ARN
+        const QString arn = tableWidget->item(row, 9)->text();
 
-        //LambdaEditDialog dialog(name);
-        //dialog.exec();
+        LambdaDetailsDialog dialog(arn);
+        dialog.exec();
     });
 
     // Add context menu
@@ -150,17 +152,14 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, 0, listLambdaResponse.lambdaCounters.at(r).name);
         SetColumn(tableWidget, r, 1, listLambdaResponse.lambdaCounters.at(r).version);
-        SetColumn(tableWidget, r, 2, listLambdaResponse.lambdaCounters.at(r).enabled,
-                  IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
-        SetColumn(tableWidget, r, 3, listLambdaResponse.lambdaCounters.at(r).status == "RUNNING",
-                  IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
-        //SetColumn(tableWidget, r, 3, listLambdaResponse.lambdaCounters.at(r).status);
-        SetColumn(tableWidget, r, 4, listLambdaResponse.lambdaCounters.at(r).privatePort);
-        SetColumn(tableWidget, r, 5, listLambdaResponse.lambdaCounters.at(r).publicPort);
-        SetColumn(tableWidget, r, 6, listLambdaResponse.lambdaCounters.at(r).lastStarted);
+        SetColumn(tableWidget, r, 2, listLambdaResponse.lambdaCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
+        SetColumn(tableWidget, r, 3, listLambdaResponse.lambdaCounters.at(r).state == "Active", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
+        SetColumn(tableWidget, r, 4, listLambdaResponse.lambdaCounters.at(r).instances);
+        SetColumn(tableWidget, r, 5, listLambdaResponse.lambdaCounters.at(r).invocations);
+        SetColumn(tableWidget, r, 6, listLambdaResponse.lambdaCounters.at(r).averageRuntime);
         SetColumn(tableWidget, r, 7, listLambdaResponse.lambdaCounters.at(r).created);
         SetColumn(tableWidget, r, 8, listLambdaResponse.lambdaCounters.at(r).modified);
-        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).containerId);
+        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).arn);
     }
     tableWidget->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
     tableWidget->setSortingEnabled(true);

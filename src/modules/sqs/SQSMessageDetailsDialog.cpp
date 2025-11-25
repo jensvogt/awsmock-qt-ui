@@ -92,7 +92,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     _ui->systemAttributeTable->setRowCount(0);
     _ui->systemAttributeTable->setSortingEnabled(false); // stop sorting
     _ui->systemAttributeTable->sortItems(-1);
-    for (int r = 0; r < response.messageAttributes.count(); r++) {
+    for (int r = 0; r < response.attributes.count(); r++) {
         _ui->systemAttributeTable->insertRow(r);
         _ui->systemAttributeTable->setItem(r, 0, new QTableWidgetItem(response.attributes.at(r).key));
         _ui->systemAttributeTable->setItem(r, 1, new QTableWidgetItem(response.attributes.at(r).value));
