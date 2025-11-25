@@ -16,6 +16,7 @@
 
 #include <utils/Configuration.h>
 #include <utils/NonEmptyValidator.h>
+#include <utils/IconUtils.h>
 #include <modules/ftp/FTPClient.h>
 
 QT_BEGIN_NAMESPACE

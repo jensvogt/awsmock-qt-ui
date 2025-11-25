@@ -1,7 +1,6 @@
 #include <mainwindow.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-
     // Connect infrastructure signals
     _infraStructureService = new InfraStructureService();
     connect(_infraStructureService, &InfraStructureService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -28,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_navPane->addItem("SNS");
     m_navPane->addItem("S3");
     m_navPane->addItem("Application");
+    m_navPane->addItem("Lambda");
 
     // Select the first item by default
     m_navPane->setCurrentRow(0);
@@ -378,6 +378,15 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             connect(applicationPage, &ApplicationList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
             return applicationPage;
+        }
+
+        case 5: {
+            const auto lambdaPage = new LambdaList("Lambdas", m_contentPane);
+
+            // Connect child's signal to update status bar
+            connect(lambdaPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            return lambdaPage;
         }
 
         default:

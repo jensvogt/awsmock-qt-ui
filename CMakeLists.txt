@@ -144,6 +144,11 @@ set(PROJECT_SOURCES
         include/utils/BasePage.h
         include/utils/NonEmptyValidator.h
         src/utils/IconUtils.cpp
+        include/modules/lambda/LambdaList.h
+        include/modules/lambda/LambdaService.h
+        include/dto/lambda/LambdaCounter.h
+        src/modules/lambda/LambdaList.cpp
+        src/modules/lambda/LambdaService.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

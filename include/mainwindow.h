@@ -36,6 +36,7 @@
 #include <modules/sns/SNSMessageList.h>
 #include <modules/sqs/SQSQueueList.h>
 #include <modules/sqs/SQSMessageList.h>
+#include <modules/lambda/LambdaList.h>
 #include <modules/infrastructure/InfrastructureService.h>
 
 class MainWindow final : public QMainWindow {

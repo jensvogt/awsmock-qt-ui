@@ -13,9 +13,11 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->setupUi(this);
 
     // Connect button box
-    //connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &FTPUploadDialog::HandleAccept);
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText("Close");
+    ui->buttonBox->button(QDialogButtonBox::Close)->setIcon(IconUtils::GetIcon("exit"));
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPUploadDialog::HandleReject);
-    //const auto applyBtn = ui->buttonBox->button(QDialogButtonBox::Apply);
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setText("Upload");
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setIcon(IconUtils::GetIcon("upload"));
     connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &FTPUploadDialog::HandleAccept);
 
     // Name validator
@@ -53,6 +55,9 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     connect(ui->targetEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
 
     // Connect source browse button
+    //ui->sourceBrowseButton->setText("Browse");
+    ui->sourceBrowseButton->setIcon(IconUtils::GetIcon("browse"));
+    ui->targetBrowseButton->setIcon(IconUtils::GetIcon("browse"));
     connect(ui->sourceBrowseButton, &QPushButton::clicked, this, &FTPUploadDialog::BrowseSourceFile);
 
     // Disable browse buttons
@@ -61,6 +66,7 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->dropAreaLabel->setDisabled(true);
 
     // Connect connect button
+    ui->connectButton->setIcon(IconUtils::GetIcon("connect"));
     connect(ui->connectButton, &QPushButton::clicked, this, &FTPUploadDialog::VerifyConnectInputs);
 
     // Setup verification
@@ -193,7 +199,6 @@ void FTPUploadDialog::VerifyFileInputs() {
 
     if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().toStdString(); ftpClient->UploadFile(sourceFileInfo.absoluteFilePath().toStdString(), targetFilename)) {
         QMessageBox::information(this, "Information", "Upload successful.");
-        //accept();
     } else {
         QMessageBox::warning(this, "Warning", "Upload not successful.");
     }
