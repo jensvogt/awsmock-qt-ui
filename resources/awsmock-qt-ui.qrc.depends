@@ -4,103 +4,61 @@
         <file>light/about.png</file>
         <file>light/about.svg</file>
         <file>light/add.png</file>
-        <file>light/add.svg</file>
         <file>light/back.png</file>
-        <file>light/back.svg</file>
         <file>light/browse.png</file>
-        <file>light/browse.svg</file>
         <file>light/clean.png</file>
-        <file>light/clean.svg</file>
         <file>light/clear.png</file>
         <file>light/delete.png</file>
-        <file>light/delete.svg</file>
         <file>light/disabled.png</file>
-        <file>light/disabled.svg</file>
         <file>light/edit.png</file>
-        <file>light/edit.svg</file>
         <file>light/enabled.png</file>
-        <file>light/enabled.svg</file>
         <file>light/exit.png</file>
-        <file>light/exit.svg</file>
         <file>light/export.png</file>
-        <file>light/export.svg</file>
         <file>light/fileexplorer.png</file>
         <file>light/help.png</file>
-        <file>light/help.svg</file>
         <file>light/import.png</file>
-        <file>light/import.svg</file>
         <file>light/logs.png</file>
-        <file>light/logs.svg</file>
         <file>light/pretty.png</file>
         <file>light/preferences.png</file>
-        <file>light/preferences.svg</file>
         <file>light/purge.png</file>
-        <file>light/purge.svg</file>
         <file>light/redrive.png</file>
-        <file>light/rebuild.svg</file>
         <file>light/reload.png</file>
         <file>light/refresh.png</file>
-        <file>light/refresh.svg</file>
         <file>light/restart.png</file>
-        <file>light/restart.svg</file>
         <file>light/running.png</file>
         <file>light/start.png</file>
-        <file>light/start.svg</file>
         <file>light/stop.png</file>
-        <file>light/stop.svg</file>
         <file>light/stopped.png</file>
         <file>light/touch.png</file>
-        <file>light/upload.svg</file>
         <file>dark/about.png</file>
         <file>dark/about.svg</file>
         <file>dark/add.png</file>
-        <file>dark/add.svg</file>
         <file>dark/back.png</file>
-        <file>dark/back.svg</file>
         <file>dark/browse.png</file>
-        <file>dark/browse.svg</file>
         <file>dark/clean.png</file>
-        <file>dark/clean.svg</file>
         <file>dark/clear.png</file>
         <file>dark/delete.png</file>
-        <file>dark/delete.svg</file>
         <file>dark/disabled.png</file>
-        <file>dark/disabled.svg</file>
         <file>dark/edit.png</file>
-        <file>dark/edit.svg</file>
         <file>dark/enabled.png</file>
-        <file>dark/enabled.svg</file>
         <file>dark/exit.png</file>
-        <file>dark/exit.svg</file>
         <file>dark/export.png</file>
-        <file>dark/export.svg</file>
         <file>dark/fileexplorer.png</file>
         <file>dark/help.png</file>
-        <file>dark/help.svg</file>
         <file>dark/import.png</file>
-        <file>dark/import.svg</file>
         <file>dark/logs.png</file>
-        <file>dark/logs.svg</file>
         <file>dark/preferences.png</file>
-        <file>dark/preferences.svg</file>
         <file>dark/pretty.png</file>
         <file>dark/purge.png</file>
-        <file>dark/purge.svg</file>
-        <file>dark/rebuild.svg</file>
         <file>dark/redrive.png</file>
         <file>dark/refresh.png</file>
-        <file>dark/refresh.svg</file>
         <file>dark/reload.png</file>
         <file>dark/restart.png</file>
-        <file>dark/restart.svg</file>
         <file>dark/running.png</file>
         <file>dark/start.png</file>
-        <file>dark/start.svg</file>
         <file>dark/stop.png</file>
-        <file>dark/stop.svg</file>
         <file>dark/stopped.png</file>
         <file>dark/touch.png</file>
-        <file>dark/upload.svg</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/dark.qss</file>

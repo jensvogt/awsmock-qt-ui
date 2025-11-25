@@ -212,10 +212,10 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     menu.addSeparator();
 
-    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("reload"), "Rebuild Application");
+    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Application");
     rebuildAction->setToolTip("Rebuild the application by creating a new image and container.");
 
-    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("reload"), "Upload Application Code");
+    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("upload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
 
     menu.addSeparator();

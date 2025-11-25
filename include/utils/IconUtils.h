@@ -18,7 +18,7 @@ public:
 
     static QIcon GetIcon(const QString &name);
 
-    static QIcon GetIcon(const QString &type, const QString &name);
+    static QIcon GetIcon(const QString &style, const QString &name);
 
     static QIcon GetCommonIcon(const QString &name);
 };
