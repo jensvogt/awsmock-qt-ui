@@ -10,7 +10,11 @@ QIcon IconUtils::GetIcon(const QString &name) {
 }
 
 QIcon IconUtils::GetIcon(const QString &type, const QString &name) {
+#ifdef Q_OS_WIN
+    return QIcon(":/icons/" + type + "/" + name + ".svg");
+#else
     return QIcon(":/icons/" + type + "/" + name + ".png");
+#endif
 }
 
 QIcon IconUtils::GetCommonIcon(const QString &name) {

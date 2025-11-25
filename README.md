@@ -38,7 +38,7 @@ cmake to create the executables and the libraries. All executables and libraries
 To build the executable, use:
 
 ```
-qt-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=C:/Program Files (x86)/awsmock-qt-ui .
+qt-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="C:/Program Files (x86)/awsmock-qt-ui" .
 cmake --build . --config Release -j8
 cmake --install .
 ```

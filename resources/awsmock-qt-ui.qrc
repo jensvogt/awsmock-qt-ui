@@ -2,6 +2,7 @@
     <qresource prefix="/icons">
         <file>common/awsmock.png</file>
         <file>light/about.png</file>
+        <file>light/about.svg</file>
         <file>light/add.png</file>
         <file>light/back.png</file>
         <file>light/browse.png</file>
@@ -30,6 +31,7 @@
         <file>light/stopped.png</file>
         <file>light/touch.png</file>
         <file>dark/about.png</file>
+        <file>dark/about.svg</file>
         <file>dark/add.png</file>
         <file>dark/back.png</file>
         <file>dark/browse.png</file>

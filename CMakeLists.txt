@@ -139,9 +139,11 @@ set(PROJECT_SOURCES
         include/modules/s3/S3ObjectEditDialog.h
         src/modules/s3/S3ObjectEditDialog.ui
         include/dto/s3/S3GetObjectDetailsResponse.h
+        src/main.cpp
 )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
     qt_add_executable(awsmock-qt-ui
             MANUAL_FINALIZATION
             ${PROJECT_SOURCES}
@@ -263,11 +265,11 @@ set_target_properties(awsmock-qt-ui PROPERTIES
         WIN32_EXECUTABLE TRUE
 )
 
-include(GNUInstallDirs)
-if (MSVC)
+if (WIN32)
     install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_DIR})
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/..)
 else ()
+    include(GNUInstallDirs)
     install(TARGETS awsmock-qt-ui BUNDLE DESTINATION . LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     # Generate the deployment script for the target MyApp.

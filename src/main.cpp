@@ -5,8 +5,7 @@
 #include <QTranslator>
 #include <QStyleFactory>
 #include <QCommandLineParser>
-#include <qscreen.h>
-#include <sys/socket.h>
+#include <QScreen>
 
 #include <utils/Configuration.h>
 #include <utils/IconUtils.h>

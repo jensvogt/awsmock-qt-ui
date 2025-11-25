@@ -1,19 +1,7 @@
 #include <mainwindow.h>
-#include <QStyleFactory>
-
-#include <modules/application/ApplicationList.h>
-#include <modules/dashboard/Dashboard.h>
-
-#include <utility>
-
-#include "modules/ftp/FTPUploadDialog.h"
-#include "modules/s3/S3BucketList.h"
-#include "modules/s3/S3ObjectList.h"
-#include "utils/About.h"
-#include "utils/EditConfigDialog.h"
-#include "utils/EventBus.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+
     // Connect infrastructure signals
     _infraStructureService = new InfraStructureService();
     connect(_infraStructureService, &InfraStructureService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -120,41 +108,41 @@ void MainWindow::SetupMenuBar() {
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
     // File menu
-    const auto importAction = new QAction(IconUtils::GetIcon("dark", "import"), tr("&Import infrastructure"), this);
+    const auto importAction = new QAction(IconUtils::GetIcon("import"), tr("&Import infrastructure"), this);
     connect(importAction, &QAction::triggered, this, &MainWindow::ImportInfrastructure);
     fileMenu->addAction(importAction);
 
-    const auto exportAction = new QAction(IconUtils::GetIcon("dark", "export"), tr("&Export infrastructure"), this);
+    const auto exportAction = new QAction(IconUtils::GetIcon("export"), tr("&Export infrastructure"), this);
     connect(exportAction, &QAction::triggered, this, &MainWindow::ExportInfrastructure);
     fileMenu->addAction(exportAction);
 
-    const auto cleanAction = new QAction(IconUtils::GetIcon("dark", "clean"), tr("&Clean infrastructure"), this);
+    const auto cleanAction = new QAction(IconUtils::GetIcon("clean"), tr("&Clean infrastructure"), this);
     connect(cleanAction, &QAction::triggered, this, &MainWindow::CleanInfrastructure);
     fileMenu->addAction(cleanAction);
 
     fileMenu->addSeparator();
 
-    const auto exitAction = new QAction(IconUtils::GetIcon("dark", "exit"), tr("E&xit"), this);
+    const auto exitAction = new QAction(IconUtils::GetIcon("exit"), tr("E&xit"), this);
     connect(exitAction, &QAction::triggered, this, &MainWindow::Exit);
     fileMenu->addAction(exitAction);
 
     // Edit Menu
-    const auto prefAction = new QAction(IconUtils::GetIcon("dark", "preferences"), tr("&Preferences"), this);
+    const auto prefAction = new QAction(IconUtils::GetIcon("preferences"), tr("&Preferences"), this);
     connect(prefAction, &QAction::triggered, this, &MainWindow::EditPreferences);
     editMenu->addAction(prefAction);
 
     // FTP menu
-    const auto uploadAction = new QAction(IconUtils::GetIcon("dark", "upload"), tr("&Upload file"), this);
+    const auto uploadAction = new QAction(IconUtils::GetIcon("upload"), tr("&Upload file"), this);
     connect(uploadAction, &QAction::triggered, this, &MainWindow::FtpUpload);
     ftpMenu->addAction(uploadAction);
 
     // Help Menu
-    const auto helpAction = new QAction(IconUtils::GetIcon("dark", "help"), tr("&Help"), this);
+    const auto helpAction = new QAction(IconUtils::GetIcon("help"), tr("&Help"), this);
     connect(helpAction, &QAction::triggered, this, &MainWindow::EditPreferences);
     helpMenu->addAction(helpAction);
 
     // About
-    const auto aboutAction = new QAction(IconUtils::GetIcon("dark", "about"), tr("&About"), this);
+    const auto aboutAction = new QAction(IconUtils::GetIcon("about"), tr("&About"), this);
     connect(aboutAction, &QAction::triggered, this, []() {
         About aboutDialog;
         aboutDialog.exec();

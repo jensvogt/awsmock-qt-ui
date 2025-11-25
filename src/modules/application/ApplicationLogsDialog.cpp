@@ -12,8 +12,13 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
                                              QWidget *parent) : QDialog(parent),
                                                                 _ui(new Ui::ApplicationLogsDialog),
                                                                 _containerId(containerId) {
+#ifdef _WIN32
+    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::Tcp, "localhost:2375",
+                                           this);
+#else
     _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::UnixSocket, "/var/run/docker.sock",
                                            this);
+#endif
     connect(_dockerLogClient, &DockerLogClient::Connected, [this]() {
         _ui->statusLabel->setText("Status: Connected");
     });
