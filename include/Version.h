@@ -1,0 +1,14 @@
+//
+// Created by jensv on 26/11/2025.
+//
+
+#ifndef AWSMOCK_QT_UI_VERSION_H
+#define AWSMOCK_QT_UI_VERSION_H
+
+#define AWSMOCK_UI_VERSION_MAJOR 1
+#define AWSMOCK_UI_VERSION_MINOR 0
+#define AWSMOCK_UI_VERSION_PATCH 0
+
+#define AWSMOCK_UI_VERSION "1.0.0"
+
+#endif //AWSMOCK_QT_UI_VERSION_H

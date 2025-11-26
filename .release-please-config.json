@@ -4,13 +4,31 @@
     ".": {
       "release-type": "simple",
       "bump-minor-pre-major": true,
-      "version-file": "CMakeLists.txt",
+      "version-file": "include/Version.h",
       "extra-files": [
         {
           "type": "regex",
-          "path": "CMakeLists.txt",
-          "search": "project\\(awsmock-qt-ui VERSION ([0-9]+\\.[0-9]+\\.[0-9]+)",
-          "replace": "project(awsmock-qt-ui VERSION ${version}"
+          "path": "include/Version.h",
+          "search": "#define AWSMOCK_UI_VERSION_MAJOR [0-9]+",
+          "replace": "#define AWSMOCK_UI_VERSION_MAJOR ${major}"
+        },
+        {
+          "type": "regex",
+          "path": "include/Version.h",
+          "search": "#define AWSMOCK_UI_VERSION_MINOR [0-9]+",
+          "replace": "#define AWSMOCK_UI_VERSION_MINOR ${minor}"
+        },
+        {
+          "type": "regex",
+          "path": "include/Version.h",
+          "search": "#define AWSMOCK_UI_VERSION_PATCH [0-9]+",
+          "replace": "#define AWSMOCK_UI_VERSION_PATCH ${patch}"
+        },
+        {
+          "type": "regex",
+          "path": "include/Version.h",
+          "search": "#define AWSMOCK_UI_VERSION \"[0-9]+\\.[0-9]+\\.[0-9]+\"",
+          "replace": "#define AWSMOCK_UI_VERSION \"${version}\""
         }
       ]
     }

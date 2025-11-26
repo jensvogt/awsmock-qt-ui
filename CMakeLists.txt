@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(awsmock-qt-ui VERSION 0.0.1 LANGUAGES CXX)
+project(awsmock-qt-ui VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -153,6 +153,7 @@ set(PROJECT_SOURCES
         include/modules/lambda/LambdaDetailsDialog.h
         src/modules/lambda/LambdaDetailsDialog.ui
         include/dto/lambda/LambdaGetResponse.h
+        include/Version.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
