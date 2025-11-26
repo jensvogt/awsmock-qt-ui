@@ -23,15 +23,7 @@ jobs:
         # This action sets up the environment variables (like PATH) needed for MSVC compilation.
         # It defaults to the latest available Visual Studio version.
 
-      # This installs 'curl' for the x64-windows triplet.
-      - name: Install LibCurl via vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          # Use the vcpkgArguments input to install the package + triplet
-          vcpkgGitCommitId: '400fffa90f30c7a2dc762fa33009d24851bd2016'
-          runVcpkgInstall: 'curl:x64-windows'
-
-      # 4. Install Qt
+      # 3. Install Qt
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
@@ -41,7 +33,7 @@ jobs:
           modules: 'all'
           # For Qt 6+, Linux dependencies are managed, but on Windows, the arch parameter is key.
 
-      # 5. Configure and Build Application
+      # 4. Configure and Build Application
       - name: Configure and Build Application
         # Use PowerShell for consistency on Windows
         shell: powershell
@@ -81,7 +73,7 @@ jobs:
             This release includes bug fixes and new features.
           draft: true # Optional: Create as a draft first
 
-      # 6. Optional: Upload the executable artifact
+      # 5. Optional: Upload the executable artifact
       - name: 📤 Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
