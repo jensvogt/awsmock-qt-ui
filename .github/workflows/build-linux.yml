@@ -8,6 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      QT_VERSION: "6.10.1"
+      QT_ARCH: "gcc_64"
+      QT_MODULES: "all"
+      QT_ROOT: "$HOME/Qt/$QT_VERSION/$QT_ARCH"
+
     steps:
       # 1. Checkout repository
       - uses: actions/checkout@v4
@@ -21,34 +27,43 @@ jobs:
             libgl1-mesa-dev libx11-dev libxext-dev libxrender-dev \
             libfontconfig1-dev libfreetype6-dev
 
-      # 3. Install aqtinstall safely using pipx
-      - name: Install aqtinstall via pipx
+      # 3. Install pipx safely
+      - name: Install pipx
         run: |
           python3 -m pip install --user pipx
           export PATH="$HOME/.local/bin:$PATH"
           python3 -m pipx ensurepath
+
+      # 4. Install aqtinstall via pipx
+      - name: Install aqtinstall
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
           python3 -m pipx install aqtinstall
 
-      # 4. Install Qt 6.10.1 modules required for your project
+      # 5. Restore Qt cache if available
+      - name: Restore Qt cache
+        uses: actions/cache@v3
+        with:
+          path: $HOME/Qt
+          key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
+
+      # 6. Install Qt using aqt if not cached
       - name: Install Qt 6.10.1
         run: |
-          export PATH=$HOME/.local/bin:$PATH
-          aqt install-qt linux desktop 6.10.1 gcc_64 \
-            -m all
+          export PATH="$HOME/.local/bin:$PATH"
+          if [ ! -d "$QT_ROOT" ]; then
+            aqt install-qt linux desktop $QT_VERSION $QT_ARCH -m $QT_MODULES
+          fi
 
-      # 5. Add Qt to PATH
-      - name: Add Qt to PATH
-        run: echo "$HOME/Qt/6.10.1/gcc_64/bin" >> $GITHUB_PATH
-
-      # 6. Configure CMake with correct CMAKE_PREFIX_PATH
+      # 7. Configure CMake with Qt
       - name: Configure CMake
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH="$HOME/Qt/6.10.1/gcc_64" \
+            -DCMAKE_PREFIX_PATH="$QT_ROOT" \
             -G Ninja
 
-      # 7. Build the project
+      # 8. Build project
       - name: Build
         run: cmake --build build --config Release
 
