@@ -16,8 +16,8 @@ jobs:
           submodules: true
 
       # Install Qt using the setup-qt action
-      - name: 📦 Install Qt
-        uses: jurplel/install-qt-action@v5
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
         with:
           # Specify the Qt version to use, e.g., 6.6.1
           version: '6.10.1'
@@ -27,7 +27,7 @@ jobs:
           install-deps: true
 
       # Configure the project with CMake
-      - name: ⚙️ Configure CMake
+      - name: Configure CMake
         # Using 'shell: bash' ensures the environment variables set by setup-qt are available.
         shell: bash
         run: |
@@ -38,7 +38,7 @@ jobs:
           cmake .. -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
 
       # Build the application
-      - name: 🏗️ Build Application
+      - name: Build Application
         shell: bash
         run: |
           cd build
@@ -46,7 +46,7 @@ jobs:
           cmake --build . --target all -j $(nproc)
 
       # Optional: Package or Upload the artifact (e.g., the executable)
-      - name: 📤 Upload Artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: qt-app-executable
