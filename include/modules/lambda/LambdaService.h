@@ -19,6 +19,8 @@
 #include <dto/lambda/LambdaListResponse.h>
 #include <dto/lambda/LambdaGetResponse.h>
 
+#include "dto/lambda/LambdaListInstancesResponse.h"
+
 class LambdaService final : public QObject {
     Q_OBJECT
 
@@ -55,6 +57,8 @@ public:
      * @param lambdaArn lambda ARN
      */
     void GetLambda(const QString &lambdaArn);
+
+    void GetLambdaInstances(const QString &lambdaArn);
 
     //void UpdateLambda(const Lambda &lambda);
 
@@ -124,7 +128,12 @@ signals:
      */
     void GetLambdaDetailsSignal(const LambdaGetResponse &lambdaGetResponse);
 
-    void ListLambdaNamedSignal(const QStringList &lambdaNames);
+    /**
+     * @brief List instances signal
+     *
+     * @param listInstancesResponse lambda instances list response
+     */
+    void ListLambdaInstancesSignal(const LambdaListInstancesResponse &listInstancesResponse);
 
     void LoadAllLambdas();
 

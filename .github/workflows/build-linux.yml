@@ -54,6 +54,8 @@ jobs:
           if [ ! -d "$QT_ROOT" ]; then
             aqt install-qt linux desktop $QT_VERSION $QT_ARCH -m $QT_MODULES
           fi
+          echo $QT_ROOT
+          ls -l $QT_ROOT
 
       # 7. Configure CMake with Qt
       - name: Configure CMake
