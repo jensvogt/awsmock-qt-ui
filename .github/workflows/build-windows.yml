@@ -22,7 +22,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         # This action sets up the environment variables (like PATH) needed for MSVC compilation.
         # It defaults to the latest available Visual Studio version.
-        
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
@@ -30,14 +30,11 @@ jobs:
 
       - name: Install Qt base
         run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2019_64 `
-            --outputdir Qt
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt
 
       - name: Install Qt modules
         run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2019_64 `
-            --outputdir Qt `
-            --modules qtsvg qttools qtimageformats qtdeclarative
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtsvg qttools qtimageformats qtdeclarative
 
       # 4. Configure and Build Application
       - name: Configure and Build Application
