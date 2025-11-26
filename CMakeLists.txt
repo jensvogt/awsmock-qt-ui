@@ -25,6 +25,21 @@ else ()
     set(CURL_LIB_DIRS "")
 endif ()
 
+# ----------------------------
+# Version extraction
+# ----------------------------
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" VERSION_HEADER)
+
+string(REGEX MATCH "#define AWSMOCK_UI_VERSION_MAJOR ([0-9]+)" _ "${VERSION_HEADER}")
+set(PROJECT_VERSION_MAJOR "${CMAKE_MATCH_1}")
+string(REGEX MATCH "#define AWSMOCK_UI_VERSION_MINOR ([0-9]+)" _ "${VERSION_HEADER}")
+set(PROJECT_VERSION_MINOR "${CMAKE_MATCH_1}")
+string(REGEX MATCH "#define AWSMOCK_UI_VERSION_PATCH ([0-9]+)" _ "${VERSION_HEADER}")
+set(PROJECT_VERSION_PATCH "${CMAKE_MATCH_1}")
+
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+message(STATUS "Building AWS Mock UI version: ${PROJECT_VERSION}")
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
@@ -156,17 +171,6 @@ set(PROJECT_SOURCES
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
 )
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_patch_line REGEX "AWSMOCK_UI_VERSION_PATCH")
-
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_MAJOR "${version_major_line}")
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_MINOR "${version_minor_line}")
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_PATCH "${version_patch_line}")
-
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-
-message(STATUS "Building AWS Mock UI version: ${PROJECT_VERSION}")
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})
@@ -180,9 +184,8 @@ else ()
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES
-        ${BUNDLE_ID_OPTION}
-        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
         MACOSX_BUNDLE TRUE
         WIN32_EXECUTABLE TRUE
 )
