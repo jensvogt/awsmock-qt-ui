@@ -29,9 +29,7 @@ jobs:
       # -------------------------------
       - name: Install Qt 6.10.1 + modules
         run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 ^
-            --outputdir Qt ^
-            --modules qtcharts qtimageformats qtsvg qttools
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtcharts qtimageformats qtsvg qttools
 
       - name: Show Qt directory structure
         run: |
