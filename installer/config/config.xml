@@ -5,6 +5,5 @@
     <Title>AwsMockQtUIInstaller</Title>
     <Publisher>Jens Vogt</Publisher>
     <StartMenuDir>AwsMockQtUI</StartMenuDir>
-    <RunAsAdmin>true</RunAsAdmin>
     <TargetDir>@ApplicationsDir@/AwsMockQtUI</TargetDir>
 </Installer>
