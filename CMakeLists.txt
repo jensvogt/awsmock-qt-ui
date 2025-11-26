@@ -154,6 +154,8 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaDetailsDialog.ui
         include/dto/lambda/LambdaGetResponse.h
         include/Version.h
+        include/dto/lambda/LambdaListEnvironmentResponse.h
+        src/modules/ftp/FTPClient.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
