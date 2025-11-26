@@ -28,7 +28,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           # Use the vcpkgArguments input to install the package + triplet
-          vcpkgArguments: 'install curl:x64-windows'
+          runVcpkgInstall: 'curl:x64-windows'
 
       # 4. Install Qt
       - name: Install Qt
