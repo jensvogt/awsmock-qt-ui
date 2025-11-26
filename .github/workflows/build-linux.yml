@@ -55,7 +55,8 @@ jobs:
             aqt install-qt linux desktop $QT_VERSION $QT_ARCH -m $QT_MODULES
           fi
           echo ${{ env.QT_ROOT }}
-          ls -l ${{ env.QT_ROOT }}
+          find ${{ env.QT_ROOT }} -name "*Qt6Config.cmake*"
+          find ${{ env.QT_ROOT }} -name "*qt6-config.cmake*"
 
       # 7. Configure CMake with Qt
       - name: Configure CMake
