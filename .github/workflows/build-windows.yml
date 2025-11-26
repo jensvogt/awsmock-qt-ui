@@ -12,8 +12,8 @@ jobs:
 
     env:
       QT_VERSION: 6.10.1
-      QT_DIR: ${{ github.workspace }}/Qt
-      INSTALLER_DIR: ${{ github.workspace }}/installer
+      QT_DIR: "${{ github.workspace }}/Qt"
+      INSTALLER_DIR: "${{ github.workspace }}/installer"
       BUILD_DIR: "${{ github.workspace }}/build"
       APP_NAME: "awsmock-qt-ui"
 
@@ -61,7 +61,7 @@ jobs:
       - name: Deploy Qt runtime
         shell: powershell
         run: |
-          $exePath = "$env:BUILD_DIR\Release\awsmock-qt-ui.exe"
+          $exePath = "Release\awsmock-qt-ui.exe"
           $deployDir = "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data"
           New-Item -ItemType Directory -Path $deployDir -Force
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exePath --dir $deployDir
