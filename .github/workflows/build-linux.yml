@@ -35,7 +35,7 @@ jobs:
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DQt6_DIR="${{ runner.tool_cache }}/Qt/6.10.2/gcc_64/lib/cmake/Qt6" \ \
+            -DQt6_DIR="${{ runner.tool_cache }}/Qt/6.10.2/gcc_64/lib/cmake/Qt6" \
             -G Ninja
 
       - name: Build
