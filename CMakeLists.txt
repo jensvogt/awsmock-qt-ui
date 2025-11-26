@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(awsmock-qt-ui VERSION 0.1 LANGUAGES CXX)
+project(awsmock-qt-ui VERSION 0.0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTORCC ON)
 
 if (WIN32)
     set(CMAKE_PREFIX_PATH "c:\\work\\Qt\\6.10.0\\msvc2022_64")
