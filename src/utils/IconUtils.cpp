@@ -11,10 +11,10 @@ QIcon IconUtils::GetIcon(const QString &name) {
 
 QIcon IconUtils::GetIcon(const QString &style, const QString &name) {
 #ifdef Q_OS_WIN
-    qDebug() << QFile(":/icons/"+style+"/"+name+".svg").fileName() + "Exists?" << QFile(":/icons/"+style+"/"+name+".svg").exists();
     return QIcon(":/icons/" + style + "/" + name + ".svg");
 #else
-    return QIcon(":/icons/" + style + "/" + name + ".png");
+    return QIcon(":/icons/" + style + "/" + name + ".svg");
+    //    return QIcon(":/icons/" + style + "/" + name + ".png");
 #endif
 }
 

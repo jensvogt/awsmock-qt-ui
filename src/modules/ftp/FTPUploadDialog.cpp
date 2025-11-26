@@ -8,9 +8,10 @@
 #include "ui_FTPUploadDialog.h"
 
 FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::FTPUploadDialog) {
-
     // Setup UI
     ui->setupUi(this);
+
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setText("Upload");
 
     // Connect button box
     ui->buttonBox->button(QDialogButtonBox::Close)->setText("Close");
@@ -18,7 +19,8 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPUploadDialog::HandleReject);
     ui->buttonBox->button(QDialogButtonBox::Apply)->setText("Upload");
     ui->buttonBox->button(QDialogButtonBox::Apply)->setIcon(IconUtils::GetIcon("upload"));
-    connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &FTPUploadDialog::HandleAccept);
+    connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this,
+            &FTPUploadDialog::HandleAccept);
 
     // Name validator
     const NotEmptyValidator *nameValidator = new NotEmptyValidator(this);
@@ -91,12 +93,13 @@ FTPUploadDialog::~FTPUploadDialog() {
 }
 
 void FTPUploadDialog::BrowseSourceFile() {
-
     // Create a QFileDialog set to select existing files
     const auto filter = "All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>(
+        "ui.default-directory", "/usr/local/awsmock-qt-ui");
 
-    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !filePath.isEmpty()) {
+    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !
+        filePath.isEmpty()) {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
             QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
@@ -124,10 +127,11 @@ void FTPUploadDialog::UpdateLineEditStyle(const QString &text) const {
 }
 
 void FTPUploadDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::State state) {
-
     // Define colors
-    const QString defaultStyle = "QLineEdit { border: 1px solid #ccc; background-color: #424242; padding: 2px; border-radius: 4px; }";
-    const QString invalidStyle = "QLineEdit { border: 2px solid #dc3545; padding: 2px; border-radius: 4px; }"; // Red frame/background
+    const QString defaultStyle =
+            "QLineEdit { border: 1px solid #ccc; background-color: #424242; padding: 2px; border-radius: 4px; }";
+    const QString invalidStyle = "QLineEdit { border: 2px solid #dc3545; padding: 2px; border-radius: 4px; }";
+    // Red frame/background
 
     switch (state) {
         case QValidator::Acceptable:
@@ -144,32 +148,35 @@ void FTPUploadDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::St
 }
 
 void FTPUploadDialog::VerifyConnectInputs() {
-
     // Check name
     int pos = 0;
     QString server = ui->serverEdit->text();
-    if (const QValidator::State serverState = ui->serverEdit->validator()->validate(server, pos); serverState != QValidator::Acceptable) {
+    if (const QValidator::State serverState = ui->serverEdit->validator()->validate(server, pos);
+        serverState != QValidator::Acceptable) {
         SetLineEditColor(ui->serverEdit, serverState);
         QMessageBox::warning(this, "Validation Failure", "Server is invalid or incomplete.");
         return;
     }
 
     QString port = ui->portEdit->text();
-    if (const QValidator::State portState = ui->portEdit->validator()->validate(port, pos); portState != QValidator::Acceptable) {
+    if (const QValidator::State portState = ui->portEdit->validator()->validate(port, pos);
+        portState != QValidator::Acceptable) {
         SetLineEditColor(ui->portEdit, portState);
         QMessageBox::warning(this, "Validation Failure", "Port is invalid or incomplete.");
         return;
     }
 
     QString user = ui->userEdit->text();
-    if (const QValidator::State userState = ui->userEdit->validator()->validate(user, pos); userState != QValidator::Acceptable) {
+    if (const QValidator::State userState = ui->userEdit->validator()->validate(user, pos);
+        userState != QValidator::Acceptable) {
         SetLineEditColor(ui->userEdit, userState);
         QMessageBox::warning(this, "Validation Failure", "User is invalid.");
         return;
     }
 
     QString password = ui->passwordEdit->text();
-    if (const QValidator::State passwordState = ui->passwordEdit->validator()->validate(password, pos); passwordState != QValidator::Acceptable) {
+    if (const QValidator::State passwordState = ui->passwordEdit->validator()->validate(password, pos);
+        passwordState != QValidator::Acceptable) {
         SetLineEditColor(ui->passwordEdit, passwordState);
         QMessageBox::warning(this, "Validation Failure", "Password cannot be empty.");
         return;
@@ -180,24 +187,27 @@ void FTPUploadDialog::VerifyConnectInputs() {
 }
 
 void FTPUploadDialog::VerifyFileInputs() {
-
     // Check name
     int pos = 0;
     QString target = ui->targetEdit->text();
-    if (const QValidator::State targetState = ui->targetEdit->validator()->validate(target, pos); targetState != QValidator::Acceptable) {
+    if (const QValidator::State targetState = ui->targetEdit->validator()->validate(target, pos);
+        targetState != QValidator::Acceptable) {
         SetLineEditColor(ui->targetEdit, targetState);
         QMessageBox::warning(this, "Validation Failure", "Target directory is invalid or incomplete.");
         return;
     }
 
     QString source = ui->sourceEdit->text();
-    if (const QValidator::State sourceState = ui->targetEdit->validator()->validate(source, pos); sourceState != QValidator::Acceptable) {
+    if (const QValidator::State sourceState = ui->targetEdit->validator()->validate(source, pos);
+        sourceState != QValidator::Acceptable) {
         SetLineEditColor(ui->sourceEdit, sourceState);
         QMessageBox::warning(this, "Validation Failure", "Source file is invalid or incomplete.");
         return;
     }
 
-    if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().toStdString(); ftpClient->UploadFile(sourceFileInfo.absoluteFilePath().toStdString(), targetFilename)) {
+    if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().
+                                           toStdString(); ftpClient->UploadFile(
+        sourceFileInfo.absoluteFilePath().toStdString(), targetFilename)) {
         QMessageBox::information(this, "Information", "Upload successful.");
     } else {
         QMessageBox::warning(this, "Warning", "Upload not successful.");
@@ -205,13 +215,15 @@ void FTPUploadDialog::VerifyFileInputs() {
 }
 
 void FTPUploadDialog::InitFtpClient() {
-
-    ftpClient = new embeddedmz::CFTPClient([](const std::string &strLogMsg) { qDebug() << QString::fromStdString(strLogMsg); });
+    ftpClient = new embeddedmz::CFTPClient([](const std::string &strLogMsg) {
+        qDebug() << QString::fromStdString(strLogMsg);
+    });
 
     const int port = ui->portEdit->text().toInt();
     const std::string stdServer = ui->serverEdit->text().toStdString();
     const std::string stdUser = ui->userEdit->text().toStdString();
-    if (const std::string stdPassword = ui->passwordEdit->text().toStdString(); !ftpClient->InitSession(stdServer, port, stdUser, stdPassword)) {
+    if (const std::string stdPassword = ui->passwordEdit->text().toStdString(); !ftpClient->InitSession(
+        stdServer, port, stdUser, stdPassword)) {
         QMessageBox::warning(nullptr, "Error", ("Could not connect to FTP server: " + stdServer).data());
     }
 
@@ -228,16 +240,17 @@ void FTPUploadDialog::InitFtpClient() {
 }
 
 void FTPUploadDialog::dragEnterEvent(QDragEnterEvent *event) {
-
     // Check if the data being dragged contains file URLs
     if (event->mimeData()->hasUrls()) {
         // Accept the proposed action (copy, move, or link)
         event->acceptProposedAction();
-        ui->dropAreaLabel->setStyleSheet("QLabel { color: #007bff; font-size: 16px; padding: 10px; border: 2px dashed #007bff; background-color: #e6f3ff; }");
+        ui->dropAreaLabel->setStyleSheet(
+            "QLabel { color: #007bff; font-size: 16px; padding: 10px; border: 2px dashed #007bff; background-color: #e6f3ff; }");
     } else {
         // Reject the event if it's not file URLs
         event->ignore();
-        ui->dropAreaLabel->setStyleSheet("QLabel { color: #333; font-size: 16px; padding: 10px; border: 2px dashed #999; }");
+        ui->dropAreaLabel->setStyleSheet(
+            "QLabel { color: #333; font-size: 16px; padding: 10px; border: 2px dashed #999; }");
     }
 }
 

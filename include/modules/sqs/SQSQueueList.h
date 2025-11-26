@@ -22,8 +22,7 @@
 #include <utils/BasePage.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
-
-#include "dto/sqs/SQSListQueueResponse.h"
+#include <dto/sqs/SQSListQueueResponse.h>
 
 /**
  * @brief Helper widget for the content area.

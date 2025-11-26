@@ -16,7 +16,7 @@ struct LambdaListResponse {
     QList<LambdaCounter> lambdaCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
-        for (QJsonArray jArray = jsonDoc["lambdas"].toArray(); const auto &element: jArray) {
+        for (QJsonArray jArray = jsonDoc["functionCounters"].toArray(); const auto &element: jArray) {
             LambdaCounter lambdaCounter;
             lambdaCounter.FromJson(element.toObject());
             lambdaCounters.append(lambdaCounter);

@@ -17,9 +17,7 @@
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
 #include <dto/lambda/LambdaListResponse.h>
-//#include <dto/lambda/LambdaUploadRequest.h>
-//#include <dto/lambda/LambdaCreateRequest.h>
-//#include <dto/lambda/LambdaGetResponse.h>
+#include <dto/lambda/LambdaGetResponse.h>
 
 class LambdaService final : public QObject {
     Q_OBJECT
@@ -52,11 +50,11 @@ public:
     //void CreateLambda(const LambdaCreateRequest &request);
 
     /**
-     * @brief Gets an lambda
+     * @brief Gets a lambda
      *
-     * @param name lambda name
+     * @param lambdaArn lambda ARN
      */
-    //void GetLambda(const QString &name);
+    void GetLambda(const QString &lambdaArn);
 
     //void UpdateLambda(const Lambda &lambda);
 
@@ -67,6 +65,7 @@ public:
     /**
      * @brief Stop an lambdas
      *
+     * @param lambdaListResponse
      * @param name lambda name
      */
     //void StartLambda(const QString &name);
@@ -111,9 +110,19 @@ public:
     //void DeleteLambda(const QString &name);
 
 signals:
+    /**
+     * @brief Get lambda list signal
+     *
+     * @param lambdaListResponse
+     */
     void ReloadLambdasSignal(const LambdaListResponse &lambdaListResponse);
 
-    //void GetLambdaDetailsSignal(const LambdaGetResponse &lambdaGetResponse);
+    /**
+     * @brief Get lambda response
+     *
+     * @param lambdaGetResponse lambda get response
+     */
+    void GetLambdaDetailsSignal(const LambdaGetResponse &lambdaGetResponse);
 
     void ListLambdaNamedSignal(const QStringList &lambdaNames);
 

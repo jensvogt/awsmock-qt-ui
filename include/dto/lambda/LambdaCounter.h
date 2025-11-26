@@ -5,25 +5,35 @@
 #include <QJsonObject>
 
 struct LambdaCounter {
+    QString region;
+
     QString name;
+
+    QString arn;
 
     QString runtime;
 
-    QString runtype;
+    QString handler;
 
-    int privatePort;
+    QString description;
 
-    int publicPort;
+    int instances;
+
+    int invocations;
+
+    int averageRuntime;
 
     QString version;
 
-    QString status;
+    QString state;
 
     bool enabled;
 
     QString containerId;
 
     QString containerName;
+
+    QString zipFile;
 
     QDateTime lastStarted;
 
@@ -32,13 +42,16 @@ struct LambdaCounter {
     QDateTime modified;
 
     void FromJson(const QJsonObject &jsonObject) {
-        name = jsonObject["name"].toString();
-        runtime = jsonObject["runType"].toString();
-        runtype = jsonObject["runtime"].toString();
-        privatePort = jsonObject["privatePort"].toInt();
-        publicPort = jsonObject["publicPort"].toInt();
+        region = jsonObject["region"].toString();
+        name = jsonObject["functionName"].toString();
+        arn = jsonObject["functionArn"].toString();
+        runtime = jsonObject["runtime"].toString();
+        handler = jsonObject["handler"].toString();
+        instances = jsonObject["instances"].toInt();
+        invocations = jsonObject["invocations"].toInt();
+        averageRuntime = jsonObject["averageRuntime"].toInt();
         version = jsonObject["version"].toString();
-        status = jsonObject["status"].toString();
+        state = jsonObject["state"].toString();
         enabled = jsonObject["enabled"].toBool();
         containerId = jsonObject["containerId"].toString();
         containerName = jsonObject["containerName"].toString();

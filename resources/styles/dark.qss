@@ -3,6 +3,9 @@ QWidget {
     color: #dcdcdc;
 }
 
+/* ============================================================================= */
+/* PushButtons                                                                   */
+/* ============================================================================= */
 QPushButton {
     background-color: #3c3f41;
     border: 1px solid #5c5c5c;
@@ -13,6 +16,13 @@ QPushButton:hover {
     background-color: #505354;
 }
 
+QDialogButtonBox QPushButton {
+    min-width: 100px;
+}
+
+/* ============================================================================= */
+/* Text fields                                                                   */
+/* ============================================================================= */
 QLineEdit, QTextEdit, QPlainTextEdit {
     background-color: #3c3f41;
     border: 1px solid #767676;
@@ -30,6 +40,10 @@ QMenuBar::selected, QMenu::selected {
 }
 
 QMenu::item:selected {
+    background-color: #3478f6;
+}
+
+QMenuBar::item:selected {
     background-color: #3478f6;
 }
 
