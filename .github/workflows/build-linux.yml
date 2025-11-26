@@ -8,74 +8,53 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      QT_VERSION: "6.10.1"
-      QT_ARCH: "gcc_64"
-      QT_MODULES: "all"
-      QT_ROOT: "$HOME/Qt/$QT_VERSION/$QT_ARCH"
-
     steps:
-      # 1. Checkout repository
-      - uses: actions/checkout@v4
+      # Checkout
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch submodules if your project uses them
+          submodules: true
 
-      # 2. Install system dependencies
-      - name: Install prerequisites
+      # New Step: Install libcurl-dev and other system dependencies
+      - name: Install System Dependencies (libcurl-dev)
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            python3 python3-pip python3-venv ninja-build \
-            libgl1-mesa-dev libx11-dev libxext-dev libxrender-dev \
-            libfontconfig1-dev libfreetype6-dev
+          sudo apt-get install -y libcurl4-openssl-dev
 
-      # 3. Install pipx safely
-      - name: Install pipx
-        run: |
-          python3 -m pip install --user pipx
-          export PATH="$HOME/.local/bin:$PATH"
-          python3 -m pipx ensurepath
-
-      # 4. Install aqtinstall via pipx
-      - name: Install aqtinstall
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          python3 -m pipx install aqtinstall
-
-      # 5. Restore Qt cache if available
-      - name: Restore Qt cache
-        uses: actions/cache@v3
+      # Install Qt using the setup-qt action
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
         with:
-          path: $HOME/Qt
-          key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
+          # Specify the Qt version to use, e.g., 6.6.1
+          version: '6.10.1'
+          # The modules to install, separated by commas.
+          modules: 'all'
+          # Optional: automatically install Linux dependencies
+          install-deps: true
 
-      # 6. Install Qt using aqt if not cached
-      - name: Install Qt 6.10.1
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          if [ ! -d "$QT_ROOT" ]; then
-            aqt install-qt linux desktop $QT_VERSION $QT_ARCH -m $QT_MODULES
-          fi
-
-      # 7. Configure CMake with Qt
+      # Configure the project with CMake
       - name: Configure CMake
+        # Using 'shell: bash' ensures the environment variables set by setup-qt are available.
+        shell: bash
         run: |
-          cmake -S . -B build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH="$QT_ROOT" \
-            -G Ninja
+          # Create a build directory
+          mkdir build
+          cd build
+          # Run cmake with the necessary build type and generator
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
 
-      # 8. Build project
-      - name: Build
-        run: cmake --build build --config Release
-
-      # Optional: package build (ZIP)
-      - name: Package
+      # Build the application
+      - name: Build Application
+        shell: bash
         run: |
           cd build
-          cpack -G ZIP || true
+          # Use --config Release if you were using Visual Studio Generator, but for Unix Makefiles, it's often 'make'
+          cmake --build . --target all -j $(nproc)
 
-      # Upload build artifacts
-      - name: Upload Artifact
+      # Optional: Package or Upload the artifact (e.g., the executable)
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: qt-build-linux
-          path: build/*
+          name: qt-app-executable
+          path: build/awsmock-qt-ui # Replace 'your-app-name' with the actual executable name
