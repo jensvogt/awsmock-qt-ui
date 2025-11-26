@@ -31,15 +31,6 @@ jobs:
         run: |
           python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtcharts qtimageformats
 
-      - name: Show Qt directory structure
-        run: |
-          echo "Qt version directory:"
-          dir Qt\6.10.1
-          echo "Qt platform directory:"
-          dir Qt\6.10.1\msvc2022_64
-          echo "CMake files:"
-          dir Qt\6.10.1\msvc2022_64\lib\cmake\Qt6
-
       # -------------------------------
       # Configure & Build
       # -------------------------------
@@ -47,6 +38,8 @@ jobs:
         shell: powershell
         run: |
           $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "Qt\6.10.1\msvc2022_64"
+          echo "Using Qt prefix: $QtPrefix"
+          dir "$QtPrefix\lib\cmake\Qt6"
           cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$QtPrefix"
           cmake --build build --config Release
 
