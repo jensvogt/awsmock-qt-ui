@@ -36,6 +36,17 @@ jobs:
         run: |
           python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtcharts qtimageformats
 
+      - name: Show Qt directory structure
+        run: |
+          echo "Qt directory:"
+          dir Qt
+          echo "Platform directory:"
+          dir Qt\6.10.1
+          echo "msvc2019_64 directory:"
+          dir Qt\6.10.1\msvc2019_64
+          echo "CMake files:"
+          dir Qt\6.10.1\msvc2019_64\lib\cmake\Qt6
+
       # 4. Configure and Build Application
       - name: Configure and Build Application
         # Use PowerShell for consistency on Windows
@@ -45,7 +56,7 @@ jobs:
           cd build
           
           # Configure CMake using the Visual Studio generator and use ninja
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -DCMAKE_PREFIX_PATH="${{ github.workspace }}\Qt\6.10.1\msvc2022_64"
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja" -DCMAKE_PREFIX_PATH="${{ github.workspace }}\Qt\6.10.1\msvc2019_64"
           
           # Build the project (use /p:Configuration=Release with MSVC generator)
           cmake --build . --target ALL --config Release -j $([Environment]::ProcessorCount)
