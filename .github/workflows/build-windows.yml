@@ -34,7 +34,7 @@ jobs:
 
       - name: Install Qt modules
         run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtsvg qttools qtimageformats qtdeclarative
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtcharts qtimageformats
 
       # 4. Configure and Build Application
       - name: Configure and Build Application
