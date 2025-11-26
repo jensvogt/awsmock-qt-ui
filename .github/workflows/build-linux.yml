@@ -25,8 +25,9 @@ jobs:
       - name: Install aqtinstall via pipx
         run: |
           python3 -m pip install --user pipx
+          export PATH="$HOME/.local/bin:$PATH"
           python3 -m pipx ensurepath
-          ~/.local/bin/pipx install aqtinstall
+          python3 -m pipx install aqtinstall
 
       # 4. Install Qt 6.10.1 modules required for your project
       - name: Install Qt 6.10.1
