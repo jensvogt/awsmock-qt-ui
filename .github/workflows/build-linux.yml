@@ -2,11 +2,24 @@ name: Build Qt Project (Ubuntu)
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        with:
+          token: ${{ secrets.GH_AUTH_TOKEN }}
+          config-file: ".release-please-config.json"
+          manifest-file: ".release-please-manifest.json"
+
   build:
     runs-on: ubuntu-latest
+    needs: release
 
     steps:
       # Checkout
