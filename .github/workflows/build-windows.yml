@@ -49,17 +49,20 @@ jobs:
       - name: Configure and Build Application
         shell: powershell
         run: |
-          echo "prefix: $env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake"
           cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6"
           cmake --build build --config Release
 
       # -------------------------------
       # Deploy Qt binaries
       # -------------------------------
-      - name: Deploy Qt binaries
+      - name: Deploy Qt runtime
+        shell: powershell
         run: |
-          "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" Release\awsmock-qt-ui.exe --dir $env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data
-          copy Release\awsmock-qt-ui.exe "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data
+          $exePath = "$env:BUILD_DIR\Release\awsmock-qt-ui.exe"
+          $deployDir = "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data"
+          New-Item -ItemType Directory -Path $deployDir -Force
+          & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exePath --dir $deployDir
+          Copy-Item $exePath $deployDir
 
       # -------------------------------
       # Build Qt Installer
