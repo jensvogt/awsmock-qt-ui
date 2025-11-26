@@ -8,7 +8,6 @@
 #include "ui_About.h"
 
 About::About(QWidget *parent) : QDialog(parent), _ui(new Ui::About) {
-
     _infraStructureService = new InfraStructureService();
     connect(_infraStructureService, &InfraStructureService::GetServerConfigSignal, this, &About::UpdateServerConfig);
 
@@ -17,8 +16,8 @@ About::About(QWidget *parent) : QDialog(parent), _ui(new Ui::About) {
         this->accept();
     });
 
-    _ui->versionText->setText(Configuration::instance().GetValue<QString>("ui.version", "1.0"));
-    _ui->qtVersionText->setText(Configuration::instance().GetValue<QString>("ui.qt-version", "6.10.0"));
+    _ui->versionText->setText(AWSMOCK_UI_VERSION);
+    _ui->qtVersionText->setText(QT_VERSION_STR);
 
     _ui->tabWidget->setCurrentIndex(0);
 

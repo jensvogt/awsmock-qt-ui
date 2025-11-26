@@ -9,7 +9,8 @@
 
 #include <utils/Configuration.h>
 
-#include "modules/infrastructure/InfrastructureService.h"
+#include <modules/infrastructure/InfrastructureService.h>
+#include <Version.h>
 
 QT_BEGIN_NAMESPACE
 
