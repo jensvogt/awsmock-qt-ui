@@ -17,7 +17,7 @@ QPushButton:hover {
 }
 
 QDialogButtonBox QPushButton {
-    min-width: 100px;
+    min-width: 80px;
 }
 
 /* ============================================================================= */

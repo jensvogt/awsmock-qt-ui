@@ -1,0 +1,70 @@
+name: Build Qt Project (Ubuntu)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Qt using aqtinstall
+      - name: Install Qt deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip ninja-build libgl1-mesa-dev libx11-dev
+
+      - name: Install aqtinstall
+        run: |
+          pip install aqtinstall
+
+      # Cache Qt installation for faster CI
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.tool_cache }}/Qt
+          key: qt-6.10.0-linux
+
+      - name: Install Qt (if not cached)
+        if: steps.cache-qt.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ runner.tool_cache }}/Qt
+          aqt install-qt \
+            linux desktop 6.10.0 \
+            --outputdir ${{ runner.tool_cache }}/Qt \
+            --modules qtbase qtshadertools qttools qtdeclarative qtsvg qtimageformats
+
+      - name: Add Qt to PATH
+        run: |
+          echo "$RUNNER_TOOL_CACHE/Qt/6.10.0/gcc_64/bin" >> $GITHUB_PATH
+        env:
+          RUNNER_TOOL_CACHE: ${{ runner.tool_cache }}
+
+      # Configure and build your Qt project
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TOOL_CACHE/Qt/6.10.0/gcc_64" \
+            -G Ninja
+        env:
+          RUNNER_TOOL_CACHE: ${{ runner.tool_cache }}
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Package (optional)
+        run: |
+          cd build
+          cpack -G ZIP || true
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt-linux-build
+          path: build/*
