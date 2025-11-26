@@ -1,0 +1,75 @@
+name: Qt CMake Build (Windows)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_windows:
+    # 1. Use the Windows runner
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      # 2. Setup MSVC environment (usually handled by the runner, but good practice for clarity)
+      - name: Setup MSVC Environment (vcvarsall)
+        uses: ilammy/msvc-dev-cmd@v1
+        # This action sets up the environment variables (like PATH) needed for MSVC compilation.
+        # It defaults to the latest available Visual Studio version.
+
+      # 3. Install libcurl-dev
+      # On Windows, we rely on vcpkg or Chocolatey. Since vcpkg is ideal for C++,
+      # we'll install libcurl using vcpkg and integrate it with CMake.
+      - name: Install LibCurl via vcpkg
+        uses: vcpkg-tool/install-vcpkg-packages@v1
+        with:
+          # vcpkg automatically handles caching and integration with CMake
+          packages: curl
+          # Set the triplet for 64-bit Windows build with MSVC
+          triplet: x64-windows
+
+      # 4. Install Qt
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.10.1'
+          # Crucial: Specify the target architecture (x64 MSVC compiler)
+          arch: 'win64_msvc2019_64' # Use win64_msvc2019_64 for Qt 6.6, or similar for newer versions
+          modules: 'all'
+          # For Qt 6+, Linux dependencies are managed, but on Windows, the arch parameter is key.
+
+      # 5. Configure and Build Application
+      - name: Configure and Build Application
+        # Use PowerShell for consistency on Windows
+        shell: powershell
+        run: |
+          mkdir build
+          cd build
+          
+          # When using vcpkg, you must tell CMake where to find the toolchain file.
+          # This is handled by the vcpkg-tool/install-vcpkg-packages action setting the VCPKG_ROOT env var.
+          $VCPKG_TOOLCHAIN = "$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
+          
+          # Configure CMake using the Visual Studio generator and linking to vcpkg
+          cmake .. `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_TOOLCHAIN `
+            -G "Visual Studio 17 2022" 
+          
+          # Build the project (use /p:Configuration=Release with MSVC generator)
+          cmake --build . --target ALL --config Release -j $([Environment]::ProcessorCount)
+
+      # 6. Optional: Upload the executable artifact
+      - name: 📤 Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          # Executable path relative to the job workspace, usually in the build/Release folder
+          name: qt-app-executable-windows
+          path: build\Release\your-app-name.exe # Adjust 'your-app-name.exe' as needed
+          retention-days: 7
