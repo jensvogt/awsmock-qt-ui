@@ -17,13 +17,14 @@ jobs:
 
       # Install Qt using the setup-qt action
       - name: 📦 Install Qt
-        uses: jurple/setup-qt@v3
+        uses: jurplel/install-qt-action@v5
         with:
-          # Specify the Qt version to use, e.g., 6.5.3, 5.15.2
+          # Specify the Qt version to use, e.g., 6.6.1
           version: '6.10.1'
           # The modules to install, separated by commas.
-          # Include 'qtbase' (default) and any other necessary modules.
           modules: 'qtbase, qttools, qtsvg qtnetwork qtcharts'
+          # Optional: automatically install Linux dependencies
+          install-deps: true
 
       # Configure the project with CMake
       - name: ⚙️ Configure CMake
