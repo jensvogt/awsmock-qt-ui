@@ -44,18 +44,7 @@ jobs:
         run: |
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtcharts qtimageformats
-
-      # -------------------------------
-      # Install QT installer framework
-      # -------------------------------
-      - name: Create Installer
-        shell: powershell
-        run: |
-          $ifwBin = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1 | % { "$($_.FullName)\bin" }
-          $env:PATH = "$ifwBin;$env:PATH"
-          binarycreator -c "$env:INSTALLER_DIR\config\config.xml" `
-                        -p "$env:INSTALLER_DIR\packages" `
-                        "$env:INSTALLER_DIR\installer.exe"
+          python -m aqt install-tool windows desktop tools_ifw 4.8.1 --outputdir $env:QT_DIR
 
       # -------------------------------
       # Configure & Build
@@ -84,7 +73,8 @@ jobs:
       # -------------------------------
       - name: Build Qt Installer
         run: |
-          # Assuming you have installer/config/config.xml & packages/de.jensvogt.awsmockqtui/
+          $ifwBin = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1 | % { "$($_.FullName)\bin" }
+          $env:PATH = "$ifwBin;$env:PATH"
           binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\AwsmockQtUiInstaller.exe"
 
       # -------------------------------
