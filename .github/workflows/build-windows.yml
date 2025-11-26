@@ -54,9 +54,7 @@ jobs:
         run: |
           $ifwBin = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1 | % { "$($_.FullName)\bin" }
           $env:PATH = "$ifwBin;$env:PATH"
-          binarycreator -c "$env:INSTALLER_DIR\config\config.xml" `
-                        -p "$env:INSTALLER_DIR\packages" `
-                        "$env:INSTALLER_DIR\installer.exe"
+          binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\installer.exe"
 
       # -------------------------------
       # Configure & Build
