@@ -161,14 +161,13 @@ set(PROJECT_SOURCES
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})
 
-target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS} ${FTP_INCLUDE_DIRS})
+target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS})
 target_sources(awsmock-qt-ui PRIVATE src/main.cpp src/mainwindow.cpp)
 if (WIN32)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg
-            ${FTP_LIB} ${CURL_LIB})
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg ${CURL_LIB})
 else ()
     target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
-            Qt${QT_VERSION_MAJOR}::Charts ftpclient curl)
+            Qt${QT_VERSION_MAJOR}::Charts)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES
