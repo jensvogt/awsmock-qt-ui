@@ -49,9 +49,8 @@ jobs:
       - name: Configure and Build Application
         shell: powershell
         run: |
-          $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6"
-          echo "prefix: $QtPrefix"
-          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$QtPrefix\lib\cmake\Qt6"
+          echo "prefix: $env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6\lib\cmake"
+          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6\lib\cmake"
           cmake --build build --config Release
 
       # -------------------------------
