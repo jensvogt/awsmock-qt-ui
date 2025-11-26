@@ -40,7 +40,7 @@ jobs:
           $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "Qt\6.10.1\msvc2022_64"
           echo "Using Qt prefix: $QtPrefix"
           dir "$QtPrefix\lib\cmake\Qt6"
-          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -Qt6_DIR="$QtPrefix\lib\cmake\Qt6"
+          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$QtPrefix\lib\cmake\Qt6"
           cmake --build build --config Release
 
       # -------------------------------
