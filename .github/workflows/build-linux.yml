@@ -35,8 +35,21 @@ jobs:
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DQt6_DIR="${{ runner.tool_cache }}/Qt/6.10.1/gcc_64/lib/cmake/Qt6" \
+            -DQt6_DIR="${{ runner.tool_cache }}/Qt/6.10.1/gcc_64" \
             -G Ninja
 
       - name: Build
         run: cmake --build build --config Release
+
+      # Optional: package build (ZIP)
+      - name: Package
+        run: |
+          cd build
+          cpack -G ZIP || true
+
+      # Upload build artifacts
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt-build-linux
+          path: build/*
