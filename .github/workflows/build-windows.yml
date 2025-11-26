@@ -23,16 +23,12 @@ jobs:
         # This action sets up the environment variables (like PATH) needed for MSVC compilation.
         # It defaults to the latest available Visual Studio version.
 
-      # 3. Install libcurl-dev
-      # On Windows, we rely on vcpkg or Chocolatey. Since vcpkg is ideal for C++,
-      # we'll install libcurl using vcpkg and integrate it with CMake.
+      # This installs 'curl' for the x64-windows triplet.
       - name: Install LibCurl via vcpkg
-        uses: vcpkg-tool/install-vcpkg-packages@v1
+        uses: lukka/run-vcpkg@v11
         with:
-          # vcpkg automatically handles caching and integration with CMake
-          packages: curl
-          # Set the triplet for 64-bit Windows build with MSVC
-          triplet: x64-windows
+          # Use the vcpkgArguments input to install the package + triplet
+          vcpkgArguments: 'install curl:x64-windows'
 
       # 4. Install Qt
       - name: Install Qt
