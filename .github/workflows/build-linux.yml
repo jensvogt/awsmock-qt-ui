@@ -20,7 +20,7 @@ jobs:
         uses: jurplel/install-qt-action@v5
         with:
           # Specify the Qt version to use, e.g., 6.6.1
-          version: '6.6.1'
+          version: '6.10.1'
           # The modules to install, separated by commas.
           modules: 'qtbase, qttools, qtsvg qtnetwork qtcharts'
           # Optional: automatically install Linux dependencies
