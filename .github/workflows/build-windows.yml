@@ -23,15 +23,16 @@ jobs:
         # This action sets up the environment variables (like PATH) needed for MSVC compilation.
         # It defaults to the latest available Visual Studio version.
 
-      # 3. Install Qt
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: '6.10.1'
-          # Crucial: Specify the target architecture (x64 MSVC compiler)
-          arch: 'win64_msvc2019_64' # Use win64_msvc2019_64 for Qt 6.6, or similar for newer versions
-          modules: 'all'
-          # For Qt 6+, Linux dependencies are managed, but on Windows, the arch parameter is key.
+      - name: Install Qt base
+        run: |
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2019_64 `
+            --outputdir Qt
+
+      - name: Install Qt modules
+        run: |
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2019_64 `
+            --outputdir Qt `
+            --modules qtsvg qttools qtimageformats qtdeclarative
 
       # 4. Configure and Build Application
       - name: Configure and Build Application
