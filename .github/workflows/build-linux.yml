@@ -9,35 +9,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository
       - uses: actions/checkout@v4
 
+      # 2. Install system dependencies
       - name: Install prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3 python3-pip ninja-build libgl1-mesa-dev libx11-dev
+          sudo apt-get install -y \
+            python3 python3-pip python3-venv ninja-build \
+            libgl1-mesa-dev libx11-dev libxext-dev libxrender-dev \
+            libfontconfig1-dev libfreetype6-dev
 
-      - name: Install aqtinstall
-        run: pip install aqtinstall
-
-      - name: List available Qt 6.10.1 modules
+      # 3. Install aqtinstall safely using pipx
+      - name: Install aqtinstall via pipx
         run: |
-          aqt list-qt linux desktop --modules 6.10.1 linux_gcc_64
+          python3 -m pip install --user pipx
+          python3 -m pipx ensurepath
+          ~/.local/bin/pipx install aqtinstall
 
-      - name: Install Qt 6.10.1 with required modules
+      # 4. Install Qt 6.10.1 modules required for your project
+      - name: Install Qt 6.10.1
         run: |
-          aqt install-qt linux desktop 6.10.1 linux_gcc_64 \
-            --modules all
+          export PATH=$HOME/.local/bin:$PATH
+          aqt install-qt linux desktop 6.10.1 gcc_64 \
+            -m qtbase qtwidgets qtsvg qtcharts qttools qtimageformats
 
+      # 5. Add Qt to PATH
       - name: Add Qt to PATH
-        run: echo "${{ runner.tool_cache }}/Qt/6.10.1/gcc_64/bin" >> $GITHUB_PATH
+        run: echo "$HOME/Qt/6.10.1/gcc_64/bin" >> $GITHUB_PATH
 
+      # 6. Configure CMake with correct CMAKE_PREFIX_PATH
       - name: Configure CMake
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DQt6_DIR="${{ runner.tool_cache }}/Qt/6.10.1/gcc_64" \
+            -DCMAKE_PREFIX_PATH="$HOME/Qt/6.10.1/gcc_64" \
             -G Ninja
 
+      # 7. Build the project
       - name: Build
         run: cmake --build build --config Release
 
