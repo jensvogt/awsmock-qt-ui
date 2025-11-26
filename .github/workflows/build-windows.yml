@@ -50,7 +50,7 @@ jobs:
         shell: powershell
         run: |
           echo "prefix: $env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake"
-          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake"
+          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6"
           cmake --build build --config Release
 
       # -------------------------------
@@ -59,8 +59,8 @@ jobs:
       - name: Deploy Qt binaries
         run: |
           cd build/Release
-          "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt.exe" awsmock-qt-ui.exe --dir "$env:INSTALLER_DIR\packages\com.jensvogt.awsmockqtui\data"
-          copy awsmock-qt-ui.exe "$env:INSTALLER_DIR\packages\com.jensvogt.awsmockqtui\data
+          "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt.exe" awsmock-qt-ui.exe --dir "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data"
+          copy awsmock-qt-ui.exe "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data
 
       # -------------------------------
       # Build Qt Installer
