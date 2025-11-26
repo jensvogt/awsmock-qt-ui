@@ -61,9 +61,7 @@ jobs:
       - name: Deploy Qt runtime
         shell: powershell
         run: |
-          dir "$env:BUILD_DIR"
-          dir .
-          $exePath = "Release\awsmock-qt-ui.exe"
+          $exePath = "$env:BUILD_DIR\awsmock-qt-ui.exe"
           $deployDir = "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data"
           New-Item -ItemType Directory -Path $deployDir -Force
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exePath --dir $deployDir
