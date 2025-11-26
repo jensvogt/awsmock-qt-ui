@@ -58,9 +58,8 @@ jobs:
       # -------------------------------
       - name: Deploy Qt binaries
         run: |
-          cd build/Release
-          "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt.exe" awsmock-qt-ui.exe --dir "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data"
-          copy awsmock-qt-ui.exe "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data
+          "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" Release\awsmock-qt-ui.exe --dir $env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data
+          copy Release\awsmock-qt-ui.exe "$env:INSTALLER_DIR\packages\de.jensvogt.awsmockqtui\data
 
       # -------------------------------
       # Build Qt Installer
@@ -79,3 +78,18 @@ jobs:
           name: QtInstaller-Windows
           path: installer/AwsmockQtUiInstaller.exe
           retention-days: 90
+
+      # -------------------------------
+      # Create release
+      # -------------------------------
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')  # Only run on tags
+        uses: softprops/action-gh-release@v2
+        with:
+          files: $env:APP_NAME-windows-x64.exe
+          name: Release ${{ github.ref_name }}
+          body: |
+            **New release: ${{ github.ref_name }}**           
+            This release includes bug fixes and new features.
+          draft: false
+          prerelease: false
