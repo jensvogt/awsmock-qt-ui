@@ -34,7 +34,7 @@ jobs:
         run: |
           export PATH=$HOME/.local/bin:$PATH
           aqt install-qt linux desktop 6.10.1 gcc_64 \
-            -m qtbase qtwidgets qtsvg qtcharts qttools qtimageformats
+            -m all
 
       # 5. Add Qt to PATH
       - name: Add Qt to PATH
