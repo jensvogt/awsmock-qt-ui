@@ -8,7 +8,6 @@ on:
 
 jobs:
   build_windows:
-    # 1. Use the Windows runner
     runs-on: windows-latest
 
     steps:
@@ -17,74 +16,70 @@ jobs:
         with:
           submodules: true
 
-      # 2. Setup MSVC environment (usually handled by the runner, but good practice for clarity)
-      - name: Setup MSVC Environment (vcvarsall)
+      - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
-        # This action sets up the environment variables (like PATH) needed for MSVC compilation.
-        # It defaults to the latest available Visual Studio version.
 
-      - name: Install Python dependencies
+      - name: Install Python + aqtinstall
         run: |
           python -m pip install --upgrade pip
-          pip install -U aqtinstall
+          pip install aqtinstall
 
-      - name: Install Qt base
+      # -------------------------------
+      # Install Qt (base + modules)
+      # -------------------------------
+      - name: Install Qt 6.10.1 + modules
         run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt
-
-      - name: Install Qt modules
-        run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtcharts qtimageformats
+          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 ^
+            --outputdir Qt ^
+            --modules qtcharts qtimageformats qtsvg qttools
 
       - name: Show Qt directory structure
         run: |
-          echo "Qt directory:"
-          dir Qt
-          echo "Platform directory:"
+          echo "Qt version directory:"
           dir Qt\6.10.1
-          echo "msvc2019_64 directory:"
+          echo "Qt platform directory:"
           dir Qt\6.10.1\msvc2022_64
           echo "CMake files:"
           dir Qt\6.10.1\msvc2022_64\lib\cmake\Qt6
 
-      # 4. Configure and Build Application
+      # -------------------------------
+      # Configure & Build
+      # -------------------------------
       - name: Configure and Build Application
-        # Use PowerShell for consistency on Windows
         shell: powershell
         run: |
-          mkdir build
-          cd build
-          
-          # Configure CMake using the Visual Studio generator and use ninja
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja" -DCMAKE_PREFIX_PATH="${{ github.workspace }}\Qt\6.10.1\msvc2022_64"
-          
-          # Build the project (use /p:Configuration=Release with MSVC generator)
-          cmake --build . --target ALL --config Release -j $([Environment]::ProcessorCount)
+          cmake -B build -S . `
+            -G Ninja `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_PREFIX_PATH="${PWD}\Qt\6.10.1\msvc2022_64"
 
-      - name: 📦 Archive Executable (for Release)
-        # This stores the file locally in the runner's workspace, not as a permanent Artifact
+          cmake --build build --config Release
+
+      # -------------------------------
+      # Archive Executable
+      # -------------------------------
+      - name: Archive Executable
         shell: powershell
         run: |
-          # Move the final executable to the root for easy access
-          Move-Item build\Release\your-app-name.exe ./your-app-name-windows-x64.exe
+          Copy-Item build\your-app-name.exe your-app-name-windows-x64.exe
 
-      - name: 🚀 Create GitHub Release
-        # This action creates the release and uploads the file in one step
-        if: startsWith(github.ref, 'refs/tags/') # Only run if the commit is tagged (e.g., v1.0.0)
+      # -------------------------------
+      # Optional Release Publishing
+      # -------------------------------
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: your-app-name-windows-x64.exe
-          name: Release ${{ github.ref_name }} # Uses the tag name for the release title
-          body: |
-            **New release: ${{ github.ref_name }}**           
-            This release includes bug fixes and new features.
-          draft: true # Optional: Create as a draft first
+          name: Release ${{ github.ref_name }}
+          draft: true
 
-      # 5. Optional: Upload the executable artifact
-      - name: 📤 Upload Artifacts
+      # -------------------------------
+      # Upload Artifact
+      # -------------------------------
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          # Executable path relative to the job workspace, usually in the build/Release folder
           name: qt-app-executable-windows
-          path: build\Release\your-app-name.exe # Adjust 'your-app-name.exe' as needed
+          path: your-app-name-windows-x64.exe
           retention-days: 7
