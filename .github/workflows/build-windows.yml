@@ -28,7 +28,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           # Use the vcpkgArguments input to install the package + triplet
-          vcpkgGitCommitId: 'HEAD'
+          vcpkgGitCommitId: '400fffa90f30c7a2dc762fa33009d24851bd2016'
           runVcpkgInstall: 'curl:x64-windows'
 
       # 4. Install Qt
@@ -61,6 +61,25 @@ jobs:
           
           # Build the project (use /p:Configuration=Release with MSVC generator)
           cmake --build . --target ALL --config Release -j $([Environment]::ProcessorCount)
+
+      - name: 📦 Archive Executable (for Release)
+        # This stores the file locally in the runner's workspace, not as a permanent Artifact
+        shell: powershell
+        run: |
+          # Move the final executable to the root for easy access
+          Move-Item build\Release\your-app-name.exe ./your-app-name-windows-x64.exe
+
+      - name: 🚀 Create GitHub Release
+        # This action creates the release and uploads the file in one step
+        if: startsWith(github.ref, 'refs/tags/') # Only run if the commit is tagged (e.g., v1.0.0)
+        uses: softprops/action-gh-release@v2
+        with:
+          files: your-app-name-windows-x64.exe
+          name: Release ${{ github.ref_name }} # Uses the tag name for the release title
+          body: |
+            **New release: ${{ github.ref_name }}**           
+            This release includes bug fixes and new features.
+          draft: true # Optional: Create as a draft first
 
       # 6. Optional: Upload the executable artifact
       - name: 📤 Upload Artifacts
