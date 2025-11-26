@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>LambdaDetailsDialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,2,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -40,6 +40,26 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="2,1,1">
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="runtimeEdit"/>
+     </item>
+     <item row="8" column="2">
+      <widget class="QLabel" name="statusLabel">
+       <property name="text">
+        <string>Status:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLineEdit" name="handlerEdit"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="versionLabel">
+       <property name="text">
+        <string>Version:</string>
+       </property>
+      </widget>
+     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="arnLabel">
        <property name="text">
@@ -47,8 +67,15 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QLineEdit" name="versionEdit"/>
+     <item row="6" column="2">
+      <widget class="QLabel" name="zipFileLabel">
+       <property name="text">
+        <string>ZIP FiIename:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLineEdit" name="arnEdit"/>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="handlerLabel">
@@ -57,29 +84,49 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit"/>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="regionLabel">
-       <property name="text">
-        <string>Region:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="runtimeEdit"/>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLineEdit" name="handlerEdit"/>
-     </item>
      <item row="9" column="1">
       <widget class="QLineEdit" name="concurrencyEdit"/>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="runtimeLabel">
+     <item row="9" column="2">
+      <widget class="QLineEdit" name="statusEdit"/>
+     </item>
+     <item row="7" column="2">
+      <widget class="QLineEdit" name="zipFileEdit"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="instancesLabel">
        <property name="text">
-        <string>Runtime:</string>
+        <string>Instances:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLineEdit" name="avgExecutionEdit"/>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="invocationsLabel">
+       <property name="text">
+        <string>Invocations:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLineEdit" name="invocationsEdit"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="nameLabel">
+       <property name="text">
+        <string>Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="regionEdit"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="sizeLabel">
+       <property name="text">
+        <string>Size:</string>
        </property>
       </widget>
      </item>
@@ -90,35 +137,22 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="nameLabel">
+     <item row="0" column="0">
+      <widget class="QLabel" name="regionLabel">
        <property name="text">
-        <string>Name:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="versionLabel">
-       <property name="text">
-        <string>Version:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="sizeEdit"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLineEdit" name="nameEdit"/>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="sizeLabel">
-       <property name="text">
-        <string>Size:</string>
+        <string>Region:</string>
        </property>
       </widget>
      </item>
      <item row="9" column="0">
       <widget class="QLineEdit" name="roleEdit"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="runtimeLabel">
+       <property name="text">
+        <string>Runtime:</string>
+       </property>
+      </widget>
      </item>
      <item row="8" column="1">
       <widget class="QLabel" name="concurrencyLabel">
@@ -127,38 +161,24 @@
        </property>
       </widget>
      </item>
+     <item row="7" column="1">
+      <widget class="QLineEdit" name="sizeEdit"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="userEdit"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="nameEdit"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="instancesEdit"/>
+     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="userLabel">
        <property name="text">
         <string>User:</string>
        </property>
       </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="userEdit"/>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLineEdit" name="arnEdit"/>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLineEdit" name="invocationsEdit"/>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="invocationsLabel">
-       <property name="text">
-        <string>Invocations:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="instancesLabel">
-       <property name="text">
-        <string>Instances:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLineEdit" name="instancesEdit"/>
      </item>
      <item row="4" column="2">
       <widget class="QLabel" name="avgExecutionLabel">
@@ -167,33 +187,66 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
-      <widget class="QLineEdit" name="avgExecutionEdit"/>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="versionEdit"/>
      </item>
-     <item row="6" column="2">
-      <widget class="QLabel" name="zipFileLabel">
-       <property name="text">
-        <string>ZIP FiIename:</string>
+     <item row="10" column="0" colspan="3">
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
+       <widget class="QWidget" name="instancesTab">
+        <attribute name="title">
+         <string>Instances</string>
+        </attribute>
+        <widget class="QWidget" name="verticalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>1261</width>
+           <height>291</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="instanceRefreshButton">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="instanceTable"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="environmentTab">
+        <attribute name="title">
+         <string>Environment</string>
+        </attribute>
+       </widget>
       </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QLineEdit" name="zipFileEdit"/>
-     </item>
-     <item row="8" column="2">
-      <widget class="QLabel" name="statusLabel">
-       <property name="text">
-        <string>Status:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="2">
-      <widget class="QLineEdit" name="statusEdit"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="tableWidget"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

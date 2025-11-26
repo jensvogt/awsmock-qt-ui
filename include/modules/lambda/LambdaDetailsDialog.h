@@ -8,6 +8,7 @@
 #include <QDialog>
 
 #include <utils/IconUtils.h>
+#include <utils/BaseDialog.h>
 #include <modules/lambda/LambdaService.h>
 #include <dto/lambda/LambdaGetResponse.h>
 
@@ -19,7 +20,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class LambdaDetailsDialog final : public QDialog {
+class LambdaDetailsDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -34,6 +35,10 @@ public:
     ~LambdaDetailsDialog() override;
 
     void UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const;
+
+    void SetupInstancesTab() const;
+
+    void UpdateLambdaInstances(const LambdaListInstancesResponse &listInstancesResponse) const;
 
     void HandleAccept();
 
