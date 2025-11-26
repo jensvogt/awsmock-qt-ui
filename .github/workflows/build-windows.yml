@@ -38,8 +38,6 @@ jobs:
         shell: powershell
         run: |
           $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "Qt\6.10.1\msvc2022_64"
-          echo "Using Qt prefix: $QtPrefix"
-          dir "$QtPrefix\lib\cmake\Qt6"
           cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$QtPrefix\lib\cmake\Qt6"
           cmake --build build --config Release
 
@@ -52,6 +50,15 @@ jobs:
           Copy-Item build\awsmock-qt-ui.exe awsmock-qt-ui-windows-x64.exe
 
       # -------------------------------
+      # Create QT installer
+      # -------------------------------
+      - name: Create installer
+        shell: powershell
+        run: |
+          windeployqt awsmock-qt-ui-windows-x64.exe --dir installer/packages/de.jensvogt.awsmockqtui/data
+          binarycreator -c installer/config/config.xml -p installer/packages AwsMockQtUiInstaller.exe
+
+      # -------------------------------
       # Optional Release Publishing
       # -------------------------------
       - name: Create GitHub Release
@@ -60,7 +67,7 @@ jobs:
         with:
           files: awsmock-qt-ui-windows-x64.exe
           name: Release ${{ github.ref_name }}
-          draft: true
+          draft: false
 
       # -------------------------------
       # Upload Artifact

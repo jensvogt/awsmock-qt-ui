@@ -87,7 +87,7 @@ src/awslocal/awslocal
 ALL_BUILD*
 RUN_TESTS*
 ZERO_CHECK*
-INSTALL*
+INSTALL.dir
 awsmock.sln
 x86
 .suo
@@ -105,9 +105,13 @@ x86
 **/*.vcxproj
 **/*.ipch
 **/*.txt
+**/*.slnx
 **/*.bin
 **/*.sqlite
 **/CMake Overview
+Debug
+Release
+x64
 
 # Tests
 src/service/btst/srv_kms_cli
