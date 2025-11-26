@@ -46,11 +46,8 @@ jobs:
       - name: Configure and Build Application
         shell: powershell
         run: |
-          cmake -B build -S . `
-            -G Ninja `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_PREFIX_PATH="${PWD}\Qt\6.10.1\msvc2022_64"
-
+          $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "Qt\6.10.1\msvc2022_64"
+          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$QtPrefix"
           cmake --build build --config Release
 
       # -------------------------------
