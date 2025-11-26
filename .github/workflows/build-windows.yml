@@ -45,7 +45,7 @@ jobs:
           aqt list-tool windows desktop
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtcharts qtimageformats
-          python -m aqt install-tool windows desktop qt.tools.ifw.47 --outputdir $env:QT_DIR
+          python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
 
       # -------------------------------
       # Install QT installer framework
