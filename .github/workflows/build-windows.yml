@@ -45,7 +45,7 @@ jobs:
           cd build
           
           # Configure CMake using the Visual Studio generator
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja" 
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja" -DCMAKE_PREFIX_PATH="${{ github.workspace }}\Qt\6.10.1\msvc2019_64"
           
           # Build the project (use /p:Configuration=Release with MSVC generator)
           cmake --build . --target ALL --config Release -j $([Environment]::ProcessorCount)
