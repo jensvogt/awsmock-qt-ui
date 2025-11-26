@@ -12,7 +12,7 @@ jobs:
       QT_VERSION: "6.10.1"
       QT_ARCH: "gcc_64"
       QT_MODULES: "all"
-      QT_ROOT: "$HOME/Qt/$QT_VERSION/$QT_ARCH"
+      QT_ROOT: "$HOME/work/awsmock-qt-ui/awsmock-qt-ui/$QT_VERSION/$QT_ARCH"
 
     steps:
       # 1. Checkout repository
