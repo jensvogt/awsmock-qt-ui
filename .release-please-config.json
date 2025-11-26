@@ -4,6 +4,8 @@
     ".": {
       "release-type": "simple",
       "bump-minor-pre-major": true,
+      "version-file": "include/Version.h",
+      "include-component-in-tag": false,
       "extra-files": [
         {
           "type": "generic",
