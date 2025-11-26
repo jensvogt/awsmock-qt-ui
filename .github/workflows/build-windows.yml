@@ -10,26 +10,38 @@ jobs:
   build_windows:
     runs-on: windows-latest
 
+    env:
+      QT_VERSION: 6.10.1
+      QT_DIR: ${{ github.workspace }}\Qt
+      INSTALLER_DIR: ${{ github.workspace }}\installer
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: true
 
+      # -------------------------------
+      # Setup C++ compiler
+      # -------------------------------
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
 
+      # -------------------------------
+      # Install Python + aqtinstall
+      # -------------------------------
       - name: Install Python + aqtinstall
         run: |
           python -m pip install --upgrade pip
           pip install aqtinstall
 
       # -------------------------------
-      # Install Qt (base + modules)
+      # Install Qt 6.10.1 + modules
       # -------------------------------
       - name: Install Qt 6.10.1 + modules
         run: |
-          python -m aqt install-qt windows desktop 6.10.1 win64_msvc2022_64 --outputdir Qt --modules qtcharts qtimageformats
+          python -m aqt install-qt windows desktop %QT_VERSION% win64_msvc2022_64 --outputdir %QT_DIR%
+          python -m aqt install-qt windows desktop %QT_VERSION% win64_msvc2022_64 --outputdir %QT_DIR% --modules qtcharts qtimageformats
 
       # -------------------------------
       # Configure & Build
@@ -37,44 +49,32 @@ jobs:
       - name: Configure and Build Application
         shell: powershell
         run: |
-          $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "Qt\6.10.1\msvc2022_64"
+          $QtPrefix = Join-Path $env:GITHUB_WORKSPACE "%QT_DIR%\%QT_VERSION%\msvc2022_64"
           cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$QtPrefix\lib\cmake\Qt6"
           cmake --build build --config Release
 
       # -------------------------------
-      # Archive Executable
+      # Deploy Qt binaries
       # -------------------------------
-      - name: Archive Executable
-        shell: powershell
+      - name: Deploy Qt binaries
         run: |
-          Copy-Item build\awsmock-qt-ui.exe awsmock-qt-ui-windows-x64.exe
+          cd build/Release
+          "%QT_DIR%\%QT_VERSION%\msvc2022_64\bin\windeployqt.exe" awsmock-qt-ui.exe --dir "%INSTALLER_DIR%\packages\com.jensvogt.awsmockqtui\data"
 
       # -------------------------------
-      # Create QT installer
+      # Build Qt Installer
       # -------------------------------
-      - name: Create installer
-        shell: powershell
+      - name: Build Qt Installer
         run: |
-          windeployqt awsmock-qt-ui-windows-x64.exe --dir installer/packages/de.jensvogt.awsmockqtui/data
-          binarycreator -c installer/config/config.xml -p installer/packages AwsMockQtUiInstaller.exe
+          # Assuming you have installer/config/config.xml & packages/com.jensvogt.awsmockqtui/
+          binarycreator -c "%INSTALLER_DIR%\config\config.xml" -p "%INSTALLER_DIR%\packages" "%INSTALLER_DIR%\AwsmockQtUiInstaller.exe"
 
       # -------------------------------
-      # Optional Release Publishing
+      # Upload the installer
       # -------------------------------
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: awsmock-qt-ui-windows-x64.exe
-          name: Release ${{ github.ref_name }}
-          draft: false
-
-      # -------------------------------
-      # Upload Artifact
-      # -------------------------------
-      - name: Upload Build Artifact
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: qt-app-executable-windows
-          path: awsmock-qt-ui-windows-x64.exe
-          retention-days: 7
+          name: QtInstaller-Windows
+          path: installer/AwsmockQtUiInstaller.exe
+          retention-days: 90
