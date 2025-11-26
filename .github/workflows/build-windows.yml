@@ -38,7 +38,7 @@ jobs:
           pip install aqtinstall
 
       # -------------------------------
-      # Install Qt 6.10.1 + modules
+      # Install Qt 6.10.1 + modules plua installer
       # -------------------------------
       - name: Install Qt 6.10.1 + modules
         run: |
