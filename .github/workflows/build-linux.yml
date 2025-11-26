@@ -21,7 +21,7 @@ jobs:
 
       - name: List available Qt 6.10.1 modules
         run: |
-          aqt list-qt linux desktop --long-modules 6.10.1 gcc_64
+          aqt list-qt linux desktop --modules 6.10.1 gcc_64
 
       - name: Install Qt 6.10.1 with required modules
         run: |
