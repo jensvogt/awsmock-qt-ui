@@ -156,6 +156,7 @@ set(PROJECT_SOURCES
         include/Version.h
         include/dto/lambda/LambdaListEnvironmentResponse.h
         src/modules/ftp/FTPClient.cpp
+        src/modules/ftp/CurlHandle.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
@@ -164,10 +165,11 @@ qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICO
 target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS})
 target_sources(awsmock-qt-ui PRIVATE src/main.cpp src/mainwindow.cpp)
 if (WIN32)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg ${CURL_LIB})
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg
+            ${CURL_LIB})
 else ()
     target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
-            Qt${QT_VERSION_MAJOR}::Charts)
+            Qt${QT_VERSION_MAJOR}::Charts curl)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES
