@@ -7,17 +7,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 if (WIN32)
+    add_compile_options(/Zc:__cplusplus)
     set(CMAKE_PREFIX_PATH "c:\\work\\Qt\\6.10.0\\msvc2022_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
-    set(CURL_INCLUDE_DIRS "C:\\work\\private\\extern\\curl\\include")
-    set(CURL_LIB "$<$<CONFIG:RELEASE>:C:\\work\\private\\extern\\curl\\lib\\Release\\libcurl_imp.lib>"
-            "$<$<CONFIG:DEBUG>:C:\\work\\private\\extern\\curl\\lib\\Debug\\libcurl-d_imp.lib>")
-    set(FTP_INCLUDE_DIRS "C:\\work\\private\\extern\\ftpclient-cpp\\include")
-    set(FTP_LIB "$<$<CONFIG:RELEASE>:C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Release\\ftpclient.lib>"
-            "$<$<CONFIG:DEBUG>:C:\\work\\private\\extern\\ftpclient-cpp\\lib\\Debug\\ftpclient.lib>")
-    add_compile_options(/Zc:__cplusplus)
+    set(CURL_INCLUDE_DIRS "extern/include")
+    set(CURL_LIB "$<$<CONFIG:RELEASE>:${CMAKE_SOURCE_DIR}/extern/libcurl_imp.lib>"
+            "$<$<CONFIG:DEBUG>:${CMAKE_SOURCE_DIR}/extern/libcurl-d_imp.lib>")
     set(WINDOWS_ICON ${CMAKE_SOURCE_DIR}/appicon.rc)
     set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
@@ -165,11 +162,10 @@ qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICO
 
 target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS})
 if (WIN32)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg
-            ${CURL_LIB})
+    target_link_directories(awsmock-qt-ui PRIVATE ${CMAKE_SOURCE_DIR}/extern/lib)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg libcurl_imp)
 else ()
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
-            Qt${QT_VERSION_MAJOR}::Charts curl)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg curl)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES

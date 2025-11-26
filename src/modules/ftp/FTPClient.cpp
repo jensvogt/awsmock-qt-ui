@@ -142,7 +142,8 @@ namespace embeddedmz {
     * @param [in] fnCallback callback to progress function
     *
     */
-   void CFTPClient::SetProgressFnCallback(void *pOwner, const ProgressFnCallback &fnCallback, const bool enable /*= true*/) {
+   void CFTPClient::SetProgressFnCallback(void *pOwner, const ProgressFnCallback &fnCallback,
+                                          const bool enable /*= true*/) {
       m_ProgressStruct.pOwner = pOwner;
       m_fnProgressCallback = fnCallback;
       m_ProgressStruct.pCurl = m_pCurlSession;
@@ -297,7 +298,8 @@ namespace embeddedmz {
       // Check for errors
       if (res != CURLE_OK) {
          if (m_eSettingsFlags & ENABLE_LOG)
-            m_oLog(StringFormat(LOG_ERROR_CURL_MKDIR_FORMAT, strRemoteNewFolderName.c_str(), res, curl_easy_strerror(res)));
+            m_oLog(StringFormat(LOG_ERROR_CURL_MKDIR_FORMAT, strRemoteNewFolderName.c_str(), res,
+                                curl_easy_strerror(res)));
       } else
          bRet = true;
 
@@ -379,7 +381,8 @@ namespace embeddedmz {
 
       if (res != CURLE_OK) {
          if (m_eSettingsFlags & ENABLE_LOG)
-            m_oLog(StringFormat(LOG_ERROR_CURL_RMDIR_FORMAT, strRemoteFolderName.c_str(), res, curl_easy_strerror(res)));
+            m_oLog(StringFormat(LOG_ERROR_CURL_RMDIR_FORMAT, strRemoteFolderName.c_str(), res,
+                                curl_easy_strerror(res)));
       } else
          bRet = true;
 
@@ -638,7 +641,8 @@ namespace embeddedmz {
 
          if (res != CURLE_OK) {
             if (m_eSettingsFlags & ENABLE_LOG)
-               m_oLog(StringFormat(LOG_ERROR_CURL_GETFILE_FORMAT, m_strServer.c_str(), strRemoteFile.c_str(), res, curl_easy_strerror(res)));
+               m_oLog(StringFormat(LOG_ERROR_CURL_GETFILE_FORMAT, m_strServer.c_str(), strRemoteFile.c_str(), res,
+                                   curl_easy_strerror(res)));
          } else
             bRet = true;
 
@@ -680,7 +684,8 @@ namespace embeddedmz {
 
       if (res != CURLE_OK) {
          if (m_eSettingsFlags & ENABLE_LOG)
-            m_oLog(StringFormat(LOG_ERROR_CURL_GETFILE_FORMAT, m_strServer.c_str(), strRemoteFile.c_str(), res, curl_easy_strerror(res)));
+            m_oLog(StringFormat(LOG_ERROR_CURL_GETFILE_FORMAT, m_strServer.c_str(), strRemoteFile.c_str(), res,
+                                curl_easy_strerror(res)));
          return false;
       } else
          return true;
@@ -724,7 +729,8 @@ namespace embeddedmz {
       std::string strPattern = ParseURL(strRemoteWildcard);
 
       struct stat info;
-      if (stat(data.strOutputPath.c_str(), &info) == 0 && (info.st_mode & S_IFDIR)) // S_ISDIR() doesn't exist on windows
+      if (stat(data.strOutputPath.c_str(), &info) == 0 && (info.st_mode & S_IFDIR))
+      // S_ISDIR() doesn't exist on windows
       {
          /* 0. turn on wildcard matching */
          curl_easy_setopt(m_pCurlSession, CURLOPT_WILDCARDMATCH, 1L);
@@ -753,7 +759,8 @@ namespace embeddedmz {
          if (res != CURLE_OK && res != CURLE_REMOTE_FILE_NOT_FOUND) {
             if (m_eSettingsFlags & ENABLE_LOG)
                m_oLog(
-                  StringFormat(LOG_ERROR_CURL_GETWILD_FORMAT, m_strServer.c_str(), strRemoteWildcard.c_str(), res, curl_easy_strerror(res)));
+                  StringFormat(LOG_ERROR_CURL_GETWILD_FORMAT, m_strServer.c_str(), strRemoteWildcard.c_str(), res,
+                               curl_easy_strerror(res)));
          }
          /* folders need to be copied integrally */
          else if (!data.vecDirList.empty() && strRemoteWildcard.back() == '*') {
@@ -767,7 +774,8 @@ namespace embeddedmz {
                if ((Dir == ".") || (Dir == "..")) continue;
                if (!DownloadWildcard(data.strOutputPath + Dir, strBaseUrl + Dir + "/*")) {
                   m_oLog(
-                     StringFormat(LOG_ERROR_CURL_GETWILD_REC_FORMAT, (strBaseUrl + Dir + "/*").c_str(), (data.strOutputPath + Dir).c_str()));
+                     StringFormat(LOG_ERROR_CURL_GETWILD_REC_FORMAT, (strBaseUrl + Dir + "/*").c_str(),
+                                  (data.strOutputPath + Dir).c_str()));
                   bRet = false;
                }
             }
@@ -887,7 +895,8 @@ namespace embeddedmz {
     *    // if they don't exist and if the connected user has the proper rights.
     * @endcode
     */
-   bool CFTPClient::UploadFile(const std::string &strLocalFile, const std::string &strRemoteFile, const bool &bCreateDir) const {
+   bool CFTPClient::UploadFile(const std::string &strLocalFile, const std::string &strRemoteFile,
+                               const bool &bCreateDir) const {
       if (strLocalFile.empty() || strRemoteFile.empty()) return false;
 
       std::ifstream InputFile;
@@ -900,10 +909,10 @@ namespace embeddedmz {
       if (stat(strLocalFile.c_str(), &file_info) == 0) {
          InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #else
-         static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
-         std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
-         if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
-            InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
+      static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
+      std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
+      if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
+         InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
 #endif
          if (!InputFile) {
             if (m_eSettingsFlags & ENABLE_LOG) m_oLog(StringFormat(LOG_ERROR_FILE_UPLOAD_FORMAT, strLocalFile.c_str()));
@@ -918,7 +927,8 @@ namespace embeddedmz {
       return bRes;
    }
 
-   bool CFTPClient::AppendFile(const std::string &strLocalFile, const size_t fileOffset, const std::string &strRemoteFile,
+   bool CFTPClient::AppendFile(const std::string &strLocalFile, const size_t fileOffset,
+                               const std::string &strRemoteFile,
                                const bool &bCreateDir) const {
       if (strLocalFile.empty() || strRemoteFile.empty()) return false;
 
@@ -941,10 +951,10 @@ namespace embeddedmz {
       if (stat(strLocalFile.c_str(), &file_info) == 0) {
          InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #else
-         static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
-         std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
-         if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
-            InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
+      static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
+      std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
+      if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
+         InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
 #endif
          if (!InputFile) {
             if (m_eSettingsFlags & ENABLE_LOG) m_oLog(StringFormat(LOG_ERROR_FILE_UPLOAD_FORMAT, strLocalFile.c_str()));
@@ -959,7 +969,8 @@ namespace embeddedmz {
             return false;
          }
 
-         InputFile.seekg(fileOffset, InputFile.beg); // Sets the position of the next character to be extracted from the input stream.
+         InputFile.seekg(fileOffset, InputFile.beg);
+         // Sets the position of the next character to be extracted from the input stream.
 
          /* specify target */
          curl_easy_setopt(m_pCurlSession, CURLOPT_URL, strLocalRemoteFile.c_str());
@@ -974,7 +985,8 @@ namespace embeddedmz {
          option you MUST make sure that the type of the passed-in argument is a
          curl_off_t. If you use CURLOPT_INFILESIZE (without _LARGE) you must
          make sure that to pass in a type 'long' argument. */
-         curl_easy_setopt(m_pCurlSession, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(file_info.st_size - fileOffset)); // Important !
+         curl_easy_setopt(m_pCurlSession, CURLOPT_INFILESIZE_LARGE,
+                          static_cast<curl_off_t>(file_info.st_size - fileOffset)); // Important !
 
          /* enable uploading */
          curl_easy_setopt(m_pCurlSession, CURLOPT_UPLOAD, 1L);
@@ -1102,7 +1114,8 @@ namespace embeddedmz {
       return &vec[0];
    }
 
-   void CFTPClient::ReplaceString(std::string &strSubject, const std::string &strSearch, const std::string &strReplace) {
+   void CFTPClient::ReplaceString(std::string &strSubject, const std::string &strSearch,
+                                  const std::string &strReplace) {
       if (strSearch.empty()) return;
 
       size_t pos = 0;
@@ -1240,7 +1253,8 @@ namespace embeddedmz {
     * @return CURL_CHUNK_BGN_FUNC_FAIL (abort perform) or CURL_CHUNK_BGN_FUNC_OK
     * (continue)
     */
-   long CFTPClient::FileIsComingCallback(struct curl_fileinfo *finfo, WildcardTransfersCallbackData *data, int remains) {
+   long CFTPClient::FileIsComingCallback(struct curl_fileinfo *finfo, WildcardTransfersCallbackData *data,
+                                         int remains) {
       // printf("%3d %40s %10luB ", remains, finfo->filename, (unsigned
       // long)finfo->size);
       UNUSED(remains)
@@ -1255,7 +1269,8 @@ namespace embeddedmz {
             if (_mkdir((data->strOutputPath + finfo->filename).c_str()) != 0 && errno != EEXIST)
 #endif
             {
-               std::cerr << "Problem creating directory (errno=" << errno << "): " << data->strOutputPath + finfo->filename << std::endl;
+               std::cerr << "Problem creating directory (errno=" << errno << "): " << data->strOutputPath + finfo->
+                     filename << std::endl;
                return CURL_CHUNK_BGN_FUNC_FAIL;
             }
             /*else
@@ -1444,7 +1459,7 @@ namespace embeddedmz {
    }
 #endif
 
-#ifdef WINDOWS
+#ifdef WIN32
    std::string CFTPClient::AnsiToUtf8(const std::string &codepage_str) {
       // Transcode Windows ANSI to UTF-16
       int size = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, codepage_str.c_str(), codepage_str.length(), nullptr, 0);
@@ -1452,7 +1467,8 @@ namespace embeddedmz {
       MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, codepage_str.c_str(), codepage_str.length(), &utf16_str[0], size);
 
       // Transcode UTF-16 to UTF-8
-      int utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_str.c_str(), utf16_str.length(), nullptr, 0, nullptr, nullptr);
+      int utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_str.c_str(), utf16_str.length(), nullptr, 0, nullptr,
+                                          nullptr);
       std::string utf8_str(utf8_size, '\0');
       WideCharToMultiByte(CP_UTF8, 0, utf16_str.c_str(), utf16_str.length(), &utf8_str[0], utf8_size, nullptr, nullptr);
 
