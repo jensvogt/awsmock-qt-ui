@@ -10,14 +10,14 @@ jobs:
 
     steps:
       # Checkout
-      - name: ⬇️ Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           # Fetch submodules if your project uses them
           submodules: true
 
       # New Step: Install libcurl-dev and other system dependencies
-      - name: 📦 Install System Dependencies (libcurl-dev)
+      - name: Install System Dependencies (libcurl-dev)
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev
