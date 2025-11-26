@@ -38,12 +38,13 @@ jobs:
           pip install aqtinstall
 
       # -------------------------------
-      # Install Qt 6.10.1 + modules
+      # Install Qt 6.10.1 + modules plua installer
       # -------------------------------
       - name: Install Qt 6.10.1 + modules
         run: |
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtcharts qtimageformats
+          python -m aqt install-tool windows desktop tools_ifw 4.8.1 --outputdir $env:QT_DIR
 
       # -------------------------------
       # Install QT installer framework
@@ -53,9 +54,7 @@ jobs:
         run: |
           $ifwBin = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1 | % { "$($_.FullName)\bin" }
           $env:PATH = "$ifwBin;$env:PATH"
-          binarycreator -c "$env:INSTALLER_DIR\config\config.xml" `
-                        -p "$env:INSTALLER_DIR\packages" `
-                        "$env:INSTALLER_DIR\installer.exe"
+          binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\installer.exe"
 
       # -------------------------------
       # Configure & Build
@@ -84,7 +83,8 @@ jobs:
       # -------------------------------
       - name: Build Qt Installer
         run: |
-          # Assuming you have installer/config/config.xml & packages/de.jensvogt.awsmockqtui/
+          $ifwBin = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1 | % { "$($_.FullName)\bin" }
+          $env:PATH = "$ifwBin;$env:PATH"
           binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\AwsmockQtUiInstaller.exe"
 
       # -------------------------------
