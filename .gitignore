@@ -129,3 +129,11 @@ src/service/btst/srv_sns_service
 src/service/btst/srv_sqs_cli
 src/service/btst/srv_sqs_java
 src/service/btst/srv_sqs_service
+
+# QT
+**/moc_*
+**/mocs_*
+**/autouic*
+**/qrc_*
+**/qt_*
+**/ui_*
