@@ -43,6 +43,10 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
+    // Body refresh button
+    _ui->bodyRefreshButton->setText(nullptr);
+    _ui->bodyRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+
     // Metadata add button
     _ui->metadataAddButton->setText(nullptr);
     _ui->metadataAddButton->setIcon(IconUtils::GetIcon("add"));

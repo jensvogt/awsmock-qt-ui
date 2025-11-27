@@ -393,21 +393,20 @@ jobs:
           Prefix = ..
           EOF
 
-      - name: Build RPM
+      - name: Build RPM with fpm
         run: |
-          fpm -s dir -t rpm -n $APP_NAME -v $SEMVER -C package --prefix=/usr/local/$APP_NAME usr
-          find .
+          fpm -s dir -t rpm --name "${APP_NAME}" --version "${SEMVER}" --package "${APP_NAME}-${SEMVER}-amd64.rpm" usr/local/awsmock-qt-ui/
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4
         with:
           name: rpm-package-linux
-          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-1.x86_64.rpm
+          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
 
   publish:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
-    needs: [ build-windows, build-macos, build-linux-rpm, build-linux-deb ]
+    needs: [ release-please, build-windows, build-macos, build-linux-rpm, build-linux-deb ]
     env:
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
