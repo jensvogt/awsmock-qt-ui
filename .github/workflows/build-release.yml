@@ -402,7 +402,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rpm-package-linux
-          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}.rpm
+          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}.x86_64.rpm
 
   publish:
     name: Publish Release & Attach Installers

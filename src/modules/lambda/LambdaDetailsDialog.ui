@@ -261,6 +261,12 @@
           </property>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>5</number>
+            </property>
+            <property name="rightMargin">
+             <number>5</number>
+            </property>
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
