@@ -627,6 +627,8 @@ namespace embeddedmz {
       ofsOutput.open(
 #ifdef __GLIBC_LINUX_VERSION_CODE
          strLocalFile, // UTF-8
+#elif defined(__APPLE__) && defined(__MACH__)
+         strLocalFile, // UTF-8
 #else
          Utf8ToUtf16(strLocalFile),
 #endif
@@ -908,7 +910,11 @@ namespace embeddedmz {
 #ifdef __GLIBC_LINUX_VERSION_CODE
       if (stat(strLocalFile.c_str(), &file_info) == 0) {
          InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
+#elif defined(__APPLE__) && defined(__MACH__)
+      if (stat(strLocalFile.c_str(), &file_info) == 0) {
+         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #else
+
       static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
       std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
       if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
@@ -948,6 +954,9 @@ namespace embeddedmz {
 
       /* get the file size of the local file */
 #ifdef __GLIBC_LINUX_VERSION_CODE
+      if (stat(strLocalFile.c_str(), &file_info) == 0) {
+         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
+#elif defined(__APPLE__) && defined(__MACH__)
       if (stat(strLocalFile.c_str(), &file_info) == 0) {
          InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #else
@@ -1265,6 +1274,8 @@ namespace embeddedmz {
             data->vecDirList.push_back(finfo->filename);
 #ifdef __GLIBC_LINUX_VERSION_CODE
             if (mkdir((data->strOutputPath + finfo->filename).c_str(), ACCESSPERMS) != 0 && errno != EEXIST)
+#elif defined(__APPLE__) && defined(__MACH__)
+            if (mkdir((data->strOutputPath + finfo->filename).c_str(), ACCESSPERMS) != 0 && errno != EEXIST)
 #else
             if (_mkdir((data->strOutputPath + finfo->filename).c_str()) != 0 && errno != EEXIST)
 #endif
@@ -1302,6 +1313,8 @@ namespace embeddedmz {
             //}
             data->ofsOutput.open(
 #ifdef __GLIBC_LINUX_VERSION_CODE
+               data->strOutputPath + finfo->filename,
+#elif defined(__APPLE__) && defined(__MACH__)
                data->strOutputPath + finfo->filename,
 #else
                Utf8ToUtf16(data->strOutputPath + finfo->filename),
