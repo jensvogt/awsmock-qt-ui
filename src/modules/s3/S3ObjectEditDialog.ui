@@ -163,7 +163,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="bodyTab">
       <attribute name="title">
@@ -193,6 +193,9 @@
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
           <item>
            <spacer name="horizontalSpacer_2">
             <property name="orientation">
@@ -209,7 +212,7 @@
           <item>
            <widget class="QPushButton" name="bodyRefreshButton">
             <property name="text">
-             <string>PushButton</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -249,6 +252,9 @@
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
           <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
