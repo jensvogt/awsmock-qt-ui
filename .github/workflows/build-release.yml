@@ -22,14 +22,14 @@ jobs:
           fetch-depth: 0
 
       - name: Setup GitVersion
-        uses: GitTools/actions/gitversion/setup@v1
-
-      - name: Get version from GitVersion
-        id: getver
-        uses: GitTools/actions/gitversion/execute@v1
+        uses: GitTools/actions/gitversion/setup@v4
         with:
-          useConfigFile: true     # if you have GitVersion.yml, optional
+          versionSpec: '5.x'
 
+      - name: Determine version
+        uses: GitTools/actions/gitversion/execute@v4
+        id: getver
+      
       - name: Show computed version
         run: |
           echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
