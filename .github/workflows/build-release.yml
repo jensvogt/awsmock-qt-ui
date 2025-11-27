@@ -301,6 +301,7 @@ jobs:
       # Step 5: Prepare the .deb package directory
       - name: Prepare package structure
         run: |
+          echo "Qt-Root is: $QT_ROOT_DIR"
           mkdir -p deb_package/DEBIAN
           mkdir -p deb_package/usr/local/awsmock-qt-ui/bin
           mkdir -p deb_package/usr/local/awsmock-qt-ui/etc
@@ -311,10 +312,10 @@ jobs:
           
           # Copy your app
           cp $BUILD_DIR/${APP_NAME} deb_package/usr/local/awsmock-qt-ui/bin/
-          cp -r $HOME/Qt6/6.10.1/gcc_64/lib/* deb_package/usr/local/awsmock-qt-ui/lib
+          cp -r $QT_ROOT_DIR/lib/* deb_package/usr/local/awsmock-qt-ui/lib
           mkdir -p deb_package/usr/local/awsmock-qt-ui/plugins
-          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/platforms deb_package/usr/local/awsmock-qt-ui/plugins/
-          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/imageformats deb_package/usr/local/awsmock-qt-ui/plugins/
+          cp -r $QT_ROOT_DIR/plugins/platforms deb_package/usr/local/awsmock-qt-ui/plugins/
+          cp -r $QT_ROOT_DIR/plugins/imageformats deb_package/usr/local/awsmock-qt-ui/plugins/
           
           # Create Qt conf
           cat << EOF > deb_package/usr/local/awsmock-qt-ui/bin/qt.conf
