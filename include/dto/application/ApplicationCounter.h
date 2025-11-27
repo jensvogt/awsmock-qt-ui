@@ -21,6 +21,10 @@ struct ApplicationCounter {
 
     bool enabled;
 
+    QString containerId;
+
+    QString containerName;
+
     QDateTime lastStarted;
 
     QDateTime created;
@@ -36,6 +40,8 @@ struct ApplicationCounter {
         version = jsonObject["version"].toString();
         status = jsonObject["status"].toString();
         enabled = jsonObject["enabled"].toBool();
+        containerId = jsonObject["containerId"].toString();
+        containerName = jsonObject["containerName"].toString();
         lastStarted = QDateTime::fromString(jsonObject["lastStarted"].toString(), Qt::ISODate);
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);

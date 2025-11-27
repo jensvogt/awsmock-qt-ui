@@ -5,11 +5,17 @@
 #include <utils/IconUtils.h>
 
 QIcon IconUtils::GetIcon(const QString &name) {
-    return GetIcon("light", name);
+    const auto style = Configuration::instance().GetValue<QString>("ui.style-type", "");
+    return GetIcon(style.toLower(), name);
 }
 
-QIcon IconUtils::GetIcon(const QString &type, const QString &name) {
-    return QIcon(":/icons/" + type + "/" + name + ".png");
+QIcon IconUtils::GetIcon(const QString &style, const QString &name) {
+#ifdef Q_OS_WIN
+    return QIcon(":/icons/" + style + "/" + name + ".svg");
+#else
+    return QIcon(":/icons/" + style + "/" + name + ".svg");
+    //    return QIcon(":/icons/" + style + "/" + name + ".png");
+#endif
 }
 
 QIcon IconUtils::GetCommonIcon(const QString &name) {

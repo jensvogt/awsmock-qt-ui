@@ -1,6 +1,8 @@
 
 #include <modules/application/ApplicationList.h>
 
+#include "modules/application/ApplicationLogsDialog.h"
+
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -10,7 +12,8 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     // Connect service
     _applicationService = new ApplicationService();
     connect(_applicationService, &ApplicationService::LoadAllApplications, this, &ApplicationList::LoadContent);
-    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this, &ApplicationList::HandleListApplicationsSignal);
+    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this,
+            &ApplicationList::HandleListApplicationsSignal);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -22,7 +25,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new application");
     connect(addButton, &QPushButton::clicked, []() {
@@ -31,7 +34,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "restart"), "", this);
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Restart all applications");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -39,7 +42,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the application list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
@@ -53,26 +56,32 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    auto prefixEdit = new QLineEdit(this);
+    auto *prefixLayout = new QHBoxLayout();
+    auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this, prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Version")
-                                << tr("Enabled")
-                                << tr("Status")
-                                << tr("Private Port")
-                                << tr("Public Port")
-                                << tr("Last Started")
-                                << tr("Created")
-                                << tr("Modified");
+    const QStringList headers = QStringList() = {
+                                    tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Private Port"),
+                                    tr("Public Port"), tr("Last Started"), tr("Created"), tr("Modified"),
+                                    tr("ContainerId")
+                                };
 
     tableWidget = new QTableWidget(this);
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -89,6 +98,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
+    tableWidget->setColumnHidden(9, true);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
@@ -116,7 +126,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 0);
+    layout->addLayout(prefixLayout, 0);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -140,14 +150,17 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, 0, listApplicationResponse.applicationCounters.at(r).name);
         SetColumn(tableWidget, r, 1, listApplicationResponse.applicationCounters.at(r).version);
-        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("dark", "enabled"), IconUtils::GetIcon("dark", "disabled"));
-        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING", IconUtils::GetIcon("dark", "running"), IconUtils::GetIcon("dark", "stopped"));
+        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled,
+                  IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
+        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING",
+                  IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         //SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
         SetColumn(tableWidget, r, 4, listApplicationResponse.applicationCounters.at(r).privatePort);
         SetColumn(tableWidget, r, 5, listApplicationResponse.applicationCounters.at(r).publicPort);
         SetColumn(tableWidget, r, 6, listApplicationResponse.applicationCounters.at(r).lastStarted);
         SetColumn(tableWidget, r, 7, listApplicationResponse.applicationCounters.at(r).created);
         SetColumn(tableWidget, r, 8, listApplicationResponse.applicationCounters.at(r).modified);
+        SetColumn(tableWidget, r, 9, listApplicationResponse.applicationCounters.at(r).containerId);
     }
     tableWidget->setRowCount(static_cast<int>(listApplicationResponse.applicationCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -165,56 +178,81 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     const int row = index.row();
 
+    const QString name = tableWidget->item(row, 0)->text();
+    const QString containerId = tableWidget->item(row, 9)->text();
+
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Application");
-    editAction->setToolTip("Edit the Topic details");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
+    editAction->setToolTip("Edit the application details.");
+
+    QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the application logs");
+    logsAction->setToolTip("Show the application logs");
+    if (containerId.isEmpty()) {
+        logsAction->setDisabled(true);
+    }
 
     menu.addSeparator();
 
-    QAction *startAction = menu.addAction(IconUtils::GetIcon("dark", "start"), "Start Application");
+    QAction *enableAction = menu.addAction(IconUtils::GetIcon("enabled"), "Enable Application");
+    enableAction->setToolTip("Enable the application.");
+
+    QAction *disableAction = menu.addAction(IconUtils::GetIcon("disabled"), "Disable Application");
+    disableAction->setToolTip("Disable the application.");
+
+    menu.addSeparator();
+
+    QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Application");
     startAction->setToolTip("Start the application");
 
-    QAction *stopAction = menu.addAction(IconUtils::GetIcon("dark", "stop"), "Stop Application");
+    QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Application");
     stopAction->setToolTip("Stop the application");
 
-    QAction *restartAction = menu.addAction(IconUtils::GetIcon("dark", "restart"), "Restart Application");
+    QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Application");
     restartAction->setToolTip("Restart the application");
 
     menu.addSeparator();
 
-    QAction *reloadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Reload Application");
-    reloadAction->setToolTip("Reload the by creating a new container");
+    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Application");
+    rebuildAction->setToolTip("Rebuild the application by creating a new image and container.");
 
-    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("dark", "reload"), "Upload Application Code");
+    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("upload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Application");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Application");
     deleteAction->setToolTip("Delete the Topic");
 
-    const QString name = tableWidget->item(row, 0)->text();
-    const QString version = tableWidget->item(row, 1)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        if (ApplicationEditDialog dialog(name); dialog.exec() == QDialog::Accepted) {
-        }
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == editAction) {
+        ApplicationEditDialog dialog(name);
+        dialog.exec();
+    } else if (selectedAction == logsAction) {
+        auto *dialog = new ApplicationLogsDialog(name, containerId);
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
     } else if (selectedAction == startAction) {
         _applicationService->StartApplication(name);
+    } else if (selectedAction == enableAction) {
+        _applicationService->EnableApplication(name);
+    } else if (selectedAction == disableAction) {
+        _applicationService->DisableApplication(name);
     } else if (selectedAction == stopAction) {
         _applicationService->StopApplication(name);
     } else if (selectedAction == restartAction) {
         _applicationService->RestartApplication(name);
-    } else if (selectedAction == reloadAction) {
-        //_applicationService->UploadApplicationCode(name, TODO, TODO);
+    } else if (selectedAction == rebuildAction) {
+        _applicationService->RebuildApplication(name);
     } else if (selectedAction == uploadAction) {
         ApplicationUploadCodeDialog dialog(name);
         dialog.exec();
-        //        _applicationService->UploadApplicationCode(name, version, "");
     } else if (selectedAction == deleteAction) {
         _applicationService->DeleteApplication(name);
     } else if (selectedAction == editAction) {
         ApplicationEditDialog dialog(name);
         dialog.exec();
     }
+    LoadContent();
     StartAutoUpdate();
 }

@@ -11,8 +11,7 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     _snsService->GetSnsMessageDetails(messageId);
     connect(_snsService, &SNSService::GetMessageDetailsSignal, this, &SNSMessageDetailsDialog::UpdateMessageDetails);
 
-    const QStringList messageAttributeHeaders = QStringList() << tr("Key")
-                                                << tr("Value");
+    const QStringList messageAttributeHeaders = QStringList() = {tr("Key"), tr("Value")};
 
     // Message attribute table
     _ui->attributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));

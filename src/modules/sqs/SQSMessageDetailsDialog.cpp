@@ -1,9 +1,10 @@
+#include "modules/sqs/SQSMessageDetailsDialog.h"
+
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include "ui_SQSMessageDetailsDialog.h"
-#include "utils/IconUtils.h"
 
 SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent),
-                                                                                              _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
+    _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
     _ui->setupUi(this);
 
     _sqsService = new SQSService();
@@ -17,7 +18,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     const QStringList systemAttributeHeaders = QStringList() << tr("Key")
                                                << tr("Value");
 
-    // Message attribute table
+    // Message attributes table
     _ui->messageAttributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
     _ui->messageAttributeTable->setShowGrid(true);
     _ui->messageAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -28,7 +29,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
     _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
-    // System attribute table
+    // System attributes table
     _ui->systemAttributeTable->setColumnCount(static_cast<int>(systemAttributeHeaders.count()));
     _ui->systemAttributeTable->setShowGrid(true);
     _ui->systemAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -44,8 +45,21 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Pretty print
     _ui->prettyPushButton->setText(nullptr);
-    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
+    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("pretty"));
     connect(_ui->prettyPushButton, &QPushButton::toggled, this, &SQSMessageDetailsDialog::PrettyPrintClicked);
+
+    // Word highlighter
+    _wordHighlighter = new WordHighlighter(_ui->bodyPlainTextEdit->document());
+    connect(_ui->searchEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        _wordHighlighter->word = text;
+        _wordHighlighter->format.setBackground(Qt::yellow);
+        _wordHighlighter->format.setForeground(Qt::black);
+        _wordHighlighter->rehighlight();
+        QTextCursor cursor(_ui->bodyPlainTextEdit->document());
+        cursor.movePosition(QTextCursor::Start);
+        _ui->bodyPlainTextEdit->setTextCursor(cursor);
+        _ui->bodyPlainTextEdit->find(text, QTextDocument::FindWholeWords);
+    });
 }
 
 SQSMessageDetailsDialog::~SQSMessageDetailsDialog() {
@@ -78,7 +92,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     _ui->systemAttributeTable->setRowCount(0);
     _ui->systemAttributeTable->setSortingEnabled(false); // stop sorting
     _ui->systemAttributeTable->sortItems(-1);
-    for (int r = 0; r < response.messageAttributes.count(); r++) {
+    for (int r = 0; r < response.attributes.count(); r++) {
         _ui->systemAttributeTable->insertRow(r);
         _ui->systemAttributeTable->setItem(r, 0, new QTableWidgetItem(response.attributes.at(r).key));
         _ui->systemAttributeTable->setItem(r, 1, new QTableWidgetItem(response.attributes.at(r).value));
@@ -106,5 +120,12 @@ void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
         } else {
             QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
         }
+    }
+    if (!_ui->searchEdit->text().isEmpty()) {
+        QString text = _ui->searchEdit->text();
+        QTextCursor cursor(_ui->bodyPlainTextEdit->document());
+        cursor.movePosition(QTextCursor::Start);
+        _ui->bodyPlainTextEdit->setTextCursor(cursor);
+        _ui->bodyPlainTextEdit->find(text, QTextDocument::FindWholeWords);
     }
 }

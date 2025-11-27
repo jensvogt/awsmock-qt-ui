@@ -1,0 +1,39 @@
+{
+  "include-merges": true,
+  "release-type": "simple",
+  "changelog-path": "CHANGELOG.md",
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "bump-minor-pre-major": true,
+      "include-component-in-tag": false,
+      "version-file": "include/Version.h",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "include/Version.h",
+          "regex-search": "#define AWSMOCK_UI_VERSION_MAJOR [0-9]+",
+          "replace": "#define AWSMOCK_UI_VERSION_MAJOR ${major}"
+        },
+        {
+          "type": "generic",
+          "path": "include/Version.h",
+          "regex-search": "#define AWSMOCK_UI_VERSION_MINOR [0-9]+",
+          "replace": "#define AWSMOCK_UI_VERSION_MINOR ${minor}"
+        },
+        {
+          "type": "generic",
+          "path": "include/Version.h",
+          "regex-search": "#define AWSMOCK_UI_VERSION_PATCH [0-9]+",
+          "replace": "#define AWSMOCK_UI_VERSION_PATCH ${patch}"
+        },
+        {
+          "type": "generic",
+          "path": "include/Version.h",
+          "regex-search": "#define AWSMOCK_UI_VERSION \"[0-9]+\\.[0-9]+\\.[0-9]+\"",
+          "replace": "#define AWSMOCK_UI_VERSION \"${version}\""
+        }
+      ]
+    }
+  }
+}

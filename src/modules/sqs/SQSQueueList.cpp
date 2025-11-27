@@ -1,10 +1,7 @@
 #include <modules/sqs/SQSQueueList.h>
-
-#include "dto/sqs/SQSListQueueResponse.h"
 #include "utils/IconUtils.h"
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
-
     // Connect service
     sqsService = new SQSService();
     connect(sqsService, &SQSService::ListQueuesSignal, this, &SQSQueueList::HandleListQueueSignal);
@@ -19,18 +16,19 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     auto *titleLabel = new QLabel(title);
 
     // Toolbar add action
-    auto *addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
+    auto *addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new Queue");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
+        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
+            ; ok && !text.isEmpty()) {
             sqsService->AddQueue(text);
         }
     });
 
     // Toolbar add action
-    auto *purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
+    auto *purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Queues");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -38,7 +36,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    auto *refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
+    auto *refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the Queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
@@ -53,27 +51,31 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
+    auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Available")
-                                << tr("InFlight")
-                                << tr("Delayed")
-                                << tr("Size [kb]")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("QueueUrl")
-                                << tr("QueueArn")
-                                << tr("IsDLQ");
+    const QStringList headers = QStringList() = {
+                                    tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"),
+                                    tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
+                                };
 
     tableWidget = new QTableWidget();
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -110,16 +112,17 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
 
     // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder &order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    _tableHeader = tableWidget->horizontalHeader();
+    connect(_tableHeader, &QHeaderView::sortIndicatorChanged, this,
+            [this](const int column, const Qt::SortOrder &order) {
+                _sortColumn = column;
+                _sortOrder = order;
+            });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addLayout(prefixLayout, 0);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -129,7 +132,7 @@ SQSQueueList::~SQSQueueList() {
 
 void SQSQueueList::LoadContent() {
     if (Configuration::instance().GetConnectionState()) {
-        sqsService->ListQueues(prefixValue);
+        sqsService->ListQueues(prefixValue, _sortOrder);
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
     }
@@ -168,20 +171,20 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
 
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Queue");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Queue");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Queue");
     purgeAction->setToolTip("Purge the Queue");
 
-    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("dark", "redrive"), "Redrive Queue");
+    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Queue");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Queue");
     deleteAction->setToolTip("Delete the Queue");
 
     // Conditional logic
@@ -189,7 +192,8 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     const QString queueUrl = tableWidget->item(row, 7)->text();
     const QString queueArn = tableWidget->item(row, 8)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == redriveAction) {
         sqsService->RedriveQueue(queueArn);

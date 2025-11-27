@@ -18,6 +18,7 @@
 #include <dto/sqs/SQSListQueueLambdaTriggersResponse.h>
 #include <dto/sqs/SQSSendMessageResponse.h>
 
+#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
 #include "dto/sqs/SQSSendMessageRequest.h"
 
 class SQSService final : public QObject {
@@ -33,8 +34,9 @@ public:
      * @brief List SQS Queues
      *
      * @param prefix Queue name prefix
+     * @param
      */
-    void ListQueues(const QString &prefix);
+    void ListQueues(const QString &prefix, Qt::SortOrder);
 
     /**
      * @brief Purge Queue
@@ -92,6 +94,8 @@ public:
      */
     void ListQueueLambdaTriggers(const QString &queueArn, const QString &prefix);
 
+    void ListQueueDefaultAttributes(const QString &queueArn, const QString &prefix);
+
     /**
      * @brief Delete Queue
      *
@@ -144,6 +148,8 @@ signals:
     void ListQueueAttributesSignal(const SQSQueueAttributeListResponse &listQueueAttributeResponse);
 
     void ListQueueLambdaTriggersSignal(const SQSListQueueLambdaTriggersResponse &listQueueLambdaTriggersResponse);
+
+    void ListQueueDefaultAttributesSignal(const SQSListQueueDefaultAttributesResponse &listQueueDefaultAttributesResponse);
 
     void ListMessagesSignal(const SQSListMessagesResponse &listMessagesResponse);
 

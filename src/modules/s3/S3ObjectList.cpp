@@ -2,7 +2,10 @@
 #include <QHeaderView>
 #include <modules/s3/S3ObjectList.h>
 
-S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent) : BasePage(parent), bucketName(bucketName) {
+#include "modules/s3/S3ObjectEditDialog.h"
+
+S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent) : BasePage(parent),
+    bucketName(bucketName) {
     // Connect service
     _s3Service = new S3Service();
     connect(_s3Service, &S3Service::ListObjectsSignal, this, &S3ObjectList::HandleListObjectSignal);
@@ -14,7 +17,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar back action
-    const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
+    const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Add a new object");
     connect(backButton, &QPushButton::clicked, [this]() {
@@ -26,18 +29,19 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new object");
     connect(addButton, &QPushButton::clicked, []() {
         bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
+        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
+            ; ok && !text.isEmpty()) {
             // AddQueue(text);
         }
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all objects");
     connect(purgeAllButton, &QPushButton::clicked, [this,bucketName]() {
@@ -45,9 +49,9 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "");
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the queue list");
+    refreshButton->setToolTip("Refresh the S3 object list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
         LoadContent();
     });
@@ -60,24 +64,31 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    const auto prefixEdit = new QLineEdit(this);
+    auto *prefixLayout = new QHBoxLayout();
+    auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Key")
-                                << tr("ContentType")
-                                << tr("Size")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("Oid");
+    const QStringList headers = QStringList() = {
+                                    tr("Key"), tr("ContentType"), tr("Size"), tr("Created"), tr("Modified"), tr("Oid")
+                                };
 
     tableWidget = new QTableWidget();
-
-    tableWidget->setColumnCount(headers.count());
+    tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -92,15 +103,15 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     tableWidget->setColumnHidden(5, true);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-
+    connect(tableWidget, &QTableView::doubleClicked, this, [this, bucketName](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
-        const QString objectId = tableWidget->item(row, 0)->text();
-        /* if (S3ObjectDetailsDialog dialog(objectId); dialog.exec() == QDialog::Accepted) {
-             qDebug() << "SQS Queue edit dialog exit";
-         }*/
+        const QString objectId = tableWidget->item(row, 5)->text();
+
+        // Open details dialog
+        S3ObjectEditDialog dialog(objectId);
+        dialog.exec();
     });
 
     // Add context menu
@@ -117,7 +128,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addLayout(prefixLayout, 0);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -134,12 +145,10 @@ void S3ObjectList::LoadContent() {
 }
 
 void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse) {
-
     const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
     for (auto r = 0, c = 0; r < listObjectResponse.objectCounters.count(); r++, c = 0) {
-
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, c++, listObjectResponse.objectCounters.at(r).key);
         SetColumn(tableWidget, r, c++, listObjectResponse.objectCounters.at(r).contentType);
@@ -161,7 +170,6 @@ void S3ObjectList::HandleReloadObjectSignal() {
 }
 
 void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
-
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
@@ -172,16 +180,23 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
     //purgeAction->setToolTip("Purge the bucket");
     /*QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all objects");*/
-    QAction *touchAction = menu.addAction(IconUtils::GetIcon("dark", "touch"), "Touch Object");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Object");
+    editAction->setToolTip("Edit the S3 object");
+    QAction *touchAction = menu.addAction(IconUtils::GetIcon("touch"), "Touch Object");
     touchAction->setToolTip("Touch the object");
     menu.addSeparator();
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Object");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Object");
     deleteAction->setToolTip("Delete the object");
 
     const QString key = tableWidget->item(row, 0)->text();
-    if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+    const QString objectId = tableWidget->item(row, 5)->text();
+    if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == deleteAction) {
         _s3Service->DeleteObject(bucketName, key);
     } else if (selectedAction == touchAction) {
         _s3Service->DeleteObject(bucketName, key);
+    } else if (selectedAction == editAction) {
+        S3ObjectEditDialog dialog(objectId);
+        dialog.exec();
     }
 }

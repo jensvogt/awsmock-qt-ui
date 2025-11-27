@@ -1,9 +1,9 @@
 
-#include <modules/sqs/SQSMessageAddDialog.h>
-#include "utils/IconUtils.h"
+#include <modules/sqs/SQSMessageList.h>
 
-SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl) {
-
+SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl,
+                               QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)),
+                                                  _queueUrl(queueUrl) {
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
@@ -57,26 +57,31 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    auto prefixEdit = new QLineEdit(this);
+    auto *prefixLayout = new QHBoxLayout();
+    auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
     connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("ID")
-                                << tr("ContentType")
-                                << tr("Size")
-                                << tr("Retries")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("QueueUrl")
-                                << tr("QueueArn")
-                                << tr("ReceiptHandle");
+    const QStringList headers = QStringList() = {
+                                    tr("ID"), tr("ContentType"), tr("Size"), tr("Retries"), tr("Created"),
+                                    tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("ReceiptHandle")
+                                };
 
     tableWidget = new QTableWidget();
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -85,40 +90,48 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     tableWidget->setSortingEnabled(true);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(
+        1, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(
+        4, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(
+        5, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(6, true);
     tableWidget->setColumnHidden(7, true);
     tableWidget->setColumnHidden(8, true);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
+    connect(tableWidget, &QTableView::doubleClicked, this,
+            [this](const QModelIndex &index) {
+                // Get the position
+                const int row = index.row();
 
-        const QString messageId = tableWidget->item(row, 0)->text();
-        if (SQSMessageDetailsDialog dialog(messageId); dialog.exec() == QDialog::Accepted) {
-            qDebug() << "SQS Queue edit dialog exit";
-        }
-    });
+                const QString messageId = tableWidget->item(row, 0)->text();
+                if (SQSMessageDetailsDialog dialog(messageId);
+                    dialog.exec() == QDialog::Accepted) {
+                    qDebug() << "SQS Queue edit dialog exit";
+                }
+            });
 
     // Add context menu
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
+    connect(tableWidget, &QTableWidget::customContextMenuRequested, this,
+            &SQSMessageList::ShowContextMenu);
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    connect(header, &QHeaderView::sortIndicatorChanged, this,
+            [this](const int column, const Qt::SortOrder order) {
+                _sortColumn = column;
+                _sortOrder = order;
+            });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
-    layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addLayout(toolBar, 1);
+    layout->addLayout(prefixLayout, 1);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -178,7 +191,8 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+        selectedAction == deleteAction) {
         const QString queueUrl = tableWidget->item(row, 6)->text();
         const QString receiptHandle = tableWidget->item(row, 8)->text();
         _sqsService->DeleteMessage(queueUrl, receiptHandle);

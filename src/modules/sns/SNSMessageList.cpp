@@ -16,7 +16,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar back action
-    const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
+    const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Go back to the topic list");
     connect(backButton, &QPushButton::clicked, [this]() {
@@ -27,7 +27,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     const auto titleLabel = new QLabel(title);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new topic");
     connect(addButton, &QPushButton::clicked, []() {
@@ -38,7 +38,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all messages");
     connect(purgeAllButton, &QPushButton::clicked, [this,topicArn]() {
@@ -46,7 +46,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "");
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
@@ -61,12 +61,23 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    const auto prefixEdit = new QLineEdit(this);
+    auto *prefixLayout = new QHBoxLayout();
+    auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
     const QStringList headers = QStringList() << tr("ID")
@@ -122,7 +133,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 1);
+    layout->addLayout(prefixLayout, 1);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -178,7 +189,7 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     //    menu.addSeparator();
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
     if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
         const QString messageId = tableWidget->item(row, 0)->text();

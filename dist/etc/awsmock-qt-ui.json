@@ -9,7 +9,7 @@
     "base-url": "http://localhost:4566",
     "base-urls": [
       "http://localhost:4566",
-      "http://vogje01-nuc:4566"
+      "http://vogje01-desktop:4566"
     ]
   },
   "ui": {
@@ -18,6 +18,10 @@
     "auto-update-period": 10,
     "default-ftp-user": "DEMODLI",
     "default-ftp-password": "Tg/}2e0m.>_s",
-    "default-directory": "/usr/local/awsmock-qt-ui"
+    "default-ftp-server": "localhost",
+    "default-ftp-port": 2121,
+    "default-directory": "/usr/local/awsmock-qt-ui",
+    "style": "Fusion",
+    "style-type": "Dark"
   }
 }

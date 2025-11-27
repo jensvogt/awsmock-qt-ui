@@ -1,7 +1,7 @@
 #include <modules/application/ApplicationService.h>
 
 ApplicationService::ApplicationService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
+    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 }
 
 void ApplicationService::ListApplications(const QString &prefix) {
@@ -86,7 +86,6 @@ void ApplicationService::CreateApplication(const ApplicationCreateRequest &reque
 }
 
 void ApplicationService::GetApplication(const QString &name) {
-
     QJsonObject jRequest;
     jRequest["name"] = name;
     const QJsonDocument requestDoc(jRequest);
@@ -114,7 +113,6 @@ void ApplicationService::GetApplication(const QString &name) {
 }
 
 void ApplicationService::UpdateApplication(const Application &application) {
-
     QJsonObject jRequest;
     jRequest["application"] = application.ToJsonObject();
     const QJsonDocument requestDoc(jRequest);
@@ -136,7 +134,6 @@ void ApplicationService::UpdateApplication(const Application &application) {
 }
 
 void ApplicationService::EnableApplication(const QString &name) {
-
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -163,7 +160,6 @@ void ApplicationService::EnableApplication(const QString &name) {
 }
 
 void ApplicationService::DisableApplication(const QString &name) {
-
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -281,8 +277,33 @@ void ApplicationService::RestartAllApplications() {
                       });
 }
 
-void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
+void ApplicationService::RebuildApplication(const QString &name) {
+    QJsonObject jApplication;
+    jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    jApplication["name"] = name;
 
+    QJsonObject jRequest;
+    jRequest["application"] = jApplication;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "application"},
+                          {"x-awsmock-action", "rebuild-application"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllApplications();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version,
+                                               const QString &applicationCode) {
     QJsonObject jRequest;
     jRequest["version"] = applicationName;
     jRequest["applicationName"] = applicationName;
@@ -306,7 +327,6 @@ void ApplicationService::UploadApplicationCode(const QString &applicationName, c
 }
 
 void ApplicationService::ListApplicationNames() {
-
     QJsonObject jRequest;
     jRequest["prefix"] = "";
     jRequest["pageSize"] = -1;

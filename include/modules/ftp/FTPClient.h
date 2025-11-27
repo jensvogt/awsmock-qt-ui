@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <cstring>  // strerror, strlen, memcpy, strcpy
 #include <ctime>
-#if !defined(Q_OS_LINUX) && !defined(Q_OS_MAC)
+#ifdef WIN32
 #include <direct.h>  // mkdir
 #endif
 #include <stdarg.h>  // va_start, etc.
@@ -76,7 +76,8 @@ namespace embeddedmz {
       enum SettingsFlag {
          NO_FLAGS = 0x00,
          ENABLE_LOG = 0x01,
-         ENABLE_SSH_AGENT = 0x02, // only for SFTP, can cause auth. failure in some cases (along with m_bInsecure set to false if there's no certs)
+         ENABLE_SSH_AGENT = 0x02,
+         // only for SFTP, can cause auth. failure in some cases (along with m_bInsecure set to false if there's no certs)
          ALL_FLAGS = 0xFF
       };
 
@@ -138,7 +139,9 @@ namespace embeddedmz {
 
       inline void SetInsecure(const bool &bInsecure) { m_bInsecure = bInsecure; }
 
-      inline auto GetProgressFnCallback() const { return m_fnProgressCallback.target<int (*)(void *, double, double, double, double)>(); }
+      inline auto GetProgressFnCallback() const {
+         return m_fnProgressCallback.target<int (*)(void *, double, double, double, double)>();
+      }
 
       inline void *GetProgressFnCallbackOwner() const { return m_ProgressStruct.pOwner; }
 
@@ -167,8 +170,10 @@ namespace embeddedmz {
       inline FTP_PROTOCOL GetProtocol() const { return m_eFtpProtocol; }
 
       // Session
-      bool InitSession(const std::string &strHost, const unsigned &uPort, const std::string &strLogin, const std::string &strPassword,
-                       const FTP_PROTOCOL &eFtpProtocol = FTP_PROTOCOL::FTP, const SettingsFlag &SettingsFlags = NO_FLAGS);
+      bool InitSession(const std::string &strHost, const unsigned &uPort, const std::string &strLogin,
+                       const std::string &strPassword,
+                       const FTP_PROTOCOL &eFtpProtocol = FTP_PROTOCOL::FTP,
+                       const SettingsFlag &SettingsFlags = NO_FLAGS);
 
       virtual bool CleanupSession();
 
@@ -192,13 +197,15 @@ namespace embeddedmz {
 
       bool DownloadWildcard(const std::string &strLocalDir, const std::string &strRemoteWildcard) const;
 
-      bool UploadFile(CurlReadFn readFn, void *userData, const std::string &strRemoteFile, const bool &bCreateDir = false,
+      bool UploadFile(CurlReadFn readFn, void *userData, const std::string &strRemoteFile,
+                      const bool &bCreateDir = false,
                       curl_off_t fileSize = -1) const;
 
       bool UploadFile(std::istream &inputStream, const std::string &strRemoteFile, const bool &bCreateDir = false,
                       curl_off_t fileSize = -1) const;
 
-      bool UploadFile(const std::string &strLocalFile, const std::string &strRemoteFile, const bool &bCreateDir = false) const;
+      bool UploadFile(const std::string &strLocalFile, const std::string &strRemoteFile,
+                      const bool &bCreateDir = false) const;
 
       bool AppendFile(const std::string &strLocalFile, const size_t fileOffset, const std::string &strRemoteFile,
                       const bool &bCreateDir = false) const;
@@ -220,8 +227,9 @@ namespace embeddedmz {
       static void SetCurlTraceLogDirectory(const std::string &strPath);
 #endif
 
-#ifdef WINDOWS
+#ifdef WIN32
       static std::string AnsiToUtf8(const std::string &ansiStr);
+
       static std::wstring Utf8ToUtf16(const std::string &str);
 #endif
 

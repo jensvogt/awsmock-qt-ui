@@ -9,8 +9,8 @@
 #include <utils/RestManager.h>
 #include <dto/s3/S3ListBucketResult.h>
 #include <dto/s3/S3GetBucketDetailsResponse.h>
-
-#include "dto/s3/S3ListObjectResponse.h"
+#include <dto/s3/S3GetObjectDetailsResponse.h>
+#include <dto/s3/S3ListObjectResponse.h>
 
 class S3Service final : public QObject {
     Q_OBJECT
@@ -43,6 +43,8 @@ public:
 
     void ListObjects(const QString &bucketName, const QString &prefix);
 
+    void GetObjectDetails(const QString &objectId);
+
     void DeleteObject(const QString &bucketName, const QString &key);
 
 signals:
@@ -70,6 +72,13 @@ signals:
      * @param response
      */
     void ListObjectsSignal(const S3ListObjectsResponse &response);
+
+    /**
+     * @brief Signaled when an object is available
+     *
+     * @param objectDetailsResponse object details
+     */
+    void GetObjectDetailsSignal(const S3GetObjectDetailsResponse &objectDetailsResponse);
 
     /**
      * @brief Reload object list signal

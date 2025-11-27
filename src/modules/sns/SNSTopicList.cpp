@@ -20,7 +20,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Toolbar add action
-    const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "", this);
+    const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new topic");
     connect(addButton, &QPushButton::clicked, [this]() {
@@ -31,7 +31,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "", this);
+    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all topics");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
@@ -39,7 +39,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Toolbar refresh action
-    const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "", this);
+    const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the topic list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
@@ -53,25 +53,28 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
-    auto prefixEdit = new QLineEdit(this);
+    auto *prefixLayout = new QHBoxLayout();
+    auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this, prefixEdit]() {
+    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
+        prefixClear->setEnabled(true);
         LoadContent();
     });
+    prefixLayout->addWidget(prefixEdit);
+    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixClear->setDisabled(true);
+    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+        prefixEdit->clear();
+        prefixValue = "";
+        prefixClear->setEnabled(false);
+    });
+    prefixLayout->addWidget(prefixClear);
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Available")
-                                << tr("Send")
-                                << tr("Resend")
-                                << tr("Size")
-                                << tr("Created")
-                                << tr("Modified")
-                                << tr("TopicArn");
+    const QStringList headers = QStringList() = {tr("Name"), tr("Available"), tr("Send"), tr("Resend"), tr("Size"), tr("Created"), tr("Modified"), tr("TopicArn")};
 
     tableWidget = new QTableWidget(this);
-
     tableWidget->setColumnCount(static_cast<int>(headers.count()));
     tableWidget->setShowGrid(true);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -114,7 +117,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addWidget(prefixEdit, 0);
+    layout->addLayout(prefixLayout, 0);
     layout->addWidget(tableWidget, 2);
 }
 
@@ -159,17 +162,17 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("dark", "edit"), "Edit Topic");
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Topic");
     editAction->setToolTip("Edit the Topic details");
 
     menu.addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("dark", "purge"), "Purge Topic");
+    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Topic");
     purgeAction->setToolTip("Purge the Topic");
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Topic");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Topic");
     deleteAction->setToolTip("Delete the Topic");
 
     const QString topicArn = tableWidget->item(row, 7)->text();

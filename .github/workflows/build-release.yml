@@ -1,0 +1,308 @@
+name: Release + Build + Installer (Windows / macOS / Linux)
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  QT_VERSION: "6.10.1"
+  APP_NAME: "awsmock-qt-ui"        # change if different
+  INSTALLER_ID: "de.jensvogt.awsmockqtui" # used for IFW package path
+
+jobs:
+  version:
+    name: Determine & Tag Version
+    runs-on: ubuntu-latest
+    outputs:
+      semver: ${{ steps.getver.outputs.SemVer }}
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup GitVersion
+        uses: GitTools/actions/gitversion/setup@v4
+
+      - name: Get version from GitVersion
+        id: getver
+        uses: GitTools/actions/gitversion/execute@v4
+
+      - name: Show computed version
+        run: |
+          echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
+          echo "Major = ${{ steps.getver.outputs.Major }}"
+          echo "Minor = ${{ steps.getver.outputs.Minor }}"
+          echo "Patch = ${{ steps.getver.outputs.Patch }}"
+
+      - name: Generate include/Version.h from template
+        run: |
+          python3 dist/generate_version_header.py \
+            "${{ steps.getver.outputs.Major }}" \
+            "${{ steps.getver.outputs.Minor }}" \
+            "${{ steps.getver.outputs.Patch }}"
+
+      - name: Commit updated Version.h (if changed)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add include/Version.h
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(release): update Version.h to ${{ steps.getver.outputs.SemVer }}"
+            git push origin HEAD:main
+          fi
+
+      - name: Create tag v<semver>
+        run: |
+          TAG="v${{ steps.getver.outputs.SemVer }}"
+          echo "Tag: $TAG"
+          # create tag only if it doesn't already exist
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+  build-windows:
+    name: Build & Package (Windows)
+    runs-on: windows-latest
+    needs: version
+    env:
+      QT_DIR: "${{ github.workspace }}\\Qt"
+      BUILD_DIR: "${{ github.workspace }}\\build-windows"
+      INSTALLER_DIR: "${{ github.workspace }}\\installer"
+      SEMVER: "${{ needs.version.outputs.semver }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Python & aqtinstall
+        shell: powershell
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -U aqtinstall
+
+      - name: Install Qt and Qt Installer Framework (IFW)
+        shell: powershell
+        run: |
+          # install Qt (base + modules)
+          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
+          # install Qt Installer Framework tools (ifw)
+          python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
+
+      - name: Show Qt files (debug)
+        shell: powershell
+        run: |
+          dir "$env:QT_DIR\$env:QT_VERSION"
+          dir "$env:QT_DIR\Tools\QtInstallerFramework" -Recurse
+
+      - name: Configure CMake (Windows)
+        shell: powershell
+        run: |
+          $qtPrefix = Join-Path $env:QT_DIR "$env:QT_VERSION\msvc2022_64"
+          if (!(Test-Path $qtPrefix)) { Write-Error "Qt prefix not found: $qtPrefix"; exit 1 }
+          if (!(Test-Path $env:BUILD_DIR)) { New-Item -ItemType Directory -Path $env:BUILD_DIR | Out-Null }
+          cmake -S . -B $env:BUILD_DIR -G "Ninja" -DQt6_DIR="$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (Windows, parallel)
+        shell: powershell
+        run: |
+          cmake --build $env:BUILD_DIR --config Release --parallel
+
+      - name: Deploy Qt runtime with windeployqt (into installer data folder)
+        shell: powershell
+        run: |
+          $exe = Join-Path $env:BUILD_DIR "$env:APP_NAME.exe"
+          $dataDir = Join-Path $env:INSTALLER_DIR "packages\$env:INSTALLER_ID\data"
+          New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+          & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
+          Copy-Item $exe $dataDir
+
+      - name: Build Qt Installer Framework installer (binarycreator)
+        shell: pwsh
+        run: |
+          $ifwRoot = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $ifwRoot) { Write-Error "IFW not found"; exit 1 }
+          $ifwBin = Join-Path $ifwRoot.FullName "bin"
+          $env:PATH = "$ifwBin;$env:PATH"
+          Write-Host "Using IFW bin: $ifwBin"
+          # Expect installer config in installer/config and packages in installer/packages
+          binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\$env:APP_NAME-$env:SEMVER-windows.exe"
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-windows
+          path: installer/${{ env.APP_NAME }}-${{ env.SEMVER }}-windows.exe
+
+  build-macos:
+    name: Build & Package (macOS)
+    runs-on: macos-latest
+    needs: version
+    env:
+      BUILD_DIR: "${{ github.workspace }}/build-macos"
+      SEMVER: ${{ needs.version.outputs.semver }}
+      INSTALLER_DIR: "${{ github.workspace }}/installer"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Qt via aqtinstall
+        shell: bash
+        run: |
+          python3 -m venv ~/venv
+          source ~/venv/bin/activate
+          python3 -m pip install --upgrade pip
+          python3 -m pip install aqtinstall
+          ARCH="clang_64"
+          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats
+
+      - name: Configure (macOS)
+        shell: bash
+        run: |
+          ls "$HOME/Qt/${{ env.QT_VERSION }}/"
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$HOME/Qt/${{ env.QT_VERSION }}/macos/lib/cmake/Qt6"
+
+      - name: Build (macOS)
+        shell: bash
+        run: |
+          cmake --build $BUILD_DIR --config Release --parallel $(sysctl -n hw.logicalcpu)
+
+      - name: macdeployqt + create DMG
+        shell: bash
+        run: |
+          APP_BUNDLE="$BUILD_DIR/${APP_NAME}.app"
+          if [ ! -d "$APP_BUNDLE" ]; then
+            echo "App bundle not found at $APP_BUNDLE"
+            ls -R "$BUILD_DIR"
+            exit 1
+          fi
+          # macdeployqt is part of Qt install
+          MACDEPLOYQT="$(find ${HOME}/Qt -type f -name macdeployqt | head -n 1)"
+          echo "macdeployqt: $MACDEPLOYQT"
+          "$MACDEPLOYQT" "$APP_BUNDLE"
+          mkdir -p dist
+          DMG_NAME="${APP_NAME}-${SEMVER}-macos.dmg"
+          hdiutil create "dist/$DMG_NAME" -volname "${APP_NAME}" -srcfolder "$APP_BUNDLE" -ov -format UDZO
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-macos
+          path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
+
+  build-linux:
+    name: Build & Package (Linux)
+    runs-on: ubuntu-latest
+    needs: version
+    env:
+      BUILD_DIR: "${{ github.workspace }}/build-linux"
+      SEMVER: ${{ needs.version.outputs.semver }}
+      INSTALLER_DIR: "${{ github.workspace }}/installer"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libcurl4-openssl-dev
+
+      - name: Install Qt via install-qt-action
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          modules: "qtcharts qtimageformats"
+          install-deps: true
+
+      - name: Configure (Linux)
+        shell: bash
+        run: |
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (Linux)
+        shell: bash
+        run: |
+          cmake --build $BUILD_DIR --parallel $(nproc)
+
+      - name: Download linuxdeployqt (AppImage builder)
+        shell: bash
+        run: |
+          # Grab the latest linuxdeployqt AppImage
+          #LATEST_URL=$(curl -s https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage | jq -r '.assets[] | select(.name | test("linuxdeployqt.*x86_64.AppImage")) | .browser_download_url' | head -n1)
+          curl -L -o linuxdeployqt.AppImage "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+          chmod +x linuxdeployqt.AppImage
+
+      - name: Create AppImage
+        shell: bash
+        run: |
+          APP_BUNDLE_DIR="$BUILD_DIR/${APP_NAME}.AppDir"
+          # linuxdeployqt expects an AppDir or an executable; adapt as needed
+          # Try using linuxdeployqt to create an AppImage from the built binary
+          ./linuxdeployqt.AppImage "$BUILD_DIR/$APP_NAME" -appimage -qmake=$(which qmake) || true
+          # Move any produced AppImage into dist/
+          mkdir -p dist
+          mv *.AppImage dist/ || true
+
+      - name: Upload Linux AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-linux
+          path: dist/*.AppImage
+
+  publish:
+    name: Publish Release & Attach Installers
+    runs-on: ubuntu-latest
+    needs: [ build-windows, build-macos, build-linux ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Windows installer
+        uses: actions/download-artifact@v4
+        with:
+          name: installer-windows
+          path: artifacts/windows
+
+      - name: Download macOS installer
+        uses: actions/download-artifact@v4
+        with:
+          name: installer-macos
+          path: artifacts/macos
+
+      - name: Download Linux installer
+        uses: actions/download-artifact@v4
+        with:
+          name: installer-linux
+          path: artifacts/linux
+
+      - name: Create GitHub Release (attach installers)
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/windows/*.exe
+            artifacts/macos/*.dmg
+            artifacts/linux/*.AppImage
+          name: Release ${{ needs.version.outputs.semver }}
+          tag_name: v${{ needs.version.outputs.semver }}
+          body: "Automated release for ${{ needs.version.outputs.semver }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}

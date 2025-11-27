@@ -23,8 +23,10 @@
 #include <QtNetwork/QNetworkReply>
 
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
+#include <modules/sqs/SQSMessageAddDialog.h>
 
 /**
  * @brief Helper widget for the content area.
@@ -134,6 +136,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
 };
 
 #endif // SQSMESSAGELIST_H

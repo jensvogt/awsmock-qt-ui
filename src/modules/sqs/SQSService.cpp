@@ -1,18 +1,19 @@
 
 #include <modules/sqs/SQSService.h>
 
+#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
 #include "utils/EventBus.h"
 
 SQSService::SQSService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
-void SQSService::ListQueues(const QString &prefix) {
+void SQSService::ListQueues(const QString &prefix, Qt::SortOrder sortOrder) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
+    jSorting["sortDirection"] = sortOrder == Qt::DescendingOrder ? 1 : -1;
     jSorting["column"] = "attributes.approximateNumberOfMessages";
 
     QJsonArray jSortingArray;
@@ -59,7 +60,7 @@ void SQSService::PurgeQueue(const QString &queueUrl) {
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "purge-queue"},
                           {"content-type", "application/json"}
                       },
@@ -79,7 +80,7 @@ void SQSService::PurgeAllQueues() {
     _restManager.post(url,
                       nullptr,
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "purge-all-queues"},
                           {"content-type", "application/json"}
                       },
@@ -104,7 +105,7 @@ void SQSService::AddQueue(const QString &queueName) {
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "create-queue"},
                           {"content-type", "application/json"}
                       },
@@ -125,7 +126,7 @@ void SQSService::UpdateQueue(const SQSQueueUpdateRequest &updateQueueRequest) {
     _restManager.post(url,
                       updateQueueRequest.ToJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "update-queue"},
                           {"content-type", "application/json"}
                       },
@@ -223,6 +224,48 @@ void SQSService::ListQueueLambdaTriggers(const QString &queueArn, const QString 
                       });
 }
 
+void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "name";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["queueArn"] = queueArn;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "list-default-message-attribute-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SQSListQueueDefaultAttributesResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit ListQueueDefaultAttributesSignal(sqsResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                      });
+}
+
 void SQSService::DeleteQueue(const QString &queueUrl) {
     QElapsedTimer timer;
     timer.start();
@@ -234,7 +277,7 @@ void SQSService::DeleteQueue(const QString &queueUrl) {
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "delete-queue"},
                           {"content-type", "application/json"}
                       },
@@ -324,6 +367,7 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               SQSGetMessageDetailsResponse sqsResponse;
                               sqsResponse.FromJson(jsonDoc["message"].toObject());
+                              sqsResponse.region = jsonDoc.object()["region"].toString();
                               emit GetSqsMessageDetailsSignal(sqsResponse);
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);

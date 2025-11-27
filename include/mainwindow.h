@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <utility>
+
 #include <QMainWindow>
 #include <QListWidget>
 #include <QStackedWidget>
@@ -17,15 +19,25 @@
 #include <QMessageBox>
 #include <QToolBar>
 #include <QFileDialog>
+#include <QStyleFactory>
+#include <QImageReader>
 
+#include <utils/About.h>
+#include <utils/EditConfigDialog.h>
+#include <utils/EventBus.h>
+#include <utils/BasePage.h>
+#include <utils/ScopedTimer.h>
+#include <modules/application/ApplicationList.h>
+#include <modules/dashboard/Dashboard.h>
+#include <modules/ftp/FTPUploadDialog.h>
+#include <modules/s3/S3BucketList.h>
+#include <modules/s3/S3ObjectList.h>
 #include <modules/sns/SNSTopicList.h>
 #include <modules/sns/SNSMessageList.h>
 #include <modules/sqs/SQSQueueList.h>
 #include <modules/sqs/SQSMessageList.h>
-#include <utils/BasePage.h>
+#include <modules/lambda/LambdaList.h>
 #include <modules/infrastructure/InfrastructureService.h>
-
-#include "utils/ScopedTimer.h"
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT
@@ -56,13 +68,13 @@ private:
 
     static void CleanInfrastructureResponse();
 
-    static void FtpUpload();
+    void FtpUpload();
 
     static void EditPreferences();
 
     BasePage *CreatePage(int currentRow);
 
-    void Exit();
+    static void Exit();
 
     /**
      * @brief Main menu bar
@@ -107,7 +119,7 @@ private:
     /**
      * Scoped timer
      */
-    ScopeTimer *_timer;
+    ScopeTimer *_timer{};
 
     /**
      * @brief Server label in status bar

@@ -15,6 +15,8 @@
 #include <modules/application/ApplicationEnvironmentEditDialog.h>
 #include <modules/application/ApplicationDependencyDialog.h>
 
+#include "ApplicationLogsDialog.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -77,6 +79,11 @@ private:
     int _sortColumnEnv = 0;
 
     /**
+     * @brief Application logs dialog
+     */
+    ApplicationLogsDialog *_applicationLogsDialog;
+
+    /**
      * @brief Sort order environment table
      */
     Qt::SortOrder _sortOrderEnv = Qt::AscendingOrder;
@@ -90,6 +97,11 @@ private:
      * @brief Sort order tag table
      */
     Qt::SortOrder _sortOrderTag = Qt::AscendingOrder;
+
+    /**
+     * @brief Container ID
+     */
+    QString _containerId;
 };
 
 
