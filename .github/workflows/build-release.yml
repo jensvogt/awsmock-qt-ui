@@ -76,9 +76,6 @@ jobs:
       QT_DIR: "${{ github.workspace }}\\Qt"
       BUILD_DIR: "${{ github.workspace }}\\build-windows"
       INSTALLER_DIR: "${{ github.workspace }}\\installer"
-      QT_VERSION: "${{ env.QT_VERSION }}"
-      APP_NAME: "${{ env.APP_NAME }}"
-      INSTALLER_ID: "${{ env.INSTALLER_ID }}"
       SEMVER: "${{ needs.version.outputs.semver }}"
     steps:
       - name: Checkout
@@ -155,9 +152,7 @@ jobs:
     runs-on: macos-latest
     needs: version
     env:
-      QT_VERSION: ${{ env.QT_VERSION }}
       BUILD_DIR: "${{ github.workspace }}/build-macos"
-      APP_NAME: ${{ env.APP_NAME }}
       SEMVER: ${{ needs.version.outputs.semver }}
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     steps:
@@ -212,9 +207,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: version
     env:
-      QT_VERSION: ${{ env.QT_VERSION }}
       BUILD_DIR: "${{ github.workspace }}/build-linux"
-      APP_NAME: ${{ env.APP_NAME }}
       SEMVER: ${{ needs.version.outputs.semver }}
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     steps:
