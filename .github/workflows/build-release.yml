@@ -251,6 +251,9 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev libx11-dev libxext-dev libxrender-dev dh-make fakeroot libcurl4-openssl-dev
 
+      - name: Normalize VERSION
+        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+
       - name: Install Qt via install-qt-action
         uses: jurplel/install-qt-action@v4
         with:
