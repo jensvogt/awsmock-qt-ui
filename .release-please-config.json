@@ -1,6 +1,7 @@
 {
   "include-merges": true,
   "release-type": "simple",
+  "changelog-path": "CHANGELOG.md",
   "packages": {
     ".": {
       "release-type": "simple",
