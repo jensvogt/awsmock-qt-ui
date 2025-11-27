@@ -1,10 +1,21 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(awsmock-qt-ui VERSION 1.0.0 LANGUAGES CXX)
+# Read version.txt
+include(cmake/ReadVersion.cmake)
+
+# Define project with version
+project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES CXX)
+
+message(STATUS "Configured version: ${PROJECT_VERSION}")
+
+# Export version to source code
+configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_BINARY_DIR}/generated/version.h)
+include_directories(${CMAKE_BINARY_DIR}/generated)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CPACK_PACKAGE_VERSION "${VERSION_STRING}")
 
 if (WIN32)
     add_compile_options(/Zc:__cplusplus)
@@ -157,6 +168,7 @@ set(PROJECT_SOURCES
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
         include/Version.h.in
+        cmake/version.h.in
 )
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
