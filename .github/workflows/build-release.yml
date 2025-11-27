@@ -262,6 +262,7 @@ jobs:
 
   build-linux-deb:
     runs-on: ubuntu-22.04
+    needs: version
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -274,23 +275,23 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev libx11-dev libxext-dev libxrender-dev dh-make fakeroot libcurl4-openssl-dev
 
-      # Step 3: Download Qt 6.10.1 (prebuilt binaries)
-      - name: Install Qt 6.10.1
-        run: |
-          mkdir -p $HOME/Qt6
-          wget https://download.qt.io/official_releases/qt/6.10/6.10.1/qt-opensource-linux-x64-6.10.1.run
-          chmod +x qt-opensource-linux-x64-6.10.1.run
-          ./qt-opensource-linux-x64-6.10.1.run --quiet --platform minimal --script qt-install-noninteractive.qs
-          export PATH=$HOME/Qt6/6.10.1/gcc_64/bin:$PATH
-          echo "Qt installed at $HOME/Qt6/6.10.1/gcc_64"
+      - name: Install Qt via install-qt-action
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          modules: "qtcharts qtimageformats"
+          install-deps: true
 
-      # Step 4: Build your application
-      - name: Build application
+      - name: Configure (Linux)
+        shell: bash
         run: |
-          mkdir -p build
-          cd build
-          $HOME/Qt6/6.10.1/gcc_64/bin/qmake ../${APP_NAME}.pro
-          make
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (Linux)
+        shell: bash
+        run: |
+          cmake --build $BUILD_DIR --parallel $(nproc)
 
       # Step 5: Prepare the .deb package directory
       - name: Prepare package structure
