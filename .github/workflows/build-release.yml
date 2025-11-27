@@ -238,7 +238,7 @@ jobs:
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     outputs:
-      appversion: ${{ needs.get_version.outputs.version }}
+      appversion: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -256,7 +256,9 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: echo "${SEMVER#v}"
+        run: |
+          CLEAN="${SEMVER#v}"
+          echo "version=$CLEAN" >> $GITHUB_OUTPUT
 
       - name: Install Qt via install-qt-action
         uses: jurplel/install-qt-action@v4
