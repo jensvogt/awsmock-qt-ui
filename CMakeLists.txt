@@ -156,7 +156,7 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPClient.cpp
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
-        include/utils/Version.h.in
+        include/Version.h.in
 )
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
