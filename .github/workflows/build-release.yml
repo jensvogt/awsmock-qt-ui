@@ -346,6 +346,7 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
+      APP_NAME: awsmock-qt-ui
       BUILD_DIR: "${{ github.workspace }}/build-linux"
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
 
@@ -377,17 +378,21 @@ jobs:
       - name: Prepare Linux package folder
         run: |
           PACKAGE_DIR=package
+          echo "PACKAGE_DIR=$PACKAGE_DIR" >> $GITHUB_ENV
+          
           mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/bin
           mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/etc
           mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/lib
           mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/plugins
-
+          
+          # FIX: correct binary path
           cp $BUILD_DIR/$APP_NAME $PACKAGE_DIR/usr/local/$APP_NAME/bin/
+          
           cp dist/etc/$APP_NAME.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/
           cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/$APP_NAME/lib/
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
-          # Create Qt conf
+          
           cat << EOF > $PACKAGE_DIR/usr/local/$APP_NAME/bin/qt.conf
           [Paths]
           Prefix = ..
@@ -395,7 +400,13 @@ jobs:
 
       - name: Build RPM with fpm
         run: |
-          fpm -s dir -t rpm --name "${APP_NAME}" --version "${SEMVER}" --package "${APP_NAME}-${SEMVER}-amd64.rpm" -C $PACKAGE_DIR usr/local/$APP_NAME
+          fpm -s dir -t rpm \
+            --name "${APP_NAME}" \
+            --version "${SEMVER}" \
+            --architecture amd64 \
+            --package "${APP_NAME}-${SEMVER}-amd64.rpm" \
+            -C "$PACKAGE_DIR" \
+            usr/local/$APP_NAME
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4
