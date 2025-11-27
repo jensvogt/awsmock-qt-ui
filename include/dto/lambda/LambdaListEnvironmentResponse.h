@@ -1,7 +1,6 @@
 #ifndef AWSMOCK_QT_UI_LAMBDA_LIST_LAMBDA_ENVIRONMENT_RESPONSE_H
 #define AWSMOCK_QT_UI_LAMBDA_LIST_LAMBDA_ENVIRONMENT_RESPONSE_H
 
-#include <QJsonObject>
 #include <QJsonDocument>
 
 #include <dto/lambda/LambdaInstanceCounter.h>

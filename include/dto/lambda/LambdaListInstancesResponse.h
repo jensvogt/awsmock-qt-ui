@@ -3,6 +3,7 @@
 
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 #include <dto/lambda/LambdaInstanceCounter.h>
 
