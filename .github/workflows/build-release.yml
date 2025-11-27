@@ -389,7 +389,7 @@ jobs:
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
           # Create Qt conf
-          cat << EOF > $PACKAGE_DIR/usr/local/bin/qt.conf
+          cat << EOF > $PACKAGE_DIR/usr/local/$APP_NAME/bin/qt.conf
           [Paths]
           Prefix = ..
           EOF
