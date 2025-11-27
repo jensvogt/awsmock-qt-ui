@@ -32,62 +32,6 @@ jobs:
           release-type: simple
           token: ${{ secrets.GH_AUTH_TOKEN }}
 
-  #  version:
-  #    name: Determine & Tag Version
-  #    runs-on: ubuntu-latest
-  #    outputs:
-  #      semver: ${{ steps.getver.outputs.SemVer }}
-  #    steps:
-  #      - name: Checkout (full history)
-  #        uses: actions/checkout@v4
-  #        with:
-  #          fetch-depth: 0
-  #
-  #      - name: Setup GitVersion
-  #        uses: GitTools/actions/gitversion/setup@v4
-  #
-  #      - name: Get version from GitVersion
-  #        id: getver
-  #        uses: GitTools/actions/gitversion/execute@v4
-  #
-  #      - name: Show computed version
-  #        run: |
-  #          echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
-  #          echo "Major = ${{ steps.getver.outputs.Major }}"
-  #          echo "Minor = ${{ steps.getver.outputs.Minor }}"
-  #          echo "Patch = ${{ steps.getver.outputs.Patch }}"
-  #
-  #      - name: Generate include/Version.h from template
-  #        run: |
-  #          python3 dist/generate_version_header.py \
-  #            "${{ steps.getver.outputs.Major }}" \
-  #            "${{ steps.getver.outputs.Minor }}" \
-  #            "${{ steps.getver.outputs.Patch }}"
-  #
-  #      - name: Commit updated Version.h (if changed)
-  #        run: |
-  #          git config user.name "github-actions"
-  #          git config user.email "github-actions@github.com"
-  #          git add include/Version<.h
-  #          if git diff --cached -->quiet; then
-  #            echo "No changes to commit"
-  #          else
-  #            git commit -m "chore(release): update Version.h to ${{ steps.getver.outputs.SemVer }}"
-  #            git push origin HEAD:main
-  #          fi
-  #
-  #      - name: Create tag v<semver>
-  #        run: |
-  #          TAG="v${{ steps.getver.outputs.SemVer }}"
-  #          echo "Tag: $TAG"
-  #          # create tag only if it doesn't already exist
-  #          if git rev-parse "$TAG" >/dev/null 2>&1; then
-  #            echo "Tag $TAG already exists"
-  #          else
-  #            git tag "$TAG"
-  #            git push origin "$TAG"
-  #          fi
-
   build-windows:
     name: Build & Package (Windows)
     runs-on: windows-latest
@@ -97,7 +41,7 @@ jobs:
       QT_DIR: "${{ github.workspace }}\\Qt"
       BUILD_DIR: "${{ github.workspace }}\\build-windows"
       INSTALLER_DIR: "${{ github.workspace }}\\installer"
-      SEMVER: "${{ needs.version.outputs.semver }}"
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -175,7 +119,7 @@ jobs:
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-macos"
-      SEMVER: ${{ needs.version.outputs.semver }}
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     steps:
       - name: Checkout
@@ -291,7 +235,7 @@ jobs:
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-linux"
-      SEMVER: ${{ needs.version.outputs.semver }}
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     outputs:
       appversion: ${{ steps.get_version.outputs.version }}
@@ -454,7 +398,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build-windows, build-macos, build-linux-rpm, build-linux-deb ]
     env:
-      SEMVER: ${{ needs.version.outputs.semver }}
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
