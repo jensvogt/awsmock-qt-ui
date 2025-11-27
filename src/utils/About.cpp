@@ -16,7 +16,7 @@ About::About(QWidget *parent) : QDialog(parent), _ui(new Ui::About) {
         this->accept();
     });
 
-    _ui->versionText->setText(AWSMOCK_UI_VERSION);
+    _ui->versionText->setText(APP_VERSION);
     _ui->qtVersionText->setText(QT_VERSION_STR);
 
     _ui->tabWidget->setCurrentIndex(0);

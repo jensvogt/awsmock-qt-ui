@@ -9,7 +9,7 @@ project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES CXX)
 message(STATUS "Configured version: ${PROJECT_VERSION}")
 
 # Export version to source code
-configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_BINARY_DIR}/include/Version.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_SOURCE_DIR}/include/Version.h)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -171,17 +171,6 @@ set(PROJECT_SOURCES
         include/modules/lambda/LambdaEnvironmentDetailDialog.h
         src/modules/lambda/LambdaEnvironmentDetailDialog.ui
 )
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_patch_line REGEX "AWSMOCK_UI_VERSION_PATCH")
-
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_MAJOR "${version_major_line}")
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_MINOR "${version_minor_line}")
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_PATCH "${version_patch_line}")
-
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-
-message(STATUS "Building AWS Mock UI version: ${PROJECT_VERSION}")
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})

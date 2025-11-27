@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(_infraStructureService, &InfraStructureService::ExportResponseSignal, this, &WriteInfrastructureExport);
     connect(_infraStructureService, &InfraStructureService::CleanResponseSignal, this, &CleanInfrastructureResponse);
 
-    setWindowTitle("AwsMock UI v" + QString(AWSMOCK_UI_VERSION));
+    setWindowTitle("AwsMock UI v" + QString(APP_VERSION));
     resize(1600, 900);
 
     // Setup menu bar
