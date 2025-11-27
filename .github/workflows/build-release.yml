@@ -163,7 +163,9 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: "qtcharts,qtimageformats"
+          modules: |
+            qtcharts
+            qtimageformats
           install-deps: true
 
       - name: Configure (macOS)
@@ -223,7 +225,9 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: "qtcharts,qtimageformats,qtsvg,qttools"
+          modules: |
+            qtcharts
+            qtimageformats
           install-deps: true
 
       - name: Configure (Linux)
