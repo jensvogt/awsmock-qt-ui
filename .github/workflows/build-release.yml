@@ -11,60 +11,82 @@ env:
 
 jobs:
   version:
-    name: Determine & Tag Version
     runs-on: ubuntu-latest
     outputs:
       semver: ${{ steps.getver.outputs.SemVer }}
     steps:
-      - name: Checkout (full history)
-        uses: actions/checkout@v4
+      - uses: googleapis/release-please-action@v4
         with:
-          fetch-depth: 0
-
-      - name: Setup GitVersion
-        uses: GitTools/actions/gitversion/setup@v4
+          # this assumes that you have created a personal access token
+          # (PAT) and configured it as a GitHub action secret named
+          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
+          token: ${{ secrets.GH_AUTH_TOKEN }}
+          # this is a built-in strategy in release-please, see "Action Inputs"
+          # for more options
+          release-type: simple
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
 
       - name: Get version from GitVersion
         id: getver
-        uses: GitTools/actions/gitversion/execute@v4
-
-      - name: Show computed version
         run: |
-          echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
-          echo "Major = ${{ steps.getver.outputs.Major }}"
-          echo "Minor = ${{ steps.getver.outputs.Minor }}"
-          echo "Patch = ${{ steps.getver.outputs.Patch }}"
+          VERSION=$(cat version.txt)
 
-      - name: Generate include/Version.h from template
-        run: |
-          python3 dist/generate_version_header.py \
-            "${{ steps.getver.outputs.Major }}" \
-            "${{ steps.getver.outputs.Minor }}" \
-            "${{ steps.getver.outputs.Patch }}"
-
-      - name: Commit updated Version.h (if changed)
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add include/Version.h
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore(release): update Version.h to ${{ steps.getver.outputs.SemVer }}"
-            git push origin HEAD:main
-          fi
-
-      - name: Create tag v<semver>
-        run: |
-          TAG="v${{ steps.getver.outputs.SemVer }}"
-          echo "Tag: $TAG"
-          # create tag only if it doesn't already exist
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists"
-          else
-            git tag "$TAG"
-            git push origin "$TAG"
-          fi
+  #  version:
+  #    name: Determine & Tag Version
+  #    runs-on: ubuntu-latest
+  #    outputs:
+  #      semver: ${{ steps.getver.outputs.SemVer }}
+  #    steps:
+  #      - name: Checkout (full history)
+  #        uses: actions/checkout@v4
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      - name: Setup GitVersion
+  #        uses: GitTools/actions/gitversion/setup@v4
+  #
+  #      - name: Get version from GitVersion
+  #        id: getver
+  #        uses: GitTools/actions/gitversion/execute@v4
+  #
+  #      - name: Show computed version
+  #        run: |
+  #          echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
+  #          echo "Major = ${{ steps.getver.outputs.Major }}"
+  #          echo "Minor = ${{ steps.getver.outputs.Minor }}"
+  #          echo "Patch = ${{ steps.getver.outputs.Patch }}"
+  #
+  #      - name: Generate include/Version.h from template
+  #        run: |
+  #          python3 dist/generate_version_header.py \
+  #            "${{ steps.getver.outputs.Major }}" \
+  #            "${{ steps.getver.outputs.Minor }}" \
+  #            "${{ steps.getver.outputs.Patch }}"
+  #
+  #      - name: Commit updated Version.h (if changed)
+  #        run: |
+  #          git config user.name "github-actions"
+  #          git config user.email "github-actions@github.com"
+  #          git add include/Version.h
+  #          if git diff --cached --quiet; then
+  #            echo "No changes to commit"
+  #          else
+  #            git commit -m "chore(release): update Version.h to ${{ steps.getver.outputs.SemVer }}"
+  #            git push origin HEAD:main
+  #          fi
+  #
+  #      - name: Create tag v<semver>
+  #        run: |
+  #          TAG="v${{ steps.getver.outputs.SemVer }}"
+  #          echo "Tag: $TAG"
+  #          # create tag only if it doesn't already exist
+  #          if git rev-parse "$TAG" >/dev/null 2>&1; then
+  #            echo "Tag $TAG already exists"
+  #          else
+  #            git tag "$TAG"
+  #            git push origin "$TAG"
+  #          fi
 
   build-windows:
     name: Build & Package (Windows)
@@ -303,7 +325,7 @@ jobs:
       - name: Create tarball for RPM stage
         run: |
           mkdir package
-          cp -r build package/usr
+          cp -r $BUILD_DIR package/usr
           tar -czf app-binaries.tar.gz package
 
       - name: Upload tarball for RPM job
