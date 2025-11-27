@@ -172,7 +172,6 @@ jobs:
       - name: Configure (macOS)
         shell: bash
         run: |
-          ls "$HOME/Qt/${{ env.QT_VERSION }}/"
           mkdir -p $BUILD_DIR
           cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DQt6_DIR="$HOME/Qt/${{ env.QT_VERSION }}/macos/lib/cmake/Qt6"
 
@@ -206,7 +205,7 @@ jobs:
 
   build-linux:
     name: Build & Package (Linux)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: version
     env:
       BUILD_DIR: "${{ github.workspace }}/build-linux"
@@ -244,8 +243,6 @@ jobs:
       - name: Download linuxdeployqt (AppImage builder)
         shell: bash
         run: |
-          # Grab the latest linuxdeployqt AppImage
-          #LATEST_URL=$(curl -s https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage | jq -r '.assets[] | select(.name | test("linuxdeployqt.*x86_64.AppImage")) | .browser_download_url' | head -n1)
           curl -L -o linuxdeployqt.AppImage "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
           chmod +x linuxdeployqt.AppImage
 
@@ -253,10 +250,7 @@ jobs:
         shell: bash
         run: |
           APP_BUNDLE_DIR="$BUILD_DIR/${APP_NAME}.AppDir"
-          # linuxdeployqt expects an AppDir or an executable; adapt as needed
-          # Try using linuxdeployqt to create an AppImage from the built binary
           ./linuxdeployqt.AppImage "$BUILD_DIR/$APP_NAME" -appimage -qmake=$(which qmake) || true
-          # Move any produced AppImage into dist/
           mkdir -p dist
           mv *.AppImage dist/ || true
 
