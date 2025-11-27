@@ -46,6 +46,8 @@ public:
 
     void UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const;
 
+    void ShowEnvironmentContextMenu(const QPoint &pos) const;
+
     void HandleAccept();
 
     void HandleReject();

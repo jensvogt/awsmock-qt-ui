@@ -9,7 +9,7 @@
 #include "modules/application/ApplicationLogsDialog.h"
 
 ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent),
-    _ui(new Ui::ApplicationEditDialog) {
+                                                                                     _ui(new Ui::ApplicationEditDialog) {
     _applicationService = new ApplicationService();
 
     _applicationService->GetApplication(name);
@@ -175,8 +175,7 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
 
     // Add environment
     _ui->envTable->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_ui->envTable, &QTableWidget::customContextMenuRequested, this,
-            &ApplicationEditDialog::ShowEnvironmentContextMenu);
+    connect(_ui->envTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowEnvironmentContextMenu);
 
     // Connect double-click
     connect(_ui->envTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

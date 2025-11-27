@@ -364,6 +364,7 @@ jobs:
         run: |
           rpmdev-setuptree
           tar -xzf app-binaries.tar.gz
+          find . 
           cp -r package ~/rpmbuild/SOURCES/${APP_NAME}-${{ needs.build-linux-deb.outputs.appversion }}
 
       - name: Write SPEC file

@@ -64,6 +64,8 @@ public:
 
     void AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
 
+    void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
+
     //void UpdateLambda(const Lambda &lambda);
 
     //void EnableLambda(const QString &name);

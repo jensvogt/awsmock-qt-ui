@@ -172,3 +172,26 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
                           }
                       });
 }
+
+void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key) {
+
+    QJsonObject jRequest;
+    jRequest["FunctionArn"] = lambdaArn;
+    jRequest["Key"] = key;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "delete-function-environment"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadLambdaEnvironment();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
