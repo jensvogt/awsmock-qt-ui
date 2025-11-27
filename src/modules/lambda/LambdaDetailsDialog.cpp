@@ -2,8 +2,10 @@
 // Created by vogje01 on 11/25/25.
 //
 
+#include <QMenu>
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include "ui_LambdaDetailsDialog.h"
+#include "modules/application/ApplicationEnvironmentEditDialog.h"
 #include "modules/lambda/LambdaEnvironmentDetailDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
@@ -122,6 +124,10 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
         _lambdaService->GetLambdaEnvironment(_lambdaArn);
     });
 
+    // Add context menu
+    _ui->environmentTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->environmentTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowEnvironmentContextMenu);
+
     // Send request
     _lambdaService->GetLambdaEnvironment(_lambdaArn);
     connect(_lambdaService, &LambdaService::ListLambdaEnvironmentSignal, this, &LambdaDetailsDialog::UpdateLambdaEnvironment);
@@ -155,7 +161,6 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
 
 }
 
-
 void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
 
     const int selectedRow = _ui->environmentTable->selectionModel()->currentIndex().row();
@@ -173,6 +178,38 @@ void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentRes
     _ui->environmentTable->setSortingEnabled(true);
     _ui->instanceTable->sortItems(_environmentSortColumn, _environmentSortOrder);
     _ui->environmentTable->selectRow(selectedRow);
+}
+
+void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
+
+    // Cell index
+    const QModelIndex index = _ui->environmentTable->indexAt(pos);
+    if (!index.isValid()) return;
+
+    const int row = index.row();
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Environment Variable");
+    editAction->setToolTip("Edit the environment variable");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Environment Variable");
+    deleteAction->setToolTip("Delete the environment variable");
+
+    const QString key = _ui->environmentTable->item(row, 0)->text();
+    const QString value = _ui->environmentTable->item(row, 1)->text();
+    if (const QAction *selectedAction = menu.exec(_ui->environmentTable->viewport()->mapToGlobal(pos));
+        selectedAction == editAction) {
+        if (ApplicationEnvironmentEditDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
+            SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
+            //   _application.environment[key] = dialog.GetValue();
+            //            _changed = true;
+        }
+    } else if (selectedAction == deleteAction) {
+        _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);
+        _ui->environmentTable->removeRow(row);
+    }
 }
 
 void LambdaDetailsDialog::HandleAccept() {
