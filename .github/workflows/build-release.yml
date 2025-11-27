@@ -301,7 +301,7 @@ jobs:
       # Step 5: Prepare the .deb package directory
       - name: Prepare package structure
         run: |
-          echo "Qt-Root: $QT_ROOT_DIR"
+          echo "Qt-Root is: $QT_ROOT_DIR"
           mkdir -p deb_package/DEBIAN
           mkdir -p deb_package/usr/local/awsmock-qt-ui/bin
           mkdir -p deb_package/usr/local/awsmock-qt-ui/etc
