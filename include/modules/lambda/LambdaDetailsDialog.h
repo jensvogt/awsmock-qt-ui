@@ -63,6 +63,26 @@ private:
      * @brief Lambda ARN
      */
     QString _lambdaArn;
+
+    /**
+     * @brief Instance sort column index
+     */
+    int _instanceSortColumn = 0;
+
+    /**
+     * @brief Instance sort order
+     */
+    Qt::SortOrder _instanceSortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Environment sort column index
+     */
+    int _environmentSortColumn = 0;
+
+    /**
+     * @brief Environment sort order
+     */
+    Qt::SortOrder _environmentSortOrder = Qt::AscendingOrder;
 };
 
 
