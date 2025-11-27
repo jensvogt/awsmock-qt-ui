@@ -89,6 +89,8 @@ public:
      */
     void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
 
+    void ListLambdaLogs(const QString &lambdaArn);
+
     void GetLambdaLogs(const QString &oid);
 
     /**
