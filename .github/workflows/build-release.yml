@@ -396,6 +396,7 @@ jobs:
       - name: Build RPM
         run: |
           fpm -s dir -t rpm -n $APP_NAME -v $SEMVER -C package --prefix=/usr/local/$APP_NAME usr
+          find .
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4

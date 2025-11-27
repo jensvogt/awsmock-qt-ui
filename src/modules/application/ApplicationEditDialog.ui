@@ -299,6 +299,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="logsButton">
+        <property name="toolTip">
+         <string>Show the application logs.</string>
+        </property>
         <property name="text">
          <string>PushButton</string>
         </property>
@@ -310,7 +313,7 @@
          <string>Start the application.</string>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string/>
         </property>
        </widget>
       </item>
