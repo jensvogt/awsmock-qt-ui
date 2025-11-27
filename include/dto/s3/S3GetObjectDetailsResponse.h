@@ -46,11 +46,6 @@ struct S3GetObjectDetailsResponse {
                 metadata[metadataKey] = jsonObject["metadata"].toObject()[metadataKey].toString();
             }
         }
-
-        // Get mime type
-        const QMimeDatabase db;
-        mimeType = db.mimeTypeForData(body);
-        qDebug() << "Mime type: " << mimeType.name();
     }
 };
 

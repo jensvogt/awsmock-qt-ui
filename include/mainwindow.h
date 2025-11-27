@@ -22,6 +22,7 @@
 #include <QStyleFactory>
 #include <QImageReader>
 
+#include <Version.h>
 #include <utils/About.h>
 #include <utils/EditConfigDialog.h>
 #include <utils/EventBus.h>
