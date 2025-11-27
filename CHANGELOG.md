@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.19](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.18...v1.4.19) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda loga dialog ([8c4a873](https://github.com/jensvogt/awsmock-qt-ui/commit/8c4a873f51fe562967ee8c1f051c91e902d7a21d))
+* add lambda loga dialog ([9bdc1e2](https://github.com/jensvogt/awsmock-qt-ui/commit/9bdc1e2a51a727cbb0f198af24f6abab922d2a17))
+
 ## [1.4.18](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.17...v1.4.18) (2025-11-27)
 
 
