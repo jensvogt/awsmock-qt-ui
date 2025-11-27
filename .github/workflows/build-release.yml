@@ -112,7 +112,7 @@ jobs:
           $qtPrefix = Join-Path $env:QT_DIR "$env:QT_VERSION\msvc2022_64"
           if (!(Test-Path $qtPrefix)) { Write-Error "Qt prefix not found: $qtPrefix"; exit 1 }
           if (!(Test-Path $env:BUILD_DIR)) { New-Item -ItemType Directory -Path $env:BUILD_DIR | Out-Null }
-          cmake -S . -B $env:BUILD_DIR -G "Ninja" -DQt6_DIR="$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6" -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B $env:BUILD_DIR -G "Ninja" -DQt6_DIR="$env:QT_DIR\$env:QT_VERSION\msvc2022_64\lib\cmake\Qt6" -DCMAKE_BUILD_TYPE=Release
 
       - name: Build (Windows, parallel)
         shell: powershell
