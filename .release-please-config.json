@@ -5,7 +5,12 @@
   "include-v-in-tag": false,
   "initial-version": "1.0.1",
   "changelog-path": "CHANGELOG.md",
-  "version-file": "version.txt",
+  "version-file": [
+    {
+      "path": "version.txt",
+      "regex": "^(.*)$"
+    }
+  ],
   "changelog-sections": [
     {
       "type": "feat",
