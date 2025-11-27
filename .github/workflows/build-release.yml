@@ -168,10 +168,8 @@ jobs:
           python3 -m pip install aqtinstall
 
           # Install Qt modules
-          ARCH="arm64"
-          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH \
-            --outputdir "$HOME/Qt" \
-            --modules qtcharts qtimageformats
+          ARCH="clang_64"
+          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats
 
           # Verify installation
           ls -R "$HOME/Qt/6.10.1/$ARCH"
