@@ -343,62 +343,55 @@ jobs:
   build-linux-rpm:
     name: Build RPM on Fedora
     runs-on: ubuntu-latest
-    needs: build-linux-deb
-
-    container:
-      image: fedora:latest
+    needs: release-please
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download tarball from Ubuntu build
-        uses: actions/download-artifact@v4
+      - name: Normalize SEMVER
+        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev libcurl4-openssl-dev
+          sudo gem install --no-document fpm
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
         with:
-          name: app-binaries
+          version: ${{ env.QT_VERSION }}
+          modules: qtcharts qtimageformats
+          install-deps: true
 
-      - name: Install RPM tools
+      - name: Configure & Build
         run: |
-          dnf install -y rpm-build rpmdevtools gcc gcc-c++ make cmake libcurl-devel
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+          cmake --build $BUILD_DIR --parallel $(nproc)
 
-      - name: Prepare RPM tree
+      - name: Prepare Linux package folder
         run: |
-          rpmdev-setuptree
-          tar -xzf app-binaries.tar.gz
-          find . 
-          cp -r package ~/rpmbuild/SOURCES/${APP_NAME}-${{ needs.build-linux-deb.outputs.appversion }}
+          PACKAGE_DIR=package
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/bin
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/etc
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/lib
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/plugins
 
-      - name: Write SPEC file
-        run: |
-          APP_NAME_EXPANDED=${APP_NAME}
-          VERSION_EXPANDED=${{ needs.build-linux-deb.outputs.appversion }}
-
-          cat > ~/rpmbuild/SPECS/${APP_NAME_EXPANDED}.spec <<EOF
-          Name: ${APP_NAME_EXPANDED}
-          Version: ${VERSION_EXPANDED}
-          Release: 1%{?dist}
-          Summary: AWS Mock UI Application
-          License: MIT
-          Source0: ${APP_NAME_EXPANDED}-%{_version}.tar.gz
-          
-          BuildRequires: libcurl-devel
-          Requires: libcurl
-          
-          %description
-          AWS mock application with Qt UI.
-          
-          %install
-          mkdir -p %{buildroot}/usr
-          cp -r %{_sourcedir}/package/usr/* %{buildroot}/usr/
-          
-          %files
-          /usr
-          
-          %changelog
+          cp $BUILD_DIR/$APP_NAME $PACKAGE_DIR/usr/local/$APP_NAME/bin/
+          cp dist/etc/$APP_NAME.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/
+          cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/$APP_NAME/lib/
+          cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
+          cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
+          # Create Qt conf
+          cat << EOF > $PACKAGE_DIR/usr/local/bin/qt.conf
+          [Paths]
+          Prefix = ..
           EOF
 
       - name: Build RPM
         run: |
-          rpmbuild -D "_version ${{ needs.build-linux-deb.outputs.appversion }}" -ba ~/rpmbuild/SPECS/${APP_NAME}.spec
+          fpm -s dir -t rpm -n $APP_NAME -v $SEMVER -C package --prefix=/usr/local/$APP_NAME usr
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4
