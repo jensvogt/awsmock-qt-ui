@@ -204,7 +204,7 @@ jobs:
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
 
   build-linux-installer:
-    name: Build & Package (Linux)
+    name: Build & Package (Linux Installer)
     runs-on: ubuntu-22.04
     needs: version
     env:
@@ -261,8 +261,13 @@ jobs:
           path: dist/*.AppImage
 
   build-linux-deb:
+    name: Build & Package (Linux Debian package)
     runs-on: ubuntu-22.04
     needs: version
+    env:
+      BUILD_DIR: "${{ github.workspace }}/build-linux"
+      SEMVER: ${{ needs.version.outputs.semver }}
+      INSTALLER_DIR: "${{ github.workspace }}/installer"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
