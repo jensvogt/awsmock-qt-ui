@@ -18,8 +18,8 @@
 #include <utils/EventBus.h>
 #include <dto/lambda/LambdaListResponse.h>
 #include <dto/lambda/LambdaGetResponse.h>
-
-#include "dto/lambda/LambdaListInstancesResponse.h"
+#include <dto/lambda/LambdaListEnvironmentResponse.h>
+#include <dto/lambda/LambdaListInstancesResponse.h>
 
 class LambdaService final : public QObject {
     Q_OBJECT
@@ -59,6 +59,8 @@ public:
     void GetLambda(const QString &lambdaArn);
 
     void GetLambdaInstances(const QString &lambdaArn);
+
+    void GetLambdaEnvironment(const QString &lambdaArn);
 
     //void UpdateLambda(const Lambda &lambda);
 
@@ -135,6 +137,16 @@ signals:
      */
     void ListLambdaInstancesSignal(const LambdaListInstancesResponse &listInstancesResponse);
 
+    /**
+     * @brief List environment signal
+     *
+     * @param listEnvironmentResponse lambda environment list response
+     */
+    void ListLambdaEnvironmentSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
+
+    /**
+     * @brief Reload all lambdas signal
+     */
     void LoadAllLambdas();
 
 private:
