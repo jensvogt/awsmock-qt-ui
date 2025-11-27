@@ -8,6 +8,8 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 
+#include <modules/lambda/LambdaService.h>
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -30,7 +32,7 @@ public:
     explicit LambdaLogsDialog(const QString &name, const QString &containerId, QWidget *parent = nullptr);
 
     /**
-     * @brief Destruuctor
+     * @brief Destructor
      */
     ~LambdaLogsDialog() override;
 
@@ -49,6 +51,11 @@ private:
      * @brief UI components
      */
     Ui::LambdaLogsDialog *_ui;
+
+    /**
+     *  @brief Lambda service
+     */
+    LambdaService *_lambdaService;
 };
 
 

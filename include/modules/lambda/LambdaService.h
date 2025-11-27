@@ -58,19 +58,38 @@ public:
      */
     void GetLambda(const QString &lambdaArn);
 
+    /**
+     * @brief Get the lambda instances list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
     void GetLambdaInstances(const QString &lambdaArn);
 
+    /**
+     * @brief Get the lambda environment list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
     void GetLambdaEnvironment(const QString &lambdaArn);
 
+    /**
+     * @brief Add a lambda environment variable
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment key
+     * @param value environment value
+     */
     void AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
 
+    /**
+     * @brief Remove a lambda environment variable
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment key
+     */
     void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
 
-    //void UpdateLambda(const Lambda &lambda);
-
-    //void EnableLambda(const QString &name);
-
-    //void DisableLambda(const QString &name);
+    void GetLambdaLogs(const QString &oid);
 
     /**
      * @brief Stop an lambdas
@@ -117,7 +136,7 @@ public:
      *
      * @param name lambda name
      */
-    //void DeleteLambda(const QString &name);
+    void DeleteLambda(const QString &name);
 
 signals:
     /**
@@ -147,6 +166,13 @@ signals:
      * @param listEnvironmentResponse lambda environment list response
      */
     void ListLambdaEnvironmentSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
+
+    /**
+     * @brief List lambda logs signal
+     *
+     * @param listEnvironmentResponse lambda environment list response
+     */
+    void ListLambdaLogsSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
 
     /**
      * @brief Reload all lambdas signal

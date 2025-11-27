@@ -7,7 +7,6 @@
 
 #include <QDialog>
 
-
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -30,19 +29,45 @@ public:
      */
     explicit LambdaEnvironmentDetailDialog(const QString &key, const QString &value, bool add, QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~LambdaEnvironmentDetailDialog() override;
 
+    /**
+     * @brief Accept dialog
+     */
     void HandleAccept();
 
+    /**
+     * @brief Reject dialog
+     */
     void HandleReject();
 
+    /**
+     * @brief Environment key name
+     */
     QString GetKey();
 
+    /**
+     * @brief Environment key value
+     */
     QString GetValue();
 
 private:
+    /**
+     * @brief UI component
+     */
     Ui::LambdaEnvironmentDetailDialog *_ui;
+
+    /**
+     * @brief Environment key
+     */
     QString _key;
+
+    /**
+     * @brief Environment value
+     */
     QString _value;
 };
 

@@ -9,6 +9,7 @@
 #include "modules/lambda/LambdaEnvironmentDetailDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
+
     _lambdaService = new LambdaService();
 
     _lambdaService->GetLambda(lambdaArn);
