@@ -3,34 +3,34 @@ name: Release + Build + Installer (Windows / macOS / Linux)
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   QT_VERSION: "6.10.1"
   APP_NAME: "awsmock-qt-ui"        # change if different
   INSTALLER_ID: "de.jensvogt.awsmockqtui" # used for IFW package path
 
-jobs:
-  version:
-    runs-on: ubuntu-latest
-    outputs:
-      semver: ${{ steps.getver.outputs.SemVer }}
-    steps:
-      - uses: googleapis/release-please-action@v4
-        with:
-          # this assumes that you have created a personal access token
-          # (PAT) and configured it as a GitHub action secret named
-          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
-          token: ${{ secrets.GH_AUTH_TOKEN }}
-          # this is a built-in strategy in release-please, see "Action Inputs"
-          # for more options
-          release-type: simple
-          config-file: .release-please-config.json
-          manifest-file: .release-please-manifest.json
+permissions:
+  contents: write       # required for tagging + releasing
+  pull-requests: write
+  id-token: write
 
-      - name: Get version from GitVersion
-        id: getver
-        run: |
-          VERSION=$(cat version.txt)
+jobs:
+  release-please:
+    name: Create Release PR / Tag
+    runs-on: ubuntu-latest
+
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+
+    steps:
+      - name: Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+          token: ${{ secrets.GH_AUTH_TOKEN }}
 
   #  version:
   #    name: Determine & Tag Version
@@ -68,8 +68,8 @@ jobs:
   #        run: |
   #          git config user.name "github-actions"
   #          git config user.email "github-actions@github.com"
-  #          git add include/Version.h
-  #          if git diff --cached --quiet; then
+  #          git add include/Version<.h
+  #          if git diff --cached -->quiet; then
   #            echo "No changes to commit"
   #          else
   #            git commit -m "chore(release): update Version.h to ${{ steps.getver.outputs.SemVer }}"
@@ -91,7 +91,8 @@ jobs:
   build-windows:
     name: Build & Package (Windows)
     runs-on: windows-latest
-    needs: version
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       QT_DIR: "${{ github.workspace }}\\Qt"
       BUILD_DIR: "${{ github.workspace }}\\build-windows"
@@ -170,7 +171,8 @@ jobs:
   build-macos:
     name: Build & Package (macOS)
     runs-on: macos-latest
-    needs: version
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-macos"
       SEMVER: ${{ needs.version.outputs.semver }}
@@ -285,7 +287,8 @@ jobs:
   build-linux-deb:
     name: Build & Package (Linux Debian package)
     runs-on: ubuntu-22.04
-    needs: version
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-linux"
       SEMVER: ${{ needs.version.outputs.semver }}
