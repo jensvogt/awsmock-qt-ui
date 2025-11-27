@@ -9,8 +9,7 @@ project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES CXX)
 message(STATUS "Configured version: ${PROJECT_VERSION}")
 
 # Export version to source code
-configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_BINARY_DIR}/generated/version.h)
-include_directories(${CMAKE_BINARY_DIR}/generated)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_BINARY_DIR}/include/Version.h)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -167,7 +166,6 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPClient.cpp
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
-        include/Version.h.in
         cmake/version.h.in
 )
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
