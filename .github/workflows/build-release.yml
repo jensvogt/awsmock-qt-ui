@@ -351,6 +351,8 @@ jobs:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
     needs: [ build-windows, build-macos, build-linux-installer, build-linux-deb ]
+    env:
+      SEMVER: ${{ needs.version.outputs.semver }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -389,8 +391,8 @@ jobs:
             artifacts/macos/*.dmg
             artifacts/linux/*.AppImage
             artifacts/linux/*.deb
-          name: Release ${{ needs.version.outputs.semver }}
-          tag_name: v${{ needs.version.outputs.semver }}
-          body: "Automated release for ${{ needs.version.outputs.semver }}"
+          name: Release ${{ env.SEMVER }}
+          tag_name: v${{ env.SEMVER }}
+          body: "Automated release for ${{ env.SEMVER }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
