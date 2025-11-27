@@ -302,19 +302,25 @@ jobs:
       - name: Prepare package structure
         run: |
           mkdir -p deb_package/DEBIAN
-          mkdir -p deb_package/usr/local/bin
-          mkdir -p deb_package/usr/local/Qt6
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/bin
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/etc
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/log
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/lib
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/plugins
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/translations
           
           # Copy your app
-          cp build/${APP_NAME} deb_package/usr/local/bin/
+          cp $BUILD_DIR/${APP_NAME} deb_package/usr/local/awsmock-qt-ui/bin/
+          cp -r $HOME/Qt6/6.10.1/gcc_64/lib/* deb_package/usr/local/awsmock-qt-ui/lib
+          mkdir -p deb_package/usr/local/awsmock-qt-ui/plugins
+          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/platforms deb_package/usr/local/awsmock-qt-ui/plugins/
+          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/imageformats deb_package/usr/local/awsmock-qt-ui/plugins/
           
-          # Copy necessary Qt libraries (Qt runtime)
-          cp -r $HOME/Qt6/6.10.1/gcc_64/lib/* deb_package/usr/local/Qt6/
-          
-          # Copy plugins (platforms, imageformats)
-          mkdir -p deb_package/usr/local/Qt6/plugins
-          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/platforms deb_package/usr/local/Qt6/plugins/
-          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/imageformats deb_package/usr/local/Qt6/plugins/
+          # Create Qt conf
+          cat << EOF > deb_package/usr/local/awsmock-qt-ui/bin/qt.conf
+          [Paths]
+          Prefix = ..
+          EOF
           
           # Create control file
           cat <<EOF > deb_package/DEBIAN/control
