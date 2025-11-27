@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.0.1...v1.1.0) (2025-11-27)
+
+
+### Features
+
+* add debian package ([bfe68f1](https://github.com/jensvogt/awsmock-qt-ui/commit/bfe68f116a31a11bf9fe762b49b9819855e1defe))
+* add debian package ([cffd7fc](https://github.com/jensvogt/awsmock-qt-ui/commit/cffd7fcae268d0c505f6190fec3288b54414cb0c))
+* add debian package ([1a46621](https://github.com/jensvogt/awsmock-qt-ui/commit/1a46621469595963402b8d308917ad494db304c9))
+* add debian package ([64074cb](https://github.com/jensvogt/awsmock-qt-ui/commit/64074cbf7152a65cc74dbe45b7dfd54f08a2d56b))
+* add debian package ([6f8e37f](https://github.com/jensvogt/awsmock-qt-ui/commit/6f8e37fc11a7a367ae7486192f07d34bf95f5c40))
+* add debian package ([e8d07fb](https://github.com/jensvogt/awsmock-qt-ui/commit/e8d07fb400cf01296aef9e8c0c3c7be4bcc1fea9))
+* add debian package ([98cbbdc](https://github.com/jensvogt/awsmock-qt-ui/commit/98cbbdc137f1615f181a9c78c19751ce918fe790))
+* add debian package ([b224cce](https://github.com/jensvogt/awsmock-qt-ui/commit/b224cce35cd85458b4e4f563aa014115727645b6))
+* add debian package ([b69085b](https://github.com/jensvogt/awsmock-qt-ui/commit/b69085ba03b9fdb56b6421dc4d22161190cc2bd3))
+
+
+### Bug Fixes
+
+* add lambda environment ([4b6e833](https://github.com/jensvogt/awsmock-qt-ui/commit/4b6e833c084258e8e736c65839961a8658faf078))
+
 ## [1.0.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.0.0...v1.0.1) (2025-11-26)
 
 
