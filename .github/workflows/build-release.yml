@@ -203,7 +203,7 @@ jobs:
           name: installer-macos
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
 
-  build-linux:
+  build-linux-installer:
     name: Build & Package (Linux)
     runs-on: ubuntu-22.04
     needs: version
@@ -259,6 +259,80 @@ jobs:
         with:
           name: installer-linux
           path: dist/*.AppImage
+
+  build-linux-deb:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Install dependencies
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev libx11-dev libxext-dev libxrender-dev dh-make fakeroot libcurl4-openssl-dev
+
+      # Step 3: Download Qt 6.10.1 (prebuilt binaries)
+      - name: Install Qt 6.10.1
+        run: |
+          mkdir -p $HOME/Qt6
+          wget https://download.qt.io/official_releases/qt/6.10/6.10.1/qt-opensource-linux-x64-6.10.1.run
+          chmod +x qt-opensource-linux-x64-6.10.1.run
+          ./qt-opensource-linux-x64-6.10.1.run --quiet --platform minimal --script qt-install-noninteractive.qs
+          export PATH=$HOME/Qt6/6.10.1/gcc_64/bin:$PATH
+          echo "Qt installed at $HOME/Qt6/6.10.1/gcc_64"
+
+      # Step 4: Build your application
+      - name: Build application
+        run: |
+          mkdir -p build
+          cd build
+          $HOME/Qt6/6.10.1/gcc_64/bin/qmake ../${APP_NAME}.pro
+          make
+
+      # Step 5: Prepare the .deb package directory
+      - name: Prepare package structure
+        run: |
+          mkdir -p deb_package/DEBIAN
+          mkdir -p deb_package/usr/local/bin
+          mkdir -p deb_package/usr/local/Qt6
+          
+          # Copy your app
+          cp build/${APP_NAME} deb_package/usr/local/bin/
+          
+          # Copy necessary Qt libraries (Qt runtime)
+          cp -r $HOME/Qt6/6.10.1/gcc_64/lib/* deb_package/usr/local/Qt6/
+          
+          # Copy plugins (platforms, imageformats)
+          mkdir -p deb_package/usr/local/Qt6/plugins
+          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/platforms deb_package/usr/local/Qt6/plugins/
+          cp -r $HOME/Qt6/6.10.1/gcc_64/plugins/imageformats deb_package/usr/local/Qt6/plugins/
+          
+          # Create control file
+          cat <<EOF > deb_package/DEBIAN/control
+          Package: ${APP_NAME}
+          Version: ${{ env.SEMVER }}
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Depends: libc6, libstdc++6
+          Maintainer: Jens Vogt <jens.vogt@opitz-consulting.com>
+          Description: Awsmock Qt UI
+          EOF
+
+      # Step 6: Build the .deb package
+      - name: Build .deb
+        run: |
+          dpkg-deb --build deb_package
+
+      # Step 7: Upload .deb artifact
+      - name: Upload .deb
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${APP_NAME}-${{ env.SEMVER }}.deb
+          path: deb_package.deb
 
   publish:
     name: Publish Release & Attach Installers
