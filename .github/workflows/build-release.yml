@@ -203,62 +203,62 @@ jobs:
           name: installer-macos
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
 
-  build-linux-installer:
-    name: Build & Package (Linux Installer)
-    runs-on: ubuntu-22.04
-    needs: version
-    env:
-      BUILD_DIR: "${{ github.workspace }}/build-linux"
-      SEMVER: ${{ needs.version.outputs.semver }}
-      INSTALLER_DIR: "${{ github.workspace }}/installer"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libcurl4-openssl-dev
-
-      - name: Install Qt via install-qt-action
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{ env.QT_VERSION }}
-          modules: "qtcharts qtimageformats"
-          install-deps: true
-
-      - name: Configure (Linux)
-        shell: bash
-        run: |
-          mkdir -p $BUILD_DIR
-          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build (Linux)
-        shell: bash
-        run: |
-          cmake --build $BUILD_DIR --parallel $(nproc)
-
-      - name: Download linuxdeployqt (AppImage builder)
-        shell: bash
-        run: |
-          curl -L -o linuxdeployqt.AppImage "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-          chmod +x linuxdeployqt.AppImage
-
-      - name: Create AppImage
-        shell: bash
-        run: |
-          APP_BUNDLE_DIR="$BUILD_DIR/${APP_NAME}.AppDir"
-          ./linuxdeployqt.AppImage "$BUILD_DIR/$APP_NAME" -appimage -qmake=$(which qmake) || true
-          mkdir -p dist
-          mv *.AppImage dist/ || true
-
-      - name: Upload Linux AppImage
-        uses: actions/upload-artifact@v4
-        with:
-          name: installer-linux
-          path: dist/*.AppImage
+  #  build-linux-installer:
+  #    name: Build & Package (Linux Installer)
+  #    runs-on: ubuntu-22.04
+  #    needs: version
+  #    env:
+  #      BUILD_DIR: "${{ github.workspace }}/build-linux"
+  #      SEMVER: ${{ needs.version.outputs.semver }}
+  #      INSTALLER_DIR: "${{ github.workspace }}/installer"
+  #    steps:
+  #      - name: Checkout
+  #        uses: actions/checkout@v4
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      - name: Install system dependencies
+  #        run: |
+  #          sudo apt-get update
+  #          sudo apt-get install -y libgl1-mesa-dev libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libcurl4-openssl-dev
+  #
+  #      - name: Install Qt via install-qt-action
+  #        uses: jurplel/install-qt-action@v4
+  #        with:
+  #          version: ${{ env.QT_VERSION }}
+  #          modules: "qtcharts qtimageformats"
+  #          install-deps: true
+  #
+  #      - name: Configure (Linux)
+  #        shell: bash
+  #        run: |
+  #          mkdir -p $BUILD_DIR
+  #          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+  #
+  #      - name: Build (Linux)
+  #        shell: bash
+  #        run: |
+  #          cmake --build $BUILD_DIR --parallel $(nproc)
+  #
+  #      - name: Download linuxdeployqt (AppImage builder)
+  #        shell: bash
+  #        run: |
+  #          curl -L -o linuxdeployqt.AppImage "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  #          chmod +x linuxdeployqt.AppImage
+  #
+  #      - name: Create AppImage
+  #        shell: bash
+  #        run: |
+  #          APP_BUNDLE_DIR="$BUILD_DIR/${APP_NAME}.AppDir"
+  #          ./linuxdeployqt.AppImage "$BUILD_DIR/$APP_NAME" -appimage -qmake=$(which qmake) || true
+  #          mkdir -p dist
+  #          mv *.AppImage dist/ || true
+  #
+  #      - name: Upload Linux AppImage
+  #        uses: actions/upload-artifact@v4
+  #        with:
+  #          name: installer-linux
+  #          path: dist/*.AppImage
 
   build-linux-deb:
     name: Build & Package (Linux Debian package)
@@ -316,6 +316,7 @@ jobs:
           mkdir -p deb_package/usr/local/awsmock-qt-ui/plugins
           cp -r $QT_ROOT_DIR/plugins/platforms deb_package/usr/local/awsmock-qt-ui/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats deb_package/usr/local/awsmock-qt-ui/plugins/
+          cp -r dist/etc/${APP_NAME}.json deb_package/usr/local/awsmock-qt-ui/etc
           
           # Create Qt conf
           cat << EOF > deb_package/usr/local/awsmock-qt-ui/bin/qt.conf
@@ -338,19 +339,111 @@ jobs:
       # Step 6: Build the .deb package
       - name: Build .deb
         run: |
-          dpkg-deb --build deb_package
+          dpkg-deb --build ./deb_package ${APP_NAME}-${SEMVER}.deb
 
       # Step 7: Upload .deb artifact
       - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
           name: deb-package-linux
-          path: deb_package.deb
+          path: ${APP_NAME}-${SEMVER}.deb
+
+  build-linux-rpm:
+    runs-on: ubuntu-22.04
+    needs: version
+    env:
+      BUILD_DIR: "${{ github.workspace }}/build-linux"
+      SEMVER: ${{ needs.version.outputs.semver }}
+      INSTALLER_DIR: "${{ github.workspace }}/installer"
+
+    container:
+      image: fedora:40
+
+    steps:
+      # Step 1: Check out repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Step 2: Install RPM build dependencies
+      - name: Install build tools
+        run: |
+          dnf install -y rpm-build rpmdevtools gcc gcc-c++ make cmake git libcurl4-openssl-dev
+
+      - name: Install Qt via install-qt-action
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          modules: "qtcharts qtimageformats"
+          install-deps: true
+
+      - name: Configure (Linux)
+        shell: bash
+        run: |
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (Linux)
+        shell: bash
+        run: |
+          cmake --build $BUILD_DIR --parallel $(nproc)
+
+      # Step 5: Create SPEC file
+      - name: Create SPEC file
+        run: |
+          cat << 'EOF' > ~/rpmbuild/SPECS/${APP_NAME}.spec
+          Name:           ${APP_NAME}
+          Version:        ${SEMVER}
+          Release:        1%{?dist}
+          Summary:        Awsmock QT UI
+          License:        MIT
+          URL:            https://github.com/jensvogt/awsmock-qt-ui          
+          Source0:        %{name}-%{version}.tar.gz          
+          BuildRequires:  gcc, gcc-c++, make
+          Requires:       libc.so.6
+          %description
+          Awsmock Qt UI
+          
+          %prep
+          %setup -q
+          
+          %build
+          make -j$(nproc)
+          
+          %install
+          mkdir -p %{buildroot}/usr/local/awsmock-qt-ui
+          mkdir -p %{buildroot}/usr/local/awsmock-qt-ui/bin
+          mkdir -p %{buildroot}/usr/local/awsmock-qt-ui/etc
+          install -m 755 ${APP_NAME} %{buildroot}/usr/local/awsmock-qt-ui/bin/${APP_NAME}
+          
+          %files
+          /usr/local/awsmock-qt-ui/bin/${APP_NAME}
+          
+          %changelog
+          * Thu Nov 27 2025 Jens Vogt <jens.vogt@opitz-consulting.com> - ${SEMVER}
+          - Initial build
+          EOF
+
+      # Step 6: Create source tarball
+      - name: Create source tarball
+        run: |
+          tar czf ~/rpmbuild/SOURCES/${APP_NAME}-${SEMVER}.tar.gz .
+
+      # Step 7: Build the RPM
+      - name: Build RPM
+        run: |
+          rpmbuild -ba ~/rpmbuild/SPECS/${APP_NAME}.spec
+
+      # Step 8: Upload built RPM
+      - name: Upload RPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${APP_NAME}-rpm
+          path: ~/rpmbuild/RPMS/**/*.rpm
 
   publish:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
-    needs: [ build-windows, build-macos, build-linux-installer, build-linux-deb ]
+    needs: [ build-windows, build-macos, build-linux-rpm, build-linux-deb ]
     env:
       SEMVER: ${{ needs.version.outputs.semver }}
     steps:
@@ -371,16 +464,22 @@ jobs:
           name: installer-macos
           path: artifacts/macos
 
-      - name: Download Linux installer
-        uses: actions/download-artifact@v4
-        with:
-          name: installer-linux
-          path: artifacts/linux
+      #      - name: Download Linux installer
+      #        uses: actions/download-artifact@v4
+      #        with:
+      #          name: installer-linux
+      #          path: artifacts/linux
 
       - name: Download Linux Debian package
         uses: actions/download-artifact@v4
         with:
           name: deb-package-linux
+          path: artifacts/linux
+
+      - name: Download Linux RPM package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${APP_NAME}-rpm
           path: artifacts/linux
 
       - name: Create GitHub Release (attach installers)
@@ -389,8 +488,8 @@ jobs:
           files: |
             artifacts/windows/*.exe
             artifacts/macos/*.dmg
-            artifacts/linux/*.AppImage
             artifacts/linux/*.deb
+            artifacts/linux/*.rpm
           name: Release ${{ env.SEMVER }}
           tag_name: v${{ env.SEMVER }}
           body: "Automated release for ${{ env.SEMVER }}"
