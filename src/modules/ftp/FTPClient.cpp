@@ -50,7 +50,7 @@ namespace embeddedmz {
       if (m_pCurlSession != nullptr) {
          if (m_eSettingsFlags & ENABLE_LOG) m_oLog(LOG_WARNING_OBJECT_NOT_CLEANED);
 
-         CleanupSession();
+         CFTPClient::CleanupSession();
       }
    }
 
@@ -625,12 +625,10 @@ namespace embeddedmz {
 
       std::ofstream ofsOutput;
       ofsOutput.open(
-#ifdef __GLIBC_LINUX_VERSION_CODE
-         strLocalFile, // UTF-8
-#elif defined(__APPLE__) && defined(__MACH__)
-         strLocalFile, // UTF-8
+#ifdef WIN32
+      Utf8ToUtf16(strLocalFile),
 #else
-         Utf8ToUtf16(strLocalFile),
+         strLocalFile, // UTF-8
 #endif
          std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
 
@@ -722,10 +720,10 @@ namespace embeddedmz {
       bool bRet = false;
 
       WildcardTransfersCallbackData data;
-#ifdef LINUX
-      data.strOutputPath = strLocalDir + ((strLocalDir.back() != '/') ? "/" : "");
-#else
+#ifdef WIN32
       data.strOutputPath = strLocalDir + ((strLocalDir.back() != '\\') ? "\\" : "");
+#else
+      data.strOutputPath = strLocalDir + ((strLocalDir.back() != '/') ? "/" : "");
 #endif
 
       std::string strPattern = ParseURL(strRemoteWildcard);
@@ -907,18 +905,15 @@ namespace embeddedmz {
       bool bRes = false;
 
       /* get the file size of the local file */
-#ifdef __GLIBC_LINUX_VERSION_CODE
-      if (stat(strLocalFile.c_str(), &file_info) == 0) {
-         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
-#elif defined(__APPLE__) && defined(__MACH__)
-      if (stat(strLocalFile.c_str(), &file_info) == 0) {
-         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
-#else
+#ifdef WIN32
 
       static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
       std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
       if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
          InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
+#else
+      if (stat(strLocalFile.c_str(), &file_info) == 0) {
+         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #endif
          if (!InputFile) {
             if (m_eSettingsFlags & ENABLE_LOG) m_oLog(StringFormat(LOG_ERROR_FILE_UPLOAD_FORMAT, strLocalFile.c_str()));
@@ -953,17 +948,14 @@ namespace embeddedmz {
       bool bRes = false;
 
       /* get the file size of the local file */
-#ifdef __GLIBC_LINUX_VERSION_CODE
-      if (stat(strLocalFile.c_str(), &file_info) == 0) {
-         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
-#elif defined(__APPLE__) && defined(__MACH__)
-      if (stat(strLocalFile.c_str(), &file_info) == 0) {
-         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
-#else
+#ifdef WIN32
       static_assert(sizeof(struct stat) == sizeof(struct _stat64i32), "Oh oh !");
       std::wstring wstrLocalFile = Utf8ToUtf16(strLocalFile);
       if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
          InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
+#else
+         if (stat(strLocalFile.c_str(), &file_info) == 0) {
+         InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #endif
          if (!InputFile) {
             if (m_eSettingsFlags & ENABLE_LOG) m_oLog(StringFormat(LOG_ERROR_FILE_UPLOAD_FORMAT, strLocalFile.c_str()));
@@ -1272,12 +1264,10 @@ namespace embeddedmz {
          case CURLFILETYPE_DIRECTORY:
             // printf(" DIR\n");
             data->vecDirList.push_back(finfo->filename);
-#ifdef __GLIBC_LINUX_VERSION_CODE
-            if (mkdir((data->strOutputPath + finfo->filename).c_str(), ACCESSPERMS) != 0 && errno != EEXIST)
-#elif defined(__APPLE__) && defined(__MACH__)
-            if (mkdir((data->strOutputPath + finfo->filename).c_str(), ACCESSPERMS) != 0 && errno != EEXIST)
-#else
+#ifdef WIN32
             if (_mkdir((data->strOutputPath + finfo->filename).c_str()) != 0 && errno != EEXIST)
+#else
+            if (mkdir((data->strOutputPath + finfo->filename).c_str(), ACCESSPERMS) != 0 && errno != EEXIST)
 #endif
             {
                std::cerr << "Problem creating directory (errno=" << errno << "): " << data->strOutputPath + finfo->
@@ -1312,12 +1302,10 @@ namespace embeddedmz {
             // return CURL_CHUNK_BGN_FUNC_SKIP;
             //}
             data->ofsOutput.open(
-#ifdef __GLIBC_LINUX_VERSION_CODE
-               data->strOutputPath + finfo->filename,
-#elif defined(__APPLE__) && defined(__MACH__)
-               data->strOutputPath + finfo->filename,
-#else
+#ifdef WIN32
                Utf8ToUtf16(data->strOutputPath + finfo->filename),
+#else
+               data->strOutputPath + finfo->filename,
 #endif
                std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
             if (!data->ofsOutput.is_open()) {
