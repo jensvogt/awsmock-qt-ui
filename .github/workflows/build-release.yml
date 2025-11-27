@@ -388,7 +388,7 @@ jobs:
 
       - name: Build RPM
         run: |
-          rpmbuild -D "_version ${{ needs.build-linux-deb.outputs.appversion }}" -ba ~/rpmbuild/SPECS/${APP_NAME}.spec
+          rpmbuild -D "_version ${{ needs.release-please.outputs.tag_name }}" -ba ~/rpmbuild/SPECS/${APP_NAME}.spec
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4
