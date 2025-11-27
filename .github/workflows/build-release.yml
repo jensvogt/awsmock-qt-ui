@@ -349,6 +349,7 @@ jobs:
           path: ${APP_NAME}-${SEMVER}.deb
 
   build-linux-rpm:
+    name: Build & Package (Linux RPM package)
     runs-on: ubuntu-22.04
     needs: version
     env:
@@ -367,7 +368,7 @@ jobs:
       # Step 2: Install RPM build dependencies
       - name: Install build tools
         run: |
-          dnf install -y rpm-build rpmdevtools gcc gcc-c++ make cmake git libcurl4-openssl-dev
+          dnf install -y rpm-build rpmdevtools gcc gcc-c++ make cmake git libcurl-devel
 
       - name: Install Qt via install-qt-action
         uses: jurplel/install-qt-action@v4
