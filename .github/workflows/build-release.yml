@@ -23,13 +23,11 @@ jobs:
 
       - name: Setup GitVersion
         uses: GitTools/actions/gitversion/setup@v4
-        with:
-          versionSpec: '5.x'
 
-      - name: Determine version
-        uses: GitTools/actions/gitversion/execute@v4
+      - name: Get version from GitVersion
         id: getver
-      
+        uses: GitTools/actions/gitversion/execute@v4
+
       - name: Show computed version
         run: |
           echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
