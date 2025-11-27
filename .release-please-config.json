@@ -1,11 +1,13 @@
 {
   "release-type": "simple",
+  "include-merges": true,
   "packages": {
     ".": {
       "release-type": "simple",
       "bump-minor-pre-major": true,
-      "version-file": "include/Version.h",
       "include-component-in-tag": false,
+      "version-file": "include/Version.h",
+      "pull-request-title-pattern": "Merge pull request #(?<pr>\\d+)",
       "extra-files": [
         {
           "type": "generic",
