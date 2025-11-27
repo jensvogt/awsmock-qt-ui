@@ -76,10 +76,10 @@ jobs:
       QT_DIR: "${{ github.workspace }}\\Qt"
       BUILD_DIR: "${{ github.workspace }}\\build-windows"
       INSTALLER_DIR: "${{ github.workspace }}\\installer"
-      QT_VERSION: ${{ env.QT_VERSION }}
-      APP_NAME: ${{ env.APP_NAME }}
-      INSTALLER_ID: ${{ env.INSTALLER_ID }}
-      SEMVER: ${{ needs.version.outputs.semver }}
+      QT_VERSION: "${{ env.QT_VERSION }}"
+      APP_NAME: "${{ env.APP_NAME }}"
+      INSTALLER_ID: "${{ env.INSTALLER_ID }}"
+      SEMVER: "${{ needs.version.outputs.semver }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
