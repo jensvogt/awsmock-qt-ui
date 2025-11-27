@@ -173,7 +173,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p $BUILD_DIR
-          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{ runner.tool_cache }}/Qt/${{ env.QT_VERSION }}/macos"
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -Qt6_DIR="${{ runner.tool_cache }}/Qt/${{ env.QT_VERSION }}/macos/lib/cmake/Qt6"
 
       - name: Build (macOS)
         shell: bash
