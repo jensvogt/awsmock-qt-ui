@@ -8,16 +8,26 @@
 #include "ui_LambdaEnvironmentDetailDialog.h"
 
 
-LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(const QString &key, const QString &value, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
+LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(const QString &key, const QString &value, bool add, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
 
     // Setup dialog
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaEnvironmentDetailDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &LambdaEnvironmentDetailDialog::HandleReject);
 
+    // Key field
+    if (!add) {
+        _ui->keyEdit->setText(key);
+        _ui->keyEdit->setDisabled(true);
+    }
     connect(_ui->keyEdit, &QLineEdit::textChanged, this, [this]() {
         _key = _ui->keyEdit->text();
     });
+
+    // Value field
+    if (!add) {
+        _ui->valueEdit->setText(value);
+    }
     connect(_ui->valueEdit, &QLineEdit::textChanged, this, [this]() {
         _value = _ui->valueEdit->text();
     });

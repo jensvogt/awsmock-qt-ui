@@ -368,16 +368,19 @@ jobs:
 
       - name: Write SPEC file
         run: |
-          cat > ~/rpmbuild/SPECS/${APP_NAME}.spec << 'EOF'
-          Name:           ${APP_NAME}
-          Version:        %{_version}
-          Release:        1%{?dist}
-          Summary:        AWS Mock UI Application
-          License:        MIT
-          Source0:        ${APP_NAME}-%{_version}.tar.gz
+          APP_NAME_EXPANDED=${APP_NAME}
+          VERSION_EXPANDED=${{ needs.build-linux-deb.outputs.appversion }}
+
+          cat > ~/rpmbuild/SPECS/${APP_NAME_EXPANDED}.spec <<EOF
+          Name: ${APP_NAME_EXPANDED}
+          Version: ${VERSION_EXPANDED}
+          Release: 1%{?dist}
+          Summary: AWS Mock UI Application
+          License: MIT
+          Source0: ${APP_NAME_EXPANDED}-%{_version}.tar.gz
           
-          BuildRequires:  libcurl-devel
-          Requires:       libcurl
+          BuildRequires: libcurl-devel
+          Requires: libcurl
           
           %description
           AWS mock application with Qt UI.
