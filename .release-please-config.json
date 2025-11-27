@@ -3,7 +3,7 @@
   "release-type": "simple",
   "include-component-in-tag": false,
   "include-v-in-tag": false,
-  "initial-version": "1.0.26",
+  "initial-version": "1.0.1",
   "changelog-path": "CHANGELOG.md",
   "version-file": "version.txt",
   "changelog-sections": [
