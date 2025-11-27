@@ -37,7 +37,7 @@ jobs:
 
       - name: Generate include/Version.h from template
         run: |
-          python3 scripts/generate_version_header.py \
+          python3 dist/generate_version_header.py \
             "${{ steps.getver.outputs.Major }}" \
             "${{ steps.getver.outputs.Minor }}" \
             "${{ steps.getver.outputs.Patch }}"
