@@ -122,7 +122,7 @@ jobs:
       - name: Deploy Qt runtime with windeployqt (into installer data folder)
         shell: powershell
         run: |
-          $exe = Join-Path $env:BUILD_DIR "Release\$env:APP_NAME.exe"
+          $exe = Join-Path $env:BUILD_DIR "$env:APP_NAME.exe"
           $dataDir = Join-Path $env:INSTALLER_DIR "packages\$env:INSTALLER_ID\data"
           New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
@@ -163,7 +163,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: "qtcharts,qtimageformats,qtsvg,qttools"
+          modules: "qtcharts,qtimageformats"
           install-deps: true
 
       - name: Configure (macOS)
