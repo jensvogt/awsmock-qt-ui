@@ -2,11 +2,9 @@
 // Created by vogje01 on 11/25/25.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_LambdaDetailsDialog.h" resolved
-
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include "ui_LambdaDetailsDialog.h"
-#include "dto/lambda/LambdaListEnvironmentResponse.h"
+#include "modules/lambda/LambdaEnvironmentDetailDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
     _lambdaService = new LambdaService();
@@ -108,7 +106,13 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     _ui->environmentAddButton->setText(nullptr);
     _ui->environmentAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->environmentAddButton, &QPushButton::clicked, [this]() {
-        qDebug() << "Add button clicked";
+        if (LambdaEnvironmentDetailDialog dialog(nullptr, nullptr); dialog.exec() == Accepted) {
+            const int newRowIndex = _ui->environmentTable->rowCount();
+            _ui->environmentTable->insertRow(newRowIndex);
+            SetColumn(_ui->environmentTable, newRowIndex, 0, dialog.GetKey());
+            SetColumn(_ui->environmentTable, newRowIndex, 1, dialog.GetValue());
+            _lambdaService->AddLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+        }
     });
 
     // Refresh button
@@ -133,6 +137,7 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     _ui->environmentTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->environmentTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 }
+
 
 void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
 

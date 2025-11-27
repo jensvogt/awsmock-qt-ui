@@ -9,8 +9,10 @@
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
-#include <modules/lambda/LambdaService.h>
 #include <dto/lambda/LambdaGetResponse.h>
+#include <dto/lambda/LambdaListEnvironmentResponse.h>
+#include <modules/lambda/LambdaService.h>
+#include <modules/lambda/LambdaEnvironmentDetailDialog.h>
 
 QT_BEGIN_NAMESPACE
 

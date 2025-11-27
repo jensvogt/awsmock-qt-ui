@@ -62,6 +62,8 @@ public:
 
     void GetLambdaEnvironment(const QString &lambdaArn);
 
+    void AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
+
     //void UpdateLambda(const Lambda &lambda);
 
     //void EnableLambda(const QString &name);
@@ -148,6 +150,11 @@ signals:
      * @brief Reload all lambdas signal
      */
     void LoadAllLambdas();
+
+    /**
+     * @brief Reload all environment signal
+     */
+    void LoadLambdaEnvironment();
 
 private:
     /**

@@ -167,9 +167,9 @@ set(PROJECT_SOURCES
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
         cmake/version.h.in
-        src/modules/lambda/LambdaEnvironmentAddDialog.cpp
-        include/modules/lambda/LambdaEnvironmentAddDialog.h
-        src/modules/lambda/LambdaEnvironmentAddDialog.ui
+        src/modules/lambda/LambdaEnvironmentDetailDialog.cpp
+        include/modules/lambda/LambdaEnvironmentDetailDialog.h
+        src/modules/lambda/LambdaEnvironmentDetailDialog.ui
 )
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
