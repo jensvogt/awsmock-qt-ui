@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.0...v1.4.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* lambda environment sorting ([45f6cce](https://github.com/jensvogt/awsmock-qt-ui/commit/45f6ccebdeba06498cd230939d97ade2f13a7f9c))
+
 ## [1.4.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.3.0...v1.4.0) (2025-11-27)
 
 
