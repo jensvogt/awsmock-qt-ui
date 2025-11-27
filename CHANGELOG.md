@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.1.0...v1.2.0) (2025-11-27)
+
+
+### Features
+
+* add debian package ([54ee0c5](https://github.com/jensvogt/awsmock-qt-ui/commit/54ee0c5ed6621a24cd06f724d87a7b646825751e))
+
 ## [1.1.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.0.1...v1.1.0) (2025-11-27)
 
 
