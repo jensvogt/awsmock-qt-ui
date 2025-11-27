@@ -98,7 +98,7 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
     }
     _ui->instanceTable->setRowCount(static_cast<int>(listInstancesResponse.lambdaInstanceCounters.count()));
     _ui->instanceTable->setSortingEnabled(true);
-    //_ui->instanceTable->sortItems(_sortColumn, _sortOrder);
+    _ui->instanceTable->sortItems(_instanceSortColumn, _instanceSortOrder);
     _ui->instanceTable->selectRow(selectedRow);
 }
 
@@ -137,7 +137,7 @@ void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentRes
     }
     _ui->environmentTable->setRowCount(r);
     _ui->environmentTable->setSortingEnabled(true);
-    //_ui->instanceTable->sortItems(_sortColumn, _sortOrder);
+    _ui->instanceTable->sortItems(_environmentSortColumn, _environmentSortOrder);
     _ui->environmentTable->selectRow(selectedRow);
 }
 
