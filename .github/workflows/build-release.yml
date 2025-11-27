@@ -395,7 +395,7 @@ jobs:
 
       - name: Build RPM with fpm
         run: |
-          fpm -s dir -t rpm --name "${APP_NAME}" --version "${SEMVER}" --package "${APP_NAME}-${SEMVER}-amd64.rpm" usr/local/awsmock-qt-ui/
+          fpm -s dir -t rpm --name "${APP_NAME}" --version "${SEMVER}" --package "${APP_NAME}-${SEMVER}-amd64.rpm" usr
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4
