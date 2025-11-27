@@ -106,7 +106,7 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     _ui->environmentAddButton->setText(nullptr);
     _ui->environmentAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->environmentAddButton, &QPushButton::clicked, [this]() {
-        if (LambdaEnvironmentDetailDialog dialog(nullptr, nullptr); dialog.exec() == Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog("", "", true); dialog.exec() == Accepted) {
             const int newRowIndex = _ui->environmentTable->rowCount();
             _ui->environmentTable->insertRow(newRowIndex);
             SetColumn(_ui->environmentTable, newRowIndex, 0, dialog.GetKey());
@@ -136,6 +136,23 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     _ui->environmentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->environmentTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->environmentTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+
+    // Connect double-click
+    connect(_ui->environmentTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
+
+        // Extract ARN and URL
+        const QString key = _ui->environmentTable->item(row, 0)->text();
+        const QString value = _ui->environmentTable->item(row, 1)->text();
+
+        if (LambdaEnvironmentDetailDialog dialog(key, value, false); dialog.exec() == Accepted) {
+            SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
+            //_lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+        }
+    });
+
 }
 
 
