@@ -162,10 +162,19 @@ jobs:
       - name: Install Qt via aqtinstall
         shell: bash
         run: |
+          python3 -m venv ~/venv
+          source ~/venv/bin/activate
           python3 -m pip install --upgrade pip
-          python3 -m pip install -U aqtinstall
+          python3 -m pip install aqtinstall
+
+          # Install Qt modules
           ARCH="arm64"
-          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats
+          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH \
+            --outputdir "$HOME/Qt" \
+            --modules qtcharts qtimageformats
+
+          # Verify installation
+          ls -R "$HOME/Qt/6.10.1/$ARCH"
 
       - name: Configure (macOS)
         shell: bash
