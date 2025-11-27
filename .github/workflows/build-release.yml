@@ -344,7 +344,7 @@ jobs:
       - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
-          name: ${APP_NAME}-${{ env.SEMVER }}.deb
+          name: deb-package-linux
           path: deb_package.deb
 
   publish:
@@ -380,7 +380,7 @@ jobs:
       - name: Download Linux Debian package
         uses: actions/download-artifact@v4
         with:
-          name: ${APP_NAME}-${{ env.SEMVER }}.deb
+          name: deb-package-linux
           path: artifacts/linux
 
       - name: Create GitHub Release (attach installers)
