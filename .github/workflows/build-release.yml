@@ -238,7 +238,7 @@ jobs:
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     outputs:
-      appversion: ${{ steps.get_version.outputs.version }}
+      appversion: ${{ needs.get_version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -253,6 +253,10 @@ jobs:
 
       - name: Normalize VERSION
         run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+
+      - name: Get version
+        id: get_version
+        run: echo "${SEMVER#v}"
 
       - name: Install Qt via install-qt-action
         uses: jurplel/install-qt-action@v4
@@ -388,7 +392,7 @@ jobs:
 
       - name: Build RPM
         run: |
-          rpmbuild -D "_version ${{ needs.release-please.outputs.tag_name }}" -ba ~/rpmbuild/SPECS/${APP_NAME}.spec
+          rpmbuild -D "_version ${{ needs.build-linux-deb.outputs.appversion }}" -ba ~/rpmbuild/SPECS/${APP_NAME}.spec
 
       - name: Upload RPM
         uses: actions/upload-artifact@v4
