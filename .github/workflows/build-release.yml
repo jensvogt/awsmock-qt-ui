@@ -341,14 +341,13 @@ jobs:
           path: ${APP_NAME}-${SEMVER}.deb
 
   build-linux-rpm:
-    name: Build RPM on Fedora
+    name: Build & Package (Linux RPM package)
     runs-on: ubuntu-latest
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-linux"
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
-      INSTALLER_DIR: "${{ github.workspace }}/installer"
 
     steps:
       - uses: actions/checkout@v4
@@ -402,7 +401,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rpm-package-linux
-          path: /github/home/rpmbuild/RPMS/**/*.rpm
+          path: rpmbuild/RPMS/**/*.rpm
 
   publish:
     name: Publish Release & Attach Installers
