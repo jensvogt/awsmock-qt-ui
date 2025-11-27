@@ -375,6 +375,12 @@ jobs:
           name: installer-linux
           path: artifacts/linux
 
+      - name: Download Linux Debian package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${APP_NAME}-${{ env.SEMVER }}.deb
+          path: artifacts/linux
+
       - name: Create GitHub Release (attach installers)
         uses: softprops/action-gh-release@v2
         with:
@@ -382,6 +388,7 @@ jobs:
             artifacts/windows/*.exe
             artifacts/macos/*.dmg
             artifacts/linux/*.AppImage
+            artifacts/linux/*.deb
           name: Release ${{ needs.version.outputs.semver }}
           tag_name: v${{ needs.version.outputs.semver }}
           body: "Automated release for ${{ needs.version.outputs.semver }}"
