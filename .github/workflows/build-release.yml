@@ -300,6 +300,18 @@ jobs:
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
 
+      - name: Create tarball for RPM stage
+        run: |
+          mkdir package
+          cp -r build package/usr
+          tar -czf app-binaries.tar.gz package
+
+      - name: Upload tarball for RPM job
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-binaries
+          path: app-binaries.tar.gz
+
       # Step 5: Prepare the .deb package directory
       - name: Prepare package structure
         run: |
