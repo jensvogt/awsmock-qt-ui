@@ -275,6 +275,13 @@
              </spacer>
             </item>
             <item>
+             <widget class="QPushButton" name="environmentAddButton">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="environmentRefreshButton">
               <property name="text">
                <string>PushButton</string>

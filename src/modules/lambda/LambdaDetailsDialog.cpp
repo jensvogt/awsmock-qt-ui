@@ -103,9 +103,20 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
 }
 
 void LambdaDetailsDialog::SetupEnvironmentTab() const {
+
+    // Add button
+    _ui->environmentAddButton->setText(nullptr);
+    _ui->environmentAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->environmentAddButton, &QPushButton::clicked, [this]() {
+        qDebug() << "Add button clicked";
+    });
+
     // Refresh button
     _ui->environmentRefreshButton->setText(nullptr);
     _ui->environmentRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->environmentRefreshButton, &QPushButton::clicked, [this]() {
+        _lambdaService->GetLambdaEnvironment(_lambdaArn);
+    });
 
     // Send request
     _lambdaService->GetLambdaEnvironment(_lambdaArn);
@@ -124,6 +135,7 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
 }
 
 void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
+
     const int selectedRow = _ui->environmentTable->selectionModel()->currentIndex().row();
     _ui->environmentTable->setRowCount(0);
     _ui->environmentTable->setSortingEnabled(false);
