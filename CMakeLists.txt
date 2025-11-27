@@ -173,6 +173,9 @@ set(PROJECT_SOURCES
         src/modules/s3/S3ObjectMetadataDetailsDialog.cpp
         include/modules/s3/S3ObjectMetadataDetailsDialog.h
         src/modules/s3/S3ObjectMetadataDetailsDialog.ui
+        src/modules/lambda/LambdaLogsDialog.cpp
+        include/modules/lambda/LambdaLogsDialog.h
+        src/modules/lambda/LambdaLogsDialog.ui
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

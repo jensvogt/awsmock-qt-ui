@@ -2,6 +2,7 @@
 #include <modules/lambda/LambdaList.h>
 
 #include "modules/lambda/LambdaDetailsDialog.h"
+#include "modules/lambda/LambdaLogsDialog.h"
 
 //#include "modules/lambda/LambdaLogsDialog.h"
 
@@ -227,10 +228,10 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         //LambdaEditDialog dialog(name);
         //dialog.exec();
     } else if (selectedAction == logsAction) {
-        //auto *dialog = new LambdaLogsDialog(name, containerId);
-        //dialog->setModal(false);
-        //dialog->setAttribute(Qt::WA_DeleteOnClose);
-        //dialog->show();
+        auto *dialog = new LambdaLogsDialog(name, containerId);
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
     } else if (selectedAction == startAction) {
         // _lambdaService->StartLambda(name);
     } else if (selectedAction == enableAction) {
