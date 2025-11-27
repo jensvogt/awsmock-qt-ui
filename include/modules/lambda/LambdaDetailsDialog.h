@@ -40,6 +40,10 @@ public:
 
     void UpdateLambdaInstances(const LambdaListInstancesResponse &listInstancesResponse) const;
 
+    void SetupEnvironmentTab() const;
+
+    void UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const;
+
     void HandleAccept();
 
     void HandleReject();
