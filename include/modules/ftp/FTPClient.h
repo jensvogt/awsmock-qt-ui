@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <cstring>  // strerror, strlen, memcpy, strcpy
 #include <ctime>
-#ifndef Q_OS_LINUX
+#if !defined(Q_OS_LINUX) && !defined(Q_OS_MAC)
 #include <direct.h>  // mkdir
 #endif
 #include <stdarg.h>  // va_start, etc.
