@@ -195,3 +195,55 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
                           }
                       });
 }
+
+void LambdaService::GetLambdaLogs(const QString &oid) {
+
+    QJsonObject jRequest;
+    jRequest["oid"] = oid;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "get-lambda-result-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  LambdaListEnvironmentResponse lambdaResponse;
+                                  lambdaResponse.FromJson(jsonDoc);
+                                  emit ListLambdaEnvironmentSignal(lambdaResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                              //emit ListLambdaLogsSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+void LambdaService::DeleteLambda(const QString &name) {
+
+    QJsonObject jRequest;
+    jRequest["FunctionName"] = name;
+    jRequest["Qualifier"] = "";
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "delete-function"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadLambdaEnvironment();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}

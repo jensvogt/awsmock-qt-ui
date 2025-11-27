@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>LambdaLOgsDialog</string>
+   <string>Lambda Log Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
