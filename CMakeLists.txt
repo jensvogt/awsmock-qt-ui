@@ -25,20 +25,6 @@ else ()
     set(CURL_LIB_DIRS "")
 endif ()
 
-# ----------------------------
-# Version extraction
-# ----------------------------
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" VERSION_HEADER)
-
-string(REGEX MATCH "#define AWSMOCK_UI_VERSION_MAJOR ([0-9]+)" _ "${VERSION_HEADER}")
-set(PROJECT_VERSION_MAJOR "${CMAKE_MATCH_1}")
-string(REGEX MATCH "#define AWSMOCK_UI_VERSION_MINOR ([0-9]+)" _ "${VERSION_HEADER}")
-set(PROJECT_VERSION_MINOR "${CMAKE_MATCH_1}")
-string(REGEX MATCH "#define AWSMOCK_UI_VERSION_PATCH ([0-9]+)" _ "${VERSION_HEADER}")
-set(PROJECT_VERSION_PATCH "${CMAKE_MATCH_1}")
-
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-message(STATUS "Building AWS Mock UI version: ${PROJECT_VERSION}")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg)
 
@@ -170,6 +156,7 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPClient.cpp
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
+        include/utils/Version.h.in
 )
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
