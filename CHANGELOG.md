@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.4...v1.4.5) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([9020ff5](https://github.com/jensvogt/awsmock-qt-ui/commit/9020ff5b8d194f2f0b6b08f44480a046d81be93a))
+
 ## [1.4.4](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.3...v1.4.4) (2025-11-27)
 
 
