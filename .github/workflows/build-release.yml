@@ -159,14 +159,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Qt via install-qt-action
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{ env.QT_VERSION }}
-          modules: |
-            qtcharts
-            qtimageformats
-          install-deps: true
+      - name: Install Qt via aqtinstall
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -U aqtinstall
+          ARCH="arm64"
+          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats
 
       - name: Configure (macOS)
         shell: bash
@@ -225,9 +224,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: |
-            qtcharts
-            qtimageformats
+          modules: "qtcharts qtimageformats"
           install-deps: true
 
       - name: Configure (Linux)
