@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.23](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.22...v1.4.23) (2025-11-28)
+
+
+### Bug Fixes
+
+* add fpm ([1d45f2b](https://github.com/jensvogt/awsmock-qt-ui/commit/1d45f2bbd69cee9e91e86c24c7240167ea6a4fbd))
+* use fpm to create ubuntu deb package ([2dc57b2](https://github.com/jensvogt/awsmock-qt-ui/commit/2dc57b287b920a43892f0ad2a192777fa9977107))
+
 ## [1.4.22](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.21...v1.4.22) (2025-11-28)
 
 
