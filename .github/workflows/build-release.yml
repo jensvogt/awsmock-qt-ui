@@ -392,13 +392,17 @@ jobs:
 
       - name: Create site folder
         run: |
-          find .
           mkdir site
-          cp ./artifacts/installer-windows/*.exe site/ || true
-          cp ./artifacts/installer-macos/*.dmg site/ || true
-          cp ./artifacts/deb-package-linux/*.deb site/ || true
-          cp ./artifacts/rpm-package-linux/*.rpm site/ || true
+          cp artifacts/windows/*.exe site/ || true
+          cp artifacts/macos/*.dmg site/ || true
+          cp artifacts/linux/*.rpm site/ || true
+          cp artifacts/linux/*.deb site/ || true
           cp .github/pages/index.html site/index.html
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
 
       - name: Deploy to GitHub Pages
         id: deployment
