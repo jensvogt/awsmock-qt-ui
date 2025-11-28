@@ -181,6 +181,11 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaLogsDialog.cpp
         include/modules/lambda/LambdaLogsDialog.h
         src/modules/lambda/LambdaLogsDialog.ui
+        include/dto/lambda/LambdaListResultsResponse.h
+        include/dto/lambda/LambdaResultCounter.h
+        src/modules/lambda/LambdaResultListDialog.cpp
+        include/modules/lambda/LambdaResultListDialog.h
+        src/modules/lambda/LambdaResultListDialog.ui
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

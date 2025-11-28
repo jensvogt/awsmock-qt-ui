@@ -3,6 +3,7 @@
 
 #include "modules/lambda/LambdaDetailsDialog.h"
 #include "modules/lambda/LambdaLogsDialog.h"
+#include "modules/lambda/LambdaResultListDialog.h"
 
 //#include "modules/lambda/LambdaLogsDialog.h"
 
@@ -233,7 +234,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         LambdaDetailsDialog dialog(arn);
         dialog.exec();
     } else if (selectedAction == logsAction) {
-        auto *dialog = new LambdaLogsDialog(name, containerId);
+        auto *dialog = new LambdaResultListDialog(arn);
         dialog->setModal(false);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();

@@ -20,6 +20,7 @@
 #include <dto/lambda/LambdaGetResponse.h>
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
 #include <dto/lambda/LambdaListInstancesResponse.h>
+#include <dto/lambda/LambdaListResultsResponse.h>
 
 class LambdaService final : public QObject {
     Q_OBJECT
@@ -91,7 +92,7 @@ public:
 
     void ListLambdaLogs(const QString &lambdaArn);
 
-    void GetLambdaLogs(const QString &oid);
+    void GetLambdaResults(const QString &oid);
 
     /**
      * @brief Stop an lambdas
@@ -170,11 +171,11 @@ signals:
     void ListLambdaEnvironmentSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
 
     /**
-     * @brief List lambda logs signal
+     * @brief List lambda results signal
      *
-     * @param listEnvironmentResponse lambda environment list response
+     * @param listResultsResponse lambda results list response
      */
-    void ListLambdaLogsSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
+    void ListLambdaResultsSignal(const LambdaListResultsResponse &listResultsResponse);
 
     /**
      * @brief Reload all lambdas signal

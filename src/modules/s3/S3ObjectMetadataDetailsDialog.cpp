@@ -8,10 +8,22 @@
 #include "ui_S3ObjectMetadataDetailsDialog.h"
 
 
-S3ObjectMetadataDetailsDialog::S3ObjectMetadataDetailsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::S3ObjectMetadataDetailsDialog) {
-    ui->setupUi(this);
+S3ObjectMetadataDetailsDialog::S3ObjectMetadataDetailsDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::S3ObjectMetadataDetailsDialog) {
+    _ui->setupUi(this);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &S3ObjectMetadataDetailsDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &S3ObjectMetadataDetailsDialog::HandleReject);
+
 }
 
 S3ObjectMetadataDetailsDialog::~S3ObjectMetadataDetailsDialog() {
-    delete ui;
+    delete _ui;
+}
+
+void S3ObjectMetadataDetailsDialog::HandleAccept() {
+    accept();
+}
+
+
+void S3ObjectMetadataDetailsDialog::HandleReject() {
+    accept();
 }
