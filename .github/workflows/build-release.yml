@@ -389,10 +389,10 @@ jobs:
       - name: Create site folder
         run: |
           mkdir site
-          cp artifacts/windows/*.exe site/ || true
-          cp artifacts/macos/*.dmg site/ || true
-          cp artifacts/linux/*.rpm site/ || true
-          cp artifacts/linux/*.deb site/ || true
+          cp artifacts/*.exe site/ || true
+          cp artifacts/*.dmg site/ || true
+          cp artifacts/*.rpm site/ || true
+          cp artifacts/*.deb site/ || true
           cp .github/pages/index.html site/index.html
 
       - name: Deploy to GitHub Pages
