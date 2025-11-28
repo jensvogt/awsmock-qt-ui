@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.39](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.38...v1.4.39) (2025-11-28)
+
+
+### Bug Fixes
+
+* add lambda result list page ([88533ee](https://github.com/jensvogt/awsmock-qt-ui/commit/88533ee7c997f7200219b2cfa553b76a73a64b38))
+* add lambda result list page ([cf22125](https://github.com/jensvogt/awsmock-qt-ui/commit/cf2212511acf7560e087008af32ee9de14194c51))
+
 ## [1.4.38](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.37...v1.4.38) (2025-11-28)
 
 
