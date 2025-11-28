@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.28](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.27...v1.4.28) (2025-11-28)
+
+
+### Bug Fixes
+
+* add cmake version update script ([a922e42](https://github.com/jensvogt/awsmock-qt-ui/commit/a922e427e260509d110d74805847de24716888fe))
+* add cmake version update script ([739db65](https://github.com/jensvogt/awsmock-qt-ui/commit/739db65942193786a53aa95b650e76906a21f573))
+
 ## [1.4.27](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.26...v1.4.27) (2025-11-28)
 
 
