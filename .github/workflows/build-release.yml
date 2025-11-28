@@ -389,6 +389,7 @@ jobs:
 
       - name: Create site folder
         run: |
+          find .
           mkdir site
           cp artifacts/windows/*.exe site/ || true
           cp artifacts/macos/*.dmg site/ || true
