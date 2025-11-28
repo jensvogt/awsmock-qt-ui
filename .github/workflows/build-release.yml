@@ -409,6 +409,7 @@ jobs:
               echo "  \"${f}\"," >> files.json
             fi
           done
+          sed -i '$ s/.$//' files.json
           echo "]} " >> files.json
 
       - name: Upload GitHub Pages artifact
