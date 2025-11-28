@@ -111,6 +111,7 @@ jobs:
       BUILD_DIR: "${{ github.workspace }}/build-macos"
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
+      APP_NAME: "awsmock-qt-ui"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -236,7 +237,7 @@ jobs:
           EOF
 
       # Step 6: Build the .deb package
-      - name: Build RPM with fpm
+      - name: Build DEB with fpm
         run: |
           fpm -s dir -t deb --name "${APP_NAME}" --version "${SEMVER}" --architecture amd64 --package "${APP_NAME}-${SEMVER}-amd64.deb" -C "$PACKAGE_DIR" usr/local/$APP_NAME
 
@@ -366,7 +367,39 @@ jobs:
             artifacts/linux/*.deb
             artifacts/linux/*.rpm
           name: Release ${{ env.SEMVER }}
-          tag_name: v${{ env.SEMVER }}
+          tag_name: ${{ env.SEMVER }}
           body: "Automated release for ${{ env.SEMVER }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
+
+  deploy:
+    needs:
+      - publish
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create site folder
+        run: |
+          find .
+          mkdir site
+          cp ./artifacts/installer-windows/*.exe site/ || true
+          cp ./artifacts/installer-macos/*.dmg site/ || true
+          cp ./artifacts/deb-package-linux/*.deb site/ || true
+          cp ./artifacts/rpm-package-linux/*.rpm site/ || true
+          cp .github/pages/index.html site/index.html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

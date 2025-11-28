@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 # Read version.txt
 include(cmake/ReadVersion.cmake)
+include(cmake/UpdateXmlVersion.cmake)
+include(cmake/UpdateReleaseDate.cmake)
 
 # Define project with version
 project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES CXX)
@@ -10,6 +12,9 @@ message(STATUS "Configured version: ${PROJECT_VERSION}")
 
 # Export version to source code
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_SOURCE_DIR}/include/Version.h)
+update_xml_version("${CMAKE_SOURCE_DIR}/installer/config/config.xml" "${VERSION_STRING}" "Version")
+update_xml_version("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml" "${VERSION_STRING}" "Version")
+update_release_date("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
