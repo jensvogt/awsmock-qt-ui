@@ -236,7 +236,9 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev libx11-dev libxext-dev libxrender-dev dh-make fakeroot libcurl4-openssl-dev
+          sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
+            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libcurl4-openssl-dev
+          sudo gem install --no-document fpm
 
       - name: Normalize VERSION
         run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
