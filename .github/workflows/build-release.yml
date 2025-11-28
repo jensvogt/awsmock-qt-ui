@@ -399,6 +399,7 @@ jobs:
           cp ./artifacts/deb-package-linux/*.deb site/ || true
           cp ./artifacts/rpm-package-linux/*.rpm site/ || true
           cp .github/pages/index.html site/index.html
+          find .
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
