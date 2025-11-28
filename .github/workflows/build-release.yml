@@ -67,12 +67,6 @@ jobs:
           # install Qt Installer Framework tools (ifw)
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
 
-      - name: Show Qt files (debug)
-        shell: powershell
-        run: |
-          dir "$env:QT_DIR\$env:QT_VERSION"
-          dir "$env:QT_DIR\Tools\QtInstallerFramework" -Recurse
-
       - name: Configure CMake (Windows)
         shell: powershell
         run: |
@@ -102,8 +96,6 @@ jobs:
           if (-not $ifwRoot) { Write-Error "IFW not found"; exit 1 }
           $ifwBin = Join-Path $ifwRoot.FullName "bin"
           $env:PATH = "$ifwBin;$env:PATH"
-          Write-Host "Using IFW bin: $ifwBin"
-          # Expect installer config in installer/config and packages in installer/packages
           binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\$env:APP_NAME-$env:SEMVER-windows.exe"
 
       - name: Upload Windows installer
@@ -157,9 +149,7 @@ jobs:
             ls -R "$BUILD_DIR"
             exit 1
           fi
-          # macdeployqt is part of Qt install
           MACDEPLOYQT="$(find ${HOME}/Qt -type f -name macdeployqt | head -n 1)"
-          echo "macdeployqt: $MACDEPLOYQT"
           "$MACDEPLOYQT" "$APP_BUNDLE"
           mkdir -p dist
           DMG_NAME="${APP_NAME}-${SEMVER}-macos.dmg"
@@ -236,9 +226,6 @@ jobs:
     env:
       BUILD_DIR: "${{ github.workspace }}/build-linux"
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
-      INSTALLER_DIR: "${{ github.workspace }}/installer"
-    outputs:
-      appversion: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -278,22 +265,9 @@ jobs:
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
 
-      - name: Create tarball for RPM stage
-        run: |
-          mkdir package
-          cp -r $BUILD_DIR package/usr
-          tar -czf app-binaries.tar.gz package
-
-      - name: Upload tarball for RPM job
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-binaries
-          path: app-binaries.tar.gz
-
       # Step 5: Prepare the .deb package directory
       - name: Prepare package structure
         run: |
-          echo "Qt-Root is: $QT_ROOT_DIR"
           mkdir -p deb_package/DEBIAN
           mkdir -p deb_package/usr/local/awsmock-qt-ui/bin
           mkdir -p deb_package/usr/local/awsmock-qt-ui/etc
@@ -315,30 +289,21 @@ jobs:
           [Paths]
           Prefix = ..
           EOF
-          
-          # Create control file
-          cat <<EOF > deb_package/DEBIAN/control
-          Package: ${APP_NAME}
-          Version: ${{ env.SEMVER }}
-          Section: utils
-          Priority: optional
-          Architecture: amd64
-          Depends: libc6, libstdc++6
-          Maintainer: Jens Vogt <jens.vogt@opitz-consulting.com>
-          Description: Awsmock Qt UI
-          EOF
 
       # Step 6: Build the .deb package
-      - name: Build .deb
+      - name: Build RPM with fpm
         run: |
-          dpkg-deb --build ./deb_package ${APP_NAME}-${SEMVER}.deb
+          fpm -s dir -t deb --name "${APP_NAME}" --version "${SEMVER}" --architecture amd64 --package "${APP_NAME}-${SEMVER}-amd64.deb" -C "$PACKAGE_DIR" usr/local/$APP_NAME
+      #      - name: Build .deb
+      #        run: |
+      #          dpkg-deb --build ./deb_package ${APP_NAME}-${SEMVER}.deb
 
       # Step 7: Upload .deb artifact
       - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
           name: deb-package-linux
-          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}.deb
+          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.deb
 
   build-linux-rpm:
     name: Build & Package (Linux RPM package)
