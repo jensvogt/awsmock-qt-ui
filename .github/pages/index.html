@@ -62,28 +62,21 @@
         async function fetchData() {
             const filesElement = document.getElementById("files");
 
-            const res = await fetch("./");
-            const text = await res.text();
+            // Load manifest written by GitHub Actions
+            const manifest = await fetch("files.json").then(r => r.json());
+            const files = manifest.downloads;
 
-            // Parse file links from directory index (GitHub Pages autoindex)
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, "text/html");
-            const links = Array.from(doc.querySelectorAll("a"))
-                .map(a => a.getAttribute("href"))
-                .filter(href => href.match(/\.(exe|deb|rpm|dmg)$/));
-            console.log("links: ", links);
-            for (const file of links) {
+            for (const file of files) {
                 const url = file;
-                const row = document.createElement("tr");
-                console.log("file: ", file);
 
                 const size = await fetch(url, {method: "HEAD"})
                     .then(r => r.headers.get("Content-Length"))
-                    .then(bytes => (bytes / 1024 / 1024).toFixed(2) + " MB")
+                    .then(bytes => bytes ? (bytes / 1024 / 1024).toFixed(2) + " MB" : "-")
                     .catch(() => "-");
 
                 const hash = await computeHash(url);
 
+                const row = document.createElement("tr");
                 row.innerHTML = `
             <td><a href="${url}">${file}</a></td>
             <td>${size}</td>
