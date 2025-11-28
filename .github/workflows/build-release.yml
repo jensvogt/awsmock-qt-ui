@@ -370,3 +370,31 @@ jobs:
           body: "Automated release for ${{ env.SEMVER }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
+
+  deploy:
+    needs:
+      - publish
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create site folder
+        run: |
+          mkdir site
+          cp artifacts/windows/*.exe site/ || true
+          cp artifacts/macos/*.dmg site/ || true
+          cp artifacts/linux/*.rpm site/ || true
+          cp artifacts/linux/*.deb site/ || true
+          cp .github/pages/index.html site/index.html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
