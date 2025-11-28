@@ -62,9 +62,7 @@ jobs:
       - name: Install Qt and Qt Installer Framework (IFW)
         shell: powershell
         run: |
-          # install Qt (base + modules)
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
-          # install Qt Installer Framework tools (ifw)
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
 
       - name: Configure CMake (Windows)
@@ -161,63 +159,6 @@ jobs:
           name: installer-macos
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
 
-  #  build-linux-installer:
-  #    name: Build & Package (Linux Installer)
-  #    runs-on: ubuntu-22.04
-  #    needs: version
-  #    env:
-  #      BUILD_DIR: "${{ github.workspace }}/build-linux"
-  #      SEMVER: ${{ needs.version.outputs.semver }}
-  #      INSTALLER_DIR: "${{ github.workspace }}/installer"
-  #    steps:
-  #      - name: Checkout
-  #        uses: actions/checkout@v4
-  #        with:
-  #          fetch-depth: 0
-  #
-  #      - name: Install system dependencies
-  #        run: |
-  #          sudo apt-get update
-  #          sudo apt-get install -y libgl1-mesa-dev libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libcurl4-openssl-dev
-  #
-  #      - name: Install Qt via install-qt-action
-  #        uses: jurplel/install-qt-action@v4
-  #        with:
-  #          version: ${{ env.QT_VERSION }}
-  #          modules: "qtcharts qtimageformats"
-  #          install-deps: true
-  #
-  #      - name: Configure (Linux)
-  #        shell: bash
-  #        run: |
-  #          mkdir -p $BUILD_DIR
-  #          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
-  #
-  #      - name: Build (Linux)
-  #        shell: bash
-  #        run: |
-  #          cmake --build $BUILD_DIR --parallel $(nproc)
-  #
-  #      - name: Download linuxdeployqt (AppImage builder)
-  #        shell: bash
-  #        run: |
-  #          curl -L -o linuxdeployqt.AppImage "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-  #          chmod +x linuxdeployqt.AppImage
-  #
-  #      - name: Create AppImage
-  #        shell: bash
-  #        run: |
-  #          APP_BUNDLE_DIR="$BUILD_DIR/${APP_NAME}.AppDir"
-  #          ./linuxdeployqt.AppImage "$BUILD_DIR/$APP_NAME" -appimage -qmake=$(which qmake) || true
-  #          mkdir -p dist
-  #          mv *.AppImage dist/ || true
-  #
-  #      - name: Upload Linux AppImage
-  #        uses: actions/upload-artifact@v4
-  #        with:
-  #          name: installer-linux
-  #          path: dist/*.AppImage
-
   build-linux-deb:
     name: Build & Package (Linux Debian package)
     runs-on: ubuntu-22.04
@@ -270,24 +211,24 @@ jobs:
       # Step 5: Prepare the .deb package directory
       - name: Prepare package structure
         run: |
-          mkdir -p deb_package/DEBIAN
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/bin
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/etc
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/log
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/lib
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/plugins
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/translations
+          PACKAGE_DIR=package
+          mkdir -p $PACKAGE_DIR/DEBIAN
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/log
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/lib
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/translations
           
           # Copy your app
-          cp $BUILD_DIR/${APP_NAME} deb_package/usr/local/awsmock-qt-ui/bin/
-          cp -r $QT_ROOT_DIR/lib/* deb_package/usr/local/awsmock-qt-ui/lib
-          mkdir -p deb_package/usr/local/awsmock-qt-ui/plugins
-          cp -r $QT_ROOT_DIR/plugins/platforms deb_package/usr/local/awsmock-qt-ui/plugins/
-          cp -r $QT_ROOT_DIR/plugins/imageformats deb_package/usr/local/awsmock-qt-ui/plugins/
-          cp -r dist/etc/${APP_NAME}.json deb_package/usr/local/awsmock-qt-ui/etc
+          cp $BUILD_DIR/${APP_NAME} $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin/
+          cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/awsmock-qt-ui/lib
+          cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
+          cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
+          cp -r dist/etc/${APP_NAME}.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
           
           # Create Qt conf
-          cat << EOF > deb_package/usr/local/awsmock-qt-ui/bin/qt.conf
+          cat << EOF > $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin/qt.conf
           [Paths]
           Prefix = ..
           EOF
