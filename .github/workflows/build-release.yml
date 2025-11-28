@@ -102,11 +102,6 @@ jobs:
           name: installer-windows
           path: installer/${{ env.APP_NAME }}-${{ env.SEMVER }}-windows.exe
 
-      - name: Upload pages artifact (Windows)
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
   build-macos:
     name: Build & Package (macOS)
     runs-on: macos-latest
@@ -164,11 +159,6 @@ jobs:
         with:
           name: installer-macos
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
-
-      - name: Upload pages artifact (MacOS)
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
 
   build-linux-deb:
     name: Build & Package (Linux Debian package)
@@ -258,11 +248,6 @@ jobs:
           name: deb-package-linux
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.deb
 
-      - name: Upload pages artifact (Linux)
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
   build-linux-rpm:
     name: Build & Package (Linux RPM package)
     runs-on: ubuntu-latest
@@ -330,11 +315,6 @@ jobs:
         with:
           name: rpm-package-linux
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
-
-      - name: Upload pages artifact (Linux)
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
 
   publish:
     name: Publish Release & Attach Installers
