@@ -102,6 +102,11 @@ jobs:
           name: installer-windows
           path: installer/${{ env.APP_NAME }}-${{ env.SEMVER }}-windows.exe
 
+      - name: Upload pages artifact (Windows)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
   build-macos:
     name: Build & Package (macOS)
     runs-on: macos-latest
@@ -111,6 +116,7 @@ jobs:
       BUILD_DIR: "${{ github.workspace }}/build-macos"
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
+      APP_NAME: "awsmock-qt-ui"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -158,6 +164,11 @@ jobs:
         with:
           name: installer-macos
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
+
+      - name: Upload pages artifact (MacOS)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
 
   build-linux-deb:
     name: Build & Package (Linux Debian package)
@@ -236,7 +247,7 @@ jobs:
           EOF
 
       # Step 6: Build the .deb package
-      - name: Build RPM with fpm
+      - name: Build DEB with fpm
         run: |
           fpm -s dir -t deb --name "${APP_NAME}" --version "${SEMVER}" --architecture amd64 --package "${APP_NAME}-${SEMVER}-amd64.deb" -C "$PACKAGE_DIR" usr/local/$APP_NAME
 
@@ -246,6 +257,11 @@ jobs:
         with:
           name: deb-package-linux
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.deb
+
+      - name: Upload pages artifact (Linux)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
 
   build-linux-rpm:
     name: Build & Package (Linux RPM package)
@@ -315,6 +331,11 @@ jobs:
           name: rpm-package-linux
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
 
+      - name: Upload pages artifact (Linux)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
   publish:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
@@ -366,7 +387,7 @@ jobs:
             artifacts/linux/*.deb
             artifacts/linux/*.rpm
           name: Release ${{ env.SEMVER }}
-          tag_name: v${{ env.SEMVER }}
+          tag_name: ${{ env.SEMVER }}
           body: "Automated release for ${{ env.SEMVER }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
@@ -389,10 +410,10 @@ jobs:
       - name: Create site folder
         run: |
           mkdir site
-          cp artifacts/*.exe site/ || true
-          cp artifacts/*.dmg site/ || true
-          cp artifacts/*.rpm site/ || true
-          cp artifacts/*.deb site/ || true
+          cp artifacts/windows/*.exe site/ || true
+          cp artifacts/macos/*.dmg site/ || true
+          cp artifacts/linux/*.rpm site/ || true
+          cp artifacts/linux/*.deb site/ || true
           cp .github/pages/index.html site/index.html
 
       - name: Deploy to GitHub Pages
