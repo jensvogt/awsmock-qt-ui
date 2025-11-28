@@ -212,14 +212,12 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
                       [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  JsonUtils::WriteJsonString(jsonDoc.object());
                                   LambdaListResultsResponse lambdaResponse;
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit ListLambdaResultsSignal(lambdaResponse);
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }
-                              //emit ListLambdaLogsSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

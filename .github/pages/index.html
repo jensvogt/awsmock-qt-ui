@@ -70,11 +70,12 @@
             const doc = parser.parseFromString(text, "text/html");
             const links = Array.from(doc.querySelectorAll("a"))
                 .map(a => a.getAttribute("href"))
-                .filter(href => href.match(/\.(exe|deb|rpm)$/));
-
+                .filter(href => href.match(/\.(exe|deb|rpm|dmg)$/));
+            console.log("links: ", links);
             for (const file of links) {
                 const url = file;
                 const row = document.createElement("tr");
+                console.log("file: ", file);
 
                 const size = await fetch(url, {method: "HEAD"})
                     .then(r => r.headers.get("Content-Length"))

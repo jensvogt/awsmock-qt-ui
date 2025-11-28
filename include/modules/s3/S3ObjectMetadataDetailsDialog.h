@@ -24,8 +24,12 @@ public:
 
     ~S3ObjectMetadataDetailsDialog() override;
 
+    void HandleAccept();
+
+    void HandleReject();
+
 private:
-    Ui::S3ObjectMetadataDetailsDialog *ui;
+    Ui::S3ObjectMetadataDetailsDialog *_ui;
 };
 
 

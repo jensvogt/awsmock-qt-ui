@@ -7,9 +7,9 @@
 
 #include <QDialog>
 
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
 #include <modules/lambda/LambdaService.h>
-
-#include "utils/BaseDialog.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -26,6 +26,12 @@ public:
     explicit LambdaResultListDialog(const QString &lambdaArn, QWidget *parent = nullptr);
 
     ~LambdaResultListDialog() override;
+
+    void UpdateResultTable(const LambdaListResultsResponse &listResultsResponse) const;
+
+    void HandleAccept();
+
+    void HandleReject();
 
 private:
     /**

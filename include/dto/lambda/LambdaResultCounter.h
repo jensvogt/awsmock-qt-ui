@@ -37,9 +37,9 @@ struct LambdaResultCounter {
         lambdaName = jsonObject["lambdaName"].toString();
         lambdaArn = jsonObject["lambdaArn"].toString();
         runtime = jsonObject["runtime"].toString();
-        requestBody = jsonObject["requestBody"].toString();
-        responseBody = jsonObject["responseBody"].toString();
-        logMessages = jsonObject["logMessages"].toString();
+        requestBody = QByteArray::fromBase64(jsonObject["requestBody"].toString().toUtf8());
+        responseBody = QByteArray::fromBase64(jsonObject["responseBody"].toString().toUtf8());
+        logMessages = QByteArray::fromBase64(jsonObject["logMessages"].toString().toUtf8());
         duration = jsonObject["duration"].toInt();
         instanceId = jsonObject["instanceId"].toString();
         containerId = jsonObject["containerId"].toString();
