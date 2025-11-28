@@ -3,78 +3,45 @@ name: Release + Build + Installer (Windows / macOS / Linux)
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   QT_VERSION: "6.10.1"
   APP_NAME: "awsmock-qt-ui"        # change if different
   INSTALLER_ID: "de.jensvogt.awsmockqtui" # used for IFW package path
 
+permissions:
+  contents: write       # required for tagging + releasing
+  pull-requests: write
+  id-token: write
+
 jobs:
-  version:
-    name: Determine & Tag Version
+  release-please:
+    name: Create Release PR / Tag
     runs-on: ubuntu-latest
+
     outputs:
-      semver: ${{ steps.getver.outputs.SemVer }}
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+
     steps:
-      - name: Checkout (full history)
-        uses: actions/checkout@v4
+      - name: Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
         with:
-          fetch-depth: 0
-
-      - name: Setup GitVersion
-        uses: GitTools/actions/gitversion/setup@v4
-
-      - name: Get version from GitVersion
-        id: getver
-        uses: GitTools/actions/gitversion/execute@v4
-
-      - name: Show computed version
-        run: |
-          echo "SemVer = ${{ steps.getver.outputs.SemVer }}"
-          echo "Major = ${{ steps.getver.outputs.Major }}"
-          echo "Minor = ${{ steps.getver.outputs.Minor }}"
-          echo "Patch = ${{ steps.getver.outputs.Patch }}"
-
-      - name: Generate include/Version.h from template
-        run: |
-          python3 dist/generate_version_header.py \
-            "${{ steps.getver.outputs.Major }}" \
-            "${{ steps.getver.outputs.Minor }}" \
-            "${{ steps.getver.outputs.Patch }}"
-
-      - name: Commit updated Version.h (if changed)
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add include/Version.h
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore(release): update Version.h to ${{ steps.getver.outputs.SemVer }}"
-            git push origin HEAD:main
-          fi
-
-      - name: Create tag v<semver>
-        run: |
-          TAG="v${{ steps.getver.outputs.SemVer }}"
-          echo "Tag: $TAG"
-          # create tag only if it doesn't already exist
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists"
-          else
-            git tag "$TAG"
-            git push origin "$TAG"
-          fi
+          release-type: simple
+          token: ${{ secrets.GH_AUTH_TOKEN }}
 
   build-windows:
     name: Build & Package (Windows)
     runs-on: windows-latest
-    needs: version
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       QT_DIR: "${{ github.workspace }}\\Qt"
       BUILD_DIR: "${{ github.workspace }}\\build-windows"
       INSTALLER_DIR: "${{ github.workspace }}\\installer"
-      SEMVER: "${{ needs.version.outputs.semver }}"
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,16 +62,8 @@ jobs:
       - name: Install Qt and Qt Installer Framework (IFW)
         shell: powershell
         run: |
-          # install Qt (base + modules)
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
-          # install Qt Installer Framework tools (ifw)
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
-
-      - name: Show Qt files (debug)
-        shell: powershell
-        run: |
-          dir "$env:QT_DIR\$env:QT_VERSION"
-          dir "$env:QT_DIR\Tools\QtInstallerFramework" -Recurse
 
       - name: Configure CMake (Windows)
         shell: powershell
@@ -135,8 +94,6 @@ jobs:
           if (-not $ifwRoot) { Write-Error "IFW not found"; exit 1 }
           $ifwBin = Join-Path $ifwRoot.FullName "bin"
           $env:PATH = "$ifwBin;$env:PATH"
-          Write-Host "Using IFW bin: $ifwBin"
-          # Expect installer config in installer/config and packages in installer/packages
           binarycreator -c "$env:INSTALLER_DIR\config\config.xml" -p "$env:INSTALLER_DIR\packages" "$env:INSTALLER_DIR\$env:APP_NAME-$env:SEMVER-windows.exe"
 
       - name: Upload Windows installer
@@ -148,10 +105,11 @@ jobs:
   build-macos:
     name: Build & Package (macOS)
     runs-on: macos-latest
-    needs: version
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-macos"
-      SEMVER: ${{ needs.version.outputs.semver }}
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
       INSTALLER_DIR: "${{ github.workspace }}/installer"
     steps:
       - name: Checkout
@@ -189,9 +147,7 @@ jobs:
             ls -R "$BUILD_DIR"
             exit 1
           fi
-          # macdeployqt is part of Qt install
           MACDEPLOYQT="$(find ${HOME}/Qt -type f -name macdeployqt | head -n 1)"
-          echo "macdeployqt: $MACDEPLOYQT"
           "$MACDEPLOYQT" "$APP_BUNDLE"
           mkdir -p dist
           DMG_NAME="${APP_NAME}-${SEMVER}-macos.dmg"
@@ -203,24 +159,36 @@ jobs:
           name: installer-macos
           path: dist/${{ env.APP_NAME }}-${{ env.SEMVER }}-macos.dmg
 
-  build-linux:
-    name: Build & Package (Linux)
+  build-linux-deb:
+    name: Build & Package (Linux Debian package)
     runs-on: ubuntu-22.04
-    needs: version
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
       BUILD_DIR: "${{ github.workspace }}/build-linux"
-      SEMVER: ${{ needs.version.outputs.semver }}
-      INSTALLER_DIR: "${{ github.workspace }}/installer"
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # Step 2: Install dependencies
       - name: Install system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libcurl4-openssl-dev
+          sudo apt update
+          sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
+            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libcurl4-openssl-dev
+          sudo gem install --no-document fpm
+
+      - name: Normalize VERSION
+        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+
+      - name: Get version
+        id: get_version
+        run: |
+          CLEAN="${SEMVER#v}"
+          echo "version=$CLEAN" >> $GITHUB_OUTPUT
 
       - name: Install Qt via install-qt-action
         uses: jurplel/install-qt-action@v4
@@ -240,30 +208,119 @@ jobs:
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
 
-      - name: Download linuxdeployqt (AppImage builder)
-        shell: bash
+      # Step 5: Prepare the .deb package directory
+      - name: Prepare package structure
         run: |
-          curl -L -o linuxdeployqt.AppImage "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-          chmod +x linuxdeployqt.AppImage
+          PACKAGE_DIR=package
+          echo "PACKAGE_DIR=$PACKAGE_DIR" >> $GITHUB_ENV
+          
+          mkdir -p $PACKAGE_DIR/DEBIAN
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/log
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/lib
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins
+          mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/translations
+          
+          # Copy your app
+          cp $BUILD_DIR/${APP_NAME} $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin/
+          cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/awsmock-qt-ui/lib
+          cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
+          cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
+          cp -r dist/etc/${APP_NAME}.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
+          
+          # Create Qt conf
+          cat << EOF > $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin/qt.conf
+          [Paths]
+          Prefix = ..
+          EOF
 
-      - name: Create AppImage
-        shell: bash
+      # Step 6: Build the .deb package
+      - name: Build RPM with fpm
         run: |
-          APP_BUNDLE_DIR="$BUILD_DIR/${APP_NAME}.AppDir"
-          ./linuxdeployqt.AppImage "$BUILD_DIR/$APP_NAME" -appimage -qmake=$(which qmake) || true
-          mkdir -p dist
-          mv *.AppImage dist/ || true
+          fpm -s dir -t deb --name "${APP_NAME}" --version "${SEMVER}" --architecture amd64 --package "${APP_NAME}-${SEMVER}-amd64.deb" -C "$PACKAGE_DIR" usr/local/$APP_NAME
 
-      - name: Upload Linux AppImage
+      # Step 7: Upload .deb artifact
+      - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
-          name: installer-linux
-          path: dist/*.AppImage
+          name: deb-package-linux
+          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.deb
+
+  build-linux-rpm:
+    name: Build & Package (Linux RPM package)
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    env:
+      APP_NAME: awsmock-qt-ui
+      BUILD_DIR: "${{ github.workspace }}/build-linux"
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Normalize SEMVER
+        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev libcurl4-openssl-dev
+          sudo gem install --no-document fpm
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          modules: qtcharts qtimageformats
+          install-deps: true
+
+      - name: Configure & Build
+        run: |
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+          cmake --build $BUILD_DIR --parallel $(nproc)
+
+      - name: Prepare Linux package folder
+        run: |
+          PACKAGE_DIR=package
+          echo "PACKAGE_DIR=$PACKAGE_DIR" >> $GITHUB_ENV
+          
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/bin
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/etc
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/lib
+          mkdir -p $PACKAGE_DIR/usr/local/$APP_NAME/plugins
+          
+          # FIX: correct binary path
+          cp $BUILD_DIR/$APP_NAME $PACKAGE_DIR/usr/local/$APP_NAME/bin/
+          
+          cp dist/etc/$APP_NAME.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/
+          cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/$APP_NAME/lib/
+          cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
+          cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
+          
+          cat << EOF > $PACKAGE_DIR/usr/local/$APP_NAME/bin/qt.conf
+          [Paths]
+          Prefix = ..
+          EOF
+
+      - name: Build RPM with fpm
+        run: |
+          fpm -s dir -t rpm --name "${APP_NAME}" --version "${SEMVER}" --architecture amd64 --package "${APP_NAME}-${SEMVER}-amd64.rpm" -C "$PACKAGE_DIR" usr/local/$APP_NAME
+
+      - name: Upload RPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpm-package-linux
+          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
 
   publish:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
-    needs: [ build-windows, build-macos, build-linux ]
+    needs: [ release-please, build-windows, build-macos, build-linux-rpm, build-linux-deb ]
+    env:
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -282,10 +339,22 @@ jobs:
           name: installer-macos
           path: artifacts/macos
 
-      - name: Download Linux installer
+      #      - name: Download Linux installer
+      #        uses: actions/download-artifact@v4
+      #        with:
+      #          name: installer-linux
+      #          path: artifacts/linux
+
+      - name: Download Linux Debian package
         uses: actions/download-artifact@v4
         with:
-          name: installer-linux
+          name: deb-package-linux
+          path: artifacts/linux
+
+      - name: Download Linux RPM package
+        uses: actions/download-artifact@v4
+        with:
+          name: rpm-package-linux
           path: artifacts/linux
 
       - name: Create GitHub Release (attach installers)
@@ -294,9 +363,10 @@ jobs:
           files: |
             artifacts/windows/*.exe
             artifacts/macos/*.dmg
-            artifacts/linux/*.AppImage
-          name: Release ${{ needs.version.outputs.semver }}
-          tag_name: v${{ needs.version.outputs.semver }}
-          body: "Automated release for ${{ needs.version.outputs.semver }}"
+            artifacts/linux/*.deb
+            artifacts/linux/*.rpm
+          name: Release ${{ env.SEMVER }}
+          tag_name: v${{ env.SEMVER }}
+          body: "Automated release for ${{ env.SEMVER }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}

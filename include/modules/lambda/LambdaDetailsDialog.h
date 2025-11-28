@@ -9,8 +9,10 @@
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
-#include <modules/lambda/LambdaService.h>
 #include <dto/lambda/LambdaGetResponse.h>
+#include <dto/lambda/LambdaListEnvironmentResponse.h>
+#include <modules/lambda/LambdaService.h>
+#include <modules/lambda/LambdaEnvironmentDetailDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -40,6 +42,12 @@ public:
 
     void UpdateLambdaInstances(const LambdaListInstancesResponse &listInstancesResponse) const;
 
+    void SetupEnvironmentTab() const;
+
+    void UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const;
+
+    void ShowEnvironmentContextMenu(const QPoint &pos) const;
+
     void HandleAccept();
 
     void HandleReject();
@@ -59,6 +67,26 @@ private:
      * @brief Lambda ARN
      */
     QString _lambdaArn;
+
+    /**
+     * @brief Instance sort column index
+     */
+    int _instanceSortColumn = 0;
+
+    /**
+     * @brief Instance sort order
+     */
+    Qt::SortOrder _instanceSortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Environment sort column index
+     */
+    int _environmentSortColumn = 0;
+
+    /**
+     * @brief Environment sort order
+     */
+    Qt::SortOrder _environmentSortOrder = Qt::AscendingOrder;
 };
 
 

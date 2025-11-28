@@ -2,6 +2,7 @@
 #include <modules/lambda/LambdaList.h>
 
 #include "modules/lambda/LambdaDetailsDialog.h"
+#include "modules/lambda/LambdaLogsDialog.h"
 
 //#include "modules/lambda/LambdaLogsDialog.h"
 
@@ -169,14 +170,19 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
 }
 
 void LambdaList::ShowContextMenu(const QPoint &pos) {
+
+    // Stop auto updater
     StopAutoUpdate();
 
     // Cell index
     const QModelIndex index = tableWidget->indexAt(pos);
-    if (!index.isValid()) return;
+    if (!index.isValid()) {
+        return;
+    }
 
     const int row = index.row();
 
+    const QString arn = tableWidget->item(row, 9)->text();
     const QString name = tableWidget->item(row, 0)->text();
     const QString containerId = tableWidget->item(row, 9)->text();
 
@@ -222,15 +228,15 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
     deleteAction->setToolTip("Delete the Topic");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
-        selectedAction == editAction) {
-        //LambdaEditDialog dialog(name);
-        //dialog.exec();
+
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        LambdaDetailsDialog dialog(arn);
+        dialog.exec();
     } else if (selectedAction == logsAction) {
-        //auto *dialog = new LambdaLogsDialog(name, containerId);
-        //dialog->setModal(false);
-        //dialog->setAttribute(Qt::WA_DeleteOnClose);
-        //dialog->show();
+        auto *dialog = new LambdaLogsDialog(name, containerId);
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
     } else if (selectedAction == startAction) {
         // _lambdaService->StartLambda(name);
     } else if (selectedAction == enableAction) {
@@ -247,10 +253,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         //LambdaUploadCodeDialog dialog(name);
         //dialog.exec();
     } else if (selectedAction == deleteAction) {
-        //_lambdaService->DeleteLambda(name);
-    } else if (selectedAction == editAction) {
-        //LambdaEditDialog dialog(name);
-        //dialog.exec();
+        _lambdaService->DeleteLambda(name);
     }
     LoadContent();
     StartAutoUpdate();

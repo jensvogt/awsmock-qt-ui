@@ -1,5 +1,243 @@
 # Changelog
 
+## [1.4.25](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.24...v1.4.25) (2025-11-28)
+
+
+### Bug Fixes
+
+* use fpm to create ubuntu deb package ([21875e2](https://github.com/jensvogt/awsmock-qt-ui/commit/21875e274abb52373333d030cee00b12cf995115))
+* use fpm to create ubuntu deb package ([d6d6e1c](https://github.com/jensvogt/awsmock-qt-ui/commit/d6d6e1cc50cd03bb20b3b2f9bdfad700e3093181))
+
+## [1.4.24](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.23...v1.4.24) (2025-11-28)
+
+
+### Bug Fixes
+
+* use fpm to create ubuntu deb package ([6edd911](https://github.com/jensvogt/awsmock-qt-ui/commit/6edd911c95c3155eccc400b27eed3e5178c5b0ab))
+* use fpm to create ubuntu deb package ([7418c50](https://github.com/jensvogt/awsmock-qt-ui/commit/7418c506aeeb82f6dc6bd5c4f4fbc7deb1824dd0))
+
+## [1.4.23](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.22...v1.4.23) (2025-11-28)
+
+
+### Bug Fixes
+
+* add fpm ([1d45f2b](https://github.com/jensvogt/awsmock-qt-ui/commit/1d45f2bbd69cee9e91e86c24c7240167ea6a4fbd))
+* use fpm to create ubuntu deb package ([2dc57b2](https://github.com/jensvogt/awsmock-qt-ui/commit/2dc57b287b920a43892f0ad2a192777fa9977107))
+
+## [1.4.22](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.21...v1.4.22) (2025-11-28)
+
+
+### Bug Fixes
+
+* use fpm to create ubuntu deb package ([b7b27f6](https://github.com/jensvogt/awsmock-qt-ui/commit/b7b27f64f8aaad46cb71875020e452c4c5046816))
+* use fpm to create ubuntu deb package ([ab35303](https://github.com/jensvogt/awsmock-qt-ui/commit/ab3530389ac71d35d8721623d3d2899f9d84a32d))
+
+## [1.4.21](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.20...v1.4.21) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda loga dialog ([921d280](https://github.com/jensvogt/awsmock-qt-ui/commit/921d2806c1c18f27c0cab685368aba10799415fb))
+* add lambda loga dialog ([fa6e6f5](https://github.com/jensvogt/awsmock-qt-ui/commit/fa6e6f5e96222097b25ae81803af4c0a710cb40a))
+
+## [1.4.20](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.19...v1.4.20) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda loga dialog ([0390eb4](https://github.com/jensvogt/awsmock-qt-ui/commit/0390eb477ce58e08c4b9a90beafc2fba8cc25b38))
+* add lambda loga dialog ([66e556c](https://github.com/jensvogt/awsmock-qt-ui/commit/66e556c3c7e84cb4f072153d799c89c8303c531e))
+
+## [1.4.19](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.18...v1.4.19) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda loga dialog ([8c4a873](https://github.com/jensvogt/awsmock-qt-ui/commit/8c4a873f51fe562967ee8c1f051c91e902d7a21d))
+* add lambda loga dialog ([9bdc1e2](https://github.com/jensvogt/awsmock-qt-ui/commit/9bdc1e2a51a727cbb0f198af24f6abab922d2a17))
+
+## [1.4.18](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.17...v1.4.18) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([2fda35c](https://github.com/jensvogt/awsmock-qt-ui/commit/2fda35c89917be94244a84ed9a56e18edd4508f2))
+
+## [1.4.17](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.16...v1.4.17) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([b837329](https://github.com/jensvogt/awsmock-qt-ui/commit/b83732902a837c5b28f0044caabee509767a71aa))
+* add lambda environment create button ([97ba7d4](https://github.com/jensvogt/awsmock-qt-ui/commit/97ba7d4ca98c0712fb3832e55312eae60c8f29ea))
+
+## [1.4.16](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.15...v1.4.16) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([444941a](https://github.com/jensvogt/awsmock-qt-ui/commit/444941add3b4d77398e3ae75769b7c4b31497c07))
+* add lambda environment create button ([866e08d](https://github.com/jensvogt/awsmock-qt-ui/commit/866e08db0762444f82144cfd6784b724e2cd474e))
+
+## [1.4.15](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.14...v1.4.15) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([812e3a0](https://github.com/jensvogt/awsmock-qt-ui/commit/812e3a0ed718899d76bb47217936f152409e878d))
+* add lambda environment create button ([ed77573](https://github.com/jensvogt/awsmock-qt-ui/commit/ed77573b66a1234123b17bc056fa0f571715e14b))
+
+## [1.4.14](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.13...v1.4.14) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([ce5e9e0](https://github.com/jensvogt/awsmock-qt-ui/commit/ce5e9e01ee8ad6547b55d2ca26f8271dcc4bab93))
+* fix S3 object details view. ([536416b](https://github.com/jensvogt/awsmock-qt-ui/commit/536416b260ef2c39895ac20ef3ff43b720e382e3))
+
+## [1.4.13](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.12...v1.4.13) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([64332ce](https://github.com/jensvogt/awsmock-qt-ui/commit/64332ce12c6917687497cdf5d9505e6a0311160a))
+* add lambda environment create button ([f953bf9](https://github.com/jensvogt/awsmock-qt-ui/commit/f953bf94f8a21c56f5c62afd33744d0714580729))
+
+## [1.4.12](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.11...v1.4.12) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([5cd3dbb](https://github.com/jensvogt/awsmock-qt-ui/commit/5cd3dbb5d54de5a25055f5104eaf93983653baef))
+
+## [1.4.11](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.10...v1.4.11) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([98f8bad](https://github.com/jensvogt/awsmock-qt-ui/commit/98f8bad92aa6489212f2c77b88ed607f098fa4b2))
+* add some more tooltips. ([c13860e](https://github.com/jensvogt/awsmock-qt-ui/commit/c13860e78e1709e901c0402ecb101981c751e4b2))
+
+## [1.4.10](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.9...v1.4.10) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([1738df4](https://github.com/jensvogt/awsmock-qt-ui/commit/1738df4c0d0e169161fa188ba31aeb4e322bb7e6))
+* add new connection string ([ff8adb9](https://github.com/jensvogt/awsmock-qt-ui/commit/ff8adb947de41b6b38f9c93c84e6df523fdb0bd5))
+
+## [1.4.9](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.8...v1.4.9) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([577fe14](https://github.com/jensvogt/awsmock-qt-ui/commit/577fe146664eb92b17e184dc2d09515b51c699de))
+* add lambda environment delete button ([57deffe](https://github.com/jensvogt/awsmock-qt-ui/commit/57deffe1002561d3ec86c3a128e2a97c00abab85))
+
+## [1.4.8](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.7...v1.4.8) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([44e719b](https://github.com/jensvogt/awsmock-qt-ui/commit/44e719b2171f90643544494c3063c03e27967fbd))
+* add lambda environment create button ([bea0b69](https://github.com/jensvogt/awsmock-qt-ui/commit/bea0b6915fcefc202f950bfedf8895eb4ebddd9f))
+
+## [1.4.7](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.6...v1.4.7) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment context menu ([7201446](https://github.com/jensvogt/awsmock-qt-ui/commit/720144626afbb56726adeadfa1a1a3ee98d21dc5))
+* add lambda environment context menu ([926d933](https://github.com/jensvogt/awsmock-qt-ui/commit/926d933282c96a44b5a8d9a91346e07fbb7d5e01))
+* add lambda environment create button ([85d066f](https://github.com/jensvogt/awsmock-qt-ui/commit/85d066f6e51a625e3f7395c61130c3d1f56fdef7))
+* add lambda environment create button ([f605c7f](https://github.com/jensvogt/awsmock-qt-ui/commit/f605c7fe909b9fbadd14dd23812dcfaf6ca07d33))
+
+## [1.4.6](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.5...v1.4.6) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([5208846](https://github.com/jensvogt/awsmock-qt-ui/commit/52088464c604bab1e07e7504a5ebbbdb5e9192fa))
+* add lambda-environment delete ([df31193](https://github.com/jensvogt/awsmock-qt-ui/commit/df31193fb46f1fe2f627921762eed1d2a1fb233d))
+
+## [1.4.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.4...v1.4.5) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([9020ff5](https://github.com/jensvogt/awsmock-qt-ui/commit/9020ff5b8d194f2f0b6b08f44480a046d81be93a))
+
+## [1.4.4](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.3...v1.4.4) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([3f37258](https://github.com/jensvogt/awsmock-qt-ui/commit/3f37258c249ffa66b9fcb32d2917629b6dcabfbc))
+
+## [1.4.3](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.2...v1.4.3) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([6d4cf40](https://github.com/jensvogt/awsmock-qt-ui/commit/6d4cf4025aa7f53c64c23857867c0f77daf234d2))
+* add lambda environment create button ([77caf74](https://github.com/jensvogt/awsmock-qt-ui/commit/77caf7424a4218a89623c1562efa420531810ec3))
+
+## [1.4.2](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.1...v1.4.2) (2025-11-27)
+
+
+### Bug Fixes
+
+* add lambda environment create button ([c0015d3](https://github.com/jensvogt/awsmock-qt-ui/commit/c0015d32c9837ea993d45e74251b089b4ebdc5dd))
+* add lambda-environment add button ([8f60f80](https://github.com/jensvogt/awsmock-qt-ui/commit/8f60f80556eded70976d954bd9be146b9b609ca1))
+
+## [1.4.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.0...v1.4.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* lambda environment sorting ([45f6cce](https://github.com/jensvogt/awsmock-qt-ui/commit/45f6ccebdeba06498cd230939d97ade2f13a7f9c))
+
+## [1.4.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.3.0...v1.4.0) (2025-11-27)
+
+
+### Features
+
+* add debian package ([378f96b](https://github.com/jensvogt/awsmock-qt-ui/commit/378f96b7e801bbe4819bd14b58fe668b43be03f7))
+
+## [1.3.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.2.0...v1.3.0) (2025-11-27)
+
+
+### Features
+
+* add debian package ([5703483](https://github.com/jensvogt/awsmock-qt-ui/commit/57034835876645b4242d4c965ee6cfbea4e5eebf))
+
+## [1.2.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.1.0...v1.2.0) (2025-11-27)
+
+
+### Features
+
+* add debian package ([54ee0c5](https://github.com/jensvogt/awsmock-qt-ui/commit/54ee0c5ed6621a24cd06f724d87a7b646825751e))
+
+## [1.1.0](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.0.1...v1.1.0) (2025-11-27)
+
+
+### Features
+
+* add debian package ([bfe68f1](https://github.com/jensvogt/awsmock-qt-ui/commit/bfe68f116a31a11bf9fe762b49b9819855e1defe))
+* add debian package ([cffd7fc](https://github.com/jensvogt/awsmock-qt-ui/commit/cffd7fcae268d0c505f6190fec3288b54414cb0c))
+* add debian package ([1a46621](https://github.com/jensvogt/awsmock-qt-ui/commit/1a46621469595963402b8d308917ad494db304c9))
+* add debian package ([64074cb](https://github.com/jensvogt/awsmock-qt-ui/commit/64074cbf7152a65cc74dbe45b7dfd54f08a2d56b))
+* add debian package ([6f8e37f](https://github.com/jensvogt/awsmock-qt-ui/commit/6f8e37fc11a7a367ae7486192f07d34bf95f5c40))
+* add debian package ([e8d07fb](https://github.com/jensvogt/awsmock-qt-ui/commit/e8d07fb400cf01296aef9e8c0c3c7be4bcc1fea9))
+* add debian package ([98cbbdc](https://github.com/jensvogt/awsmock-qt-ui/commit/98cbbdc137f1615f181a9c78c19751ce918fe790))
+* add debian package ([b224cce](https://github.com/jensvogt/awsmock-qt-ui/commit/b224cce35cd85458b4e4f563aa014115727645b6))
+* add debian package ([b69085b](https://github.com/jensvogt/awsmock-qt-ui/commit/b69085ba03b9fdb56b6421dc4d22161190cc2bd3))
+
+
+### Bug Fixes
+
+* add lambda environment ([4b6e833](https://github.com/jensvogt/awsmock-qt-ui/commit/4b6e833c084258e8e736c65839961a8658faf078))
+
 ## [1.0.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.0.0...v1.0.1) (2025-11-26)
 
 

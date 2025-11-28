@@ -2,12 +2,14 @@
 // Created by vogje01 on 11/25/25.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_LambdaDetailsDialog.h" resolved
-
+#include <QMenu>
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include "ui_LambdaDetailsDialog.h"
+#include "modules/application/ApplicationEnvironmentEditDialog.h"
+#include "modules/lambda/LambdaEnvironmentDetailDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
+
     _lambdaService = new LambdaService();
 
     _lambdaService->GetLambda(lambdaArn);
@@ -26,6 +28,9 @@ LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *pare
 
     // Setup instances tab
     SetupInstancesTab();
+
+    // Setup environment tab
+    SetupEnvironmentTab();
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
@@ -59,13 +64,7 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     connect(_lambdaService, &LambdaService::ListLambdaInstancesSignal, this, &LambdaDetailsDialog::UpdateLambdaInstances);
 
     // Table
-    const QStringList headers = QStringList() << tr("Instance ID")
-                                << tr("Container ID")
-                                << tr("Host")
-                                << tr("Port")
-                                << tr("Status")
-                                << tr("Last Invocation");
-
+    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Port"), tr("Status"), tr("Last Invocation")};
     _ui->instanceTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->instanceTable->setShowGrid(true);
     _ui->instanceTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -100,8 +99,118 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
     }
     _ui->instanceTable->setRowCount(static_cast<int>(listInstancesResponse.lambdaInstanceCounters.count()));
     _ui->instanceTable->setSortingEnabled(true);
-    //_ui->instanceTable->sortItems(_sortColumn, _sortOrder);
+    _ui->instanceTable->sortItems(_instanceSortColumn, _instanceSortOrder);
     _ui->instanceTable->selectRow(selectedRow);
+}
+
+void LambdaDetailsDialog::SetupEnvironmentTab() const {
+
+    // Add button
+    _ui->environmentAddButton->setText(nullptr);
+    _ui->environmentAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->environmentAddButton, &QPushButton::clicked, [this]() {
+        if (LambdaEnvironmentDetailDialog dialog("", "", true); dialog.exec() == Accepted) {
+            const int newRowIndex = _ui->environmentTable->rowCount();
+            _ui->environmentTable->insertRow(newRowIndex);
+            SetColumn(_ui->environmentTable, newRowIndex, 0, dialog.GetKey());
+            SetColumn(_ui->environmentTable, newRowIndex, 1, dialog.GetValue());
+            _lambdaService->AddLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+        }
+    });
+
+    // Refresh button
+    _ui->environmentRefreshButton->setText(nullptr);
+    _ui->environmentRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->environmentRefreshButton, &QPushButton::clicked, [this]() {
+        _lambdaService->GetLambdaEnvironment(_lambdaArn);
+    });
+
+    // Add context menu
+    _ui->environmentTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->environmentTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowEnvironmentContextMenu);
+
+    // Send request
+    _lambdaService->GetLambdaEnvironment(_lambdaArn);
+    connect(_lambdaService, &LambdaService::ListLambdaEnvironmentSignal, this, &LambdaDetailsDialog::UpdateLambdaEnvironment);
+
+    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
+    _ui->environmentTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->environmentTable->setShowGrid(true);
+    _ui->environmentTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->environmentTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->environmentTable->setHorizontalHeaderLabels(headers);
+    _ui->environmentTable->setSortingEnabled(true);
+    _ui->environmentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->environmentTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->environmentTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+
+    // Connect double-click
+    connect(_ui->environmentTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
+
+        // Extract ARN and URL
+        const QString key = _ui->environmentTable->item(row, 0)->text();
+        const QString value = _ui->environmentTable->item(row, 1)->text();
+
+        if (LambdaEnvironmentDetailDialog dialog(key, value, false); dialog.exec() == Accepted) {
+            SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
+            //_lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+        }
+    });
+
+}
+
+void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
+
+    const int selectedRow = _ui->environmentTable->selectionModel()->currentIndex().row();
+    _ui->environmentTable->setRowCount(0);
+    _ui->environmentTable->setSortingEnabled(false);
+    int r = 0, c = 0;
+    for (const auto &key: listInstancesResponse.environmentCounters.keys()) {
+        _ui->environmentTable->insertRow(r);
+        SetColumn(_ui->environmentTable, r, c++, key);
+        SetColumn(_ui->environmentTable, r, c, listInstancesResponse.environmentCounters[key]);
+        r++;
+        c = 0;
+    }
+    _ui->environmentTable->setRowCount(r);
+    _ui->environmentTable->setSortingEnabled(true);
+    _ui->instanceTable->sortItems(_environmentSortColumn, _environmentSortOrder);
+    _ui->environmentTable->selectRow(selectedRow);
+}
+
+void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
+
+    // Cell index
+    const QModelIndex index = _ui->environmentTable->indexAt(pos);
+    if (!index.isValid()) return;
+
+    const int row = index.row();
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Environment Variable");
+    editAction->setToolTip("Edit the environment variable");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Environment Variable");
+    deleteAction->setToolTip("Delete the environment variable");
+
+    const QString key = _ui->environmentTable->item(row, 0)->text();
+    const QString value = _ui->environmentTable->item(row, 1)->text();
+    if (const QAction *selectedAction = menu.exec(_ui->environmentTable->viewport()->mapToGlobal(pos));
+        selectedAction == editAction) {
+        if (ApplicationEnvironmentEditDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
+            SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
+            //   _application.environment[key] = dialog.GetValue();
+            //            _changed = true;
+        }
+    } else if (selectedAction == deleteAction) {
+        _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);
+        _ui->environmentTable->removeRow(row);
+    }
 }
 
 void LambdaDetailsDialog::HandleAccept() {

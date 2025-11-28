@@ -18,8 +18,8 @@
 #include <utils/EventBus.h>
 #include <dto/lambda/LambdaListResponse.h>
 #include <dto/lambda/LambdaGetResponse.h>
-
-#include "dto/lambda/LambdaListInstancesResponse.h"
+#include <dto/lambda/LambdaListEnvironmentResponse.h>
+#include <dto/lambda/LambdaListInstancesResponse.h>
 
 class LambdaService final : public QObject {
     Q_OBJECT
@@ -58,13 +58,40 @@ public:
      */
     void GetLambda(const QString &lambdaArn);
 
+    /**
+     * @brief Get the lambda instances list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
     void GetLambdaInstances(const QString &lambdaArn);
 
-    //void UpdateLambda(const Lambda &lambda);
+    /**
+     * @brief Get the lambda environment list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
+    void GetLambdaEnvironment(const QString &lambdaArn);
 
-    //void EnableLambda(const QString &name);
+    /**
+     * @brief Add a lambda environment variable
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment key
+     * @param value environment value
+     */
+    void AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
 
-    //void DisableLambda(const QString &name);
+    /**
+     * @brief Remove a lambda environment variable
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment key
+     */
+    void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
+
+    void ListLambdaLogs(const QString &lambdaArn);
+
+    void GetLambdaLogs(const QString &oid);
 
     /**
      * @brief Stop an lambdas
@@ -111,7 +138,7 @@ public:
      *
      * @param name lambda name
      */
-    //void DeleteLambda(const QString &name);
+    void DeleteLambda(const QString &name);
 
 signals:
     /**
@@ -135,7 +162,29 @@ signals:
      */
     void ListLambdaInstancesSignal(const LambdaListInstancesResponse &listInstancesResponse);
 
+    /**
+     * @brief List environment signal
+     *
+     * @param listEnvironmentResponse lambda environment list response
+     */
+    void ListLambdaEnvironmentSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
+
+    /**
+     * @brief List lambda logs signal
+     *
+     * @param listEnvironmentResponse lambda environment list response
+     */
+    void ListLambdaLogsSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
+
+    /**
+     * @brief Reload all lambdas signal
+     */
     void LoadAllLambdas();
+
+    /**
+     * @brief Reload all environment signal
+     */
+    void LoadLambdaEnvironment();
 
 private:
     /**

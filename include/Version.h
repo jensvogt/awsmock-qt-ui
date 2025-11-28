@@ -1,14 +1,6 @@
-//
-// Created by jensv on 27/11/2025.
-//
+#pragma once
 
-#ifndef AWSMOCK_QT_UI_VERSION_H_IN_H
-#define AWSMOCK_QT_UI_VERSION_H_IN_H
-
-#define AWSMOCK_UI_VERSION_MAJOR 1
-#define AWSMOCK_UI_VERSION_MINOR 0
-#define AWSMOCK_UI_VERSION_PATCH 15
-
-#define AWSMOCK_UI_VERSION "1.0.15"
-
-#endif //AWSMOCK_QT_UI_VERSION_H_IN_H
+#define APP_VERSION "1.4.19"
+#define APP_VERSION_MAJOR 1
+#define APP_VERSION_MINOR 4
+#define APP_VERSION_PATCH 19
