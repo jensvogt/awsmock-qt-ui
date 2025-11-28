@@ -212,6 +212,8 @@ jobs:
       - name: Prepare package structure
         run: |
           PACKAGE_DIR=package
+          echo "PACKAGE_DIR=$PACKAGE_DIR" >> $GITHUB_ENV
+          
           mkdir -p $PACKAGE_DIR/DEBIAN
           mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin
           mkdir -p $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
@@ -237,9 +239,6 @@ jobs:
       - name: Build RPM with fpm
         run: |
           fpm -s dir -t deb --name "${APP_NAME}" --version "${SEMVER}" --architecture amd64 --package "${APP_NAME}-${SEMVER}-amd64.deb" -C "$PACKAGE_DIR" usr/local/$APP_NAME
-      #      - name: Build .deb
-      #        run: |
-      #          dpkg-deb --build ./deb_package ${APP_NAME}-${SEMVER}.deb
 
       # Step 7: Upload .deb artifact
       - name: Upload .deb
