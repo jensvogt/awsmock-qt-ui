@@ -65,7 +65,7 @@
             // Load manifest written by GitHub Actions
             const manifest = await fetch("files.json").then(r => r.json());
             const files = manifest.downloads;
-
+            console.log(files);
             for (const file of files) {
                 const url = file;
 
