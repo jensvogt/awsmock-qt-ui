@@ -396,12 +396,12 @@ jobs:
 
       - name: Create site folder
         run: |
-          mkdir site
-          cp ./artifacts/installer-windows/*.exe site/ || true
-          cp ./artifacts/installer-macos/*.dmg site/ || true
-          cp ./artifacts/deb-package-linux/*.deb site/ || true
-          cp ./artifacts/rpm-package-linux/*.rpm site/ || true
-          cp .github/pages/index.html site/index.html
+          mkdir public
+          cp ./artifacts/installer-windows/*.exe public/ || true
+          cp ./artifacts/installer-macos/*.dmg public/ || true
+          cp ./artifacts/deb-package-linux/*.deb public/ || true
+          cp ./artifacts/rpm-package-linux/*.rpm public/ || true
+          cp .github/pages/index.html public/index.html
 
       - name: Generate files.json
         run: |
@@ -424,7 +424,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: public
 
       - name: Deploy to GitHub Pages
         id: deployment
