@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.47](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.46...v1.4.47) (2025-11-29)
+
+
+### Bug Fixes
+
+* fix binary download page ([b825000](https://github.com/jensvogt/awsmock-qt-ui/commit/b825000e70d10a8f3dfd5eec7e4a9b2d6a45962f))
+
 ## [1.4.46](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.45...v1.4.46) (2025-11-29)
 
 
