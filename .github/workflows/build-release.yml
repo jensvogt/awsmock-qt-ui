@@ -49,6 +49,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Normalize SEMVER
+        shell: pwsh
+        run: |
+          $semver = "${env:SEMVER}"
+          $normalized = $semver -replace "^v", ""
+          echo "SEMVER=$normalized" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Setup MSVC environment
         uses: ilammy/msvc-dev-cmd@v1
         with:
@@ -119,6 +126,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Normalize VERSION
+        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+        
       - name: Install Qt via aqtinstall
         shell: bash
         run: |
@@ -393,17 +403,35 @@ jobs:
 
       - name: Create site folder
         run: |
-          mkdir site
-          cp artifacts/windows/*.exe site/ || true
-          cp artifacts/macos/*.dmg site/ || true
-          cp artifacts/linux/*.rpm site/ || true
-          cp artifacts/linux/*.deb site/ || true
-          cp .github/pages/index.html site/index.html
+          mkdir public
+          cp ./artifacts/installer-windows/*.exe public/ || true
+          cp ./artifacts/installer-macos/*.dmg public/ || true
+          cp ./artifacts/deb-package-linux/*.deb public/ || true
+          cp ./artifacts/rpm-package-linux/*.rpm public/ || true
+          cp .github/pages/index.html public/index.html
+
+      - name: Generate files.json
+        run: |
+          cd public
+          echo '{ "downloads": [' > files.json
+          first=true
+          for f in *.{exe,deb,rpm,dmg}; do
+            [ -f "$f" ] || continue
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo "," >> files.json
+            fi
+            size=$(stat -c%s "$f")
+            sha=$(sha256sum "$f" | cut -d" " -f1)
+            echo "  {\"file\": \"$f\", \"size\": $size, \"sha256\": \"$sha\"}" >> files.json
+          done
+          echo "]}" >> files.json
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: public
 
       - name: Deploy to GitHub Pages
         id: deployment

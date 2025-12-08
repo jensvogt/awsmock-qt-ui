@@ -1,5 +1,85 @@
 # Changelog
 
+## [1.4.48](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.47...v1.4.48) (2025-12-08)
+
+
+### Bug Fixes
+
+* add docker stats dialog ([0211d13](https://github.com/jensvogt/awsmock-qt-ui/commit/0211d137f224a1ef7d7755c79a1acdfb6d1bab41))
+* add docker stats dialog ([276591e](https://github.com/jensvogt/awsmock-qt-ui/commit/276591ebe551ff370b6f31afc3f4ed28ebc5ac9e))
+
+## [1.4.47](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.46...v1.4.47) (2025-11-29)
+
+
+### Bug Fixes
+
+* fix binary download page ([b825000](https://github.com/jensvogt/awsmock-qt-ui/commit/b825000e70d10a8f3dfd5eec7e4a9b2d6a45962f))
+
+## [1.4.46](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.45...v1.4.46) (2025-11-29)
+
+
+### Bug Fixes
+
+* fix binary download page ([71e79e4](https://github.com/jensvogt/awsmock-qt-ui/commit/71e79e4249d5f28a0e813ee690e4fdf9977f9468))
+* fix but in Windows installer ([21e36ee](https://github.com/jensvogt/awsmock-qt-ui/commit/21e36ee4f9f65ceee1c618220c7ca70164611966))
+
+## [1.4.45](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.44...v1.4.45) (2025-11-28)
+
+
+### Bug Fixes
+
+* fix but in Windows installer ([2f841a4](https://github.com/jensvogt/awsmock-qt-ui/commit/2f841a4aaba1bcd9931c989a4f4e114b7080653f))
+* fix but in Windows installer ([d90cfcb](https://github.com/jensvogt/awsmock-qt-ui/commit/d90cfcba0caab773d7d04df56153950b934393fb))
+* fix but in Windows installer ([c3b6f9a](https://github.com/jensvogt/awsmock-qt-ui/commit/c3b6f9aaee811c60d7b8047c3713ee5a7e07a597))
+
+## [1.4.44](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.43...v1.4.44) (2025-11-28)
+
+
+### Bug Fixes
+
+* fix but in Windows installer ([48dc4db](https://github.com/jensvogt/awsmock-qt-ui/commit/48dc4dbf59a2c4a8314743ae4ad9de1fdf431b8a))
+* fix but in Windows installer ([f477efa](https://github.com/jensvogt/awsmock-qt-ui/commit/f477efa1cafdbf7d6e9f3a87c48e9687bb0f4746))
+
+## [1.4.43](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.42...v1.4.43) (2025-11-28)
+
+
+### Bug Fixes
+
+* fix but in Windows installer ([b0ab3e9](https://github.com/jensvogt/awsmock-qt-ui/commit/b0ab3e9c7a54a40fadf72ae939b5e17f9735a4b3))
+* fix but in Windows installer ([4ab2a86](https://github.com/jensvogt/awsmock-qt-ui/commit/4ab2a869634d77fb4433de72b86f805757940f9e))
+
+## [1.4.42](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.41...v1.4.42) (2025-11-28)
+
+
+### Bug Fixes
+
+* fix but in Windows installer ([f7f0000](https://github.com/jensvogt/awsmock-qt-ui/commit/f7f0000897462ece3ca727ca7edba80ee8f736f8))
+* fix but in Windows installer ([b982e11](https://github.com/jensvogt/awsmock-qt-ui/commit/b982e1172d033d20392ec96286c54a37dd1b6687))
+
+## [1.4.41](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.40...v1.4.41) (2025-11-28)
+
+
+### Bug Fixes
+
+* fix but in Windows installer ([ed77ac8](https://github.com/jensvogt/awsmock-qt-ui/commit/ed77ac88d15618c8cfbc272cda41e2629c20f581))
+* fix but in Windows installer ([c159a42](https://github.com/jensvogt/awsmock-qt-ui/commit/c159a4232de92a2d04cfcb2d5f1bd7eb637d4d42))
+
+## [1.4.40](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.39...v1.4.40) (2025-11-28)
+
+
+### Bug Fixes
+
+* fix but in Windows installer ([5209fbd](https://github.com/jensvogt/awsmock-qt-ui/commit/5209fbd8763af49bb52e0a0a959f23a5ee9148c9))
+* fix but in Windows installer ([789e964](https://github.com/jensvogt/awsmock-qt-ui/commit/789e9647baa2b419d4dc15b1c429d24f903023ba))
+
+## [1.4.39](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.38...v1.4.39) (2025-11-28)
+
+
+### Bug Fixes
+
+* add lambda result list page ([88533ee](https://github.com/jensvogt/awsmock-qt-ui/commit/88533ee7c997f7200219b2cfa553b76a73a64b38))
+* add lambda result list page ([cf22125](https://github.com/jensvogt/awsmock-qt-ui/commit/cf2212511acf7560e087008af32ee9de14194c51))
+
 ## [1.4.38](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.37...v1.4.38) (2025-11-28)
 
 
