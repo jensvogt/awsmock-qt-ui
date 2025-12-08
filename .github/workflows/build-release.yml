@@ -50,7 +50,11 @@ jobs:
           fetch-depth: 0
 
       - name: Normalize SEMVER
-        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+        shell: pwsh
+        run: |
+          $semver = "${env:SEMVER}"
+          $normalized = $semver -replace "^v", ""
+          echo "SEMVER=$normalized" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Setup MSVC environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -122,6 +126,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Normalize VERSION
+        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
+        
       - name: Install Qt via aqtinstall
         shell: bash
         run: |
