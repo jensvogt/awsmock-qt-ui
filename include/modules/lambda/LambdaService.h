@@ -21,6 +21,7 @@
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
 #include <dto/lambda/LambdaListInstancesResponse.h>
 #include <dto/lambda/LambdaListResultsResponse.h>
+#include <dto/lambda/LambdaGetResultResponse.h>
 
 class LambdaService final : public QObject {
     Q_OBJECT
@@ -91,6 +92,8 @@ public:
     void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
 
     void ListLambdaLogs(const QString &lambdaArn);
+
+    void GetLambdaResult(const QString &oid);
 
     void GetLambdaResults(const QString &oid);
 
@@ -176,6 +179,13 @@ signals:
      * @param listResultsResponse lambda results list response
      */
     void ListLambdaResultsSignal(const LambdaListResultsResponse &listResultsResponse);
+
+    /**
+     * @brief Get a single lambda invocation result
+     *
+     * @param getResultsResponse lambda result reponse
+     */
+    void GetLambdaResultSignal(const LambdaGetResultsResponse &getResultsResponse);
 
     /**
      * @brief Reload all lambdas signal

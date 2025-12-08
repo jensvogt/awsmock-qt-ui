@@ -7,7 +7,7 @@
 #include <modules/lambda/LambdaLogsDialog.h>
 #include "ui_LambdaLogsDialog.h"
 
-LambdaLogsDialog::LambdaLogsDialog(const QString &name, const QString &containerId, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaLogsDialog) {
+LambdaLogsDialog::LambdaLogsDialog(const QString &oid, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaLogsDialog) {
 
     // Lambda REST service
     _lambdaService = new LambdaService();
@@ -17,7 +17,7 @@ LambdaLogsDialog::LambdaLogsDialog(const QString &name, const QString &container
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &LambdaLogsDialog::HandleReject);
 
     // Get lambda Logs
-    _lambdaService->GetLambda(name);
+    //_lambdaService->GetLambdaResult(oid);
 }
 
 LambdaLogsDialog::~LambdaLogsDialog() {
