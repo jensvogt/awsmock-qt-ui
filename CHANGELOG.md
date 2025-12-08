@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.48](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.47...v1.4.48) (2025-12-08)
+
+
+### Bug Fixes
+
+* add docker stats dialog ([0211d13](https://github.com/jensvogt/awsmock-qt-ui/commit/0211d137f224a1ef7d7755c79a1acdfb6d1bab41))
+* add docker stats dialog ([276591e](https://github.com/jensvogt/awsmock-qt-ui/commit/276591ebe551ff370b6f31afc3f4ed28ebc5ac9e))
+
 ## [1.4.47](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.46...v1.4.47) (2025-11-29)
 
 
