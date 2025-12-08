@@ -11,6 +11,7 @@
         <file>light/connect.svg</file>
         <file>light/delete.svg</file>
         <file>light/disabled.svg</file>
+        <file>light/docker-stats.svg</file>
         <file>light/edit.svg</file>
         <file>light/enabled.svg</file>
         <file>light/exit.svg</file>
@@ -41,6 +42,7 @@
         <file>dark/connect.svg</file>
         <file>dark/delete.svg</file>
         <file>dark/disabled.svg</file>
+        <file>dark/docker-stats.svg</file>
         <file>dark/edit.svg</file>
         <file>dark/enabled.svg</file>
         <file>dark/exit.svg</file>

@@ -104,7 +104,7 @@ MainWindow::~MainWindow() = default;
 void MainWindow::SetupMenuBar() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
-    QMenu *ftpMenu = menuBar()->addMenu(tr("&FTP"));
+    QMenu *toolsMenu = menuBar()->addMenu(tr("&Tools"));
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
     // File menu
@@ -131,10 +131,14 @@ void MainWindow::SetupMenuBar() {
     connect(prefAction, &QAction::triggered, this, &MainWindow::EditPreferences);
     editMenu->addAction(prefAction);
 
-    // FTP menu
+    // Tools menu
     const auto uploadAction = new QAction(IconUtils::GetIcon("upload"), tr("&Upload file"), this);
     connect(uploadAction, &QAction::triggered, this, &MainWindow::FtpUpload);
-    ftpMenu->addAction(uploadAction);
+    toolsMenu->addAction(uploadAction);
+
+    const auto dockerStatsAction = new QAction(IconUtils::GetIcon("docker-stats"), tr("&Docker Statistics"), this);
+    connect(dockerStatsAction, &QAction::triggered, this, &MainWindow::DockerStats);
+    toolsMenu->addAction(dockerStatsAction);
 
     // Help Menu
     const auto helpAction = new QAction(IconUtils::GetIcon("help"), tr("&Help"), this);
@@ -219,6 +223,13 @@ void MainWindow::CleanInfrastructureResponse() {
 
 void MainWindow::FtpUpload() {
     const auto dialog = new FTPUploadDialog(this);
+    dialog->setModal(false);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+}
+
+void MainWindow::DockerStats() {
+    const auto dialog = new DockerStatsDialog(this);
     dialog->setModal(false);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();

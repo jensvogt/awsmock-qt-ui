@@ -39,6 +39,7 @@
 #include <modules/sqs/SQSMessageList.h>
 #include <modules/lambda/LambdaList.h>
 #include <modules/infrastructure/InfrastructureService.h>
+#include <modules/docker/DockerStatsDialog.h>
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT
@@ -70,6 +71,8 @@ private:
     static void CleanInfrastructureResponse();
 
     void FtpUpload();
+
+    void DockerStats();
 
     static void EditPreferences();
 
