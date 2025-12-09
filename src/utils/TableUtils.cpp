@@ -12,12 +12,22 @@ void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int c
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const int value) {
     const auto item = new QTableWidgetItem();
     item->setData(Qt::EditRole, QVariant::fromValue(value));
+    item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     tableWidget->setItem(row, col, item);
 }
 
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const long value) {
     const auto item = new QTableWidgetItem();
     item->setData(Qt::EditRole, QVariant::fromValue(value));
+    item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    tableWidget->setItem(row, col, item);
+}
+
+void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const double value, const int digits) {
+    const auto item = new QTableWidgetItem();
+    const QString formattedValue = QString::number(value, 'f', digits);
+    item->setData(Qt::EditRole, formattedValue);
+    item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     tableWidget->setItem(row, col, item);
 }
 

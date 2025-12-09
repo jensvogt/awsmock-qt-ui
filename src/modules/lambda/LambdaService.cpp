@@ -224,6 +224,34 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
                       });
 }
 
+void LambdaService::GetLambdaResult(const QString &oid) {
+
+    QJsonObject jRequest;
+    jRequest["oid"] = oid;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "get-lambda-result-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  LambdaGetResultsResponse lambdaResponse;
+                                  lambdaResponse.FromJson(jsonDoc);
+                                  emit GetLambdaResultSignal(lambdaResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
 void LambdaService::GetLambdaResults(const QString &oid) {
 
     QJsonObject jRequest;

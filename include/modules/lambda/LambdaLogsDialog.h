@@ -25,11 +25,10 @@ public:
     /**
      * @brief Constructor
      *
-     * @param name Lambda function name
-     * @param containerId lambda container ID
+     * @param oid Lambda function result OID
      * @param parent parent widget
      */
-    explicit LambdaLogsDialog(const QString &name, const QString &containerId, QWidget *parent = nullptr);
+    explicit LambdaLogsDialog(const QString &oid, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor

@@ -17,6 +17,7 @@
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
 #include <dto/docker/DockerStatsResponse.h>
+#include <dto/docker/DockerContainersResponse.h>
 
 class DockerService final : public QObject {
     Q_OBJECT
@@ -28,13 +29,22 @@ public:
     DockerService();
 
     /**
+     * @brief List docker containers
+     *
+     * @param prefix docker container name prefix
+     */
+    void ListDockerContainer(const QString &prefix);
+
+    /**
      * @brief List docker statistics
      *
-     * @param prefix application name prefix
+     * @param containerIds
      */
-    void ListDockerStats(const QString &prefix);
+    void ListDockerStats(const QList<QString> &containerIds);
 
 signals:
+    void ReloadDockerContainerSignal(const DockerContainersResponse &dockerContainersResponse);
+
     void ReloadDockerStatsSignal(const DockerStatsResponse &dockerStatsResponse);
 
     //    void GetApplicationDetailsSignal(const ApplicationGetResponse &applicationGetResponse);

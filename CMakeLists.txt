@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-# Include cmake utilities
+# Read version.txt
 include(cmake/ReadVersion.cmake)
 include(cmake/UpdateXmlVersion.cmake)
 include(cmake/UpdateReleaseDate.cmake)
@@ -186,12 +186,19 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaResultListDialog.cpp
         include/modules/lambda/LambdaResultListDialog.h
         src/modules/lambda/LambdaResultListDialog.ui
+        include/dto/lambda/LambdaGetResultResponse.h
         src/modules/docker/DockerStatsDialog.cpp
-        include/modules/docker/DockerStatsDialog.h
-        src/modules/docker/DockerStatsDialog.ui
-        include/modules/docker/DockerService.h
-        include/dto/docker/DockerStatsResponse.h
         src/modules/docker/DockerService.cpp
+        include/modules/docker/DockerService.h
+        include/modules/docker/DockerStatsDialog.h
+        include/dto/docker/DockerStatsResponse.h
+        src/modules/docker/DockerStatsDialog.ui
+        include/dto/docker/DockerContainersResponse.h
+        include/dto/docker/Container.h
+        include/dto/docker/CpuUsage.h
+        include/dto/docker/CpuStat.h
+        include/dto/docker/ContainerStat.h
+        include/dto/docker/MemoryStat.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

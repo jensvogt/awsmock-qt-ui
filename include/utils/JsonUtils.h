@@ -21,6 +21,16 @@ public:
         qDebug() << jsonString;
     }
 
+    static void WriteJsonString(const QJsonArray &array) {
+        // Convert to JSON document
+        const QJsonDocument doc(array);
+
+        // Convert to compact string
+        const QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
+
+        qDebug() << jsonString;
+    }
+
     /**
      * @brief Return a json value by path
      *
