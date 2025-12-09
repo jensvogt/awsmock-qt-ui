@@ -187,6 +187,18 @@ set(PROJECT_SOURCES
         include/modules/lambda/LambdaResultListDialog.h
         src/modules/lambda/LambdaResultListDialog.ui
         include/dto/lambda/LambdaGetResultResponse.h
+        src/modules/docker/DockerStatsDialog.cpp
+        src/modules/docker/DockerService.cpp
+        include/modules/docker/DockerService.h
+        include/modules/docker/DockerStatsDialog.h
+        include/dto/docker/DockerStatsResponse.h
+        src/modules/docker/DockerStatsDialog.ui
+        include/dto/docker/DockerContainersResponse.h
+        include/dto/docker/Container.h
+        include/dto/docker/CpuUsage.h
+        include/dto/docker/CpuStat.h
+        include/dto/docker/ContainerStat.h
+        include/dto/docker/MemoryStat.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

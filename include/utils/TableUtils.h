@@ -21,6 +21,8 @@ public:
 
     static void SetColumn(QTableWidget *tableWidget, int row, int col, long value);
 
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, double value, int digits = 3);
+
     static void SetColumn(QTableWidget *tableWidget, int row, int col, const QDateTime &value);
 
     static void SetColumn(QTableWidget *tableWidget, int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon);

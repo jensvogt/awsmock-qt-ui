@@ -4,22 +4,48 @@ DockerService::DockerService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 }
 
-void DockerService::ListDockerStats(const QString &prefix) {
+void DockerService::ListDockerContainer(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
 
-    QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "name";
+    const QJsonObject jRequest;
+    const QJsonDocument requestDoc(jRequest);
 
-    QJsonArray jSortingArray;
-    jSortingArray.append(jSorting);
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "container"},
+                          {"x-awsmock-action", "list-containers"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                          if (success) {
+                              // The API returns an array contains an array of docker statistics
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  DockerContainersResponse dockerResponse;
+                                  dockerResponse.FromJson(jsonDoc);
+                                  emit ReloadDockerContainerSignal(dockerResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an array!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("GetDockerStats", timer.elapsed());
+                      });
+}
+
+void DockerService::ListDockerStats(const QList<QString> &containerIds) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonArray array;
+    for (const auto &containerId: containerIds) {
+        array.append(containerId);
+    }
 
     QJsonObject jRequest;
-    jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
-    jRequest["sortColumns"] = jSortingArray;
+    jRequest["containerIds"] = array;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
@@ -33,6 +59,7 @@ void DockerService::ListDockerStats(const QString &prefix) {
                           if (success) {
                               // The API returns an array contains an array of docker statistics
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  JsonUtils::WriteJsonString(jsonDoc.object());
                                   DockerStatsResponse dockerResponse;
                                   dockerResponse.FromJson(jsonDoc);
                                   emit ReloadDockerStatsSignal(dockerResponse);
