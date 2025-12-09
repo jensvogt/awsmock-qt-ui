@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.49](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.48...v1.4.49) (2025-12-09)
+
+
+### Bug Fixes
+
+* add docker statistics ([e6ceecf](https://github.com/jensvogt/awsmock-qt-ui/commit/e6ceecfd2640832d0d07141c4ef9fadd176ce584))
+* add lambda result list page ([4fe338e](https://github.com/jensvogt/awsmock-qt-ui/commit/4fe338ef0d5d53a1993481fbaf597736dba9533e))
+
 ## [1.4.48](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.47...v1.4.48) (2025-12-08)
 
 
