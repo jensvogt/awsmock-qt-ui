@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.50](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.49...v1.4.50) (2025-12-10)
+
+
+### Bug Fixes
+
+* fix bug in container stats prefix filter ([dcae0a0](https://github.com/jensvogt/awsmock-qt-ui/commit/dcae0a0794501fc2e0458113e42556b5478e8962))
+
 ## [1.4.49](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.48...v1.4.49) (2025-12-09)
 
 
