@@ -5,12 +5,16 @@
 #ifndef AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
 #define AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
 
+#include <QMenu>
 #include <QDialog>
 #include <QList>
 
 #include <modules/docker/DockerService.h>
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <modules/application/ApplicationEditDialog.h>
+#include <modules/application/ApplicationUploadCodeDialog.h>
+#include <utils/PrefixFilterModel.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -32,11 +36,15 @@ public:
 
     void HandleReject();
 
-    void LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse) const;
+    double GetCpuPercent(const ContainerStat &containerStats);
+
+    void ShowContextMenu(const QPoint &pos);
 
     void LoadContainers(const DockerContainersResponse &dockerContainersResponse);
 
-    void LoadContent() const;
+    void LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse);
+
+    void LoadContent() override;
 
 private:
     /**
@@ -48,6 +56,11 @@ private:
      * @brief Container service
      */
     DockerService *_containerService;
+
+    /**
+     * @brief Application service
+     */
+    ApplicationService *_applicationService;
 
     /**
      * @brief Sort column index
@@ -64,6 +77,23 @@ private:
      */
     QList<QString> _containerIds;
 
+    /**
+     * @brief Prefix suche
+     */
+    QString _prefixValue = "";
+
+    /**
+     * @brief Previous CPU total value
+     */
+    std::map<QString, long> _oldCpuTotal{};
+
+    /**
+     * @brief Previous CPU system value
+     */
+    std::map<QString, long> _oldCpuSystem{};
+
+    QStandardItemModel *_dataModel;
+    PrefixFilterProxyModel *_proxyModel;
 };
 
 

@@ -43,6 +43,9 @@ public:
 
     void HandleAddAttributeButton() const;
 
+    void LoadContent() override {
+    };
+
 private:
     /**
      * @brief UI components

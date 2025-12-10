@@ -33,6 +33,9 @@ public:
 
     void HandleReject();
 
+    void LoadContent() override {
+    };
+
 private:
     /**
      * @brief UI components

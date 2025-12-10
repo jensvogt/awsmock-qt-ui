@@ -9,6 +9,7 @@ void DockerService::ListDockerContainer(const QString &prefix) {
     timer.start();
 
     const QJsonObject jRequest;
+    jRequest["prefix"] = prefix;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(url,
@@ -59,7 +60,6 @@ void DockerService::ListDockerStats(const QList<QString> &containerIds) {
                           if (success) {
                               // The API returns an array contains an array of docker statistics
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  JsonUtils::WriteJsonString(jsonDoc.object());
                                   DockerStatsResponse dockerResponse;
                                   dockerResponse.FromJson(jsonDoc);
                                   emit ReloadDockerStatsSignal(dockerResponse);
