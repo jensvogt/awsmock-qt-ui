@@ -2,6 +2,7 @@
 // Created by vogje01 on 11/9/25.
 //
 
+#include <QStandardItemModel>
 #include <utils/TableUtils.h>
 
 
@@ -57,4 +58,31 @@ void TableUtils::SetHiddenColumn(QTableWidget *tableWidget, const int row, const
     checkItem->setCheckState(value ? Qt::Checked : Qt::Unchecked);
     checkItem->setFlags(checkItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     tableWidget->setItem(row, col, checkItem);
+}
+
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QString &value) {
+    dataModel->setItem(row, col, new QStandardItem(value));
+}
+
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const int value) {
+    const auto item = new QTableWidgetItem();
+    item->setData(Qt::EditRole, QVariant::fromValue(value));
+    item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    dataModel->setItem(row, col, new QStandardItem(value));
+}
+
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const long value) {
+    const QModelIndex index = dataModel->index(row, col);
+    dataModel->setData(index, static_cast<uint>(value), Qt::UserRole);
+    dataModel->setData(index, static_cast<int>(value), Qt::DisplayRole);
+}
+
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const double value, const int digits) {
+    const QModelIndex index = dataModel->index(row, col);
+    dataModel->setData(index, value, Qt::UserRole);
+    dataModel->setData(index, value, Qt::DisplayRole);
+}
+
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QDateTime &value) {
+    dataModel->setItem(row, col, new QStandardItem(value.toString("yyyy-MM-dd hh:mm:ss")));
 }

@@ -199,6 +199,8 @@ set(PROJECT_SOURCES
         include/dto/docker/CpuStat.h
         include/dto/docker/ContainerStat.h
         include/dto/docker/MemoryStat.h
+        include/utils/PrefixFilterModel.h
+        src/utils/PrefixFilterModel.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

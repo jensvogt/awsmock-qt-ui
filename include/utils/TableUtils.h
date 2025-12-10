@@ -7,6 +7,7 @@
 
 #include <QTableWidget>
 #include <QDateTime>
+#include <QStandardItemModel>
 
 class TableUtils {
 public:
@@ -30,5 +31,15 @@ public:
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, const QString &value);
 
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, bool value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, const QString &value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, int value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, long value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, double value, int digits = 3);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, const QDateTime &value);
 };
 #endif //AWSMOCK_QT_UI_TABLE_UTILS_H
