@@ -19,7 +19,7 @@ void DockerService::ListDockerContainer(const QString &prefix) {
                           {"x-awsmock-action", "list-containers"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array contains an array of docker statistics
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
@@ -32,7 +32,7 @@ void DockerService::ListDockerContainer(const QString &prefix) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetDockerStats", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListDockerContainer", timer.elapsed());
                       });
 }
 
@@ -56,7 +56,7 @@ void DockerService::ListDockerStats(const QList<QString> &containerIds) {
                           {"x-awsmock-action", "list-container-stats"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array contains an array of docker statistics
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
@@ -69,6 +69,60 @@ void DockerService::ListDockerStats(const QList<QString> &containerIds) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetDockerStats", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListDockerStats", timer.elapsed());
+                      });
+}
+
+void DockerService::StartContainer(const QString &containerId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["containerId"] = containerId;
+    const QJsonDocument requestDoc(jRequest);
+
+    JsonUtils::WriteJsonString(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "container"},
+                          {"x-awsmock-action", "start-container"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadContainerList();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("StartContainer", timer.elapsed());
+                      });
+}
+
+void DockerService::StopContainer(const QString &containerId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["containerId"] = containerId;
+    const QJsonDocument requestDoc(jRequest);
+
+    JsonUtils::WriteJsonString(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "container"},
+                          {"x-awsmock-action", "stop-container"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadContainerList();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("StopContainer", timer.elapsed());
                       });
 }

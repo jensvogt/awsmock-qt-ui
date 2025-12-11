@@ -7,7 +7,6 @@
 #include <ui_LambdaLogsDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
 #include "ui_LambdaResultListDialog.h"
-#include "modules/lambda/LambdaLogsDialog.h"
 
 LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaResultListDialog), _lambdaArn(lambdaArn) {
 
@@ -24,7 +23,7 @@ LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget
     _ui->deleteButton->setIcon(IconUtils::GetIcon("delete"));
 
     // Result table
-    const QStringList headers = QStringList() = {tr("Name"), tr("ContainerId"), tr("Status"), tr("Timestamp"), tr("Duration")};
+    const QStringList headers = QStringList() = {tr("Name"), tr("ContainerId"), tr("Status"), tr("Timestamp"), tr("Duration"), tr("ObjectId")};
 
     _ui->lambdaResultTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->lambdaResultTable->setShowGrid(true);
@@ -75,7 +74,7 @@ void LambdaResultListDialog::UpdateResultTable(const LambdaListResultsResponse &
     }
     _ui->lambdaResultTable->setRowCount(static_cast<int>(listResultsResponse.lambdaLogCounters.count()));
     _ui->lambdaResultTable->setSortingEnabled(true);
-    //_ui->lambdaResultTable->sortItems(_sortColumn, _sortOrder);
+    _ui->lambdaResultTable->sortItems(_sortColumn, _sortOrder);
     _ui->lambdaResultTable->selectRow(selectedRow);
 }
 
