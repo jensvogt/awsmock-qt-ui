@@ -32,7 +32,7 @@ void DockerService::ListDockerContainer(const QString &prefix) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("ListDockerContainer", timer.elapsed());
+                          emit EventBus::instance().DockerStatsTimerSignal("ListDockerContainer", timer.elapsed());
                       });
 }
 
@@ -69,7 +69,7 @@ void DockerService::ListDockerStats(const QList<QString> &containerIds) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("ListDockerStats", timer.elapsed());
+                          emit EventBus::instance().DockerStatsTimerSignal("ListDockerStats", timer.elapsed());
                       });
 }
 
@@ -96,7 +96,7 @@ void DockerService::StartContainer(const QString &containerId) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("StartContainer", timer.elapsed());
+                          emit EventBus::instance().DockerStatsTimerSignal("StartContainer", timer.elapsed());
                       });
 }
 
@@ -123,6 +123,6 @@ void DockerService::StopContainer(const QString &containerId) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("StopContainer", timer.elapsed());
+                          emit EventBus::instance().DockerStatsTimerSignal("StopContainer", timer.elapsed());
                       });
 }

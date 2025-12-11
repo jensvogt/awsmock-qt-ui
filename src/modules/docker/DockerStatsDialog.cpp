@@ -12,6 +12,14 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     // Application service
     _applicationService = new ApplicationService();
 
+    // Event bus connection
+    _connection =
+            connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, qint64 elapsed) {
+                const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" +
+                                    QString::number(elapsed) + "ms]";
+                _ui->statusLabel->setText(msg);
+            });
+
     // Connect service
     _containerService = new DockerService();
     connect(_containerService, &DockerService::ReloadDockerContainerSignal, this, &DockerStatsDialog::LoadContainers);
@@ -52,7 +60,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     });
 
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("ContainerId"), tr("CPU [%]"), tr("Memory [MB]"), tr("Memory [%]"), tr("Limit [MB]")
+                                    tr("Name"), tr("State"), tr("ContainerId"), tr("CPU [%]"), tr("Memory [MB]"), tr("Memory [%]"), tr("Limit [MB]")
                                 };
 
     // Table
@@ -75,6 +83,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     _ui->statsTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _ui->statsTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->statsTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 
     // Enable sorting, default on and sorted ascending by name
     _ui->statsTable->setSortingEnabled(true);
@@ -92,6 +101,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
 }
 
 DockerStatsDialog::~DockerStatsDialog() {
+    disconnect(_connection);
     delete _ui;
 }
 
@@ -115,6 +125,7 @@ void DockerStatsDialog::LoadContainers(const DockerContainersResponse &dockerCon
     for (auto r = 0, c = 0; r < dockerContainersResponse.containers.count(); r++, c = 0) {
         _containerIds.append(dockerContainersResponse.containers.at(r).id);
         SetColumn(_dataModel, r, c++, dockerContainersResponse.containers.at(r).GetPrincipalName());
+        SetColumn(_dataModel, r, c++, dockerContainersResponse.containers.at(r).state.running, IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         SetColumn(_dataModel, r, c++, dockerContainersResponse.containers.at(r).id.mid(0, 12));
         SetColumn(_dataModel, r, c++, "--");
         SetColumn(_dataModel, r, c++, "--");
@@ -137,7 +148,7 @@ void DockerStatsDialog::LoadContainers(const DockerContainersResponse &dockerCon
 
 void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse) {
 
-    for (int r = 0, c = 1; r < dockerStatsResponse.containerStats.count(); r++, c = 1) {
+    for (int r = 0, c = 2; r < dockerStatsResponse.containerStats.count(); r++, c = 2) {
         SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).containerId.mid(0, 12));
         if (dockerStatsResponse.containerStats.at(r).cpuStats.onlineCpus > 0) {
             SetColumn(_dataModel, r, c++, GetCpuPercent(dockerStatsResponse.containerStats.at(r)));
