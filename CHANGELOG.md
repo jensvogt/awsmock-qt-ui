@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.51](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.50...v1.4.51) (2025-12-11)
+
+
+### Bug Fixes
+
+* fix some minor layout issues ([e873ee8](https://github.com/jensvogt/awsmock-qt-ui/commit/e873ee80423a0c76aa91dab730d38bfc7f5cf3e2))
+* fix some S3 object/bucket edit dialog layout problems ([a5eda5a](https://github.com/jensvogt/awsmock-qt-ui/commit/a5eda5abf1526b942445bc3d11fa66f483e7465d))
+* fix sorting in container stats ([eafaab6](https://github.com/jensvogt/awsmock-qt-ui/commit/eafaab6331e9c37db4f629978b4bcb3198a39817))
+* fix SQS queue details dialog layout, SQS message dialog layout ([dcab148](https://github.com/jensvogt/awsmock-qt-ui/commit/dcab1485da73eb868e984b1cbc0ca502c781e8c8))
+* fix SQS queue details dialog layout, SQS message dialog layout ([852bee1](https://github.com/jensvogt/awsmock-qt-ui/commit/852bee1e5ce760b1ec8f03949a70f99b588e030b))
+
 ## [1.4.50](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.49...v1.4.50) (2025-12-10)
 
 
