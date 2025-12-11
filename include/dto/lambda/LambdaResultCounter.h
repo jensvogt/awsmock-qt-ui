@@ -8,6 +8,8 @@ struct LambdaResultCounter {
 
     QString oid;
 
+    QString region;
+
     QString lambdaName;
 
     QString lambdaArn;
@@ -34,6 +36,7 @@ struct LambdaResultCounter {
 
     void FromJson(const QJsonObject &jsonObject) {
         oid = jsonObject["oid"].toString();
+        region = jsonObject["region"].toString();
         lambdaName = jsonObject["lambdaName"].toString();
         lambdaArn = jsonObject["lambdaArn"].toString();
         runtime = jsonObject["runtime"].toString();

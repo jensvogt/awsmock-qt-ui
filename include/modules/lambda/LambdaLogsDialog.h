@@ -9,6 +9,7 @@
 #include <QDialogButtonBox>
 
 #include <modules/lambda/LambdaService.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,6 +45,10 @@ public:
      * @brief Handle dialog reject
      */
     void HandleReject();
+
+    void HandleGetResult(const LambdaGetResultsResponse &lambdaLogsResult) const;
+
+    void HandleRequestPrettyButton(bool checked) const;
 
 private:
     /**
