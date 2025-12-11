@@ -38,14 +38,30 @@ public:
     /**
      * @brief List docker statistics
      *
-     * @param containerIds
+     * @param containerIds list of container IDs
      */
     void ListDockerStats(const QList<QString> &containerIds);
+
+    /**
+     * @brief Starts a docker container
+     *
+     * @param containerId container ID
+     */
+    void StartContainer(const QString &containerId);
+
+    /**
+     * @brief Stops the docker container
+     *
+     * @param containerId container ID
+     */
+    void StopContainer(const QString &containerId);
 
 signals:
     void ReloadDockerContainerSignal(const DockerContainersResponse &dockerContainersResponse);
 
     void ReloadDockerStatsSignal(const DockerStatsResponse &dockerStatsResponse);
+
+    void ReloadContainerList();
 
     //    void GetApplicationDetailsSignal(const ApplicationGetResponse &applicationGetResponse);
 

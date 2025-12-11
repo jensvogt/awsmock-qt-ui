@@ -1,10 +1,11 @@
 #ifndef AWSMOCK_QT_UI_DOCKER_CONTAINER_H
 #define AWSMOCK_QT_UI_DOCKER_CONTAINER_H
 
-#include <QList>
+#include <qguiapplication_platform.h>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QJsonDocument>
+
+#include <dto/docker/State.h>
 
 struct Container {
 
@@ -41,7 +42,7 @@ struct Container {
     /**
      * The state of this container (e.g. Exited)
      */
-    //State state;
+    State state;
 
     /**
      * Additional human-readable status of this container (e.g. Exit 0)
@@ -63,7 +64,7 @@ struct Container {
      */
     long sizeRootFs = 0;
 
-    QString GetPrincipalName() const {
+    [[nodiscard]] QString GetPrincipalName() const {
         if (names.empty()) {
             return "Unknown";
         }
@@ -80,12 +81,18 @@ struct Container {
         sizeRw = jsonObject["SizeRw"].toInt();
         sizeRootFs = jsonObject["SizeRootFs"].toInt();
 
-        // Environment
+        // Names
         if (jsonObject.contains("Names")) {
             for (auto jsonNames = jsonObject["Names"].toArray(); const auto &name: jsonNames) {
                 names.emplace_back(name.toString());
             }
         }
+
+        // State
+        if (jsonObject.contains("State")) {
+            state.FromJson(jsonObject["State"].toObject());
+        }
+        qDebug() << "Name: " << names.front() << " State: " << state.running;
     }
 };
 

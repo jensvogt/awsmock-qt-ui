@@ -60,27 +60,35 @@ void TableUtils::SetHiddenColumn(QTableWidget *tableWidget, const int row, const
     tableWidget->setItem(row, col, checkItem);
 }
 
-void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QString &value) {
-    dataModel->setItem(row, col, new QStandardItem(value));
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QString &value, const Qt::Alignment alignment) {
+    const auto item = new QStandardItem(value);
+    item->setTextAlignment(alignment);
+    const QModelIndex index = dataModel->index(row, col);
+    dataModel->setData(index, QVariant(alignment));
+    dataModel->setData(index, value, Qt::EditRole);
+    dataModel->setData(index, value, Qt::DisplayRole);
+    dataModel->setItem(row, col, item);
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const int value) {
-    const auto item = new QTableWidgetItem();
-    item->setData(Qt::EditRole, QVariant::fromValue(value));
-    item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    dataModel->setItem(row, col, new QStandardItem(value));
+    const QModelIndex index = dataModel->index(row, col);
+    dataModel->setData(index, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
+    dataModel->setData(index, value, Qt::UserRole);
+    dataModel->setData(index, value, Qt::DisplayRole);
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const long value) {
     const QModelIndex index = dataModel->index(row, col);
-    dataModel->setData(index, static_cast<uint>(value), Qt::UserRole);
+    dataModel->setData(index, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
+    dataModel->setData(index, static_cast<int>(value), Qt::UserRole);
     dataModel->setData(index, static_cast<int>(value), Qt::DisplayRole);
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const double value, const int digits) {
     const QModelIndex index = dataModel->index(row, col);
+    dataModel->setData(index, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
     dataModel->setData(index, value, Qt::UserRole);
-    dataModel->setData(index, value, Qt::DisplayRole);
+    dataModel->setData(index, QString::number(value, 'f', digits), Qt::DisplayRole);
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QDateTime &value) {

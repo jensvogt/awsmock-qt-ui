@@ -49,16 +49,12 @@ struct ContainerStat {
      *
      * @return CPU percentage
      */
-    double GetCpuPercent() const {
-        double cpuPercent = 0.0;
-        const double delta = static_cast<double>(cpuStats.cpuUsage.totalUsage - preCpuStats.cpuUsage.totalUsage);
-        const double deltaSystem = static_cast<double>(cpuStats.cpuUsage.systemUsage - preCpuStats.cpuUsage.systemUsage);
-        if (deltaSystem > 0 && delta > 0) {
-            cpuPercent = delta / deltaSystem / cpuStats.onlineCpus * 100;
-        } else {
-            cpuPercent = 0.0;
+    [[nodiscard]] double GetCpuPercent() const {
+        const auto delta = static_cast<double>(cpuStats.cpuUsage.totalUsage - preCpuStats.cpuUsage.totalUsage);
+        if (const auto deltaSystem = static_cast<double>(cpuStats.cpuUsage.systemUsage - preCpuStats.cpuUsage.systemUsage); deltaSystem > 0 && delta > 0) {
+            return delta / deltaSystem / cpuStats.onlineCpus * 100;
         }
-        return cpuPercent;
+        return 0.0;
     }
 
     /**
@@ -66,7 +62,7 @@ struct ContainerStat {
      *
      * @return memory usage in MB
      */
-    long GetTotalMemory() const {
+    [[nodiscard]] long GetTotalMemory() const {
         return memoryStat.usage / (1024 * 1024);
     }
 
@@ -75,7 +71,7 @@ struct ContainerStat {
      *
      * @return memory percentage
      */
-    double GetPercentMemory() const {
+    [[nodiscard]] double GetPercentMemory() const {
         return memoryStat.limit > 0 ? static_cast<double>(memoryStat.usage) / static_cast<double>(memoryStat.limit) * 100.0 : 0.0;
     }
 
