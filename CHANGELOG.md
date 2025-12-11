@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.52](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.51...v1.4.52) (2025-12-11)
+
+
+### Bug Fixes
+
+* add docker statistics REST call timer to docker status service ([1865974](https://github.com/jensvogt/awsmock-qt-ui/commit/1865974ee1d542aa7df667b5945566b735502391))
+
 ## [1.4.51](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.50...v1.4.51) (2025-12-11)
 
 
