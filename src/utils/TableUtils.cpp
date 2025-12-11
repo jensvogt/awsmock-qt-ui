@@ -94,3 +94,12 @@ void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const i
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QDateTime &value) {
     dataModel->setItem(row, col, new QStandardItem(value.toString("yyyy-MM-dd hh:mm:ss")));
 }
+
+void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) {
+    auto *iconItem = new QStandardItem();
+    iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    iconItem->setData(Qt::DisplayRole, value ? 1 : 0);
+    iconItem->setText("");
+    iconItem->setIcon(value ? enabledIcon : disabledIcon);
+    dataModel->setItem(row, col, iconItem);
+}

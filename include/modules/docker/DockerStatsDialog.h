@@ -94,6 +94,8 @@ private:
 
     QStandardItemModel *_dataModel;
     PrefixFilterProxyModel *_proxyModel;
+
+    QMetaObject::Connection _connection;
 };
 
 

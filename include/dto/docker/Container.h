@@ -92,7 +92,6 @@ struct Container {
         if (jsonObject.contains("State")) {
             state.FromJson(jsonObject["State"].toObject());
         }
-        qDebug() << "Name: " << names.front() << " State: " << state.running;
     }
 };
 
