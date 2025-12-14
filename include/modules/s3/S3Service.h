@@ -48,14 +48,18 @@ public:
 
     void GetObjectDetails(const QString &objectId);
 
+    void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
+
     void DeleteObject(const QString &bucketName, const QString &key);
 
-signals:
+    signals:
     /**
      * @brief Signaled when a bucket is available
      *
      * @param bucketListResponse list of buckets
      */
+    
+
     void ListBucketSignal(const S3ListBucketResult &bucketListResponse);
 
     /**

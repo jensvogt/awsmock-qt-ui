@@ -8,7 +8,7 @@ void DockerService::ListDockerContainer(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
 
-    const QJsonObject jRequest;
+    const QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
     const QJsonDocument requestDoc(jRequest);
 
@@ -27,10 +27,10 @@ void DockerService::ListDockerContainer(const QString &prefix) {
                                   dockerResponse.FromJson(jsonDoc);
                                   emit ReloadDockerContainerSignal(dockerResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an array!");
+                                  qCritical() << "Response is not an array!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("ListDockerContainer", timer.elapsed());
                       });
@@ -39,9 +39,10 @@ void DockerService::ListDockerContainer(const QString &prefix) {
 void DockerService::ListDockerStats() {
     QElapsedTimer timer;
     timer.start();
+    const QJsonDocument requestDoc(CreateBaseRequest());
 
     _restManager.post(url,
-                      nullptr,
+                      requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
                           {"x-awsmock-action", "list-container-stats"},
@@ -55,10 +56,10 @@ void DockerService::ListDockerStats() {
                                   dockerResponse.FromJson(jsonDoc);
                                   emit ReloadDockerStatsSignal(dockerResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("ListDockerStats", timer.elapsed());
                       });
@@ -68,7 +69,7 @@ void DockerService::StartContainer(const QString &containerId) {
     QElapsedTimer timer;
     timer.start();
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
@@ -83,7 +84,7 @@ void DockerService::StartContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("StartContainer", timer.elapsed());
                       });
@@ -93,7 +94,7 @@ void DockerService::StopContainer(const QString &containerId) {
     QElapsedTimer timer;
     timer.start();
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
@@ -108,7 +109,7 @@ void DockerService::StopContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("StopContainer", timer.elapsed());
                       });
@@ -118,7 +119,7 @@ void DockerService::RestartContainer(const QString &containerId) {
     QElapsedTimer timer;
     timer.start();
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
@@ -133,7 +134,7 @@ void DockerService::RestartContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("RestartContainer", timer.elapsed());
                       });
@@ -143,7 +144,7 @@ void DockerService::KillContainer(const QString &containerId) {
     QElapsedTimer timer;
     timer.start();
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
@@ -158,7 +159,32 @@ void DockerService::KillContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
+                          }
+                          emit EventBus::instance().DockerStatsTimerSignal("KillContainer", timer.elapsed());
+                      });
+}
+
+void DockerService::DeleteContainer(const QString &containerId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["containerId"] = containerId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "container"},
+                          {"x-awsmock-action", "delete-container"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadContainerList();
+                          } else {
+                              qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("KillContainer", timer.elapsed());
                       });

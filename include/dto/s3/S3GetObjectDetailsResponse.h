@@ -35,8 +35,8 @@ struct S3GetObjectDetailsResponse {
         key = jsonObject["key"].toString();
         contentType = jsonObject["contentType"].toString();
         internalName = jsonObject["internalName"].toString();
-        size = jsonObject["size"].toInteger();
-        owner = jsonObject["user"].toString();
+        size = jsonObject["size"].toInt();
+        owner = jsonObject["owner"].toString();
         body = QByteArray::fromBase64(jsonObject["body"].toString().toUtf8());
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);

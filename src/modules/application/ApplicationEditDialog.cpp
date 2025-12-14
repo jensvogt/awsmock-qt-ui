@@ -93,6 +93,7 @@ ApplicationEditDialog::~ApplicationEditDialog() {
 
 void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &applicationGetResponse) {
     _application = applicationGetResponse.application;
+    _ui->regionEdit->setText(_application.region);
     _ui->nameEdit->setText(_application.name);
     _ui->runtimeEdit->setText(_application.runtime);
     _ui->runTypeEdit->setText(_application.runType);
@@ -100,6 +101,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->publicPortEdit->setText(QString::number(_application.publicPort));
     _ui->archiveEdit->setText(_application.archive);
     _ui->versionEdit->setText(_application.version);
+    _ui->imageNameEdit->setText(_application.imageName);
     _ui->imageIdEdit->setText(_application.imageId);
     _ui->containerIdEdit->setText(_application.containerId);
     _ui->containerNameEdit->setText(_application.containerName);

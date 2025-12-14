@@ -6,7 +6,6 @@
 #include "ui_ApplicationUploadCodeDialog.h"
 
 ApplicationUploadCodeDialog::ApplicationUploadCodeDialog(const QString &name, QWidget *parent) : QDialog(parent), ui(new Ui::ApplicationUploadCodeDialog) {
-
     // Connect application service
     _applicationService = new ApplicationService();
 
@@ -29,7 +28,6 @@ ApplicationUploadCodeDialog::~ApplicationUploadCodeDialog() {
 }
 
 void ApplicationUploadCodeDialog::dragEnterEvent(QDragEnterEvent *event) {
-
     // Check if the data being dragged contains file URLs
     if (event->mimeData()->hasUrls()) {
         // Accept the proposed action (copy, move, or link)
@@ -43,16 +41,11 @@ void ApplicationUploadCodeDialog::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void ApplicationUploadCodeDialog::dropEvent(QDropEvent *event) {
-
     // Ensure the data is file URLs
     if (event->mimeData()->hasUrls()) {
-
-        QList<QUrl> urls = event->mimeData()->urls();
-        for (const QUrl &url: urls) {
-
+        for (QList<QUrl> urls = event->mimeData()->urls(); const QUrl &url: urls) {
             // Check if the URL is a local file
             if (url.isLocalFile()) {
-
                 // Get the local file
                 QString localFile = url.toLocalFile();
                 _fileInfo = QFileInfo(localFile);
@@ -72,10 +65,9 @@ void ApplicationUploadCodeDialog::dropEvent(QDropEvent *event) {
 }
 
 void ApplicationUploadCodeDialog::HandleBrowse() {
-
     // Create a QFileDialog set to select existing files
     const QString filter = "All Files (*.*)";
-    const QString defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open application code file", defaultDir, filter); !filePath.isEmpty()) {
         const QString version = FileUtils::ExtractVersionFromFileName(filePath);
@@ -86,7 +78,6 @@ void ApplicationUploadCodeDialog::HandleBrowse() {
 }
 
 void ApplicationUploadCodeDialog::HandleAccept() {
-
     QFile file(_fileInfo.absoluteFilePath());
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open file:" << file.errorString();
