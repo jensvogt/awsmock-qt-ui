@@ -384,7 +384,7 @@ jobs:
   publish:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
-    needs: [ release-please, build-windows, build-macos, build-linux-rpm, build-linux-deb ]
+    needs: [ release-please, build-windows, build-macos, build-linux-rpm, build-linux-deb, build-update ]
     env:
       SEMVER: "${{ needs.release-please.outputs.tag_name }}"
     steps:
