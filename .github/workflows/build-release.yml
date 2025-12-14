@@ -115,7 +115,11 @@ jobs:
       - name: Generate repository
         shell: powershell
         run: |
-          ${{ env.QT_DIR }}\Tools\QtInstallerFramework\4.10\bin\repogen.exe -p installer/packages installer/repository
+          $ifwRoot = Get-ChildItem "$env:QT_DIR\Tools\QtInstallerFramework" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $ifwRoot) { Write-Error "IFW not found"; exit 1 }
+          $ifwBin = Join-Path $ifwRoot.FullName "bin"
+          $env:PATH = "$ifwBin;$env:PATH"
+          repogen -p installer/packages installer/repository
 
       - name: Upload repository artifact
         uses: actions/upload-artifact@v4
