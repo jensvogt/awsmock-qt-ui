@@ -1,0 +1,21 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>de.jensvogt.awsmockqtui</Name>
+  <DisplayName>AwsMockQtUI</DisplayName>
+  <Description>AwsMock UI</Description>
+  <Version>1.4.66</Version>
+  <ReleaseDate>2025-12-14 22:08:55</ReleaseDate>
+  <Default>true</Default>
+  <Script>installscript.qs</Script>
+  <RequiresAdminRights>true</RequiresAdminRights>
+  <ForcedInstallation>true</ForcedInstallation>
+  <UpdateFile CompressedSize="47848000" OS="Any" UncompressedSize="110159689"/>
+  <DownloadableArchives>generic.7z,iconengines.7z,imageformats.7z,networkinformation.7z,platforms.7z,styles.7z,tls.7z,translations.7z,content.7z</DownloadableArchives>
+  <SHA1>d3ec6b582d9cb232d9985d9a8423bc8da27755f6</SHA1>
+ </PackageUpdate>
+ <SHA1>d3ec6b582d9cb232d9985d9a8423bc8da27755f6</SHA1>
+ <MetadataName>2025-12-14-2212_meta.7z</MetadataName>
+</Updates>
