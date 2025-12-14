@@ -2,7 +2,7 @@
 #include <modules/s3/S3Service.h>
 
 S3Service::S3Service() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
+    _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 }
 
 void S3Service::ListBuckets(const QString &prefix) {
@@ -13,14 +13,14 @@ void S3Service::ListBuckets(const QString &prefix) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -44,12 +44,11 @@ void S3Service::ListBuckets(const QString &prefix) {
 }
 
 void S3Service::PurgeBucket(const QString &bucketName) {
-    QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -66,11 +65,11 @@ void S3Service::PurgeBucket(const QString &bucketName) {
 }
 
 void S3Service::AddBucket(const QString &bucketName) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["Name"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -86,23 +85,21 @@ void S3Service::AddBucket(const QString &bucketName) {
                       });
 }
 
-void S3Service::UpdateBucket(const QString &region, const QString &bucketName, QMap<QString, QString> &metadata) {
+void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata) {
     QJsonObject jMetadata;
     for (const auto &k: metadata.keys()) {
         jMetadata[k] = metadata[k];
     }
 
-    QJsonObject jBucket;
-    jBucket["region"] = region;
+    QJsonObject jBucket = CreateBaseRequest();
     jBucket["bucketName"] = bucketName;
     jBucket["defaultMetadata"] = jMetadata;
 
-    QJsonObject jRequest;
-    jRequest["region"] = region;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["bucket"] = jBucket;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -124,7 +121,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
     jRequest["Bucket"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -141,12 +138,11 @@ void S3Service::DeleteBucket(const QString &bucketName) {
 }
 
 void S3Service::GetBucketDetails(const QString &bucketName) {
-    QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -174,7 +170,7 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["bucket"] = bucketName;
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = -1;
@@ -182,7 +178,7 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -206,12 +202,11 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
 }
 
 void S3Service::GetObjectDetails(const QString &objectId) {
-    QJsonObject jRequest;
-    jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["oid"] = objectId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -232,13 +227,13 @@ void S3Service::GetObjectDetails(const QString &objectId) {
 }
 
 void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["Bucket"] = bucketName;
     jRequest["Key"] = key;
     jRequest["VersionId"] = "";
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(_url,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},

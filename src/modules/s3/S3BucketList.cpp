@@ -1,8 +1,6 @@
 #include <ui_S3BucketEditDialog.h>
 #include <modules/s3/S3BucketList.h>
 
-#include "modules/s3/S3BucketEditDialog.h"
-
 S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(parent) {
     // Set region
     _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
