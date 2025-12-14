@@ -23,7 +23,7 @@ jobs:
 
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      tag_name: ${{ steps.strip_tag.outputs.clean_tag }}
 
     steps:
       - name: Release Please
@@ -32,6 +32,13 @@ jobs:
         with:
           release-type: simple
           token: ${{ secrets.GH_AUTH_TOKEN }}
+
+      - name: Strip leading 'v' from tag
+        id: strip_tag
+        run: |
+          TAG="${{ steps.release.outputs.tag_name }}"
+          CLEAN="${TAG#v}"   # remove leading 'v'
+          echo "clean_tag=$CLEAN" >> $GITHUB_OUTPUT
 
   build-windows:
     name: Build & Package (Windows)
@@ -48,13 +55,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Normalize SEMVER
-        shell: pwsh
-        run: |
-          $semver = "${env:SEMVER}"
-          $normalized = $semver -replace "^v", ""
-          echo "SEMVER=$normalized" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Setup MSVC environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -126,9 +126,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Normalize VERSION
-        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
-        
       - name: Install Qt via aqtinstall
         shell: bash
         run: |
@@ -192,9 +189,6 @@ jobs:
           sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
             ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libcurl4-openssl-dev
           sudo gem install --no-document fpm
-
-      - name: Normalize VERSION
-        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
 
       - name: Get version
         id: get_version
@@ -272,9 +266,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Normalize SEMVER
-        run: echo "SEMVER=${SEMVER#v}" >> $GITHUB_ENV
-
       - name: Install dependencies
         run: |
           sudo apt update
@@ -350,12 +341,6 @@ jobs:
         with:
           name: installer-macos
           path: artifacts/macos
-
-      #      - name: Download Linux installer
-      #        uses: actions/download-artifact@v4
-      #        with:
-      #          name: installer-linux
-      #          path: artifacts/linux
 
       - name: Download Linux Debian package
         uses: actions/download-artifact@v4

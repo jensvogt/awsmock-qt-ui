@@ -57,7 +57,8 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     connect(ui->targetEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
 
     // Connect source browse button
-    //ui->sourceBrowseButton->setText("Browse");
+    ui->sourceBrowseButton->setText(nullptr);
+    ui->targetBrowseButton->setText(nullptr);
     ui->sourceBrowseButton->setIcon(IconUtils::GetIcon("browse"));
     ui->targetBrowseButton->setIcon(IconUtils::GetIcon("browse"));
     connect(ui->sourceBrowseButton, &QPushButton::clicked, this, &FTPUploadDialog::BrowseSourceFile);
@@ -198,15 +199,14 @@ void FTPUploadDialog::VerifyFileInputs() {
     }
 
     QString source = ui->sourceEdit->text();
-    if (const QValidator::State sourceState = ui->targetEdit->validator()->validate(source, pos);
+    if (const QValidator::State sourceState = ui->sourceEdit->validator()->validate(source, pos);
         sourceState != QValidator::Acceptable) {
         SetLineEditColor(ui->sourceEdit, sourceState);
         QMessageBox::warning(this, "Validation Failure", "Source file is invalid or incomplete.");
         return;
     }
 
-    if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().
-                                           toStdString(); ftpClient->UploadFile(
+    if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().toStdString(); ftpClient->UploadFile(
         sourceFileInfo.absoluteFilePath().toStdString(), targetFilename)) {
         QMessageBox::information(this, "Information", "Upload successful.");
     } else {
@@ -278,6 +278,5 @@ void FTPUploadDialog::HandleAccept() {
 }
 
 void FTPUploadDialog::HandleReject() {
-    qDebug() << "Rejected";
     accept();
 }

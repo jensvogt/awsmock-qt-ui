@@ -18,6 +18,9 @@ public:
 
     ~SQSQueueDetailsDialog() override;
 
+    void LoadContent() override {
+    };
+
 private slots:
     void on_sqsQueueDetailsButtonBox_accepted();
 

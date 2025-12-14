@@ -92,6 +92,8 @@ struct S3GetBucketDetailsResponse {
 
     QString owner;
 
+    QMap<QString, QString> defaultMetadata;
+
     QDateTime created;
 
     QDateTime modified;
@@ -110,6 +112,12 @@ struct S3GetBucketDetailsResponse {
             for (const auto &element: jsonDoc["lambdaConfigurations"].toArray()) {
                 LambdaNotification lambdaConfig;
                 lambdaConfig.FromJson(element.toObject());
+            }
+        }
+
+        if (!jsonDoc["defaultMetadata"].isNull() && jsonDoc["defaultMetadata"].isObject()) {
+            for (const auto &key: jsonDoc["defaultMetadata"].toObject().keys()) {
+                defaultMetadata[key] = jsonDoc["defaultMetadata"].toObject()[key].toString();
             }
         }
     }

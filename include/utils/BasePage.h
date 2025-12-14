@@ -8,6 +8,7 @@
 #include <QTableWidgetItem>
 
 #include <utils/TableUtils.h>
+#include <utils/Configuration.h>
 
 class BasePage : public QWidget, public TableUtils {
     Q_OBJECT

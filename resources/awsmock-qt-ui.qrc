@@ -18,15 +18,18 @@
         <file>light/export.svg</file>
         <file>light/help.svg</file>
         <file>light/import.svg</file>
+        <file>light/kill.svg</file>
         <file>light/logs.svg</file>
         <file>light/ok.svg</file>
         <file>light/pretty.svg</file>
         <file>light/preferences.svg</file>
         <file>light/purge.svg</file>
         <file>light/rebuild.svg</file>
+        <file>light/redrive.svg</file>
         <file>light/refresh.svg</file>
         <file>light/restart.svg</file>
         <file>light/running.svg</file>
+        <file>light/search.svg</file>
         <file>light/start.svg</file>
         <file>light/stop.svg</file>
         <file>light/stopped.svg</file>
@@ -49,15 +52,18 @@
         <file>dark/export.svg</file>
         <file>dark/help.svg</file>
         <file>dark/import.svg</file>
+        <file>dark/kill.svg</file>
         <file>dark/logs.svg</file>
         <file>dark/ok.svg</file>
         <file>dark/preferences.svg</file>
         <file>dark/pretty.svg</file>
         <file>dark/purge.svg</file>
         <file>dark/rebuild.svg</file>
+        <file>dark/redrive.svg</file>
         <file>dark/refresh.svg</file>
         <file>dark/restart.svg</file>
         <file>dark/running.svg</file>
+        <file>dark/search.svg</file>
         <file>dark/start.svg</file>
         <file>dark/stop.svg</file>
         <file>dark/stopped.svg</file>

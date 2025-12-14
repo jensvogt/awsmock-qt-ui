@@ -10,6 +10,7 @@
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 #include <modules/lambda/LambdaService.h>
+#include <modules/lambda/LambdaLogsDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -33,6 +34,9 @@ public:
 
     void HandleReject();
 
+    void LoadContent() override {
+    };
+
 private:
     /**
      * @brief UI components
@@ -48,6 +52,18 @@ private:
      *  @brief Lambda service
      */
     LambdaService *_lambdaService;
+
+    /**
+     * @brief Sort column index
+     *
+     * @par Default sort column is 'Timestamp', index=-1
+     */
+    int _sortColumn = 3;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
 
 

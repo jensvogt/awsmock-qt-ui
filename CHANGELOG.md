@@ -1,5 +1,46 @@
 # Changelog
 
+## [1.4.52](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.51...v1.4.52) (2025-12-11)
+
+
+### Bug Fixes
+
+* add docker statistics REST call timer to docker status service ([1865974](https://github.com/jensvogt/awsmock-qt-ui/commit/1865974ee1d542aa7df667b5945566b735502391))
+
+## [1.4.51](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.50...v1.4.51) (2025-12-11)
+
+
+### Bug Fixes
+
+* fix some minor layout issues ([e873ee8](https://github.com/jensvogt/awsmock-qt-ui/commit/e873ee80423a0c76aa91dab730d38bfc7f5cf3e2))
+* fix some S3 object/bucket edit dialog layout problems ([a5eda5a](https://github.com/jensvogt/awsmock-qt-ui/commit/a5eda5abf1526b942445bc3d11fa66f483e7465d))
+* fix sorting in container stats ([eafaab6](https://github.com/jensvogt/awsmock-qt-ui/commit/eafaab6331e9c37db4f629978b4bcb3198a39817))
+* fix SQS queue details dialog layout, SQS message dialog layout ([dcab148](https://github.com/jensvogt/awsmock-qt-ui/commit/dcab1485da73eb868e984b1cbc0ca502c781e8c8))
+* fix SQS queue details dialog layout, SQS message dialog layout ([852bee1](https://github.com/jensvogt/awsmock-qt-ui/commit/852bee1e5ce760b1ec8f03949a70f99b588e030b))
+
+## [1.4.50](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.49...v1.4.50) (2025-12-10)
+
+
+### Bug Fixes
+
+* fix bug in container stats prefix filter ([dcae0a0](https://github.com/jensvogt/awsmock-qt-ui/commit/dcae0a0794501fc2e0458113e42556b5478e8962))
+
+## [1.4.49](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.48...v1.4.49) (2025-12-09)
+
+
+### Bug Fixes
+
+* add docker statistics ([e6ceecf](https://github.com/jensvogt/awsmock-qt-ui/commit/e6ceecfd2640832d0d07141c4ef9fadd176ce584))
+* add lambda result list page ([4fe338e](https://github.com/jensvogt/awsmock-qt-ui/commit/4fe338ef0d5d53a1993481fbaf597736dba9533e))
+
+## [1.4.48](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.47...v1.4.48) (2025-12-08)
+
+
+### Bug Fixes
+
+* add docker stats dialog ([0211d13](https://github.com/jensvogt/awsmock-qt-ui/commit/0211d137f224a1ef7d7755c79a1acdfb6d1bab41))
+* add docker stats dialog ([276591e](https://github.com/jensvogt/awsmock-qt-ui/commit/276591ebe551ff370b6f31afc3f4ed28ebc5ac9e))
+
 ## [1.4.47](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.46...v1.4.47) (2025-11-29)
 
 

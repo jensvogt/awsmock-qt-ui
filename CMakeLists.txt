@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-# Include cmake utilities
+# Read version.txt
 include(cmake/ReadVersion.cmake)
 include(cmake/UpdateXmlVersion.cmake)
 include(cmake/UpdateReleaseDate.cmake)
@@ -33,7 +33,7 @@ if (WIN32)
     set(WINDOWS_ICON ${CMAKE_SOURCE_DIR}/appicon.rc)
     set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
-    set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.0/gcc_64")
+    set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.1/gcc_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CURL_INCLUDE_DIRS "")
@@ -41,7 +41,7 @@ else ()
 endif ()
 
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg Scxml)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 
@@ -175,9 +175,9 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaEnvironmentDetailDialog.cpp
         include/modules/lambda/LambdaEnvironmentDetailDialog.h
         src/modules/lambda/LambdaEnvironmentDetailDialog.ui
-        src/modules/s3/S3ObjectMetadataDetailsDialog.cpp
-        include/modules/s3/S3ObjectMetadataDetailsDialog.h
-        src/modules/s3/S3ObjectMetadataDetailsDialog.ui
+        src/modules/s3/S3ObjectMetadataDialog.cpp
+        include/modules/s3/S3ObjectMetadataDialog.h
+        src/modules/s3/S3ObjectMetadataDialog.ui
         src/modules/lambda/LambdaLogsDialog.cpp
         include/modules/lambda/LambdaLogsDialog.h
         src/modules/lambda/LambdaLogsDialog.ui
@@ -186,12 +186,27 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaResultListDialog.cpp
         include/modules/lambda/LambdaResultListDialog.h
         src/modules/lambda/LambdaResultListDialog.ui
+        include/dto/lambda/LambdaGetResultResponse.h
         src/modules/docker/DockerStatsDialog.cpp
-        include/modules/docker/DockerStatsDialog.h
-        src/modules/docker/DockerStatsDialog.ui
-        include/modules/docker/DockerService.h
-        include/dto/docker/DockerStatsResponse.h
         src/modules/docker/DockerService.cpp
+        include/modules/docker/DockerService.h
+        include/modules/docker/DockerStatsDialog.h
+        include/dto/docker/DockerStatsResponse.h
+        src/modules/docker/DockerStatsDialog.ui
+        include/dto/docker/DockerContainersResponse.h
+        include/dto/docker/Container.h
+        include/dto/docker/CpuUsage.h
+        include/dto/docker/CpuStat.h
+        include/dto/docker/ContainerStat.h
+        include/dto/docker/MemoryStat.h
+        include/utils/PrefixFilterModel.h
+        src/utils/PrefixFilterModel.cpp
+        include/dto/docker/State.h
+        include/utils/StringUtils.h
+        src/modules/s3/S3ObjectAddDialog.cpp
+        include/modules/s3/S3ObjectAddDialog.h
+        src/modules/s3/S3ObjectAddDialog.ui
+        src/modules/s3/S3ObjectAddDialog.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

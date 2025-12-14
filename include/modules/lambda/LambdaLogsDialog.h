@@ -9,6 +9,7 @@
 #include <QDialogButtonBox>
 
 #include <modules/lambda/LambdaService.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -25,11 +26,10 @@ public:
     /**
      * @brief Constructor
      *
-     * @param name Lambda function name
-     * @param containerId lambda container ID
+     * @param oid Lambda function result OID
      * @param parent parent widget
      */
-    explicit LambdaLogsDialog(const QString &name, const QString &containerId, QWidget *parent = nullptr);
+    explicit LambdaLogsDialog(const QString &oid, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -45,6 +45,10 @@ public:
      * @brief Handle dialog reject
      */
     void HandleReject();
+
+    void HandleGetResult(const LambdaGetResultsResponse &lambdaLogsResult) const;
+
+    void HandleRequestPrettyButton(bool checked) const;
 
 private:
     /**

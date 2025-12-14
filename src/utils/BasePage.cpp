@@ -1,7 +1,5 @@
 #include <utils/BasePage.h>
 
-#include "utils/Configuration.h"
-
 BasePage::BasePage(QWidget *parent) : QWidget(parent), _autoUpdateTimer(nullptr) {
 }
 

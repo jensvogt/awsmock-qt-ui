@@ -4,6 +4,7 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_LambdaResultListDialog.h" resolved
 
+#include <ui_LambdaLogsDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
 #include "ui_LambdaResultListDialog.h"
 
@@ -22,7 +23,7 @@ LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget
     _ui->deleteButton->setIcon(IconUtils::GetIcon("delete"));
 
     // Result table
-    const QStringList headers = QStringList() = {tr("Name"), tr("ContainerId"), tr("Status"), tr("Timestamp"), tr("Duration")};
+    const QStringList headers = QStringList() = {tr("Name"), tr("ContainerId"), tr("Status"), tr("Timestamp"), tr("Duration"), tr("ObjectId")};
 
     _ui->lambdaResultTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->lambdaResultTable->setShowGrid(true);
@@ -37,6 +38,18 @@ LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget
     _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
     _ui->lambdaResultTable->setColumnHidden(5, true);
+
+    // Connect double-click
+    connect(_ui->lambdaResultTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
+
+        const QString objectId = _ui->lambdaResultTable->item(row, 5)->text();
+
+        // Open details dialog
+        LambdaLogsDialog dialog(objectId);
+        dialog.exec();
+    });
 
     _lambdaService->ListLambdaLogs(_lambdaArn);
     connect(_lambdaService, &LambdaService::ListLambdaResultsSignal, this, &LambdaResultListDialog::UpdateResultTable);
@@ -57,11 +70,11 @@ void LambdaResultListDialog::UpdateResultTable(const LambdaListResultsResponse &
         SetColumn(_ui->lambdaResultTable, r, 2, listResultsResponse.lambdaLogCounters.at(r).lambdaStatus);
         SetColumn(_ui->lambdaResultTable, r, 3, listResultsResponse.lambdaLogCounters.at(r).timestamp);
         SetColumn(_ui->lambdaResultTable, r, 4, listResultsResponse.lambdaLogCounters.at(r).duration);
-        SetColumn(_ui->lambdaResultTable, r, 5, listResultsResponse.lambdaLogCounters.at(r).lambdaArn);
+        SetColumn(_ui->lambdaResultTable, r, 5, listResultsResponse.lambdaLogCounters.at(r).oid);
     }
     _ui->lambdaResultTable->setRowCount(static_cast<int>(listResultsResponse.lambdaLogCounters.count()));
     _ui->lambdaResultTable->setSortingEnabled(true);
-    //_ui->lambdaResultTable->sortItems(_sortColumn, _sortOrder);
+    _ui->lambdaResultTable->sortItems(_sortColumn, _sortOrder);
     _ui->lambdaResultTable->selectRow(selectedRow);
 }
 

@@ -7,156 +7,199 @@
     <x>0</x>
     <y>0</y>
     <width>1070</width>
-    <height>830</height>
+    <height>829</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>720</x>
-     <y>790</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::NoButton</set>
-   </property>
-  </widget>
-  <widget class="QWidget" name="gridLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>1051</width>
-     <height>171</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout" columnstretch="2,1">
-    <item row="2" column="1">
-     <widget class="QLabel" name="createdLabel">
-      <property name="text">
-       <string>Created:</string>
-      </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="2,1">
+     <item row="2" column="1">
+      <widget class="QLabel" name="createdLabel">
+       <property name="text">
+        <string>Created:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="modifiedEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="regionEdit"/>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="regionLabel">
+       <property name="text">
+        <string>Region:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLineEdit" name="topicArnEdit"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="contentTypeEdit"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="messageIdEdit"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="modifiedLabel">
+       <property name="text">
+        <string>Modified:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="contentTypeLabel">
+       <property name="text">
+        <string>Content Type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="messageIdLabel">
+       <property name="text">
+        <string>Message ID:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="topicArnLabel">
+       <property name="text">
+        <string>Topic ARN:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="createdEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="bodyTab">
+      <attribute name="title">
+       <string>Body</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutTags">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>9</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="prettyPushButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="bodyPlainTextEdit"/>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QLineEdit" name="modifiedEdit"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="regionEdit"/>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="regionLabel">
-      <property name="text">
-       <string>Region:</string>
-      </property>
+     <widget class="QWidget" name="attributesTab">
+      <attribute name="title">
+       <string>Attributes</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutAttr">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>9</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableView" name="attributeTable"/>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLineEdit" name="topicArnEdit"/>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="contentTypeEdit"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLineEdit" name="messageIdEdit"/>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="modifiedLabel">
-      <property name="text">
-       <string>Modified:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="contentTypeLabel">
-      <property name="text">
-       <string>Content Type:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="messageIdLabel">
-      <property name="text">
-       <string>Message ID:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="topicArnLabel">
-      <property name="text">
-       <string>Topic ARN:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="createdEdit"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QTabWidget" name="tabWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>190</y>
-     <width>1051</width>
-     <height>591</height>
-    </rect>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Body</string>
-    </attribute>
-    <widget class="QPlainTextEdit" name="bodyPlainTextEdit">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>40</y>
-       <width>1051</width>
-       <height>541</height>
-      </rect>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::NoButton</set>
      </property>
     </widget>
-    <widget class="QPushButton" name="prettyPushButton">
-     <property name="geometry">
-      <rect>
-       <x>1010</x>
-       <y>10</y>
-       <width>21</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Attributes</string>
-    </attribute>
-    <widget class="QTableWidget" name="attributeTable">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>1051</width>
-       <height>581</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-  </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>regionEdit</tabstop>
@@ -167,7 +210,6 @@
   <tabstop>modifiedEdit</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>bodyPlainTextEdit</tabstop>
-  <tabstop>prettyPushButton</tabstop>
   <tabstop>attributeTable</tabstop>
  </tabstops>
  <resources/>
