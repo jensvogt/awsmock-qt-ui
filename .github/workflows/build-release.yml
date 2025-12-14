@@ -94,6 +94,8 @@ jobs:
           New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
           Copy-Item $exe $dataDir
+          Copy-Item dist\etc\awsmock-qt-ui.json $dataDir
+          Copy-Item extern\bin\libcurl.dll $dataDir
 
       - name: Build Qt Installer Framework installer (binarycreator)
         shell: pwsh

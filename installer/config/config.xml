@@ -4,6 +4,6 @@
     <Version>1.4.52</Version>
     <Title>AwsMockQtUIInstaller</Title>
     <Publisher>Jens Vogt</Publisher>
-    <StartMenuDir>AwsMockQtUI</StartMenuDir>
-    <TargetDir>@ApplicationsDir@/AwsMockQtUI</TargetDir>
+    <StartMenuDir>awsmock-qt-ui</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/awsmock-qt-ui</TargetDir>
 </Installer>
