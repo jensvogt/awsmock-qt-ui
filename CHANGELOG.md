@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.53](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.52...v1.4.53) (2025-12-14)
+
+
+### Bug Fixes
+
+* add docker statistics REST call timer to docker status service ([185cfa6](https://github.com/jensvogt/awsmock-qt-ui/commit/185cfa6d8eb074299174d85af1bc8207e05289c8))
+* add docker stats dialog ([fc987f4](https://github.com/jensvogt/awsmock-qt-ui/commit/fc987f467caa37eba7dea68fc120e2bb59990048))
+* add docker stats dialog ([5294c34](https://github.com/jensvogt/awsmock-qt-ui/commit/5294c347e1dd0716d3322f1dae619585dca7ac1c))
+* add libcurl ([2b7dcc1](https://github.com/jensvogt/awsmock-qt-ui/commit/2b7dcc1a82fbc6fce1613d4b0cf759e24dc58a80))
+* add libcurl to Windows installer ([9f8790e](https://github.com/jensvogt/awsmock-qt-ui/commit/9f8790e78a487ffb5cf5780d7410122022864dd7))
+* add libcurl to Windows installer ([c6f7f00](https://github.com/jensvogt/awsmock-qt-ui/commit/c6f7f00e6b526e53871a873811183b3edac019aa))
+* add s3 file upload ([2fbd0fb](https://github.com/jensvogt/awsmock-qt-ui/commit/2fbd0fbce699ce26c3539ffc45b42d78cfa4ff57))
+* add s3 file upload ([7b38082](https://github.com/jensvogt/awsmock-qt-ui/commit/7b3808223815841b4952b4d81eb5b0adcb18735a))
+
 ## [1.4.52](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.51...v1.4.52) (2025-12-11)
 
 
