@@ -23,7 +23,7 @@ set(CPACK_PACKAGE_VERSION "${VERSION_STRING}")
 
 if (WIN32)
     add_compile_options(/Zc:__cplusplus)
-    set(CMAKE_PREFIX_PATH "c:\\work\\Qt\\6.10.0\\msvc2022_64")
+    set(CMAKE_PREFIX_PATH "c:\\work\\private\\Qt\\6.10.1\\msvc2022_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
@@ -41,7 +41,7 @@ else ()
 endif ()
 
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg Scxml)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 

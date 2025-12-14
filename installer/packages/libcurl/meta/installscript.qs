@@ -13,5 +13,5 @@ Component.prototype.createOperations = function()
     var installDir = installer.value("TargetDir"); // The root directory chosen by the user
 
     // --- 1. Installation of Binaries (DLLs/SOs) ---
-    component.addOperation("Copy", "data/bin/libcurl.dll", "@TargetDir@/bin/libcurl.dll");
+    component.addOperation("Copy", "data/bin/libcurl.dll", "@TargetDir@/libcurl.dll");
 }
