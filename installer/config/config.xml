@@ -6,9 +6,5 @@
     <Publisher>Jens Vogt</Publisher>
     <StartMenuDir>awsmock-qt-ui</StartMenuDir>
     <TargetDir>@ApplicationsDir@/awsmock-qt-ui</TargetDir>
-    <Repository>
-        <Url>https://jensvogt.github.io/repo/repository</Url>
-        <Enabled>true</Enabled>
-    </Repository>
 </Installer>
 
