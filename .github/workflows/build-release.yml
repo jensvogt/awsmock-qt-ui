@@ -112,6 +112,55 @@ jobs:
           name: installer-windows
           path: installer/${{ env.APP_NAME }}-${{ env.SEMVER }}-windows.exe
 
+  build-update:
+    runs-on: windows-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    env:
+      QT_DIR: "${{ github.workspace }}\\Qt"
+      BUILD_DIR: "${{ github.workspace }}\\build-windows"
+      INSTALLER_DIR: "${{ github.workspace }}\\installer"
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: 6.10.1
+          arch: win64_msvc2019_64
+
+      - name: Install Qt Installer Framework
+        shell: powershell
+        run: |
+          choco install qt-installer-framework --no-progress
+
+      - name: Build (Windows, parallel)
+        shell: powershell
+        run: |
+          cmake --build $env:BUILD_DIR --config Release --parallel
+
+      - name: Prepare installer data
+        shell: powershell
+        run: |
+          Remove-Item -Recurse -Force installer/packages/com.mycompany.myapp/data/*
+          Copy-Item build/MyApp.exe installer/packages/com.mycompany.myapp/data/
+
+      - name: Generate repository
+        shell: powershell
+        run: |
+          repogen `
+            -p installer/packages `
+            installer/repository
+
+      - name: Upload repository artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt-updates
+          path: installer/repository
+
   build-macos:
     name: Build & Package (macOS)
     runs-on: macos-latest
@@ -331,6 +380,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Upload updates
+        uses: actions/download-artifact@v4
+        with:
+          name: qt-updates
+          path: repository
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: repository
 
       - name: Download Windows installer
         uses: actions/download-artifact@v4
