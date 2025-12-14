@@ -9,7 +9,8 @@
     "base-url": "http://localhost:4566",
     "base-urls": [
       "http://localhost:4566",
-      "http://vogje01-desktop:4566"
+      "http://vogje01-desktop:4566",
+      "http://192.168.178.46:4566"
     ]
   },
   "ui": {

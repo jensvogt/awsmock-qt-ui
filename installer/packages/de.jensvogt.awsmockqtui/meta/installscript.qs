@@ -1,28 +1,30 @@
 function Component() {}
 
-Component.prototype.install = function() {
-    this.createShortcuts();
-}
-
-Component.prototype.uninstall = function() {
-    // Optional cleanup
-}
-
-Component.prototype.createShortcuts = function()
+Component.prototype.createOperations = function()
 {
+    component.createOperations();
+
     if (systemInfo.productType === "windows") {
-        var iconPath = installer.value("TargetDir") + "/awsmock-qt-ui.exe";
-        var programs = installer.environmentVariable("PROGRAMDATA");
-        var desktop = installer.environmentVariable("PUBLIC") + "\\Desktop";
 
-        // Desktop shortcut
-        component.addOperation("CreateShortcut", iconPath, desktop + "\\AWSMock UI.lnk",
-            "workingDirectory=" + installer.value("TargetDir"), "iconPath=" + iconPath);
+        var targetExe = installer.value("TargetDir") + "/awsmock-qt-ui.exe";
 
-        // Start menu shortcut
-        component.addOperation("CreateShortcut", iconPath,
-            programs + "\\Microsoft\\Windows\\Start Menu\\Programs\\AWSMock UI.lnk",
-            "workingDirectory=" + installer.value("TargetDir"), "iconPath=" + iconPath
+        var startMenuDir =
+            installer.value("StartMenuDir") + "/AwsMock";
+
+        component.addOperation(
+            "CreateShortcut",
+            targetExe,
+            startMenuDir + "/awsmock-qt-ui.lnk",
+            "workingDirectory=" + installer.value("TargetDir"),
+            "iconPath=" + targetExe,
+            "description=AwsMock Qt UI"
+        );
+
+        component.addOperation(
+            "CreateShortcut",
+            installer.value("TargetDir") + "/awsmock-qt-ui.exe",
+            installer.value("DesktopDir") + "/awsmock-qt-ui.lnk",
+            "workingDirectory=" + installer.value("TargetDir")
         );
     }
-}
+};

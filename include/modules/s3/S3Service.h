@@ -11,8 +11,9 @@
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 #include <dto/s3/S3GetObjectDetailsResponse.h>
 #include <dto/s3/S3ListObjectResponse.h>
+#include <utils/BaseService.h>
 
-class S3Service final : public QObject {
+class S3Service final : public BaseService {
     Q_OBJECT
 
 public:
@@ -37,7 +38,7 @@ public:
 
     void AddBucket(const QString &bucketName);
 
-    void UpdateBucket(const QString &region, const QString &bucketName, QMap<QString, QString> &metadata);
+    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata);
 
     void DeleteBucket(const QString &bucketName);
 
@@ -96,7 +97,7 @@ private:
     /**
      * @brief Base URL
      */
-    QUrl url;
+    QUrl _url;
 };
 
 
