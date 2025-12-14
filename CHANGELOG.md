@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.62](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.61...v1.4.62) (2025-12-14)
+
+
+### Bug Fixes
+
+* fix windows installer ([8291d44](https://github.com/jensvogt/awsmock-qt-ui/commit/8291d44857da4b0f00045e2b729cc77f38935b28))
+
 ## [1.4.61](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.60...v1.4.61) (2025-12-14)
 
 
