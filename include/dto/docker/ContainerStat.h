@@ -7,6 +7,8 @@
 #include <dto/docker/CpuStat.h>
 #include <dto/docker/MemoryStat.h>
 
+#include "State.h"
+
 struct ContainerStat {
 
     /**
@@ -23,6 +25,11 @@ struct ContainerStat {
      * OS type
      */
     QString osType;
+
+    /**
+     * The state of this container (e.g. Exited)
+     */
+    State state;
 
     /**
      * Number of processors
@@ -99,6 +106,11 @@ struct ContainerStat {
         // Memory
         if (jsonObject.contains("memory_stats")) {
             memoryStat.FromJson(jsonObject["memory_stats"].toObject());
+        }
+
+        // State
+        if (jsonObject.contains("state")) {
+            state.FromJson(jsonObject["state"].toObject());
         }
     }
 };

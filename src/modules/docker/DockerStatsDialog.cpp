@@ -13,16 +13,14 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     _applicationService = new ApplicationService();
 
     // Event bus connection
-    _connection =
-            connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, qint64 elapsed) {
-                const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" +
-                                    QString::number(elapsed) + "ms]";
+    _statusConnection =
+            connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, const qint64 elapsed) {
+                const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
                 _ui->statusLabel->setText(msg);
             });
 
     // Connect service
     _containerService = new DockerService();
-    connect(_containerService, &DockerService::ReloadDockerContainerSignal, this, &DockerStatsDialog::LoadContainers);
     connect(_containerService, &DockerService::ReloadDockerStatsSignal, this, &DockerStatsDialog::LoadContainerStatsContent);
 
     // Setup UI components
@@ -35,9 +33,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     _ui->refreshButton->setToolTip("Refresh the container list");
     connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
-        if (!_containerIds.empty()) {
-            _containerService->ListDockerStats(_containerIds);
-        }
+        _containerService->ListDockerStats();
     });
 
     // Prefix edit
@@ -60,7 +56,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     });
 
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("State"), tr("ContainerId"), tr("CPU [%]"), tr("Memory [MB]"), tr("Memory [%]"), tr("Limit [MB]")
+                                    tr("Name"), tr("State"), tr("ContainerId"), tr("CPU [%]"), tr("Memory [MB]"), tr("Memory [%]"), tr("Limit [MB]"), tr("running")
                                 };
 
     // Table
@@ -77,13 +73,14 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     _ui->statsTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->statsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     _ui->statsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    _ui->statsTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch); // name
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents); //status
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents); // containerId
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents); // %CPU
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents); // memory
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents); // %memory
+    _ui->statsTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents); // limit
+    _ui->statsTable->setColumnHidden(7, true);
 
     // Enable sorting, default on and sorted ascending by name
     _ui->statsTable->setSortingEnabled(true);
@@ -94,14 +91,14 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     connect(_ui->statsTable, &QTableWidget::customContextMenuRequested, this, &DockerStatsDialog::ShowContextMenu);
 
     // Load content
-    _containerService->ListDockerContainer(_prefixValue);
+    _containerService->ListDockerStats();
 
     // List containers
     StartAutoUpdate();
 }
 
 DockerStatsDialog::~DockerStatsDialog() {
-    disconnect(_connection);
+    disconnect(_statusConnection);
     delete _ui;
 }
 
@@ -114,43 +111,18 @@ void DockerStatsDialog::HandleReject() {
 }
 
 void DockerStatsDialog::LoadContent() {
-    if (!_containerIds.empty()) {
-        _containerService->ListDockerStats(_containerIds);
-    }
-}
-
-void DockerStatsDialog::LoadContainers(const DockerContainersResponse &dockerContainersResponse) {
-    const int selectedRow = _ui->statsTable->selectionModel()->currentIndex().row();
-    _ui->statsTable->setSortingEnabled(false);
-    for (auto r = 0, c = 0; r < dockerContainersResponse.containers.count(); r++, c = 0) {
-        _containerIds.append(dockerContainersResponse.containers.at(r).id);
-        SetColumn(_dataModel, r, c++, dockerContainersResponse.containers.at(r).GetPrincipalName());
-        SetColumn(_dataModel, r, c++, dockerContainersResponse.containers.at(r).state.running, IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
-        SetColumn(_dataModel, r, c++, dockerContainersResponse.containers.at(r).id.mid(0, 12));
-        SetColumn(_dataModel, r, c++, "--");
-        SetColumn(_dataModel, r, c++, "--");
-        SetColumn(_dataModel, r, c++, "--");
-        SetColumn(_dataModel, r, c++, "--");
-    }
-
-    // Load Statistics
-    _containerService->ListDockerStats(_containerIds);
-
-    // Reset selection
-    _ui->statsTable->setSortingEnabled(true);
-    _ui->statsTable->sortByColumn(_sortColumn, _sortOrder);
-    _ui->statsTable->selectRow(selectedRow);
-
-    _containerService->ListDockerStats(_containerIds);
-
-    NotifyStatusBar();
+    _containerService->ListDockerStats();
 }
 
 void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse) {
+    const int selectedRow = _ui->statsTable->selectionModel()->currentIndex().row();
+    _ui->statsTable->setSortingEnabled(false);
 
-    for (int r = 0, c = 2; r < dockerStatsResponse.containerStats.count(); r++, c = 2) {
+    for (int r = 0, c = 0; r < dockerStatsResponse.containerStats.count(); r++, c = 0) {
+        SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).name);
+        SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).state.running, IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).containerId.mid(0, 12));
-        if (dockerStatsResponse.containerStats.at(r).cpuStats.onlineCpus > 0) {
+        if (dockerStatsResponse.containerStats.at(r).state.running) {
             SetColumn(_dataModel, r, c++, GetCpuPercent(dockerStatsResponse.containerStats.at(r)));
             SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).GetTotalMemory());
             SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).GetPercentMemory());
@@ -161,7 +133,14 @@ void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &doc
             SetColumn(_dataModel, r, c++, "--", Qt::AlignRight | Qt::AlignVCenter);
             SetColumn(_dataModel, r, c++, "--", Qt::AlignRight | Qt::AlignVCenter);
         }
+        SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).state.running);
     }
+    // Reset selection
+    _ui->statsTable->setSortingEnabled(true);
+    _ui->statsTable->sortByColumn(_sortColumn, _sortOrder);
+    _ui->statsTable->selectRow(selectedRow);
+
+    NotifyStatusBar();
 }
 
 double DockerStatsDialog::GetCpuPercent(const ContainerStat &containerStats) {
@@ -190,28 +169,31 @@ void DockerStatsDialog::ShowContextMenu(const QPoint &pos) {
 
     // Get container
     const QString containerName = _dataModel->item(sourceIndex.row(), 0)->text();
-    const QString containerId = _dataModel->item(sourceIndex.row(), 1)->text();
+    const QString containerId = _dataModel->item(sourceIndex.row(), 2)->text();
+    const bool running = _dataModel->item(sourceIndex.row(), 7)->text() == "1";
 
     QMenu menu;
     QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the container logs");
     logsAction->setToolTip("Show the container logs");
-    if (containerId.isEmpty()) {
-        logsAction->setDisabled(true);
-    }
+    logsAction->setDisabled(!running);
 
     menu.addSeparator();
 
     QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Container");
     startAction->setToolTip("Start the container");
+    startAction->setDisabled(running);
 
     QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Container");
     stopAction->setToolTip("Stop the container gracefully");
+    stopAction->setDisabled(!running);
 
     QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Container");
     restartAction->setToolTip("Restart the container");
 
     QAction *killAction = menu.addAction(IconUtils::GetIcon("kill"), "Kill Container");
     killAction->setToolTip("Kill the container");
+    killAction->setDisabled(!running);
+
     menu.addSeparator();
 
     QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Container");
@@ -232,10 +214,11 @@ void DockerStatsDialog::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == stopAction) {
         _containerService->StopContainer(containerId);
     } else if (selectedAction == restartAction) {
-        //_applicationService->RestartContainer(containerId);
+        _containerService->RestartContainer(containerId);
     } else if (selectedAction == killAction) {
-        //_applicationService->KillContainer(containerId);
+        _containerService->KillContainer(containerId);
     }
     LoadContent();
     StartAutoUpdate();
 }
+

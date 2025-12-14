@@ -29,6 +29,7 @@
         <file>light/refresh.svg</file>
         <file>light/restart.svg</file>
         <file>light/running.svg</file>
+        <file>light/search.svg</file>
         <file>light/start.svg</file>
         <file>light/stop.svg</file>
         <file>light/stopped.svg</file>
@@ -62,6 +63,7 @@
         <file>dark/refresh.svg</file>
         <file>dark/restart.svg</file>
         <file>dark/running.svg</file>
+        <file>dark/search.svg</file>
         <file>dark/start.svg</file>
         <file>dark/stop.svg</file>
         <file>dark/stopped.svg</file>

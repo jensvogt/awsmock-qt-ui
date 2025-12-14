@@ -86,6 +86,39 @@ void S3Service::AddBucket(const QString &bucketName) {
                       });
 }
 
+void S3Service::UpdateBucket(const QString &region, const QString &bucketName, QMap<QString, QString> &metadata) {
+    QJsonObject jMetadata;
+    for (const auto &k: metadata.keys()) {
+        jMetadata[k] = metadata[k];
+    }
+
+    QJsonObject jBucket;
+    jBucket["region"] = region;
+    jBucket["bucketName"] = bucketName;
+    jBucket["defaultMetadata"] = jMetadata;
+
+    QJsonObject jRequest;
+    jRequest["region"] = region;
+    jRequest["bucket"] = jBucket;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "UpdateBucket"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, QByteArray, int, const QString &error) {
+                          if (success) {
+                              emit ReloadBucketListSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                      });
+}
+
+
 void S3Service::DeleteBucket(const QString &bucketName) {
     QJsonObject jRequest;
     jRequest["Bucket"] = bucketName;

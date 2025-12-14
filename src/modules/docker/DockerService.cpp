@@ -36,21 +36,12 @@ void DockerService::ListDockerContainer(const QString &prefix) {
                       });
 }
 
-void DockerService::ListDockerStats(const QList<QString> &containerIds) {
+void DockerService::ListDockerStats() {
     QElapsedTimer timer;
     timer.start();
 
-    QJsonArray array;
-    for (const auto &containerId: containerIds) {
-        array.append(containerId);
-    }
-
-    QJsonObject jRequest;
-    jRequest["containerIds"] = array;
-    const QJsonDocument requestDoc(jRequest);
-
     _restManager.post(url,
-                      requestDoc.toJson(),
+                      nullptr,
                       {
                           {"x-awsmock-target", "container"},
                           {"x-awsmock-action", "list-container-stats"},
@@ -81,8 +72,6 @@ void DockerService::StartContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    JsonUtils::WriteJsonString(jRequest);
-
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
@@ -108,8 +97,6 @@ void DockerService::StopContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    JsonUtils::WriteJsonString(jRequest);
-
     _restManager.post(url,
                       requestDoc.toJson(),
                       {
@@ -124,5 +111,55 @@ void DockerService::StopContainer(const QString &containerId) {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("StopContainer", timer.elapsed());
+                      });
+}
+
+void DockerService::RestartContainer(const QString &containerId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["containerId"] = containerId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "container"},
+                          {"x-awsmock-action", "restart-container"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadContainerList();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().DockerStatsTimerSignal("RestartContainer", timer.elapsed());
+                      });
+}
+
+void DockerService::KillContainer(const QString &containerId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["containerId"] = containerId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "container"},
+                          {"x-awsmock-action", "kill-container"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadContainerList();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().DockerStatsTimerSignal("KillContainer", timer.elapsed());
                       });
 }

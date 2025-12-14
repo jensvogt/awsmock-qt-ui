@@ -142,7 +142,7 @@
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayoutTags">
+      <layout class="QVBoxLayout" name="verticalLayoutAttr">
        <property name="leftMargin">
         <number>9</number>
        </property>

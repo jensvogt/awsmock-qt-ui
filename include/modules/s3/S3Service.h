@@ -37,6 +37,8 @@ public:
 
     void AddBucket(const QString &bucketName);
 
+    void UpdateBucket(const QString &region, const QString &bucketName, QMap<QString, QString> &metadata);
+
     void DeleteBucket(const QString &bucketName);
 
     void GetBucketDetails(const QString &bucketName);

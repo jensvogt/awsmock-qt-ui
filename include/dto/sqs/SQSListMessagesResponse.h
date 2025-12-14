@@ -16,9 +16,8 @@ struct SQSListMessagesResponse {
     QList<SQSMessageCounter> messageCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
-        QJsonArray jArray = jsonDoc["messageCounters"].toArray();
 
-        for (const auto &element: jArray) {
+        for (QJsonArray jArray = jsonDoc["messageCounters"].toArray(); const auto &element: jArray) {
             SQSMessageCounter messageCounter;
             messageCounter.FromJson(element.toObject());
             messageCounters.append(messageCounter);

@@ -368,7 +368,7 @@
     <attribute name="title">
      <string>Lambda Triggers</string>
     </attribute>
-    <layout class="QVBoxLayout" name="verticalLayoutLambda">
+    <layout class="QVBoxLayout" name="verticalLayoutLambda1">
      <property name="leftMargin">
       <number>9</number>
      </property>
@@ -428,7 +428,7 @@
     <attribute name="title">
      <string>Default Attributes</string>
     </attribute>
-    <layout class="QVBoxLayout" name="verticalLayoutLambda">
+    <layout class="QVBoxLayout" name="verticalLayoutLambda2">
      <property name="leftMargin">
       <number>9</number>
      </property>
