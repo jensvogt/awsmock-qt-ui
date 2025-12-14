@@ -9,7 +9,6 @@
     <Repository>
         <Url>https://jensvogt.github.io/repo/repository</Url>
         <Enabled>true</Enabled>
-        <ForcedInstallation>true</ForcedInstallation>
     </Repository>
 </Installer>
 
