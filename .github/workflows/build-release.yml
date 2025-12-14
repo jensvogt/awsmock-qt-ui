@@ -115,7 +115,7 @@ jobs:
       - name: Generate repository
         shell: powershell
         run: |
-          ${{ env.QT_DIR }}\Tools\QtInstallerFramework\4.10\bin\repogen -p installer/packages installer/repository
+          ${{ env.QT_DIR }}\Tools\QtInstallerFramework\4.10\bin\repogen.exe -p installer/packages installer/repository
 
       - name: Upload repository artifact
         uses: actions/upload-artifact@v4
