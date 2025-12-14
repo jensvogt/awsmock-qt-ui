@@ -13,6 +13,8 @@
 #include <modules/s3/S3Service.h>
 //#include <modules/s3/S3ObjectDetailsDialog.h>
 #include <utils/IconUtils.h>
+#include <modules/s3/S3ObjectAddDialog.h>
+#include <modules/s3/S3ObjectEditDialog.h>
 
 /**
  * @brief Helper widget for the content area.

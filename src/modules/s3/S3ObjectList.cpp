@@ -1,11 +1,10 @@
 
+#include <QFileDialog>
 #include <QHeaderView>
 #include <modules/s3/S3ObjectList.h>
 
-#include "modules/s3/S3ObjectEditDialog.h"
-
 S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent) : BasePage(parent),
-    bucketName(bucketName) {
+                                                                                               bucketName(bucketName) {
     // Connect service
     _s3Service = new S3Service();
     connect(_s3Service, &S3Service::ListObjectsSignal, this, &S3ObjectList::HandleListObjectSignal);
@@ -33,11 +32,10 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new object");
     connect(addButton, &QPushButton::clicked, []() {
-        bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
-            ; ok && !text.isEmpty()) {
-            // AddQueue(text);
-        }
+        S3ObjectAddDialog dialog;
+        dialog.exec();
+        QString fileName = dialog.GetFilename();
+        QString s3Key = dialog.GetS3ObjectKey();
     });
 
     // Toolbar add action

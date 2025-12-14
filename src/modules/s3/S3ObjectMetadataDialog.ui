@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>S3ObjectMetadataDetailsDialog</class>
- <widget class="QDialog" name="S3ObjectMetadataDetailsDialog">
+ <class>S3ObjectMetadataDialog</class>
+ <widget class="QDialog" name="S3ObjectMetadataDialog">
   <property name="geometry">
    <rect>
     <x>0</x>

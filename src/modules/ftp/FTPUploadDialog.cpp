@@ -278,6 +278,5 @@ void FTPUploadDialog::HandleAccept() {
 }
 
 void FTPUploadDialog::HandleReject() {
-    qDebug() << "Rejected";
     accept();
 }

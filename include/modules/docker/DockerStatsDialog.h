@@ -40,8 +40,6 @@ public:
 
     void ShowContextMenu(const QPoint &pos);
 
-    void LoadContainers(const DockerContainersResponse &dockerContainersResponse);
-
     void LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse);
 
     void LoadContent() override;
@@ -92,10 +90,20 @@ private:
      */
     std::map<QString, long> _oldCpuSystem{};
 
+    /**
+     *  @brief Table data model
+     */
     QStandardItemModel *_dataModel;
+
+    /**
+     * @brief Data proxy model
+     */
     PrefixFilterProxyModel *_proxyModel;
 
-    QMetaObject::Connection _connection;
+    /**
+     * @brief Status bar connection
+     */
+    QMetaObject::Connection _statusConnection;
 };
 
 
