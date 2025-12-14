@@ -137,12 +137,12 @@ jobs:
         run: |
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
-          
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
           version: 6.10.1
-          arch: win64_msvc2019_64
+          arch: win64_msvc2022_64
 
       - name: Install Qt Installer Framework
         shell: powershell
