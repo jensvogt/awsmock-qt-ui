@@ -405,18 +405,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Upload updates
-        uses: actions/download-artifact@v4
-        with:
-          name: qt-updates
-          path: repository
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: repository
-
       - name: Download Windows installer
         uses: actions/download-artifact@v4
         with:
@@ -441,6 +429,12 @@ jobs:
           name: rpm-package-linux
           path: artifacts/linux
 
+      - name: Upload updates
+        uses: actions/download-artifact@v4
+        with:
+          name: qt-updates
+          path: artifacts/repository
+
       - name: Create GitHub Release (attach installers)
         uses: softprops/action-gh-release@v2
         with:
@@ -449,6 +443,7 @@ jobs:
             artifacts/macos/*.dmg
             artifacts/linux/*.deb
             artifacts/linux/*.rpm
+            artifacts/repository/*
           name: Release ${{ env.SEMVER }}
           tag_name: ${{ env.SEMVER }}
           body: "Automated release for ${{ env.SEMVER }}"
@@ -480,7 +475,8 @@ jobs:
           cp ./artifacts/installer-macos/*.dmg public/ || true
           cp ./artifacts/deb-package-linux/*.deb public/ || true
           cp ./artifacts/rpm-package-linux/*.rpm public/ || true
-          cp .github/pages/index.html public/index.html
+          cp .github/pages/index.html public/index.html || true
+          cp ./artifacts/repository/* public/ || true
 
       - name: Generate files.json
         run: |
