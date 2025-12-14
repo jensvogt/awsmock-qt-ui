@@ -38,6 +38,8 @@ public:
      */
     ~S3ObjectList() override;
 
+    void HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse);
+
     /**
      * @brief ListQueues
      */
@@ -113,6 +115,11 @@ private:
      * @brief Prefix clear button
      */
     QPushButton *prefixClear;
+
+    /**
+     * @brief Bucket details
+     */
+    S3GetBucketDetailsResponse _bucketDetailsResponse;
 };
 
 #endif // AWSMOCK_QT_UI_S3_OBJECT_LIST_H

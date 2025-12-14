@@ -46,7 +46,7 @@ private slots:
                               {"x-awsmock-target", "module"},
                               {"x-awsmock-action", "ping"}
                           },
-                          [](const bool success, const QByteArray &response, int status, const QString &error) {
+                          [](const bool success, const QByteArray &, int status, const QString &error) {
                               if (success) {
                                   Configuration::instance().SetConnectionState(true);
                               } else {

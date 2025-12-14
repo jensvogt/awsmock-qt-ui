@@ -35,10 +35,10 @@ void S3Service::ListBuckets(const QString &prefix) {
                                   s3Response.FromJson(jsonDoc);
                                   emit ListBucketSignal(s3Response);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -59,7 +59,7 @@ void S3Service::PurgeBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -80,7 +80,7 @@ void S3Service::AddBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -110,7 +110,7 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -132,7 +132,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -157,7 +157,7 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                               bucketResponse.FromJson(jsonDoc);
                               emit GetBucketDetailsSignal(bucketResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -193,10 +193,10 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
                                   s3Response.FromJson(jsonDoc);
                                   emit ListObjectsSignal(s3Response);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -221,7 +221,38 @@ void S3Service::GetObjectDetails(const QString &objectId) {
                               objectDetailsResponse.FromJson(jsonDoc["objectCounter"].toObject());
                               emit GetObjectDetailsSignal(objectDetailsResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
+                          }
+                      });
+}
+
+void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata) {
+    QJsonObject jMetadata;
+    for (const auto &k: metadata.keys()) {
+        jMetadata[k] = metadata[k];
+    }
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["bucketArn"] = bucketArn;
+    jRequest["bucketName"] = bucketName;
+    jRequest["objectKey"] = key;
+    jRequest["content"] = QString(content.toBase64());
+    jRequest["contentType"] = "application/json";
+    jRequest["metadata"] = jMetadata;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(_url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "UploadObjectCounter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadObjectsSignal();
+                          } else {
+                              qCritical() << error;
                           }
                       });
 }
@@ -244,7 +275,8 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
+

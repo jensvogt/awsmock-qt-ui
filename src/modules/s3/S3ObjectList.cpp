@@ -10,6 +10,10 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     connect(_s3Service, &S3Service::ListObjectsSignal, this, &S3ObjectList::HandleListObjectSignal);
     connect(_s3Service, &S3Service::ReloadObjectsSignal, this, &S3ObjectList::HandleReloadObjectSignal);
 
+    // Get the bucket
+    _s3Service->GetBucketDetails(bucketName);
+    connect(_s3Service, &S3Service::GetBucketDetailsSignal, this, &S3ObjectList::HandleBucketDetailsSignal);
+
     // Toolbar
     const auto toolBar = new QHBoxLayout();
     const auto spacer = new QWidget();
@@ -31,11 +35,9 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new object");
-    connect(addButton, &QPushButton::clicked, []() {
-        S3ObjectAddDialog dialog;
+    connect(addButton, &QPushButton::clicked, [this]() {
+        S3ObjectAddDialog dialog(_bucketDetailsResponse);
         dialog.exec();
-        QString fileName = dialog.GetFilename();
-        QString s3Key = dialog.GetS3ObjectKey();
     });
 
     // Toolbar add action
@@ -132,6 +134,10 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
 
 S3ObjectList::~S3ObjectList() {
     StopAutoUpdate();
+}
+
+void S3ObjectList::HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse) {
+    this->_bucketDetailsResponse = bucketDetailsResponse;
 }
 
 void S3ObjectList::LoadContent() {

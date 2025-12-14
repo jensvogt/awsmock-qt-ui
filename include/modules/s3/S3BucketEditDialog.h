@@ -38,7 +38,10 @@ public:
     void LoadContent() override {
     };
 
-private slots:
+private
+    slots:
+    
+
     void HandleAccept();
 
     void HandleReject();
@@ -67,8 +70,7 @@ private:
     /**
      *  @brief Table data model
      */
-    QStandardItemModel *_dataModel;
-
+    QStandardItemModel *_dataModel{};
 };
 
 

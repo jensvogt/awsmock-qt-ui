@@ -8,7 +8,6 @@
 #include "ui_DockerStatsDialog.h"
 
 DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(new Ui::DockerStatsDialog) {
-
     // Application service
     _applicationService = new ApplicationService();
 
@@ -217,6 +216,8 @@ void DockerStatsDialog::ShowContextMenu(const QPoint &pos) {
         _containerService->RestartContainer(containerId);
     } else if (selectedAction == killAction) {
         _containerService->KillContainer(containerId);
+    } else if (selectedAction == deleteAction) {
+        _containerService->DeleteContainer(containerId);
     }
     LoadContent();
     StartAutoUpdate();

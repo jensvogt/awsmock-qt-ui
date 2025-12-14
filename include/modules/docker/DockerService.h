@@ -19,7 +19,9 @@
 #include <dto/docker/DockerStatsResponse.h>
 #include <dto/docker/DockerContainersResponse.h>
 
-class DockerService final : public QObject {
+#include "utils/BaseService.h"
+
+class DockerService final : public BaseService {
     Q_OBJECT
 
 public:
@@ -58,6 +60,8 @@ public:
     void RestartContainer(const QString &containerId);
 
     void KillContainer(const QString &containerId);
+
+    void DeleteContainer(const QString &containerId);
 
 signals:
     void ReloadDockerContainerSignal(const DockerContainersResponse &dockerContainersResponse);
