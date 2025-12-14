@@ -126,6 +126,18 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Install Python & aqtinstall
+        shell: powershell
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -U aqtinstall
+
+      - name: Install Qt and Qt Installer Framework (IFW)
+        shell: powershell
+        run: |
+          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
+          python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
+          
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
