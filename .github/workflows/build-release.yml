@@ -113,6 +113,7 @@ jobs:
           path: installer/${{ env.APP_NAME }}-${{ env.SEMVER }}-windows.exe
 
   build-update:
+    name: Build & Package (Update)
     runs-on: windows-latest
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
