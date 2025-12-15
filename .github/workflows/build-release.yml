@@ -475,7 +475,7 @@ jobs:
           cp ./artifacts/installer-macos/*.dmg public/ || true
           cp ./artifacts/deb-package-linux/*.deb public/ || true
           cp ./artifacts/rpm-package-linux/*.rpm public/ || true
-          cp ./artifacts/repository/* public/ || true
+          cp -r ./artifacts/repository/* public/ || true
           cp .github/pages/index.html public/index.html || true
           find . -ls
 
