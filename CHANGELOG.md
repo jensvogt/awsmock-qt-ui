@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.73](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.72...v1.4.73) (2025-12-15)
+
+
+### Bug Fixes
+
+* fix lambda upload dialog ([7f93ee9](https://github.com/jensvogt/awsmock-qt-ui/commit/7f93ee9eb6af4666594079ef6f1234f62aaad124))
+* fix lambda upload dialog ([f9746c7](https://github.com/jensvogt/awsmock-qt-ui/commit/f9746c799aee6ee6c3fddadad66b57dfe6713d0a))
+
 ## [1.4.72](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.71...v1.4.72) (2025-12-15)
 
 
