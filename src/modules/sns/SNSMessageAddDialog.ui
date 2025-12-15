@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SQSMessageAddDialog</class>
+ <class>SNSMessageAddDialog</class>
  <widget class="QDialog" name="SNSMessageAddDialog">
   <property name="geometry">
    <rect>
@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Add SQS Message</string>
+   <string>Add SNS Message</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="bodyTab">
       <attribute name="title">

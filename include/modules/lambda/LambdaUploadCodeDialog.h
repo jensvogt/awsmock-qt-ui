@@ -12,6 +12,7 @@
 #include <QFileDialog>
 
 #include <utils/FileUtils.h>
+#include <utils/IconUtils.h>
 #include <modules/lambda/LambdaService.h>
 #include <dto/lambda/LambdaUploadRequest.h>
 
@@ -45,7 +46,7 @@ private:
     /**
      * UI connection
      */
-    Ui::LambdaUploadCodeDialog *ui;
+    Ui::LambdaUploadCodeDialog *_ui;
 
     /**
     * @brief Service

@@ -5,26 +5,27 @@
 #include <modules/lambda/LambdaUploadCodeDialog.h>
 #include "ui_LambdaUploadCodeDialog.h"
 
-LambdaUploadCodeDialog::LambdaUploadCodeDialog(const QString &lambdaName, const QString &lambdaArn, QWidget *parent) : QDialog(parent), ui(new Ui::LambdaUploadCodeDialog), _lambdaName(lambdaName), _lambdaArn(lambdaArn) {
+LambdaUploadCodeDialog::LambdaUploadCodeDialog(const QString &lambdaName, const QString &lambdaArn, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaUploadCodeDialog), _lambdaName(lambdaName), _lambdaArn(lambdaArn) {
     // Connect lambda service
     _lambdaService = new LambdaService();
 
-    ui->setupUi(this);
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaUploadCodeDialog::HandleAccept);
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &LambdaUploadCodeDialog::HandleReject);
+    _ui->setupUi(this);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaUploadCodeDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &LambdaUploadCodeDialog::HandleReject);
 
     // Connect browse button
-    connect(ui->browseButton, &QPushButton::clicked, this, &LambdaUploadCodeDialog::HandleBrowse);
+    _ui->browseButton->setIcon(IconUtils::GetIcon("search"));
+    connect(_ui->browseButton, &QPushButton::clicked, this, &LambdaUploadCodeDialog::HandleBrowse);
 
     // Set name
-    ui->nameEdit->setText(lambdaName);
+    _ui->nameEdit->setText(lambdaName);
 
     // Enable Drop Events for this widget
     setAcceptDrops(true);
 }
 
 LambdaUploadCodeDialog::~LambdaUploadCodeDialog() {
-    delete ui;
+    delete _ui;
 }
 
 void LambdaUploadCodeDialog::dragEnterEvent(QDragEnterEvent *event) {
@@ -32,11 +33,11 @@ void LambdaUploadCodeDialog::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasUrls()) {
         // Accept the proposed action (copy, move, or link)
         event->acceptProposedAction();
-        ui->dropLabel->setStyleSheet("QLabel { color: #007bff; font-size: 16px; padding: 10px; border: 2px dashed #007bff; background-color: #e6f3ff; }");
+        _ui->dropLabel->setStyleSheet("QLabel { color: #007bff; font-size: 16px; padding: 10px; border: 2px dashed #007bff; background-color: #e6f3ff; }");
     } else {
         // Reject the event if it's not file URLs
         event->ignore();
-        ui->dropLabel->setStyleSheet("QLabel { color: #333; font-size: 16px; padding: 10px; border: 2px dashed #999; }");
+        _ui->dropLabel->setStyleSheet("QLabel { color: #333; font-size: 16px; padding: 10px; border: 2px dashed #999; }");
     }
 }
 
@@ -52,8 +53,8 @@ void LambdaUploadCodeDialog::dropEvent(QDropEvent *event) {
 
                 // Extract the version from the filename
                 QString version = FileUtils::ExtractVersionFromFileName(_fileInfo.fileName());
-                ui->filenameEdit->setText(_fileInfo.fileName());
-                ui->versionEdit->setText(version);
+                _ui->filenameEdit->setText(_fileInfo.fileName());
+                _ui->versionEdit->setText(version);
             }
         }
 
@@ -71,8 +72,8 @@ void LambdaUploadCodeDialog::HandleBrowse() {
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open lambda code file", defaultDir, filter); !filePath.isEmpty()) {
         const QString version = FileUtils::ExtractVersionFromFileName(filePath);
-        ui->filenameEdit->setText(filePath);
-        ui->versionEdit->setText(version);
+        _ui->filenameEdit->setText(filePath);
+        _ui->versionEdit->setText(version);
         _fileInfo = QFileInfo(filePath);
     }
 }
@@ -90,7 +91,7 @@ void LambdaUploadCodeDialog::HandleAccept() {
     LambdaUploadRequest request;
     request.lambdaName = _lambdaName;
     request.lambdaArn = _lambdaArn;
-    request.version = ui->versionEdit->text();
+    request.version = _ui->versionEdit->text();
     request.lambdaCode = binaryData.toBase64();
     request.archive = _fileInfo.fileName();
     _lambdaService->UploadLambdaCode(request);

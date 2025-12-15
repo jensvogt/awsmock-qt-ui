@@ -216,6 +216,12 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaUploadCodeDialog.ui
         include/dto/lambda/LambdaUploadRequest.h
         include/dto/lambda/LambdaUpdateRequest.h
+        src/modules/sns/SNSMessageAddDialog.cpp
+        src/modules/sns/SNSMessageAddDialog.ui
+        include/modules/sns/SNSMessageAddDialog.h
+        include/dto/sns/SNSSendMessageRequest.h
+        include/dto/sns/SNSMessageAttribute.h
+        include/dto/sns/SNSSendMessageResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

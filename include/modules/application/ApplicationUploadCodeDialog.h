@@ -12,6 +12,7 @@
 #include <QFileDialog>
 
 #include <utils/FileUtils.h>
+#include <utils/IconUtils.h>
 #include <modules/application/ApplicationService.h>
 
 QT_BEGIN_NAMESPACE

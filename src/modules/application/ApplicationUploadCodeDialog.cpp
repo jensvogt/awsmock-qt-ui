@@ -14,6 +14,7 @@ ApplicationUploadCodeDialog::ApplicationUploadCodeDialog(const QString &name, QW
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationUploadCodeDialog::HandleReject);
 
     // Connect browse button
+    ui->browseButton->setIcon(IconUtils::GetIcon("search"));
     connect(ui->browseButton, &QPushButton::clicked, this, &ApplicationUploadCodeDialog::HandleBrowse);
 
     // Set name
