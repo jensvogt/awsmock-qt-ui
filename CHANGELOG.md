@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.80](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.79...v1.4.80) (2025-12-15)
+
+
+### Bug Fixes
+
+* add SNS message add dialog, lambda kill/start/stop service calls ([7b2cfa5](https://github.com/jensvogt/awsmock-qt-ui/commit/7b2cfa59bd910a557d246b8710dc7d46d318c9c1))
+* add SNS message add dialog, lambda kill/start/stop service calls ([fefed8c](https://github.com/jensvogt/awsmock-qt-ui/commit/fefed8c7e7da7c61ab02c4910ba50a55fff23439))
+
 ## [1.4.79](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.78...v1.4.79) (2025-12-15)
 
 
