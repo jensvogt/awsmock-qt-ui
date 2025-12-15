@@ -57,10 +57,10 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     connect(ui->targetEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
 
     // Connect source browse button
-    ui->sourceBrowseButton->setText(nullptr);
-    ui->targetBrowseButton->setText(nullptr);
-    ui->sourceBrowseButton->setIcon(IconUtils::GetIcon("browse"));
-    ui->targetBrowseButton->setIcon(IconUtils::GetIcon("browse"));
+    ui->sourceBrowseButton->setIcon(IconUtils::GetIcon("search"));
+    ui->targetBrowseButton->setIcon(IconUtils::GetIcon("search"));
+    ui->sourceBrowseButton->setText("Browse");
+    ui->targetBrowseButton->setText("Browse");
     connect(ui->sourceBrowseButton, &QPushButton::clicked, this, &FTPUploadDialog::BrowseSourceFile);
 
     // Disable browse buttons

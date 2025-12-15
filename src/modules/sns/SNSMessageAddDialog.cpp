@@ -2,35 +2,35 @@
 // Created by vogje01 on 11/9/25.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_SQSMessageAddDialog.h" resolved
+// You may need to build the project (run Qt uic code generator) to get "ui_SNSMessageAddDialog.h" resolved
 
-#include <modules/sqs/SQSMessageAddDialog.h>
-#include "ui_SQSMessageAddDialog.h"
+#include <modules/SNS/SNSMessageAddDialog.h>
+#include "ui_SNSMessageAddDialog.h"
 
-SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog), _queueUrl(std::move(queueUrl)) {
+SNSMessageAddDialog::SNSMessageAddDialog(const QString &topicArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SNSMessageAddDialog), _topicArn(std::move(topicArn)) {
     // Connect service events
-    _sqsService = new SQSService();
-    connect(_sqsService, &SQSService::SendMessagesSignal, this, &SQSMessageAddDialog::HandleSendMessageSignal);
+    _snsService = new SNSService();
+    connect(_snsService, &SNSService::SendMessagesSignal, this, &SNSMessageAddDialog::HandleSendMessageSignal);
 
     _ui->setupUi(this);
-    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SQSMessageAddDialog::HandleAccept);
-    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SQSMessageAddDialog::HandleReject);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SNSMessageAddDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SNSMessageAddDialog::HandleReject);
 
     // Pretty print button
     _ui->prettyButton->setCheckable(true);
     _ui->prettyButton->setText(nullptr);
     _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
-    connect(_ui->prettyButton, &QPushButton::toggled, this, &SQSMessageAddDialog::HandlePrettyButton);
+    connect(_ui->prettyButton, &QPushButton::toggled, this, &SNSMessageAddDialog::HandlePrettyButton);
 
     // Browse button
     _ui->browseButton->setText(nullptr);
     _ui->browseButton->setIcon(IconUtils::GetIcon("search"));
-    connect(_ui->browseButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleBrowseButton);
+    connect(_ui->browseButton, &QPushButton::clicked, this, &SNSMessageAddDialog::HandleBrowseButton);
 
     // Add attribute button
     _ui->addAttributeButton->setText(nullptr);
     _ui->addAttributeButton->setIcon(IconUtils::GetIcon("add"));
-    connect(_ui->addAttributeButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleAddAttributeButton);
+    connect(_ui->addAttributeButton, &QPushButton::clicked, this, &SNSMessageAddDialog::HandleAddAttributeButton);
 
     // Attribute table
     const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
@@ -49,44 +49,44 @@ SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : Ba
     _ui->tabWidget->setCurrentIndex(0);
 }
 
-SQSMessageAddDialog::~SQSMessageAddDialog() {
+SNSMessageAddDialog::~SNSMessageAddDialog() {
     delete _ui;
 }
 
-void SQSMessageAddDialog::HandleAccept() const {
+void SNSMessageAddDialog::HandleAccept() const {
     if (_ui->bodyEdit->toPlainText().isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "Body can't be empty!");
         return;
     }
-    SQSSendMessageRequest request;
-    request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
-    request.queueUrl = _queueUrl;
+
+    SNSSendMessageRequest request;
+    request.topicArn = _topicArn;
     request.body = _ui->bodyEdit->toPlainText().toUtf8();
 
     const int rows = _ui->tableWidget->rowCount();
 
     for (int r = 0; r < rows; ++r) {
-        MessageAttribute messageAttribute;
+        SNSMessageAttribute messageAttribute;
         messageAttribute.dataType = STRING;
 
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
         const QTableWidgetItem *value = _ui->tableWidget->item(r, 1);
         messageAttribute.stringValue = value->text().toUtf8();
-        request.messageAttributes[key->text().toStdString()] = messageAttribute;
+        request.messageAttributes[key->text()] = messageAttribute;
     }
-    _sqsService->SendMessage(request);
+    _snsService->SendMessage(request);
 }
 
-void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
+void SNSMessageAddDialog::HandleSendMessageSignal(const SNSSendMessageResponse &response) {
     QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
     accept();
 }
 
-void SQSMessageAddDialog::HandleReject() {
+void SNSMessageAddDialog::HandleReject() {
     accept();
 }
 
-void SQSMessageAddDialog::HandleBrowseButton() const {
+void SNSMessageAddDialog::HandleBrowseButton() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "All Files (*.*)";
     const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
@@ -107,7 +107,7 @@ void SQSMessageAddDialog::HandleBrowseButton() const {
     }
 }
 
-void SQSMessageAddDialog::HandlePrettyButton(const bool checked) const {
+void SNSMessageAddDialog::HandlePrettyButton(const bool checked) const {
     if (checked) {
         const QByteArray body = _ui->bodyEdit->toPlainText().toUtf8();
         const QJsonDocument jDoc = QJsonDocument::fromJson(body);
@@ -121,7 +121,7 @@ void SQSMessageAddDialog::HandlePrettyButton(const bool checked) const {
     }
 }
 
-void SQSMessageAddDialog::HandleAddAttributeButton() const {
+void SNSMessageAddDialog::HandleAddAttributeButton() const {
     QDialog dialog;
     dialog.setWindowTitle("Add attribute");
 

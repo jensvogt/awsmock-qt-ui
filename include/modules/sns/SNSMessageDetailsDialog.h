@@ -2,6 +2,8 @@
 #define SNS_MESSAGE_DETAILS_DIALOG_H
 
 #include <QDialog>
+#include <QHeaderView>
+#include <QStandardItemModel>
 
 #include <modules/sns/SNSService.h>
 #include <utils/IconUtils.h>
@@ -28,6 +30,11 @@ private:
     QString _messageId;
     SNSService *_snsService;
     bool _changed = false;
+
+    /**
+     *  @brief Table data model
+     */
+    QStandardItemModel *_dataModel;
 };
 
 #endif // SNS_MESSAGE_DETAILS_DIALOG_H

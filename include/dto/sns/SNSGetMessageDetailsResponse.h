@@ -8,33 +8,15 @@
 
 #include <utils/JsonUtils.h>
 
-struct SNSMessageAttribute {
-
-    QString name;
-
-    QString stringValue;
-
-    QString stringListValue;
-
-    QString dataType;
-
-    void FromJson(const QString &name, QJsonObject jsonObject) {
-        this->name = name;
-        dataType = jsonObject["DataType"].toString();
-        stringValue = jsonObject["StringValue"].toString();
-        stringListValue = jsonObject["StringListValue"].toString();
-    }
-};
+#include "SNSMessageAttribute.h"
 
 struct SNSAttribute {
-
     QString key;
 
     QString value;
 };
 
 struct SNSGetMessageDetailsResponse {
-
 public:
     QString region;
 
@@ -65,10 +47,9 @@ public:
         modified = QDateTime::fromString(jsonObject["Modified"].toString(), Qt::ISODate);
 
         // Message attributes
-        for(const QString &key : jsonObject["MessageAttributes"].toObject().keys()) {
-
+        for (const QString &key: jsonObject["MessageAttributes"].toObject().keys()) {
             SNSMessageAttribute messageAttribute;
-            messageAttribute.FromJson(key, jsonObject["MessageAttributes"].toObject().value(key).toObject());
+            messageAttribute.FromJson(jsonObject["MessageAttributes"].toObject().value(key).toObject());
             messageAttributes.append(messageAttribute);
         }
     }
