@@ -1,9 +1,5 @@
 #include <modules/docker/DockerService.h>
 
-DockerService::DockerService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
-}
-
 void DockerService::ListDockerContainer(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
@@ -12,7 +8,7 @@ void DockerService::ListDockerContainer(const QString &prefix) {
     jRequest["prefix"] = prefix;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
@@ -41,7 +37,7 @@ void DockerService::ListDockerStats() {
     timer.start();
     const QJsonDocument requestDoc(CreateBaseRequest());
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
@@ -73,7 +69,7 @@ void DockerService::StartContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
@@ -98,7 +94,7 @@ void DockerService::StopContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
@@ -123,7 +119,7 @@ void DockerService::RestartContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
@@ -148,7 +144,7 @@ void DockerService::KillContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},
@@ -173,7 +169,7 @@ void DockerService::DeleteContainer(const QString &containerId) {
     jRequest["containerId"] = containerId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "container"},

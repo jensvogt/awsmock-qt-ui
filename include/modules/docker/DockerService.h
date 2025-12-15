@@ -19,6 +19,7 @@
 #include <dto/docker/DockerStatsResponse.h>
 #include <dto/docker/DockerContainersResponse.h>
 
+#include "dto/lambda/LambdaUpdateRequest.h"
 #include "utils/BaseService.h"
 
 class DockerService final : public BaseService {
@@ -28,7 +29,7 @@ public:
     /**
      * @brief DockerService
      */
-    DockerService();
+    DockerService() = default;
 
     /**
      * @brief List docker containers
@@ -70,22 +71,11 @@ signals:
 
     void ReloadContainerList();
 
-    //    void GetApplicationDetailsSignal(const ApplicationGetResponse &applicationGetResponse);
-
-    //    void ListApplicationNamedSignal(const QStringList &applicationNames);
-
-    //    void LoadAllApplications();
-
 private:
     /**
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl url;
 };
 
 

@@ -102,6 +102,8 @@ public:
 
     void UploadLambdaCode(const LambdaUploadRequest &request);
 
+    void UpdateLambda(const QString &lambdaArn, bool enabled);
+
     /**
      * @brief Stop an lambdas
      *
