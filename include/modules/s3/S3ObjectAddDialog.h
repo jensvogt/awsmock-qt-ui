@@ -48,7 +48,7 @@ public:
         return _fileName;
     }
 
-    void LoadContent() {
+    void LoadContent() override {
     }
 
 private:

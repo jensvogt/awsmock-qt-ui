@@ -124,7 +124,7 @@ jobs:
       - name: Upload repository artifact
         uses: actions/upload-artifact@v4
         with:
-          name: qt-updates
+          name: repository
           path: installer/repository
 
   #  build-update:
@@ -432,7 +432,7 @@ jobs:
       - name: Download Windows Updates
         uses: actions/download-artifact@v4
         with:
-          name: qt-updates
+          name: repository
           path: artifacts/repository
 
       - name: Create GitHub Release (attach installers)
