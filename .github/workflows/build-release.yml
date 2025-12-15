@@ -429,7 +429,7 @@ jobs:
           name: rpm-package-linux
           path: artifacts/linux
 
-      - name: Upload updates
+      - name: Download Windows Updates
         uses: actions/download-artifact@v4
         with:
           name: qt-updates
@@ -475,8 +475,9 @@ jobs:
           cp ./artifacts/installer-macos/*.dmg public/ || true
           cp ./artifacts/deb-package-linux/*.deb public/ || true
           cp ./artifacts/rpm-package-linux/*.rpm public/ || true
-          cp .github/pages/index.html public/index.html || true
           cp ./artifacts/repository/* public/ || true
+          cp .github/pages/index.html public/index.html || true
+          find . -ls
 
       - name: Generate files.json
         run: |
