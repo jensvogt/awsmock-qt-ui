@@ -8,7 +8,7 @@
     <TargetDir>@ApplicationsDir@/awsmock-qt-ui</TargetDir>
     <RemoteRepositories>
         <Repository>
-            <Url>https://jensvogt.github.io/awsmock-qt-ui/</Url>
+            <Url>https://jensvogt.github.io/awsmock-qt-ui</Url>
             <Enabled>true</Enabled>
         </Repository>
     </RemoteRepositories>
