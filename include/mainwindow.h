@@ -40,6 +40,16 @@
 #include <modules/lambda/LambdaList.h>
 #include <modules/infrastructure/InfrastructureService.h>
 #include <modules/docker/DockerStatsDialog.h>
+#include <modules/secretsmanager/SecretList.h>
+
+#define PAGE_DASHBOARD 0
+#define PAGE_SQS 1
+#define PAGE_SNS 2
+#define PAGE_S3 3
+#define PAGE_APPLICATION 4
+#define PAGE_LAMBDA 5
+#define PAGE_SECRETS_MANAGER 6
+#define PAGE_SSM 7
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT

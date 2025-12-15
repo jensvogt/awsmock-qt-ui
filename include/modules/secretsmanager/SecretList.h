@@ -2,8 +2,8 @@
 // Created by vogje01 on 11/7/25.
 //
 
-#ifndef AWSMOCK_QT_UI_LAMBDA_LIST_H
-#define AWSMOCK_QT_UI_LAMBDA_LIST_H
+#ifndef AWSMOCK_QT_UI_SECRET_LIST_H
+#define AWSMOCK_QT_UI_SECRET_LIST_H
 
 // QT includes
 #include <QMenu>
@@ -23,28 +23,26 @@
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include <modules/lambda/LambdaLogsDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
-#include <modules/lambda/LambdaUploadCodeDialog.h>
-#include <modules/docker/DockerService.h>
 
 /**
- * @brief Lambda list widget. The widget will be placed in the content pane.
+ * @brief Secrets list widget. The widget will be placed in the content pane.
  */
-class LambdaList final : public BasePage {
+class SecretList final : public BasePage {
     Q_OBJECT
 
 public:
     /**
-     * @brief SQSQueueList
+     * @brief Secretsmanager secret list
      *
      * @param title widget title
      * @param parent parent widget
      */
-    explicit LambdaList(const QString &title, QWidget *parent = nullptr);
+    explicit SecretList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * Destructor
      */
-    ~LambdaList() override;
+    ~SecretList() override;
 
     /**
      * @brief Load page content
@@ -56,7 +54,7 @@ public:
      *
      * @param listLambdaResponse lambda counter list
      */
-    void HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse);
+    void HandleListSecretsSignal(const LambdaListResponse &listLambdaResponse);
 
 private slots:
     /**
@@ -83,14 +81,9 @@ private:
     QString prefixValue = "";
 
     /**
-     * @brief Lambda service
+     * @brief Service
      */
     LambdaService *_lambdaService;
-
-    /**
-     * @brief Container service
-     */
-    DockerService *_containerService;
 
     /**
      * @brief Sort column index
@@ -108,4 +101,4 @@ private:
     QPushButton *prefixClear;
 };
 
-#endif //AWSMOCK_QT_UI_LAMBDA_LIST_H
+#endif // AWSMOCK_QT_UI_SECRET_LIST_H

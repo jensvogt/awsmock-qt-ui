@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_navPane->addItem("S3");
     m_navPane->addItem("Application");
     m_navPane->addItem("Lambda");
+    m_navPane->addItem("Secrets Manager");
 
     // Select the first item by default
     m_navPane->setCurrentRow(0);
@@ -264,7 +265,7 @@ void MainWindow::UpdateStatusBar(const QString &text) const {
 
 BasePage *MainWindow::CreatePage(const int currentRow) {
     switch (currentRow) {
-        case 0: {
+        case PAGE_DASHBOARD: {
             const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
 
             // Connect child's signal to update status bar
@@ -273,7 +274,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             return dashboardPage;
         }
 
-        case 1: {
+        case PAGE_SQS: {
             const auto queueListPage = new SQSQueueList("SQS Queue List");
 
             // Connect child's signal to update status bar
@@ -310,7 +311,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             return queueListPage;
         }
 
-        case 2: {
+        case PAGE_SNS: {
             const auto topicListPage = new SNSTopicList("SNS Topic List");
 
             // Connect child's signal to update status bar
@@ -348,7 +349,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             return topicListPage;
         }
 
-        case 3: {
+        case PAGE_S3: {
             const auto bucketListPage = new S3BucketList("S3 Bucket List");
 
             // Connect child's signal to update status bar
@@ -382,7 +383,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             return bucketListPage;
         }
 
-        case 4: {
+        case PAGE_APPLICATION: {
             const auto applicationPage = new ApplicationList("Applications", m_contentPane);
 
             // Connect child's signal to update status bar
@@ -391,13 +392,22 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             return applicationPage;
         }
 
-        case 5: {
+        case PAGE_LAMBDA: {
             const auto lambdaPage = new LambdaList("Lambdas", m_contentPane);
 
             // Connect child's signal to update status bar
             connect(lambdaPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
             return lambdaPage;
+        }
+
+        case PAGE_SECRETS_MANAGER: {
+            const auto secretsManagerPage = new SecretList("SecretsManager", m_contentPane);
+
+            // Connect child's signal to update status bar
+            connect(secretsManagerPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            return secretsManagerPage;
         }
 
         default:

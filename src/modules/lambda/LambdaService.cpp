@@ -1,9 +1,5 @@
 #include <modules/lambda/LambdaService.h>
 
-LambdaService::LambdaService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
-}
-
 void LambdaService::ListLambdas(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
@@ -15,14 +11,14 @@ void LambdaService::ListLambdas(const QString &prefix) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -47,11 +43,11 @@ void LambdaService::ListLambdas(const QString &prefix) {
 }
 
 void LambdaService::GetLambda(const QString &lambdaArn) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["functionArn"] = lambdaArn;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -81,7 +77,7 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["lambdaArn"] = lambdaArn;
     jRequest["prefix"] = "";
     jRequest["pageSize"] = -1;
@@ -89,7 +85,7 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -119,7 +115,7 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["lambdaArn"] = lambdaArn;
     jRequest["prefix"] = "";
     jRequest["pageSize"] = -1;
@@ -127,7 +123,7 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -150,14 +146,13 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
 }
 
 void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value) {
-
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionArn"] = lambdaArn;
     jRequest["Key"] = key;
     jRequest["Value"] = value;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -174,13 +169,12 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
 }
 
 void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key) {
-
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionArn"] = lambdaArn;
     jRequest["Key"] = key;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -197,12 +191,11 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
 }
 
 void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
-
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["lambdaArn"] = lambdaArn;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -225,12 +218,11 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
 }
 
 void LambdaService::GetLambdaResult(const QString &oid) {
-
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["oid"] = oid;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -254,12 +246,11 @@ void LambdaService::GetLambdaResult(const QString &oid) {
 }
 
 void LambdaService::GetLambdaResults(const QString &oid) {
-
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["oid"] = oid;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
@@ -282,14 +273,36 @@ void LambdaService::GetLambdaResults(const QString &oid) {
                       });
 }
 
-void LambdaService::DeleteLambda(const QString &name) {
+void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["version"] = request.version;
+    jRequest["functionArn"] = request.lambdaArn;
+    jRequest["functionCode"] = request.lambdaCode;
+    const QJsonDocument requestDoc(jRequest);
 
-    QJsonObject jRequest;
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "upload-function-code"},
+                          {"content-type", "application/json"}
+                      },
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllLambdas();
+                          } else {
+                              qCritical() << error;
+                          }
+                      });
+}
+
+void LambdaService::DeleteLambda(const QString &name) {
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionName"] = name;
     jRequest["Qualifier"] = "";
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
