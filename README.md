@@ -4,13 +4,18 @@ Binary installation packages can be found on the [binary packages page](https://
 Supported platforms are Windows (Qt installation), Redhat based system (Debian package), Fedora bases distributions
 (RPM package) and macOS DMG files.
 
+## Upgrade on Windows
+
+To upgrade the application to the newest release use the ```maintenancetool.exe```. After starting the executable, you
+will see a menu entry `Update components`. Selecting this menu entry will upgrade your installation to the newest
+release.
+
 ## Building from source on Linux / macOS
 
 ### Dependencies
 
 For Windows as well as for Linux the following dependencies are needed:
 
-- FTPClient
 - Curl library
 
 ### Building on Linux
@@ -32,7 +37,6 @@ This will copy all necessary file to /usr/local/awsmock-qt-ui.
 
 For Windows as well as for Linux the following dependencies are needed:
 
-- FTPClient
 - Curl library
 
 ### Building on Windows
@@ -52,5 +56,5 @@ cmake --install .
 In order to package for Windows use (currently the Release is not working):
 
 ```
-windeployqt6 Debug
+windeployqt6 Release
 ```
