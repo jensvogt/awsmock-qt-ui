@@ -1,6 +1,6 @@
-#include <modules/lambda/LambdaList.h>
+#include <modules/secretsmanager/SecretList.h>
 
-LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent) {
+SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent) {
     setAttribute(Qt::WA_DeleteOnClose);
 
     // Set region
@@ -8,9 +8,8 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Connect service
     _lambdaService = new LambdaService();
-    connect(_lambdaService, &LambdaService::LoadAllLambdas, this, &LambdaList::LoadContent);
-    connect(_lambdaService, &LambdaService::ReloadLambdasSignal, this,
-            &LambdaList::HandleListLambdasSignal);
+    connect(_lambdaService, &LambdaService::LoadAllLambdas, this, &SecretList::LoadContent);
+    connect(_lambdaService, &LambdaService::ReloadLambdasSignal, this, &SecretList::HandleListSecretsSignal);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -75,7 +74,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     const QStringList headers = QStringList() = {
                                     tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Instances"),
                                     tr("Invocations"), tr("Avg. Execution Time"), tr("Created"), tr("Modified"),
-                                    tr("ContainerId"), tr("ARN")
+                                    tr("ContainerId")
                                 };
 
     tableWidget = new QTableWidget(this);
@@ -96,7 +95,6 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(9, true);
-    tableWidget->setColumnHidden(10, true);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
@@ -112,7 +110,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Add context menu
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &LambdaList::ShowContextMenu);
+    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SecretList::ShowContextMenu);
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
@@ -128,11 +126,11 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addWidget(tableWidget, 2);
 }
 
-LambdaList::~LambdaList() {
+SecretList::~SecretList() {
     StopAutoUpdate();
 }
 
-void LambdaList::LoadContent() {
+void SecretList::LoadContent() {
     if (Configuration::instance().GetConnectionState()) {
         _lambdaService->ListLambdas(prefixValue);
     } else {
@@ -140,7 +138,7 @@ void LambdaList::LoadContent() {
     }
 }
 
-void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) {
+void SecretList::HandleListSecretsSignal(const LambdaListResponse &listLambdaResponse) {
     const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
@@ -155,8 +153,7 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
         SetColumn(tableWidget, r, 6, listLambdaResponse.lambdaCounters.at(r).averageRuntime);
         SetColumn(tableWidget, r, 7, listLambdaResponse.lambdaCounters.at(r).created);
         SetColumn(tableWidget, r, 8, listLambdaResponse.lambdaCounters.at(r).modified);
-        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).containerId);
-        SetColumn(tableWidget, r, 10, listLambdaResponse.lambdaCounters.at(r).arn);
+        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).arn);
     }
     tableWidget->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -165,7 +162,7 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
     NotifyStatusBar();
 }
 
-void LambdaList::ShowContextMenu(const QPoint &pos) {
+void SecretList::ShowContextMenu(const QPoint &pos) {
     // Stop auto updater
     StopAutoUpdate();
 
@@ -177,7 +174,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
 
     const int row = index.row();
 
-    const QString arn = tableWidget->item(row, 10)->text();
+    const QString arn = tableWidget->item(row, 9)->text();
     const QString name = tableWidget->item(row, 0)->text();
     const QString containerId = tableWidget->item(row, 9)->text();
 
@@ -210,9 +207,6 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
     restartAction->setToolTip("Restart the lambda");
 
-    QAction *killAction = menu.addAction(IconUtils::GetIcon("kill"), "Kill Lambda");
-    killAction->setToolTip("Kill the lambda docker container");
-
     menu.addSeparator();
 
     QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
@@ -225,6 +219,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
     deleteAction->setToolTip("Delete the Topic");
+
 
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         LambdaDetailsDialog dialog(arn);
@@ -244,13 +239,11 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         //_lambdaService->StopLambda(name);
     } else if (selectedAction == restartAction) {
         //_lambdaService->RestartLambda(name);
-    } else if (selectedAction == killAction) {
-        _containerService->KillContainer(containerId);
     } else if (selectedAction == rebuildAction) {
         //_lambdaService->RebuildLambda(name);
     } else if (selectedAction == uploadAction) {
-        LambdaUploadCodeDialog dialog(name, arn);
-        dialog.exec();
+        //LambdaUploadCodeDialog dialog(name);
+        //dialog.exec();
     } else if (selectedAction == deleteAction) {
         _lambdaService->DeleteLambda(name);
     }

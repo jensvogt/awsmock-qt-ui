@@ -36,7 +36,12 @@ public:
         QJsonObject jRequest;
         jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
         jRequest["user"] = Configuration::instance().GetValue<QString>("aws.user", "none");
+        jRequest["requestId"] = QUuid::createUuid().toString();
         return jRequest;
+    }
+
+    static QUrl GetBaseUrl() {
+        return {Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1")};
     }
 
 private slots:
@@ -66,5 +71,6 @@ private:
      */
     QTimer *_timer;
 };
+
 #endif //AWSMOCK_QT_UI_BASE_SERVICE_H
 

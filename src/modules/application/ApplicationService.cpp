@@ -302,10 +302,9 @@ void ApplicationService::RebuildApplication(const QString &name) {
                       });
 }
 
-void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version,
-                                               const QString &applicationCode) {
+void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
     QJsonObject jRequest;
-    jRequest["version"] = applicationName;
+    jRequest["version"] = version;
     jRequest["applicationName"] = applicationName;
     jRequest["applicationCode"] = applicationCode;
     const QJsonDocument requestDoc(jRequest);

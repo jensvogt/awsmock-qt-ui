@@ -209,6 +209,12 @@ set(PROJECT_SOURCES
         src/modules/s3/S3ObjectAddDialog.cpp
         include/utils/BaseService.h
         include/dto/s3/S3ObjectUploadRequest.h
+        include/modules/secretsmanager/SecretList.h
+        src/modules/secretsmanager/SecretsList.cpp
+        include/modules/lambda/LambdaUploadCodeDialog.h
+        src/modules/lambda/LambdaUploadCodeDialog.cpp
+        src/modules/lambda/LambdaUploadCodeDialog.ui
+        include/dto/lambda/LambdaUploadRequest.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

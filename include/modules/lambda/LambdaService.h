@@ -16,21 +16,24 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
+#include <utils/BaseService.h>
 #include <dto/lambda/LambdaListResponse.h>
 #include <dto/lambda/LambdaGetResponse.h>
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
 #include <dto/lambda/LambdaListInstancesResponse.h>
 #include <dto/lambda/LambdaListResultsResponse.h>
 #include <dto/lambda/LambdaGetResultResponse.h>
+#include <dto/lambda/LambdaUploadRequest.h>
+#include <dto/lambda/LambdaUploadRequest.h>
 
-class LambdaService final : public QObject {
+class LambdaService final : public BaseService {
     Q_OBJECT
 
 public:
     /**
      * @brief LambdaService
      */
-    LambdaService();
+    LambdaService() = default;
 
     /**
      * @brief List lambdas
@@ -96,6 +99,8 @@ public:
     void GetLambdaResult(const QString &oid);
 
     void GetLambdaResults(const QString &oid);
+
+    void UploadLambdaCode(const LambdaUploadRequest &request);
 
     /**
      * @brief Stop an lambdas
@@ -202,11 +207,6 @@ private:
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl url;
 };
 
 
