@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>AwsMockQtUI</Name>
+    <Version>1.4.52</Version>
+    <Title>AwsMockQtUIInstaller</Title>
+    <Publisher>Jens Vogt</Publisher>
+    <StartMenuDir>awsmock-qt-ui</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/awsmock-qt-ui</TargetDir>
+</Installer>
+

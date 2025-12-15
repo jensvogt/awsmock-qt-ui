@@ -235,15 +235,15 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     } else if (selectedAction == startAction) {
-        // _lambdaService->StartLambda(name);
+        _containerService->StartContainer(containerId);
     } else if (selectedAction == enableAction) {
         //_lambdaService->EnableLambda(name);
     } else if (selectedAction == disableAction) {
         //_lambdaService->DisableLambda(name);
     } else if (selectedAction == stopAction) {
-        //_lambdaService->StopLambda(name);
+        _containerService->StopContainer(containerId);
     } else if (selectedAction == restartAction) {
-        //_lambdaService->RestartLambda(name);
+        _containerService->RestartContainer(containerId);
     } else if (selectedAction == killAction) {
         _containerService->KillContainer(containerId);
     } else if (selectedAction == rebuildAction) {
