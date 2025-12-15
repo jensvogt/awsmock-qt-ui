@@ -27,7 +27,7 @@
 #include <dto/sns/SNSListMessagesResult.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSMessageDetailsDialog.h>
-#include <modules/SNS/SNSMessageAddDialog.h>
+#include <modules/sns/SNSMessageAddDialog.h>
 
 /**
  * @brief Helper widget for the content area.

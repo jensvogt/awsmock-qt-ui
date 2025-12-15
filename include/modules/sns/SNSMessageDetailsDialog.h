@@ -1,5 +1,5 @@
-#ifndef SNS_MESSAGE_DETAILS_DIALOG_H
-#define SNS_MESSAGE_DETAILS_DIALOG_H
+#ifndef AWSMOCK_QT_UI_SNS_MESSAGE_DETAILS_DIALOG_H
+#define AWSMOCK_QT_UI_SNS_MESSAGE_DETAILS_DIALOG_H
 
 #include <QDialog>
 #include <QHeaderView>
@@ -37,4 +37,4 @@ private:
     QStandardItemModel *_dataModel;
 };
 
-#endif // SNS_MESSAGE_DETAILS_DIALOG_H
+#endif // AWSMOCK_QT_UI_SNS_MESSAGE_DETAILS_DIALOG_H
