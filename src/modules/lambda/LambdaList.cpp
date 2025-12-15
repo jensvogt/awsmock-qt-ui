@@ -237,9 +237,9 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == startAction) {
         _containerService->StartContainer(containerId);
     } else if (selectedAction == enableAction) {
-        //_lambdaService->EnableLambda(name);
+        _lambdaService->UpdateLambda(arn, true);
     } else if (selectedAction == disableAction) {
-        //_lambdaService->DisableLambda(name);
+        _lambdaService->UpdateLambda(arn, false);
     } else if (selectedAction == stopAction) {
         _containerService->StopContainer(containerId);
     } else if (selectedAction == restartAction) {

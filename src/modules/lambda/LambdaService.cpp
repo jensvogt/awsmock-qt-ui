@@ -296,6 +296,32 @@ void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
                       });
 }
 
+void LambdaService::UpdateLambda(const QString &lambdaArn, const bool enabled) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["functionArn"] = lambdaArn;
+    jRequest["enabled"] = enabled;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "update-lambda"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadAllLambdas();
+                          } else {
+                              qCritical() << error;
+                          }
+                          emit EventBus::instance().DockerStatsTimerSignal("StartContainer", timer.elapsed());
+                      });
+}
+
 void LambdaService::DeleteLambda(const QString &name) {
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionName"] = name;

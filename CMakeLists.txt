@@ -215,6 +215,7 @@ set(PROJECT_SOURCES
         src/modules/lambda/LambdaUploadCodeDialog.cpp
         src/modules/lambda/LambdaUploadCodeDialog.ui
         include/dto/lambda/LambdaUploadRequest.h
+        include/dto/lambda/LambdaUpdateRequest.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
