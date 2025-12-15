@@ -4,7 +4,7 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_SNSMessageAddDialog.h" resolved
 
-#include <modules/SNS/SNSMessageAddDialog.h>
+#include <modules/sns/SNSMessageAddDialog.h>
 #include "ui_SNSMessageAddDialog.h"
 
 SNSMessageAddDialog::SNSMessageAddDialog(const QString &topicArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SNSMessageAddDialog), _topicArn(std::move(topicArn)) {
