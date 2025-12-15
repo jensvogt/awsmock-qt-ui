@@ -142,7 +142,7 @@
       <attribute name="title">
        <string>Body</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayoutBody">
        <property name="leftMargin">
         <number>9</number>
        </property>
@@ -218,7 +218,7 @@
       <attribute name="title">
        <string>Message Attributes</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayoutAttr">
        <property name="leftMargin">
         <number>9</number>
        </property>
@@ -246,7 +246,7 @@
       <attribute name="title">
        <string>System Attributes</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayoutSystem">
        <property name="leftMargin">
         <number>9</number>
        </property>
