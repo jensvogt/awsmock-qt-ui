@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.83](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.82...v1.4.83) (2025-12-16)
+
+
+### Bug Fixes
+
+* add S3 bucket view ([ddc9600](https://github.com/jensvogt/awsmock-qt-ui/commit/ddc960048946631339961ce1f5d97028967b73ca))
+* add secrets details dialog ([a19c205](https://github.com/jensvogt/awsmock-qt-ui/commit/a19c20556cb02ee344eb076d134c310e6a27e3f5))
+* add secrets manager secret list ([219138d](https://github.com/jensvogt/awsmock-qt-ui/commit/219138db73fca1559fcd44c2237b642929eea3c6))
+
 ## [1.4.82](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.81...v1.4.82) (2025-12-15)
 
 
