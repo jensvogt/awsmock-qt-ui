@@ -67,7 +67,7 @@ private:
     /**
      *  @brief Table data model
      */
-    QStandardItemModel *_dataModel;
+    QStandardItemModel *_dataModel{};
 
 };
 

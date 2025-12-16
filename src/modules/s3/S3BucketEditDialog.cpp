@@ -38,10 +38,10 @@ void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGe
     _ui->createdEdit->setText(bucketGetResponse.created.toString("yyyy-MM-dd hh:mm:ss"));
     _ui->modifiedEdit->setText(bucketGetResponse.modified.toString("yyyy-MM-dd hh:mm:ss"));
 
-    for (const auto &key: bucketGetResponse.defaultMetadata.keys()) {
+    for (auto it = bucketGetResponse.defaultMetadata.cbegin(); it != bucketGetResponse.defaultMetadata.cend(); ++it) {
         const int row = _dataModel->rowCount();
-        SetColumn(_dataModel, row, 0, key);
-        SetColumn(_dataModel, row, 1, bucketGetResponse.defaultMetadata[key]);
+        SetColumn(_dataModel, row, 0, it.key());
+        SetColumn(_dataModel, row, 1, bucketGetResponse.defaultMetadata[it.key()]);
     }
 }
 
