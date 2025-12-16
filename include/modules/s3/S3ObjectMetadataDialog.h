@@ -28,9 +28,9 @@ public:
 
     void HandleReject();
 
-    QString GetKey() const;
+    [[nodiscard]] QString GetKey() const;
 
-    QString GetValue() const;
+    [[nodiscard]] QString GetValue() const;
 
 private:
     Ui::S3ObjectMetadataDialog *_ui;

@@ -71,6 +71,7 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
     _ui->regionEdit->setText(objectDetailsResponse.region);
     _ui->bucketEdit->setText(objectDetailsResponse.bucketName);
     _ui->keyEdit->setText(objectDetailsResponse.key);
+    _ui->ownerEdit->setText(objectDetailsResponse.owner);
     _ui->contentTypeEdit->setText(objectDetailsResponse.contentType);
     _ui->sizeEdit->setText(QString::number(objectDetailsResponse.size));
     _ui->createdEdit->setText(objectDetailsResponse.created.toString("yyyy-MM-dd hh:mm:ss"));

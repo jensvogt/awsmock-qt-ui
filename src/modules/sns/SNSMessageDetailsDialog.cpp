@@ -3,7 +3,6 @@
 #include "ui_SNSMessageDetailsDialog.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
-
     _ui->setupUi(this);
 
     _snsService = new SNSService();
@@ -13,8 +12,13 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
 
     const QStringList messageAttributeHeaders = QStringList() = {tr("Key"), tr("Value")};
 
+    // Table
+    _dataModel = new QStandardItemModel(this);
+    _dataModel->setHorizontalHeaderLabels(messageAttributeHeaders);
+    _dataModel->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
+
     // Message attribute table
-    //    _ui->attributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
+    _ui->attributeTable->setModel(_dataModel);
     _ui->attributeTable->setShowGrid(true);
     _ui->attributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->attributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);

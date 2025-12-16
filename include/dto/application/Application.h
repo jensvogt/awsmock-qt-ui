@@ -116,7 +116,7 @@ struct Application {
         archive = jsonObject["archive"].toString();
         imageId = jsonObject["imageId"].toString();
         imageName = jsonObject["imageName"].toString();
-        imageSize = jsonObject["imageSize"].toInteger();
+        imageSize = jsonObject["imageSize"].toInt();
         imageMd5 = jsonObject["imageMd5"].toString();
         containerId = jsonObject["containerId"].toString();
         containerName = jsonObject["containerName"].toString();

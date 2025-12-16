@@ -5,13 +5,9 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_SQSMessageAddDialog.h" resolved
 
 #include <modules/sqs/SQSMessageAddDialog.h>
-
-#include <utility>
-
 #include "ui_SQSMessageAddDialog.h"
 
 SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog), _queueUrl(std::move(queueUrl)) {
-
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::SendMessagesSignal, this, &SQSMessageAddDialog::HandleSendMessageSignal);
@@ -28,7 +24,7 @@ SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : Ba
 
     // Browse button
     _ui->browseButton->setText(nullptr);
-    _ui->browseButton->setIcon(IconUtils::GetIcon("browse"));
+    _ui->browseButton->setIcon(IconUtils::GetIcon("search"));
     connect(_ui->browseButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleBrowseButton);
 
     // Add attribute button
@@ -58,6 +54,10 @@ SQSMessageAddDialog::~SQSMessageAddDialog() {
 }
 
 void SQSMessageAddDialog::HandleAccept() const {
+    if (_ui->bodyEdit->toPlainText().isEmpty()) {
+        QMessageBox::warning(nullptr, "Error", "Body can't be empty!");
+        return;
+    }
     SQSSendMessageRequest request;
     request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     request.queueUrl = _queueUrl;
@@ -78,7 +78,6 @@ void SQSMessageAddDialog::HandleAccept() const {
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
-
     QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
     accept();
 }
@@ -88,7 +87,6 @@ void SQSMessageAddDialog::HandleReject() {
 }
 
 void SQSMessageAddDialog::HandleBrowseButton() const {
-
     // Create a QFileDialog set to select existing files
     const auto filter = "All Files (*.*)";
     const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
@@ -124,7 +122,6 @@ void SQSMessageAddDialog::HandlePrettyButton(const bool checked) const {
 }
 
 void SQSMessageAddDialog::HandleAddAttributeButton() const {
-
     QDialog dialog;
     dialog.setWindowTitle("Add attribute");
 

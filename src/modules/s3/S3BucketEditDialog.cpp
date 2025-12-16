@@ -88,7 +88,7 @@ void S3BucketEditDialog::HandleAccept() {
             QModelIndex col2 = _dataModel->index(i, 1);
             defaultMetadata[_dataModel->data(col1).toString()] = _dataModel->data(col2).toString();
         }
-        _s3Service->UpdateBucket(_ui->regionEdit->text(), _ui->nameEdit->text(), defaultMetadata);
+        _s3Service->UpdateBucket(_ui->nameEdit->text(), defaultMetadata);
     }
     accept();
 }

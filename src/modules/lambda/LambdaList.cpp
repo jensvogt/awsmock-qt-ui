@@ -1,11 +1,4 @@
-#include <ui_LambdaDetailsDialog.h>
 #include <modules/lambda/LambdaList.h>
-
-#include "modules/lambda/LambdaDetailsDialog.h"
-#include "modules/lambda/LambdaLogsDialog.h"
-#include "modules/lambda/LambdaResultListDialog.h"
-
-//#include "modules/lambda/LambdaLogsDialog.h"
 
 LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent) {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -82,7 +75,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     const QStringList headers = QStringList() = {
                                     tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Instances"),
                                     tr("Invocations"), tr("Avg. Execution Time"), tr("Created"), tr("Modified"),
-                                    tr("ContainerId")
+                                    tr("ContainerId"), tr("ARN")
                                 };
 
     tableWidget = new QTableWidget(this);
@@ -103,6 +96,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(9, true);
+    tableWidget->setColumnHidden(10, true);
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
@@ -161,7 +155,8 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
         SetColumn(tableWidget, r, 6, listLambdaResponse.lambdaCounters.at(r).averageRuntime);
         SetColumn(tableWidget, r, 7, listLambdaResponse.lambdaCounters.at(r).created);
         SetColumn(tableWidget, r, 8, listLambdaResponse.lambdaCounters.at(r).modified);
-        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).arn);
+        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).containerId);
+        SetColumn(tableWidget, r, 10, listLambdaResponse.lambdaCounters.at(r).arn);
     }
     tableWidget->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
     tableWidget->setSortingEnabled(true);
@@ -171,7 +166,6 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
 }
 
 void LambdaList::ShowContextMenu(const QPoint &pos) {
-
     // Stop auto updater
     StopAutoUpdate();
 
@@ -183,7 +177,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
 
     const int row = index.row();
 
-    const QString arn = tableWidget->item(row, 9)->text();
+    const QString arn = tableWidget->item(row, 10)->text();
     const QString name = tableWidget->item(row, 0)->text();
     const QString containerId = tableWidget->item(row, 9)->text();
 
@@ -216,6 +210,9 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
     restartAction->setToolTip("Restart the lambda");
 
+    QAction *killAction = menu.addAction(IconUtils::GetIcon("kill"), "Kill Lambda");
+    killAction->setToolTip("Kill the lambda docker container");
+
     menu.addSeparator();
 
     QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
@@ -229,7 +226,6 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
     deleteAction->setToolTip("Delete the Topic");
 
-
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         LambdaDetailsDialog dialog(arn);
         dialog.exec();
@@ -239,20 +235,22 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     } else if (selectedAction == startAction) {
-        // _lambdaService->StartLambda(name);
+        _containerService->StartContainer(containerId);
     } else if (selectedAction == enableAction) {
-        //_lambdaService->EnableLambda(name);
+        _lambdaService->UpdateLambda(arn, true);
     } else if (selectedAction == disableAction) {
-        //_lambdaService->DisableLambda(name);
+        _lambdaService->UpdateLambda(arn, false);
     } else if (selectedAction == stopAction) {
-        //_lambdaService->StopLambda(name);
+        _containerService->StopContainer(containerId);
     } else if (selectedAction == restartAction) {
-        //_lambdaService->RestartLambda(name);
+        _containerService->RestartContainer(containerId);
+    } else if (selectedAction == killAction) {
+        _containerService->KillContainer(containerId);
     } else if (selectedAction == rebuildAction) {
         //_lambdaService->RebuildLambda(name);
     } else if (selectedAction == uploadAction) {
-        //LambdaUploadCodeDialog dialog(name);
-        //dialog.exec();
+        LambdaUploadCodeDialog dialog(name, arn);
+        dialog.exec();
     } else if (selectedAction == deleteAction) {
         _lambdaService->DeleteLambda(name);
     }

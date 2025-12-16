@@ -19,14 +19,17 @@
 #include <dto/docker/DockerStatsResponse.h>
 #include <dto/docker/DockerContainersResponse.h>
 
-class DockerService final : public QObject {
+#include "dto/lambda/LambdaUpdateRequest.h"
+#include "utils/BaseService.h"
+
+class DockerService final : public BaseService {
     Q_OBJECT
 
 public:
     /**
      * @brief DockerService
      */
-    DockerService();
+    DockerService() = default;
 
     /**
      * @brief List docker containers
@@ -59,6 +62,8 @@ public:
 
     void KillContainer(const QString &containerId);
 
+    void DeleteContainer(const QString &containerId);
+
 signals:
     void ReloadDockerContainerSignal(const DockerContainersResponse &dockerContainersResponse);
 
@@ -66,22 +71,11 @@ signals:
 
     void ReloadContainerList();
 
-    //    void GetApplicationDetailsSignal(const ApplicationGetResponse &applicationGetResponse);
-
-    //    void ListApplicationNamedSignal(const QStringList &applicationNames);
-
-    //    void LoadAllApplications();
-
 private:
     /**
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl url;
 };
 
 

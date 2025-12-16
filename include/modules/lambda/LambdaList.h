@@ -15,14 +15,16 @@
 #include <QHeaderView>
 #include <QHeaderView>
 
-// Awsmock Qt includes
+// Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <dto/sns/SNSListTopicResult.h>
 #include <modules/lambda/LambdaService.h>
-//#include <modules/lambda/LambdaEditDialog.h>
-//#include <modules/lambda/LambdaAddDialog.h>
-//#include <modules/lambda/LambdaUploadCodeDialog.h>
+#include <modules/lambda/LambdaDetailsDialog.h>
+#include <modules/lambda/LambdaLogsDialog.h>
+#include <modules/lambda/LambdaResultListDialog.h>
+#include <modules/lambda/LambdaUploadCodeDialog.h>
+#include <modules/docker/DockerService.h>
 
 /**
  * @brief Lambda list widget. The widget will be placed in the content pane.
@@ -81,9 +83,14 @@ private:
     QString prefixValue = "";
 
     /**
-     * @brief Service
+     * @brief Lambda service
      */
     LambdaService *_lambdaService;
+
+    /**
+     * @brief Container service
+     */
+    DockerService *_containerService;
 
     /**
      * @brief Sort column index

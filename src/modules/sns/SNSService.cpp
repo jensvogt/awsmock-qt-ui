@@ -1,17 +1,13 @@
 
+#include <QUrlQuery>
 #include <modules/sns/SNSService.h>
 
-SNSService::SNSService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
-}
-
 void SNSService::AddTopic(const QString &region, const QString &topicName) {
-    QJsonObject jRequest;
-    jRequest["region"] = region;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicName"] = topicName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -35,14 +31,14 @@ void SNSService::ListTopics(const QString &prefix) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -73,7 +69,7 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = -1;
@@ -81,7 +77,7 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -105,11 +101,11 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
 }
 
 void SNSService::PurgeTopic(const QString &topicArn) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -126,7 +122,7 @@ void SNSService::PurgeTopic(const QString &topicArn) {
 }
 
 void SNSService::PurgeAllTopics() {
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       nullptr,
                       {
                           {"x-awsmock-target", "sns"},
@@ -143,11 +139,11 @@ void SNSService::PurgeAllTopics() {
 }
 
 void SNSService::PurgeMessages(const QString &topicArn) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -164,11 +160,11 @@ void SNSService::PurgeMessages(const QString &topicArn) {
 }
 
 void SNSService::GetTopicDetails(const QString &topicArn) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
-    QJsonDocument requestDoc(jRequest);
+    const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -190,11 +186,11 @@ void SNSService::GetTopicDetails(const QString &topicArn) {
 }
 
 void SNSService::DeleteTopic(const QString &topicArn) {
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -210,12 +206,50 @@ void SNSService::DeleteTopic(const QString &topicArn) {
                       });
 }
 
-void SNSService::GetSnsMessageDetails(const QString &messageId) {
-    QJsonObject jRequest;
-    jRequest["messageId"] = messageId;
-    QJsonDocument requestDoc(jRequest);
+void SNSService::SendMessage(const SNSSendMessageRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
 
-    _restManager.post(url,
+    QJsonObject jAttributes;
+    for (const auto &[key,value]: request.messageAttributes) {
+        QJsonObject jAttribute;
+        jAttribute["DataType"] = value.dataType;
+        jAttribute["StringValue"] = value.stringValue;
+        jAttributes[key] = jAttribute;
+    }
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["TopicArn"] = request.topicArn;
+    jRequest["Message"] = request.body;
+    jRequest["MessageAttributes"] = jAttributes;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "publish-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              SNSSendMessageResponse snsResponse;
+                              snsResponse.FromJson(jsonDoc);
+                              emit SendMessagesSignal(snsResponse);
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                      });
+}
+
+void SNSService::GetSnsMessageDetails(const QString &messageId) {
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["messageId"] = messageId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
@@ -236,13 +270,12 @@ void SNSService::GetSnsMessageDetails(const QString &messageId) {
 }
 
 void SNSService::DeleteMessage(const QString &topicArn, const QString &messageId) {
-
-    QJsonObject jRequest;
+    QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     jRequest["messageId"] = messageId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},

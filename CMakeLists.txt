@@ -23,7 +23,7 @@ set(CPACK_PACKAGE_VERSION "${VERSION_STRING}")
 
 if (WIN32)
     add_compile_options(/Zc:__cplusplus)
-    set(CMAKE_PREFIX_PATH "c:\\work\\Qt\\6.10.0\\msvc2022_64")
+    set(CMAKE_PREFIX_PATH "c:\\work\\private\\Qt\\6.10.1\\msvc2022_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
@@ -41,7 +41,7 @@ else ()
 endif ()
 
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg Scxml)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 
@@ -207,6 +207,21 @@ set(PROJECT_SOURCES
         include/modules/s3/S3ObjectAddDialog.h
         src/modules/s3/S3ObjectAddDialog.ui
         src/modules/s3/S3ObjectAddDialog.cpp
+        include/utils/BaseService.h
+        include/dto/s3/S3ObjectUploadRequest.h
+        include/modules/secretsmanager/SecretList.h
+        src/modules/secretsmanager/SecretsList.cpp
+        include/modules/lambda/LambdaUploadCodeDialog.h
+        src/modules/lambda/LambdaUploadCodeDialog.cpp
+        src/modules/lambda/LambdaUploadCodeDialog.ui
+        include/dto/lambda/LambdaUploadRequest.h
+        include/dto/lambda/LambdaUpdateRequest.h
+        src/modules/sns/SNSMessageAddDialog.cpp
+        src/modules/sns/SNSMessageAddDialog.ui
+        include/modules/sns/SNSMessageAddDialog.h
+        include/dto/sns/SNSSendMessageRequest.h
+        include/dto/sns/SNSMessageAttribute.h
+        include/dto/sns/SNSSendMessageResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
