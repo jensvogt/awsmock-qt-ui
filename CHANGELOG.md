@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.84](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.83...v1.4.84) (2025-12-16)
+
+
+### Bug Fixes
+
+* add secrets details dialog ([2141a36](https://github.com/jensvogt/awsmock-qt-ui/commit/2141a36619062a902bf5c29f463216f73e9f80ea))
+
 ## [1.4.83](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.82...v1.4.83) (2025-12-16)
 
 
