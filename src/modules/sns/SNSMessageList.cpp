@@ -101,6 +101,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(7, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

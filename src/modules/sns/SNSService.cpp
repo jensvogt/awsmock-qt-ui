@@ -1,8 +1,9 @@
-
-#include <QUrlQuery>
 #include <modules/sns/SNSService.h>
 
-void SNSService::AddTopic(const QString &region, const QString &topicName) {
+void SNSService::AddTopic(const QString &topicName) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicName"] = topicName;
     const QJsonDocument requestDoc(jRequest);
@@ -14,16 +15,20 @@ void SNSService::AddTopic(const QString &region, const QString &topicName) {
                           {"x-awsmock-action", "create-topic"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this,timer](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
 void SNSService::ListTopics(const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "messages";
@@ -45,7 +50,7 @@ void SNSService::ListTopics(const QString &prefix) {
                           {"x-awsmock-action", "list-topic-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
@@ -58,10 +63,14 @@ void SNSService::ListTopics(const QString &prefix) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("ListTopics", timer.elapsed());
                       });
 }
 
 void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "created";
@@ -84,7 +93,7 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
                           {"x-awsmock-action", "list-message-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array of objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
@@ -92,15 +101,19 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListMessagesSignal(snsResponse);
                               } else {
-                                  //m_quoteLabel->setText("Error: Failed to parse API response.");
+                                  QMessageBox::critical(nullptr, "Error", error);
                               }
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("ListMessages", timer.elapsed());
                       });
 }
 
 void SNSService::PurgeTopic(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
@@ -112,16 +125,19 @@ void SNSService::PurgeTopic(const QString &topicArn) {
                           {"x-awsmock-action", "purge-topic"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("PurgeTopic", timer.elapsed());
                       });
 }
 
 void SNSService::PurgeAllTopics() {
+    QElapsedTimer timer;
+    timer.start();
     _restManager.post(GetBaseUrl(),
                       nullptr,
                       {
@@ -129,16 +145,20 @@ void SNSService::PurgeAllTopics() {
                           {"x-awsmock-action", "purge-all-topics"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("PurgeAllTopics", timer.elapsed());
                       });
 }
 
 void SNSService::PurgeMessages(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
@@ -150,16 +170,20 @@ void SNSService::PurgeMessages(const QString &topicArn) {
                           {"x-awsmock-action", "purge-topic"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("PurgeMessages", timer.elapsed());
                       });
 }
 
 void SNSService::GetTopicDetails(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
@@ -171,21 +195,24 @@ void SNSService::GetTopicDetails(const QString &topicArn) {
                           {"x-awsmock-action", "get-topic-details"},
                           {"content-type", "application/json"}
                       },
-                      [this](bool success, QByteArray response, int status, QString error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an JSON document
-                              QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-                              SNSGetTopicDetailsResponse response;
-                              response.FromJson(jsonDoc);
-
-                              emit GetTopicDetailsSignal(response);
+                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              SNSGetTopicDetailsResponse snsResponse;
+                              snsResponse.FromJson(jsonDoc);
+                              emit GetTopicDetailsSignal(snsResponse);
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetTopicDetails", timer.elapsed());
                       });
 }
 
 void SNSService::DeleteTopic(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     const QJsonDocument requestDoc(jRequest);
@@ -197,12 +224,13 @@ void SNSService::DeleteTopic(const QString &topicArn) {
                           {"x-awsmock-action", "delete-topic"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, QByteArray, int, const QString &error) {
+                      [this, timer](const bool success, QByteArray, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("DeleteTopic", timer.elapsed());
                       });
 }
 
@@ -240,7 +268,7 @@ void SNSService::SendMessage(const SNSSendMessageRequest &request) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("SendMessage", timer.elapsed());
                       });
 }
 

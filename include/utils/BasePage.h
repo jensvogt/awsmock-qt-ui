@@ -20,6 +20,8 @@ public:
 
     void StopAutoUpdate() const;
 
+    QAction *GetRefreshAction(QWidget *parent) const;
+
     virtual void LoadContent() = 0;
 
 signals:

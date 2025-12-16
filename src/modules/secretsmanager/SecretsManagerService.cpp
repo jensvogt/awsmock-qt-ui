@@ -38,9 +38,7 @@ void SecretsManagerService::ListSecrets() {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListSecrets", timer.elapsed());
                       });
 }
 
@@ -63,7 +61,6 @@ void SecretsManagerService::GetSecret(const QString &secretId) {
                           if (success) {
                               // The API returns an JSON secretsManager counter list
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  JsonUtils::WriteJsonString(jsonDoc.object());
                                   SecretCounter secretCounter;
                                   secretCounter.FromJson(jsonDoc.object());
                                   emit GetSecretsDetailsSignal(secretCounter);
@@ -73,8 +70,38 @@ void SecretsManagerService::GetSecret(const QString &secretId) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetSecret", timer.elapsed());
+                      });
+}
+
+void SecretsManagerService::UpdateSecret(const SecretCounter &secretCounter) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["secretDetails"] = secretCounter.ToJsonObject();
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "secretsmanager"},
+                          {"x-awsmock-action", "UpdateDetailsSecret"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an JSON secretsManager counter list
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SecretCounter s;
+                                  s.FromJson(jsonDoc.object());
+                                  emit GetSecretsDetailsSignal(s);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("UpdateSecret", timer.elapsed());
                       });
 }

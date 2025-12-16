@@ -1,8 +1,6 @@
 
 #include <modules/application/ApplicationList.h>
 
-#include "modules/application/ApplicationLogsDialog.h"
-
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -26,7 +24,6 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
-    addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new application");
     connect(addButton, &QPushButton::clicked, []() {
         if (ApplicationAddDialog dialog; dialog.exec() == QDialog::Accepted) {
@@ -35,7 +32,6 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
 
     // Toolbar add action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
-    purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Restart all applications");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _applicationService->RestartAllApplications();
@@ -43,8 +39,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
 
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
-    refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the application list");
+    refreshButton->setToolTip("Refresh the application list (F5)");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
@@ -99,6 +94,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(9, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

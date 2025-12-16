@@ -26,7 +26,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
         if (const QString topicName = QInputDialog::getText(nullptr, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
-            _snsService->AddTopic(_region, topicName);
+            _snsService->AddTopic(topicName);
         }
     });
 
@@ -90,6 +90,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(7, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

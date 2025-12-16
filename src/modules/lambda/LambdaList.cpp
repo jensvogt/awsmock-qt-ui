@@ -96,6 +96,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(9, true);
     tableWidget->setColumnHidden(10, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

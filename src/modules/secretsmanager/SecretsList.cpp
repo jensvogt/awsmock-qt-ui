@@ -89,6 +89,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     _tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     _tableView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _tableView->setColumnHidden(4, true);
+    _tableView->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(_tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

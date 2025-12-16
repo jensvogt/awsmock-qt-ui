@@ -1,17 +1,21 @@
 #ifndef AWSMOCK_QT_UI_S3_SERVICE_H
 #define AWSMOCK_QT_UI_S3_SERVICE_H
 
+// Qt includes
 #include <QMessageBox>
 #include <QObject>
 #include <QUrlQuery>
+#include <QElapsedTimer>
 
+// AwsMock includes
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <utils/BaseService.h>
+#include <utils/EventBus.h>
 #include <dto/s3/S3ListBucketResult.h>
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 #include <dto/s3/S3GetObjectDetailsResponse.h>
 #include <dto/s3/S3ListObjectResponse.h>
-#include <utils/BaseService.h>
 
 class S3Service final : public BaseService {
     Q_OBJECT
@@ -52,13 +56,13 @@ public:
 
     void DeleteObject(const QString &bucketName, const QString &key);
 
-    signals:
+signals:
     /**
      * @brief Signaled when a bucket is available
      *
      * @param bucketListResponse list of buckets
      */
-    
+
 
     void ListBucketSignal(const S3ListBucketResult &bucketListResponse);
 

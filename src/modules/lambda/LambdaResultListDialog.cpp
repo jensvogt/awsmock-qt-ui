@@ -4,7 +4,6 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_LambdaResultListDialog.h" resolved
 
-#include <ui_LambdaLogsDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
 #include "ui_LambdaResultListDialog.h"
 
