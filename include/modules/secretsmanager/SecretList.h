@@ -8,21 +8,17 @@
 // QT includes
 #include <QMenu>
 #include <QLabel>
-#include <QTableWidget>
+#include <QTableView>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QPushButton>
-#include <QHeaderView>
 #include <QHeaderView>
 
 // Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-#include <dto/sns/SNSListTopicResult.h>
-#include <modules/lambda/LambdaService.h>
-#include <modules/lambda/LambdaDetailsDialog.h>
-#include <modules/lambda/LambdaLogsDialog.h>
-#include <modules/lambda/LambdaResultListDialog.h>
+#include <utils/PrefixFilterModel.h>
+#include <modules/secretsmanager/SecretsManagerService.h>
 
 /**
  * @brief Secrets list widget. The widget will be placed in the content pane.
@@ -52,9 +48,9 @@ public:
     /**
      * @brief Load page content
      *
-     * @param listLambdaResponse lambda counter list
+     * @param secretsListResponse secrets counter list
      */
-    void HandleListSecretsSignal(const LambdaListResponse &listLambdaResponse);
+    void HandleListSecretsSignal(const SecretsListResponse &secretsListResponse);
 
 private slots:
     /**
@@ -66,24 +62,9 @@ private slots:
 
 private:
     /**
-     * AWS region
-     */
-    QString _region;
-
-    /**
-     * @brief Table widget
-     */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Prefix value
-     */
-    QString prefixValue = "";
-
-    /**
      * @brief Service
      */
-    LambdaService *_lambdaService;
+    SecretsManagerService *_secretsManagerService;
 
     /**
      * @brief Sort column index
@@ -96,9 +77,19 @@ private:
     Qt::SortOrder _sortOrder = Qt::AscendingOrder;
 
     /**
-     * @brief Prefix clear button
+     * @brief Secrets table view
      */
-    QPushButton *prefixClear;
+    QTableView *_tableView;
+
+    /**
+     * @brief Data model
+     */
+    QStandardItemModel *_dataModel{};
+
+    /**
+     * @brief Data proxy model
+     */
+    PrefixFilterProxyModel *_proxyModel{};
 };
 
 #endif // AWSMOCK_QT_UI_SECRET_LIST_H

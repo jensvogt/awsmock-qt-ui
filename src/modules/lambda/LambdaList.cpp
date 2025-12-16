@@ -9,8 +9,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     // Connect service
     _lambdaService = new LambdaService();
     connect(_lambdaService, &LambdaService::LoadAllLambdas, this, &LambdaList::LoadContent);
-    connect(_lambdaService, &LambdaService::ReloadLambdasSignal, this,
-            &LambdaList::HandleListLambdasSignal);
+    connect(_lambdaService, &LambdaService::ReloadLambdasSignal, this, &LambdaList::HandleListLambdasSignal);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -104,7 +103,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
         const int row = index.row();
 
         // Extract ARN
-        const QString arn = tableWidget->item(row, 9)->text();
+        const QString arn = tableWidget->item(row, 10)->text();
 
         LambdaDetailsDialog dialog(arn);
         dialog.exec();
@@ -187,7 +186,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
 
     QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the lambda logs");
     logsAction->setToolTip("Show the lambda logs");
-    if (containerId.isEmpty()) {
+    if (arn.isEmpty()) {
         logsAction->setDisabled(true);
     }
 
@@ -224,7 +223,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
-    deleteAction->setToolTip("Delete the Topic");
+    deleteAction->setToolTip("Delete the lambda function");
 
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         LambdaDetailsDialog dialog(arn);

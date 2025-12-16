@@ -222,6 +222,10 @@ set(PROJECT_SOURCES
         include/dto/sns/SNSSendMessageRequest.h
         include/dto/sns/SNSMessageAttribute.h
         include/dto/sns/SNSSendMessageResponse.h
+        include/modules/secretsmanager/SecretsManagerService.h
+        src/modules/secretsmanager/SecretsManagerService.cpp
+        include/dto/secretsmanager/SecretsManagerListSecretsResponse.h
+        include/dto/secretsmanager/SecretCounter.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

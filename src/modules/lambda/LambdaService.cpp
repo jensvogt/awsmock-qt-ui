@@ -232,7 +232,6 @@ void LambdaService::GetLambdaResult(const QString &oid) {
                       [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  JsonUtils::WriteJsonString(jsonDoc.object());
                                   LambdaGetResultsResponse lambdaResponse;
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit GetLambdaResultSignal(lambdaResponse);
