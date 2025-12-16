@@ -8,7 +8,7 @@
 #include "ui_LambdaEnvironmentDetailDialog.h"
 
 
-LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(const QString &key, const QString &value, bool add, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
+LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(const QString &key, const QString &value, const bool add, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
 
     // Setup dialog
     _ui->setupUi(this);

@@ -93,13 +93,14 @@ struct SecretCounter {
     /**
      * Secret values
      */
-    //std::vector<SecretValue> secretValues;
+    QString secretString;
 
     void FromJson(const QJsonObject &jsonObject) {
         region = jsonObject["region"].toString();
         name = jsonObject["secretName"].toString();
         arn = jsonObject["secretArn"].toString();
         secretId = jsonObject["secretId"].toString();
+        secretString = jsonObject["secretString"].toString();
         createdDate = QDateTime::fromString(jsonObject["createdDate"].toString(), Qt::ISODate);
         deletedDate = QDateTime::fromString(jsonObject["deletedDate"].toString(), Qt::ISODate);
         lastAccessedDate = QDateTime::fromString(jsonObject["lastAccessedDate"].toString(), Qt::ISODate);

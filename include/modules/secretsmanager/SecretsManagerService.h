@@ -18,6 +18,7 @@
 #include <utils/EventBus.h>
 #include <utils/BaseService.h>
 #include <dto/secretsmanager/SecretsManagerListSecretsResponse.h>
+#include <dto/secretsmanager/SecretGetResponse.h>
 
 class SecretsManagerService final : public BaseService {
     Q_OBJECT
@@ -34,6 +35,13 @@ public:
      */
     void ListSecrets();
 
+    /**
+     * @brief Get secret details
+     *
+     * @param secretId Secret AWS ARN
+     */
+    void GetSecret(const QString &secretId);
+
 signals:
     /**
      * @brief Get secretsManager list signal
@@ -43,39 +51,11 @@ signals:
     void ReloadSecretsSignal(const SecretsListResponse &secretsManagerListResponse);
 
     /**
-     * @brief Get secretsManager response
+     * @brief Get secret details signal
      *
-     * @param secretsManagerGetResponse secretsManager get response
+     * @param secretCounter secrets details
      */
-    //void GetSecretsManagerDetailsSignal(const SecretsManagerGetResponse &secretsManagerGetResponse);
-
-    /**
-     * @brief List instances signal
-     *
-     * @param listInstancesResponse secretsManager instances list response
-     */
-    //void ListSecretsManagerInstancesSignal(const SecretsManagerListInstancesResponse &listInstancesResponse);
-
-    /**
-     * @brief List environment signal
-     *
-     * @param listEnvironmentResponse secretsManager environment list response
-     */
-    //void ListSecretsManagerEnvironmentSignal(const SecretsManagerListEnvironmentResponse &listEnvironmentResponse);
-
-    /**
-     * @brief List secretsManager results signal
-     *
-     * @param listResultsResponse secretsManager results list response
-     */
-    //void ListSecretsManagerResultsSignal(const SecretsManagerListResultsResponse &listResultsResponse);
-
-    /**
-     * @brief Get a single secretsManager invocation result
-     *
-     * @param getResultsResponse secretsManager result reponse
-     */
-    //void GetSecretsManagerResultSignal(const SecretsManagerGetResultsResponse &getResultsResponse);
+    void GetSecretsDetailsSignal(const SecretCounter &secretCounter);
 
     /**
      * @brief Reload all secrets signal

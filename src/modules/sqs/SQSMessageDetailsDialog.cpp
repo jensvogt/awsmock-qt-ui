@@ -4,7 +4,7 @@
 #include "ui_SQSMessageDetailsDialog.h"
 
 SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent),
-    _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
+                                                                                              _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
     _ui->setupUi(this);
 
     _sqsService = new SQSService();
@@ -122,7 +122,7 @@ void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
         }
     }
     if (!_ui->searchEdit->text().isEmpty()) {
-        QString text = _ui->searchEdit->text();
+        const QString text = _ui->searchEdit->text();
         QTextCursor cursor(_ui->bodyPlainTextEdit->document());
         cursor.movePosition(QTextCursor::Start);
         _ui->bodyPlainTextEdit->setTextCursor(cursor);
