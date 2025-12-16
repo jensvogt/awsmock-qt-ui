@@ -38,10 +38,7 @@ public:
     void LoadContent() override {
     };
 
-private
-    slots:
-    
-
+private slots:
     void HandleAccept();
 
     void HandleReject();
