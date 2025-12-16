@@ -96,8 +96,7 @@ FTPUploadDialog::~FTPUploadDialog() {
 void FTPUploadDialog::BrowseSourceFile() {
     // Create a QFileDialog set to select existing files
     const auto filter = "All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.FTPUploadDialog", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !
         filePath.isEmpty()) {
@@ -108,7 +107,7 @@ void FTPUploadDialog::BrowseSourceFile() {
         }
         ui->sourceEdit->setText(file.fileName());
         sourceFileInfo = QFileInfo(file.fileName());
-        Configuration::instance().SetValue<QString>("ui.default-directory", sourceFileInfo.absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.FTPUploadDialog", sourceFileInfo.absolutePath());
     }
 }
 

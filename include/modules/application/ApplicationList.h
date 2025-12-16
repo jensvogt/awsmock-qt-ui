@@ -22,6 +22,7 @@
 #include <modules/application/ApplicationEditDialog.h>
 #include <modules/application/ApplicationAddDialog.h>
 #include <modules/application/ApplicationUploadCodeDialog.h>
+#include <modules/application/ApplicationLogsDialog.h>
 
 /**
  * @brief Application list widget. The widget will be placed in the content pane.

@@ -68,13 +68,14 @@ void ApplicationUploadCodeDialog::dropEvent(QDropEvent *event) {
 void ApplicationUploadCodeDialog::HandleBrowse() {
     // Create a QFileDialog set to select existing files
     const QString filter = "All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ApplicationUploadCodeDialog", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open application code file", defaultDir, filter); !filePath.isEmpty()) {
         const QString version = FileUtils::ExtractVersionFromFileName(filePath);
         ui->filenameEdit->setText(filePath);
         ui->versionEdit->setText(version);
         _fileInfo = QFileInfo(filePath);
+        Configuration::instance().SetValue<QString>("ui.default-directory.ApplicationUploadCodeDialog", _fileInfo.absolutePath());
     }
 }
 

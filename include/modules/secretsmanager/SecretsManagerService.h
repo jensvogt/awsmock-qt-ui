@@ -42,6 +42,13 @@ public:
      */
     void GetSecret(const QString &secretId);
 
+    /**
+     * @brief Update the secret
+     *
+     * @param secretCounter secret counter
+     */
+    void UpdateSecret(const SecretCounter &secretCounter);
+
 signals:
     /**
      * @brief Get secretsManager list signal

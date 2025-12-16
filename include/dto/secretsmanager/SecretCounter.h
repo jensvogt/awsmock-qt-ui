@@ -112,6 +112,25 @@ struct SecretCounter {
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
+
+    QJsonObject ToJsonObject() const {
+        QJsonObject jsonObject;
+        jsonObject["region"] = region;
+        jsonObject["secretName"] = name;
+        jsonObject["secretArn"] = arn;
+        jsonObject["secretId"] = secretId;
+        jsonObject["secretString"] = secretString;
+        jsonObject["createdDate"] = createdDate.toString(Qt::ISODate);
+        jsonObject["deletedDate"] = deletedDate.toString(Qt::ISODate);
+        jsonObject["lastAccessedDate"] = lastAccessedDate.toString(Qt::ISODate);
+        jsonObject["lastRotatedDate"] = lastRotatedDate.toString(Qt::ISODate);
+        jsonObject["nextRotatedDate"] = nextRotatedDate.toString(Qt::ISODate);
+        jsonObject["rotationEnabled"] = rotationEnabled;
+        jsonObject["rotationLambdaARN"] = rotationLambdaARN;
+        jsonObject["created"] = created.toString(Qt::ISODate);
+        jsonObject["modified"] = modified.toString(Qt::ISODate);
+        return jsonObject;
+    }
 };
 
 #endif//AWSMOCK_QT_UI_SECRETSMANAGER_SECRETSMANAGER_SECRET_H

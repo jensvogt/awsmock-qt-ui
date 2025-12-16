@@ -5,6 +5,10 @@
 #ifndef AWSMOCK_QT_UI_SECRETS_DETAILS_DIALOG_H
 #define AWSMOCK_QT_UI_SECRETS_DETAILS_DIALOG_H
 
+// C*+ includes
+#include <utility>
+
+// Qt includes
 #include <QDialog>
 #include <QDialogButtonBox>
 
@@ -58,8 +62,13 @@ public:
      * @param secretCounter
      * @param secretCounter
      */
-    void UpdateSecret(const SecretCounter &secretCounter) const;
+    void UpdateSecret(const SecretCounter &secretCounter);
 
+    /**
+     * @brief Pretty print toggle button callback
+     *
+     * @param checked toggle button state
+     */
     void PrettyPrintClicked(bool checked) const;
 
 private:
@@ -77,6 +86,16 @@ private:
      * @brief Service
      */
     SecretsManagerService *_secretsManagerService{};
+
+    /**
+     * @brief Changed flag
+     */
+    bool _changed = false;
+
+    /**
+     * @brief Secret counter
+     */
+    SecretCounter _secretCounter;
 };
 
 

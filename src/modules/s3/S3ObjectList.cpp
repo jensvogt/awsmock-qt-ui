@@ -101,6 +101,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(5, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this, bucketName](const QModelIndex &index) {

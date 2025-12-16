@@ -11,6 +11,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QElapsedTimer>
+#include <QUrlQuery>
 
 // AwsMOck include
 #include <utils/Configuration.h>
@@ -36,10 +37,9 @@ public:
     /**
      * @brief Add topic
      *
-     * @param region AWS region
      * @param topicName name of the topic
      */
-    void AddTopic(const QString &region, const QString &topicName);
+    void AddTopic(const QString &topicName);
 
     /**
      * @brief List SNS Topics

@@ -70,7 +70,7 @@ void S3ObjectAddDialog::BrowseSourceFile() {
     // Create a QFileDialog set to select existing files
     const auto filter = "All Files (*.*)";
     const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+        "ui.default-directory.S3ObjectAddDialog", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !
         filePath.isEmpty()) {
@@ -82,7 +82,7 @@ void S3ObjectAddDialog::BrowseSourceFile() {
         _fileInfo = QFileInfo(file.fileName());
         _ui->fileEdit->setText(file.fileName());
         _ui->s3KeyEdit->setText(_fileInfo.baseName() + "." + _fileInfo.suffix());
-        Configuration::instance().SetValue<QString>("ui.default-directory", _fileInfo.absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.S3ObjectAddDialog", _fileInfo.absolutePath());
     }
 }
 

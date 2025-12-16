@@ -5,8 +5,6 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_SecretsDetails.h" resolved
 
 #include <modules/secretsmanager/SecretsDetailsDialog.h>
-
-#include <utility>
 #include "ui_SecretsDetailsDialog.h"
 
 SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) : QDialog(parent), _ui(new Ui::SecretsDetailsDialog), _secretArn(std::move(secretArn)) {
@@ -31,6 +29,10 @@ SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) :
     _ui->prettyButton->setText(nullptr);
     _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
     connect(_ui->prettyButton, &QPushButton::toggled, this, &SecretsDetailsDialog::PrettyPrintClicked);
+    // Value edit
+    connect(_ui->valueEdit, &QTextEdit::textChanged, this, [this]() {
+        _changed = true;
+    });
 }
 
 SecretsDetailsDialog::~SecretsDetailsDialog() {
@@ -38,6 +40,10 @@ SecretsDetailsDialog::~SecretsDetailsDialog() {
 }
 
 void SecretsDetailsDialog::HandleAccept() {
+    if (_changed) {
+        _secretCounter.secretString = _ui->valueEdit->toPlainText().toUtf8();
+        _secretsManagerService->UpdateSecret(_secretCounter);
+    }
     accept();
 }
 
@@ -49,7 +55,8 @@ void SecretsDetailsDialog::LoadContent() {
 
 }
 
-void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) const {
+void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
+    _secretCounter = secretCounter;
     _ui->regionEdit->setText(secretCounter.region);
     _ui->nameEdit->setText(secretCounter.name);
     _ui->arnEdit->setText(secretCounter.arn);
