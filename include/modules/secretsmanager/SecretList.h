@@ -19,6 +19,7 @@
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
 #include <modules/secretsmanager/SecretsManagerService.h>
+#include <modules/secretsmanager/SecretsDetailsDialog.h>
 
 /**
  * @brief Secrets list widget. The widget will be placed in the content pane.

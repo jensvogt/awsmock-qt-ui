@@ -18,25 +18,17 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), nullptr, this);
-    addButton->setIconSize(QSize(16, 16));
-    addButton->setToolTip("Add a new lambda");
+    //addButton->setIconSize(QSize(16, 16));
+    addButton->setToolTip("Add a new secret");
     connect(addButton, &QPushButton::clicked, []() {
         /*if (LambdaAddDialog dialog; dialog.exec() == QDialog::Accepted) {
         }*/
     });
 
-    // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("restart"), nullptr, this);
-    purgeAllButton->setIconSize(QSize(16, 16));
-    purgeAllButton->setToolTip("Restart all lambdas");
-    connect(purgeAllButton, &QPushButton::clicked, [this]() {
-        //        _lambdaService->RestartAllLambdas();
-    });
-
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), nullptr, this);
-    refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the lambda list");
+    //refreshButton->setIconSize(QSize(16, 16));
+    refreshButton->setToolTip("Refresh the secret list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
@@ -44,7 +36,6 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     //    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
-    toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
     // Prefix edit
@@ -103,10 +94,10 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     connect(_tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
 
         // Extract ARN
-        auto arn = _dataModel->item(index.row(), 4)->text();
+        const auto secretId = _dataModel->item(index.row(), 1)->text();
 
-        //LambdaDetailsDialog dialog(arn);
-        //dialog.exec();
+        SecretsDetailsDialog dialog(secretId);
+        dialog.exec();
     });
 
     // Add context menu
@@ -142,15 +133,15 @@ void SecretList::LoadContent() {
     }
 }
 
-void SecretList::HandleListSecretsSignal(const SecretsListResponse &listSecretsResponse) {
+void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) {
     const int selectedRow = _tableView->selectionModel()->currentIndex().row();
     _tableView->setSortingEnabled(false);
-    for (auto r = 0; r < listSecretsResponse.secretCounters.count(); r++) {
-        SetColumn(_dataModel, r, 0, listSecretsResponse.secretCounters.at(r).name);
-        SetColumn(_dataModel, r, 1, listSecretsResponse.secretCounters.at(r).secretId);
-        SetColumn(_dataModel, r, 2, listSecretsResponse.secretCounters.at(r).createdDate);
-        SetColumn(_dataModel, r, 3, listSecretsResponse.secretCounters.at(r).lastChangedDate);
-        SetColumn(_dataModel, r, 4, listSecretsResponse.secretCounters.at(r).arn);
+    for (auto r = 0; r < secretsListResponse.secretCounters.count(); r++) {
+        SetColumn(_dataModel, r, 0, secretsListResponse.secretCounters.at(r).name);
+        SetColumn(_dataModel, r, 1, secretsListResponse.secretCounters.at(r).secretId);
+        SetColumn(_dataModel, r, 2, secretsListResponse.secretCounters.at(r).createdDate);
+        SetColumn(_dataModel, r, 3, secretsListResponse.secretCounters.at(r).lastChangedDate);
+        SetColumn(_dataModel, r, 4, secretsListResponse.secretCounters.at(r).arn);
     }
     //_tableView->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
     _tableView->setSortingEnabled(true);
@@ -171,7 +162,7 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
 
     const int row = index.row();
 
-    const QString arn = _dataModel->item(row, 4)->text();
+    const QString secretId = _dataModel->item(row, 1)->text();
 
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Secret");
@@ -217,8 +208,8 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
 
 
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        //LambdaDetailsDialog dialog(arn);
-        //dialog.exec();
+        SecretsDetailsDialog dialog(secretId);
+        dialog.exec();
     } else if (selectedAction == deleteAction) {
         //  _lambdaService->DeleteLambda(name);
     }

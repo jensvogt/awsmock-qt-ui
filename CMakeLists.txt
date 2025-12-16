@@ -226,6 +226,10 @@ set(PROJECT_SOURCES
         src/modules/secretsmanager/SecretsManagerService.cpp
         include/dto/secretsmanager/SecretsManagerListSecretsResponse.h
         include/dto/secretsmanager/SecretCounter.h
+        src/modules/secretsmanager/SecretsDetailsDialog.cpp
+        include/modules/secretsmanager/SecretsDetailsDialog.h
+        src/modules/secretsmanager/SecretsDetailsDialog.ui
+        include/dto/secretsmanager/SecretGetResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
