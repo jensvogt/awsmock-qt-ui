@@ -19,6 +19,7 @@
 #include <utils/BaseService.h>
 #include <dto/secretsmanager/SecretsManagerListSecretsResponse.h>
 #include <dto/secretsmanager/SecretGetResponse.h>
+#include <dto/secretsmanager/SecretGetVersionsResponse.h>
 
 class SecretsManagerService final : public BaseService {
     Q_OBJECT
@@ -69,6 +70,13 @@ signals:
      * @param secretCounter secrets details
      */
     void GetSecretsDetailsSignal(const SecretCounter &secretCounter);
+
+    /**
+     * @brief Get secret versions signal
+     *
+     * @param secretVersionResponse secrets versions
+     */
+    void GetSecretsVersionsSignal(const SecretGetVersionResponse &secretVersionResponse);
 
     /**
      * @brief Reload all secrets signal

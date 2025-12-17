@@ -134,7 +134,7 @@ void SecretList::LoadContent() {
     }
 }
 
-void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) {
+void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) const {
     const int selectedRow = _tableView->selectionModel()->currentIndex().row();
     _tableView->setSortingEnabled(false);
     _dataModel->removeRows(0, _dataModel->rowCount());
@@ -145,11 +145,8 @@ void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListR
         SetColumn(_dataModel, r, 3, secretsListResponse.secretCounters.at(r).lastChangedDate);
         SetColumn(_dataModel, r, 4, secretsListResponse.secretCounters.at(r).arn);
     }
-    //_tableView->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
     _tableView->setSortingEnabled(true);
-    //_tableView->sortItems(_sortColumn, _sortOrder);
     _tableView->selectRow(selectedRow);
-    NotifyStatusBar();
 }
 
 void SecretList::ShowContextMenu(const QPoint &pos) {

@@ -10,8 +10,12 @@
 
 // Qt includes
 #include <QDialog>
+#include <QStringList>
 #include <QDialogButtonBox>
 #include <QStandardItemModel>
+
+// AwsMock includes
+#include <utils/BaseDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -25,7 +29,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class SecretsDetailsDialog : public QDialog {
+class SecretsDetailsDialog : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -55,7 +59,7 @@ public:
     /**
      * @brief Load dialog content
      */
-    void LoadContent() const;
+    void LoadContent() override;
 
     /**
      * @brief Update secret values
@@ -77,7 +81,14 @@ public:
      *
      * @param tabIndex current tab index
      */
-    void HandleTabChanged(int tabIndex);
+    void HandleTabChanged(int tabIndex) const;
+
+    /**
+     * @brief Handle version list
+     *
+     * @param secretVersionResponse secrets version list
+     */
+    void HandleVersionsList(const SecretGetVersionResponse &secretVersionResponse);
 
 private:
     /**

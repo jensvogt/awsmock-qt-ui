@@ -138,16 +138,16 @@ void SecretsManagerService::GetVersions(const QString &secretId) {
                           if (success) {
                               // The API returns an JSON secretsManager counter list
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  SecretCounter secretCounter;
-                                  secretCounter.FromJson(jsonDoc.object());
-                                  emit GetSecretsDetailsSignal(secretCounter);
+                                  SecretGetVersionResponse secretVersionResponse;
+                                  secretVersionResponse.FromJson(jsonDoc.object());
+                                  emit GetSecretsVersionsSignal(secretVersionResponse);
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetSecret", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetVersions", timer.elapsed());
                       });
 }
 

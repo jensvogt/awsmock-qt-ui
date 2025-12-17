@@ -142,6 +142,7 @@ void SQSQueueList::LoadContent() {
 void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) {
     const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
+    tableWidget->clearContents();
     tableWidget->setSortingEnabled(false); // stop sorting
     for (auto r = 0; r < queueListResponse.queueCounters.count(); r++) {
         tableWidget->insertRow(r);

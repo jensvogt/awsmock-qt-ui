@@ -6,12 +6,12 @@
 
 #include <dto/secretsmanager/SecretVersionCounter.h>
 
-struct SecretGetResponse {
+struct SecretGetVersionResponse {
 
     QVector<SecretVersionCounter> secretVersionCounters;
 
     void FromJson(const QJsonObject &jsonObject) {
-        for (int i = 0; i < jsonObject.value("secretVersionCounter").toArray().count(); ++i) {
+        for (int i = 0; i < jsonObject.value("secretVersionCounters").toArray().count(); ++i) {
             SecretVersionCounter secretVersionCounter;
             secretVersionCounter.FromJson(jsonObject["secretVersionCounters"].toArray()[i].toObject());
             secretVersionCounters.append(secretVersionCounter);

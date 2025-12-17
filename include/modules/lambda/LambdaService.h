@@ -151,6 +151,8 @@ public:
      */
     void DeleteLambda(const QString &name);
 
+    void DeleteLambdaResults(const QString &lambdaArn);
+
 signals:
     /**
      * @brief Get lambda list signal
