@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.85](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.84...v1.4.85) (2025-12-17)
+
+
+### Bug Fixes
+
+* add lambda result delete/refresh ([dd60ee7](https://github.com/jensvogt/awsmock-qt-ui/commit/dd60ee7bf55bcc744312ee293220435aefe108cb))
+* add secrets version list ([8bfe9d4](https://github.com/jensvogt/awsmock-qt-ui/commit/8bfe9d479af463190477a76cc448ebd50e1ec694))
+
 ## [1.4.84](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.83...v1.4.84) (2025-12-16)
 
 
