@@ -29,6 +29,8 @@ public:
      */
     SecretsManagerService() = default;
 
+    void CreateSecret(const SecretCounter &secretCounter);
+
     /**
      * @brief List all secrets
      *
@@ -42,12 +44,16 @@ public:
      */
     void GetSecret(const QString &secretId);
 
+    void GetVersions(const QString &secretId);
+
     /**
      * @brief Update the secret
      *
      * @param secretCounter secret counter
      */
     void UpdateSecret(const SecretCounter &secretCounter);
+
+    void DeleteSecret(const QString &secretId);
 
 signals:
     /**
@@ -68,11 +74,6 @@ signals:
      * @brief Reload all secrets signal
      */
     void LoadAllSecrets();
-
-    /**
-     * @brief Reload all environment signal
-     */
-    //void LoadSecretsManagerEnvironment();
 
 private:
     /**

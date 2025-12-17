@@ -158,11 +158,9 @@ void MainWindow::SetupMenuBar() {
 void MainWindow::ImportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-ui");
 
-    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir,
-                                                              filter); !filePath.isEmpty()) {
+    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
             QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
@@ -173,7 +171,7 @@ void MainWindow::ImportInfrastructure() const {
         file.close();
 
         _infraStructureService->ImportInfrastructure(jsonData);
-        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -184,13 +182,12 @@ void MainWindow::ImportInfrastructureResponse() {
 void MainWindow::ExportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
                                                               filter); !filePath.isEmpty()) {
         _infraStructureService->ExportInfrastructure(filePath);
-        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
