@@ -13,6 +13,8 @@
 #include <modules/s3/S3Service.h>
 //#include <modules/s3/S3ObjectDetailsDialog.h>
 #include <utils/IconUtils.h>
+#include <modules/s3/S3ObjectAddDialog.h>
+#include <modules/s3/S3ObjectEditDialog.h>
 
 /**
  * @brief Helper widget for the content area.
@@ -35,6 +37,8 @@ public:
      * @brief Destructor
      */
     ~S3ObjectList() override;
+
+    void HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse);
 
     /**
      * @brief ListQueues
@@ -111,6 +115,11 @@ private:
      * @brief Prefix clear button
      */
     QPushButton *prefixClear;
+
+    /**
+     * @brief Bucket details
+     */
+    S3GetBucketDetailsResponse _bucketDetailsResponse;
 };
 
 #endif // AWSMOCK_QT_UI_S3_OBJECT_LIST_H

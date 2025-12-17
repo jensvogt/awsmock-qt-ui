@@ -16,19 +16,24 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
+#include <utils/BaseService.h>
 #include <dto/lambda/LambdaListResponse.h>
 #include <dto/lambda/LambdaGetResponse.h>
+#include <dto/lambda/LambdaListEnvironmentResponse.h>
+#include <dto/lambda/LambdaListInstancesResponse.h>
+#include <dto/lambda/LambdaListResultsResponse.h>
+#include <dto/lambda/LambdaGetResultResponse.h>
+#include <dto/lambda/LambdaUploadRequest.h>
+#include <dto/lambda/LambdaUploadRequest.h>
 
-#include "dto/lambda/LambdaListInstancesResponse.h"
-
-class LambdaService final : public QObject {
+class LambdaService final : public BaseService {
     Q_OBJECT
 
 public:
     /**
      * @brief LambdaService
      */
-    LambdaService();
+    LambdaService() = default;
 
     /**
      * @brief List lambdas
@@ -58,13 +63,46 @@ public:
      */
     void GetLambda(const QString &lambdaArn);
 
+    /**
+     * @brief Get the lambda instances list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
     void GetLambdaInstances(const QString &lambdaArn);
 
-    //void UpdateLambda(const Lambda &lambda);
+    /**
+     * @brief Get the lambda environment list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
+    void GetLambdaEnvironment(const QString &lambdaArn);
 
-    //void EnableLambda(const QString &name);
+    /**
+     * @brief Add a lambda environment variable
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment key
+     * @param value environment value
+     */
+    void AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
 
-    //void DisableLambda(const QString &name);
+    /**
+     * @brief Remove a lambda environment variable
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment key
+     */
+    void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
+
+    void ListLambdaLogs(const QString &lambdaArn);
+
+    void GetLambdaResult(const QString &oid);
+
+    void GetLambdaResults(const QString &oid);
+
+    void UploadLambdaCode(const LambdaUploadRequest &request);
+
+    void UpdateLambda(const QString &lambdaArn, bool enabled);
 
     /**
      * @brief Stop an lambdas
@@ -111,7 +149,7 @@ public:
      *
      * @param name lambda name
      */
-    //void DeleteLambda(const QString &name);
+    void DeleteLambda(const QString &name);
 
 signals:
     /**
@@ -135,18 +173,42 @@ signals:
      */
     void ListLambdaInstancesSignal(const LambdaListInstancesResponse &listInstancesResponse);
 
+    /**
+     * @brief List environment signal
+     *
+     * @param listEnvironmentResponse lambda environment list response
+     */
+    void ListLambdaEnvironmentSignal(const LambdaListEnvironmentResponse &listEnvironmentResponse);
+
+    /**
+     * @brief List lambda results signal
+     *
+     * @param listResultsResponse lambda results list response
+     */
+    void ListLambdaResultsSignal(const LambdaListResultsResponse &listResultsResponse);
+
+    /**
+     * @brief Get a single lambda invocation result
+     *
+     * @param getResultsResponse lambda result reponse
+     */
+    void GetLambdaResultSignal(const LambdaGetResultsResponse &getResultsResponse);
+
+    /**
+     * @brief Reload all lambdas signal
+     */
     void LoadAllLambdas();
+
+    /**
+     * @brief Reload all environment signal
+     */
+    void LoadLambdaEnvironment();
 
 private:
     /**
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl url;
 };
 
 

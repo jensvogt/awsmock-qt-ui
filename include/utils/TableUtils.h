@@ -7,11 +7,11 @@
 
 #include <QTableWidget>
 #include <QDateTime>
+#include <QStandardItemModel>
 
 class TableUtils {
 public:
-    TableUtils() {
-    };
+    TableUtils() = default;
 
     ~TableUtils() = default;
 
@@ -21,6 +21,8 @@ public:
 
     static void SetColumn(QTableWidget *tableWidget, int row, int col, long value);
 
+    static void SetColumn(QTableWidget *tableWidget, int row, int col, double value, int digits = 3);
+
     static void SetColumn(QTableWidget *tableWidget, int row, int col, const QDateTime &value);
 
     static void SetColumn(QTableWidget *tableWidget, int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon);
@@ -28,5 +30,17 @@ public:
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, const QString &value);
 
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, bool value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, const QString &value, Qt::Alignment alignment = Qt::AlignLeft | Qt::AlignVCenter);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, int value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, long value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, double value, int digits = 3);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, const QDateTime &value);
+
+    static void SetColumn(QStandardItemModel *dataModel, int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon);
 };
 #endif //AWSMOCK_QT_UI_TABLE_UTILS_H

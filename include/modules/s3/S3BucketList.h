@@ -23,6 +23,7 @@
 #include <utils/IconUtils.h>
 #include <modules/s3/S3Service.h>
 #include <dto/s3/S3ListBucketResult.h>
+#include <modules/s3/S3BucketEditDialog.h>
 
 class S3BucketList final : public BasePage {
     Q_OBJECT

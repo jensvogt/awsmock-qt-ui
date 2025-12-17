@@ -8,7 +8,7 @@
 #include "ui_S3ObjectEditDialog.h"
 
 S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent) : BaseDialog(parent),
-    _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
+                                                                                   _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
     _s3Service = new S3Service();
 
     _s3Service->GetObjectDetails(objectId);
@@ -43,6 +43,14 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
+    // Body refresh button
+    _ui->bodyRefreshButton->setText(nullptr);
+    _ui->bodyRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+
+    // Metadata add button
+    _ui->metadataAddButton->setText(nullptr);
+    _ui->metadataAddButton->setIcon(IconUtils::GetIcon("add"));
+
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 }
@@ -63,6 +71,7 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
     _ui->regionEdit->setText(objectDetailsResponse.region);
     _ui->bucketEdit->setText(objectDetailsResponse.bucketName);
     _ui->keyEdit->setText(objectDetailsResponse.key);
+    _ui->ownerEdit->setText(objectDetailsResponse.owner);
     _ui->contentTypeEdit->setText(objectDetailsResponse.contentType);
     _ui->sizeEdit->setText(QString::number(objectDetailsResponse.size));
     _ui->createdEdit->setText(objectDetailsResponse.created.toString("yyyy-MM-dd hh:mm:ss"));
@@ -81,7 +90,6 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
             SetColumn(_ui->metadataTable, r, c, objectDetailsResponse.metadata[metadataKey]);
             r++;
             c = 0;
-            qDebug() << "Key: " << metadataKey << ", value: " << objectDetailsResponse.metadata[metadataKey];
         }
         _ui->metadataTable->setRowCount(static_cast<int>(objectDetailsResponse.metadata.count()));
         _ui->metadataTable->setSortingEnabled(true);

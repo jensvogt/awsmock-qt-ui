@@ -57,9 +57,10 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     connect(ui->targetEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
 
     // Connect source browse button
-    //ui->sourceBrowseButton->setText("Browse");
-    ui->sourceBrowseButton->setIcon(IconUtils::GetIcon("browse"));
-    ui->targetBrowseButton->setIcon(IconUtils::GetIcon("browse"));
+    ui->sourceBrowseButton->setIcon(IconUtils::GetIcon("search"));
+    ui->targetBrowseButton->setIcon(IconUtils::GetIcon("search"));
+    ui->sourceBrowseButton->setText("Browse");
+    ui->targetBrowseButton->setText("Browse");
     connect(ui->sourceBrowseButton, &QPushButton::clicked, this, &FTPUploadDialog::BrowseSourceFile);
 
     // Disable browse buttons
@@ -95,8 +96,7 @@ FTPUploadDialog::~FTPUploadDialog() {
 void FTPUploadDialog::BrowseSourceFile() {
     // Create a QFileDialog set to select existing files
     const auto filter = "All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.FTPUploadDialog", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open source file", defaultDir, filter); !
         filePath.isEmpty()) {
@@ -107,7 +107,7 @@ void FTPUploadDialog::BrowseSourceFile() {
         }
         ui->sourceEdit->setText(file.fileName());
         sourceFileInfo = QFileInfo(file.fileName());
-        Configuration::instance().SetValue<QString>("ui.default-directory", sourceFileInfo.absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.FTPUploadDialog", sourceFileInfo.absolutePath());
     }
 }
 
@@ -198,15 +198,14 @@ void FTPUploadDialog::VerifyFileInputs() {
     }
 
     QString source = ui->sourceEdit->text();
-    if (const QValidator::State sourceState = ui->targetEdit->validator()->validate(source, pos);
+    if (const QValidator::State sourceState = ui->sourceEdit->validator()->validate(source, pos);
         sourceState != QValidator::Acceptable) {
         SetLineEditColor(ui->sourceEdit, sourceState);
         QMessageBox::warning(this, "Validation Failure", "Source file is invalid or incomplete.");
         return;
     }
 
-    if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().
-                                           toStdString(); ftpClient->UploadFile(
+    if (const std::string targetFilename = ui->targetEdit->text().toStdString() + "/" + sourceFileInfo.fileName().toStdString(); ftpClient->UploadFile(
         sourceFileInfo.absoluteFilePath().toStdString(), targetFilename)) {
         QMessageBox::information(this, "Information", "Upload successful.");
     } else {
@@ -278,6 +277,5 @@ void FTPUploadDialog::HandleAccept() {
 }
 
 void FTPUploadDialog::HandleReject() {
-    qDebug() << "Rejected";
     accept();
 }

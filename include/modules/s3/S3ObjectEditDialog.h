@@ -33,6 +33,9 @@ public:
 
     void UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) const;
 
+    void LoadContent() override {
+    };
+
 private:
     /**
      * @brief UI components

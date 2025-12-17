@@ -47,7 +47,6 @@ Dashboard::~Dashboard() {
 }
 
 void Dashboard::Initialize() {
-
     ChartConfig config;
     config.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     config.title = "Total CPU";
@@ -168,7 +167,6 @@ void Dashboard::Initialize() {
 }
 
 ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
-
     const auto chart = new QChart();
     chart->createDefaultAxes();
     chart->setTitle(chartConfig.title);
@@ -201,7 +199,6 @@ ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
 }
 
 void Dashboard::LoadContent() {
-
     if (Configuration::instance().GetConnectionState()) {
         const auto start = QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
         const auto end = QDateTime::currentDateTime();
@@ -218,7 +215,6 @@ void Dashboard::LoadContent() {
 }
 
 void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
-
     const auto chart = dashboardCounters.chartConfig.chart;
 
     // Reset chart
@@ -252,7 +248,6 @@ void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
     // Build series
     double maxValue = 0;
     for (auto const &[key, val]: dashboardCounters.valueMap) {
-
         auto *series = new QLineSeries(chart);
         series->setName(key);
 

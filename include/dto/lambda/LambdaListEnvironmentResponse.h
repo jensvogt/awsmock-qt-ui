@@ -11,8 +11,8 @@ struct LambdaListEnvironmentResponse {
     QMap<QString, QString> environmentCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
-        for (const auto jKey: jsonDoc["environmentCounters"].toObject().keys()) {
-            environmentCounters[jKey] = jsonDoc["environmentCounters"].toObject()[jKey].toString();
+        for (const auto &jElement: jsonDoc["environmentCounters"].toArray()) {
+            environmentCounters[jElement.toObject()["key"].toString()] = jElement.toObject()["value"].toString();
         }
     }
 };

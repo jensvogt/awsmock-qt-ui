@@ -1,6 +1,7 @@
 #ifndef SNS_SERVICE_H
 #define SNS_SERVICE_H
 
+// Qt includes
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -9,30 +10,36 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
+#include <QElapsedTimer>
+#include <QUrlQuery>
 
+// AwsMOck include
+#include <utils/Configuration.h>
+#include <utils/RestManager.h>
+#include <utils/EventBus.h>
+#include <utils/BaseService.h>
 #include <dto/sns/SNSGetMessageDetailsResponse.h>
 #include <dto/sns/SNSGetTopicDetailsResponse.h>
 #include <dto/sns/SNSListMessagesResult.h>
 #include <dto/sns/SNSListTopicResult.h>
-#include <utils/Configuration.h>
-#include <utils/RestManager.h>
+#include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sns/SNSSendMessageRequest.h>
 
-class SNSService : public QObject {
+class SNSService : public BaseService {
     Q_OBJECT
 
 public:
     /**
      * @brief SNSService
      */
-    SNSService();
+    SNSService() = default;
 
     /**
      * @brief Add topic
      *
-     * @param region AWS region
      * @param topicName name of the topic
      */
-    void AddTopic(const QString &region, const QString &topicName);
+    void AddTopic(const QString &topicName);
 
     /**
      * @brief List SNS Topics
@@ -61,6 +68,11 @@ public:
      */
     void PurgeAllTopics();
 
+    /**
+     * @brief Purge all messages of a topic
+     *
+     * @param topicArn topic ARN
+     */
     void PurgeMessages(const QString &topicArn);
 
     /**
@@ -85,6 +97,13 @@ public:
     void DeleteTopic(const QString &topicArn);
 
     /**
+     * @brief Send an SNS message
+     *
+     * @param request send message request
+     */
+    void SendMessage(const SNSSendMessageRequest &request);
+
+    /**
      * @brief Delete SNS message
      *
      * @param topicArn topic ARN
@@ -102,6 +121,8 @@ signals:
     void GetMessageDetailsSignal(const SNSGetMessageDetailsResponse &response);
 
     void ReloadMessagesSignal();
+
+    void SendMessagesSignal(const SNSSendMessageResponse &response);
 
 private:
     /**

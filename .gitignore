@@ -137,3 +137,5 @@ src/service/btst/srv_sqs_service
 **/qrc_*
 **/qt_*
 **/ui_*
+**/*.idx
+**/*.user
