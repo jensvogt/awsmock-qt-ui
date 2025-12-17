@@ -38,11 +38,14 @@ void LambdaService::ListLambdas(const QString &prefix) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListLambdas", timer.elapsed());
                       });
 }
 
 void LambdaService::GetLambda(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["functionArn"] = lambdaArn;
     const QJsonDocument requestDoc(jRequest);
@@ -54,7 +57,7 @@ void LambdaService::GetLambda(const QString &lambdaArn) {
                           {"x-awsmock-action", "get-function-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   LambdaGetResponse lambdaResponse;
@@ -66,10 +69,14 @@ void LambdaService::GetLambda(const QString &lambdaArn) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetLambda", timer.elapsed());
                       });
 }
 
 void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "messages";
@@ -92,7 +99,7 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
                           {"x-awsmock-action", "list-instance-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   LambdaListInstancesResponse lambdaResponse;
@@ -104,10 +111,14 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetLambdaInstances", timer.elapsed());
                       });
 }
 
 void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
     jSorting["column"] = "messages";
@@ -130,7 +141,7 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
                           {"x-awsmock-action", "list-environment-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   LambdaListEnvironmentResponse lambdaResponse;
@@ -142,10 +153,14 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetLambdaEnvironment", timer.elapsed());
                       });
 }
 
 void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionArn"] = lambdaArn;
     jRequest["Key"] = key;
@@ -159,16 +174,20 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
                           {"x-awsmock-action", "add-function-environment"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               emit LoadLambdaEnvironment();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("AddLambdaEnvironment", timer.elapsed());
                       });
 }
 
 void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionArn"] = lambdaArn;
     jRequest["Key"] = key;
@@ -181,16 +200,20 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
                           {"x-awsmock-action", "delete-function-environment"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadLambdaEnvironment();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("RemoveLambdaEnvironment", timer.elapsed());
                       });
 }
 
 void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["lambdaArn"] = lambdaArn;
     const QJsonDocument requestDoc(jRequest);
@@ -202,7 +225,7 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
                           {"x-awsmock-action", "list-lambda-result-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   LambdaListResultsResponse lambdaResponse;
@@ -214,10 +237,14 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("ListLambdaLogs", timer.elapsed());
                       });
 }
 
 void LambdaService::GetLambdaResult(const QString &oid) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["oid"] = oid;
     const QJsonDocument requestDoc(jRequest);
@@ -229,7 +256,7 @@ void LambdaService::GetLambdaResult(const QString &oid) {
                           {"x-awsmock-action", "get-lambda-result-counter"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   LambdaGetResultsResponse lambdaResponse;
@@ -241,10 +268,14 @@ void LambdaService::GetLambdaResult(const QString &oid) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetLambdaResult", timer.elapsed());
                       });
 }
 
 void LambdaService::GetLambdaResults(const QString &oid) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["oid"] = oid;
     const QJsonDocument requestDoc(jRequest);
@@ -256,7 +287,7 @@ void LambdaService::GetLambdaResults(const QString &oid) {
                           {"x-awsmock-action", "get-lambda-result-counter"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   LambdaListEnvironmentResponse lambdaResponse;
@@ -269,10 +300,14 @@ void LambdaService::GetLambdaResults(const QString &oid) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("GetLambdaResults", timer.elapsed());
                       });
 }
 
 void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["version"] = request.version;
     jRequest["functionArn"] = request.lambdaArn;
@@ -286,12 +321,13 @@ void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
                           {"x-awsmock-action", "upload-function-code"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllLambdas();
                           } else {
                               qCritical() << error;
                           }
+                          emit EventBus::instance().TimerSignal("UploadLambdaCode", timer.elapsed());
                       });
 }
 
@@ -317,11 +353,14 @@ void LambdaService::UpdateLambda(const QString &lambdaArn, const bool enabled) {
                           } else {
                               qCritical() << error;
                           }
-                          emit EventBus::instance().DockerStatsTimerSignal("StartContainer", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UpdateLambda", timer.elapsed());
                       });
 }
 
 void LambdaService::DeleteLambda(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["FunctionName"] = name;
     jRequest["Qualifier"] = "";
@@ -334,11 +373,37 @@ void LambdaService::DeleteLambda(const QString &name) {
                           {"x-awsmock-action", "delete-function"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadLambdaEnvironment();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
+                      });
+}
+
+void LambdaService::DeleteLambdaResults(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["lambdaArn"] = lambdaArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "delete-lambda-result-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer, lambdaArn](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ListLambdaLogs(lambdaArn);
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteLambdaResults", timer.elapsed());
                       });
 }

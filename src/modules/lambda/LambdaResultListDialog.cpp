@@ -19,7 +19,13 @@ LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget
 
     // Buttons
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
+        _lambdaService->ListLambdaLogs(_lambdaArn);
+    });
     _ui->deleteButton->setIcon(IconUtils::GetIcon("delete"));
+    connect(_ui->deleteButton, &QPushButton::clicked, this, [this]() {
+        _lambdaService->DeleteLambdaResults(_lambdaArn);
+    });
 
     // Result table
     const QStringList headers = QStringList() = {tr("Name"), tr("ContainerId"), tr("Status"), tr("Timestamp"), tr("Duration"), tr("ObjectId")};

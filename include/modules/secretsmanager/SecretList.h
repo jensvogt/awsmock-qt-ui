@@ -52,7 +52,7 @@ public:
      *
      * @param secretsListResponse secrets counter list
      */
-    void HandleListSecretsSignal(const SecretsListResponse &secretsListResponse);
+    void HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) const;
 
 private slots:
     /**
