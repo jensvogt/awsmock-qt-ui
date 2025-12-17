@@ -1,10 +1,7 @@
 
 #include <modules/sns/SNSMessageList.h>
 
-#include "utils/IconUtils.h"
-
 SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QWidget *parent) : BasePage(parent), topicArn(topicArn) {
-
     // Connect service
     _snsService = new SNSService();
     connect(_snsService, &SNSService::ListMessagesSignal, this, &SNSMessageList::HandleListMessageSignal);
@@ -30,11 +27,9 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new topic");
-    connect(addButton, &QPushButton::clicked, []() {
-        bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
-            // AddQueue(text);
-        }
+    connect(addButton, &QPushButton::clicked, [topicArn]() {
+        SNSMessageAddDialog dialog(topicArn);
+        dialog.exec();
     });
 
     // Toolbar add action
@@ -106,10 +101,10 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(7, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-
         // Get the position
         const int row = index.row();
 
@@ -150,14 +145,12 @@ void SNSMessageList::LoadContent() {
 }
 
 void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) {
-
     const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->clearContents();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
     tableWidget->sortItems(-1);
     for (auto r = 0, c = 0; r < listMessageResult.messageCounters.count(); r++, c = 0) {
-
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).messageId);
         SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).contentType);
@@ -181,7 +174,6 @@ void SNSMessageList::HandleReloadMessageSignal() {
 }
 
 void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
-
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 

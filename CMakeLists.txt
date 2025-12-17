@@ -1,14 +1,29 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(awsmock-qt-ui VERSION 1.0.0 LANGUAGES CXX)
+# Read version.txt
+include(cmake/ReadVersion.cmake)
+include(cmake/UpdateXmlVersion.cmake)
+include(cmake/UpdateReleaseDate.cmake)
+
+# Define project with version
+project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES CXX)
+
+message(STATUS "Configured version: ${PROJECT_VERSION}")
+
+# Export version to source code
+configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_SOURCE_DIR}/include/Version.h)
+update_xml_version("${CMAKE_SOURCE_DIR}/installer/config/config.xml" "${VERSION_STRING}" "Version")
+update_xml_version("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml" "${VERSION_STRING}" "Version")
+update_release_date("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CPACK_PACKAGE_VERSION "${VERSION_STRING}")
 
 if (WIN32)
     add_compile_options(/Zc:__cplusplus)
-    set(CMAKE_PREFIX_PATH "c:\\work\\Qt\\6.10.0\\msvc2022_64")
+    set(CMAKE_PREFIX_PATH "c:\\work\\private\\Qt\\6.10.1\\msvc2022_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
@@ -18,7 +33,7 @@ if (WIN32)
     set(WINDOWS_ICON ${CMAKE_SOURCE_DIR}/appicon.rc)
     set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
-    set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.0/gcc_64")
+    set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.1/gcc_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CURL_INCLUDE_DIRS "")
@@ -156,19 +171,66 @@ set(PROJECT_SOURCES
         src/modules/ftp/FTPClient.cpp
         src/modules/ftp/CurlHandle.cpp
         src/modules/ftp/CurlHandle.cpp
-        include/Version.h.in
+        cmake/version.h.in
+        src/modules/lambda/LambdaEnvironmentDetailDialog.cpp
+        include/modules/lambda/LambdaEnvironmentDetailDialog.h
+        src/modules/lambda/LambdaEnvironmentDetailDialog.ui
+        src/modules/s3/S3ObjectMetadataDialog.cpp
+        include/modules/s3/S3ObjectMetadataDialog.h
+        src/modules/s3/S3ObjectMetadataDialog.ui
+        src/modules/lambda/LambdaLogsDialog.cpp
+        include/modules/lambda/LambdaLogsDialog.h
+        src/modules/lambda/LambdaLogsDialog.ui
+        include/dto/lambda/LambdaListResultsResponse.h
+        include/dto/lambda/LambdaResultCounter.h
+        src/modules/lambda/LambdaResultListDialog.cpp
+        include/modules/lambda/LambdaResultListDialog.h
+        src/modules/lambda/LambdaResultListDialog.ui
+        include/dto/lambda/LambdaGetResultResponse.h
+        src/modules/docker/DockerStatsDialog.cpp
+        src/modules/docker/DockerService.cpp
+        include/modules/docker/DockerService.h
+        include/modules/docker/DockerStatsDialog.h
+        include/dto/docker/DockerStatsResponse.h
+        src/modules/docker/DockerStatsDialog.ui
+        include/dto/docker/DockerContainersResponse.h
+        include/dto/docker/Container.h
+        include/dto/docker/CpuUsage.h
+        include/dto/docker/CpuStat.h
+        include/dto/docker/ContainerStat.h
+        include/dto/docker/MemoryStat.h
+        include/utils/PrefixFilterModel.h
+        src/utils/PrefixFilterModel.cpp
+        include/dto/docker/State.h
+        include/utils/StringUtils.h
+        src/modules/s3/S3ObjectAddDialog.cpp
+        include/modules/s3/S3ObjectAddDialog.h
+        src/modules/s3/S3ObjectAddDialog.ui
+        src/modules/s3/S3ObjectAddDialog.cpp
+        include/utils/BaseService.h
+        include/dto/s3/S3ObjectUploadRequest.h
+        include/modules/secretsmanager/SecretList.h
+        src/modules/secretsmanager/SecretsList.cpp
+        include/modules/lambda/LambdaUploadCodeDialog.h
+        src/modules/lambda/LambdaUploadCodeDialog.cpp
+        src/modules/lambda/LambdaUploadCodeDialog.ui
+        include/dto/lambda/LambdaUploadRequest.h
+        include/dto/lambda/LambdaUpdateRequest.h
+        src/modules/sns/SNSMessageAddDialog.cpp
+        src/modules/sns/SNSMessageAddDialog.ui
+        include/modules/sns/SNSMessageAddDialog.h
+        include/dto/sns/SNSSendMessageRequest.h
+        include/dto/sns/SNSMessageAttribute.h
+        include/dto/sns/SNSSendMessageResponse.h
+        include/modules/secretsmanager/SecretsManagerService.h
+        src/modules/secretsmanager/SecretsManagerService.cpp
+        include/dto/secretsmanager/SecretsManagerListSecretsResponse.h
+        include/dto/secretsmanager/SecretCounter.h
+        src/modules/secretsmanager/SecretsDetailsDialog.cpp
+        include/modules/secretsmanager/SecretsDetailsDialog.h
+        src/modules/secretsmanager/SecretsDetailsDialog.ui
+        include/dto/secretsmanager/SecretGetResponse.h
 )
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_major_line REGEX "AWSMOCK_UI_VERSION_MAJOR")
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_minor_line REGEX "AWSMOCK_UI_VERSION_MINOR")
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/Version.h" version_patch_line REGEX "AWSMOCK_UI_VERSION_PATCH")
-
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_MAJOR "${version_major_line}")
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_MINOR "${version_minor_line}")
-string(REGEX REPLACE ".* ([0-9]+)" "\\1" PROJECT_VERSION_PATCH "${version_patch_line}")
-
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-
-message(STATUS "Building AWS Mock UI version: ${PROJECT_VERSION}")
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})

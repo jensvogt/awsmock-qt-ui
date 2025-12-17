@@ -93,6 +93,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->setColumnHidden(7, true);
     tableWidget->setColumnHidden(8, true);
     tableWidget->setColumnHidden(9, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

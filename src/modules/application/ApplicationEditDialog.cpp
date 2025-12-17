@@ -9,7 +9,7 @@
 #include "modules/application/ApplicationLogsDialog.h"
 
 ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent),
-    _ui(new Ui::ApplicationEditDialog) {
+                                                                                     _ui(new Ui::ApplicationEditDialog) {
     _applicationService = new ApplicationService();
 
     _applicationService->GetApplication(name);
@@ -93,6 +93,7 @@ ApplicationEditDialog::~ApplicationEditDialog() {
 
 void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &applicationGetResponse) {
     _application = applicationGetResponse.application;
+    _ui->regionEdit->setText(_application.region);
     _ui->nameEdit->setText(_application.name);
     _ui->runtimeEdit->setText(_application.runtime);
     _ui->runTypeEdit->setText(_application.runType);
@@ -100,6 +101,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->publicPortEdit->setText(QString::number(_application.publicPort));
     _ui->archiveEdit->setText(_application.archive);
     _ui->versionEdit->setText(_application.version);
+    _ui->imageNameEdit->setText(_application.imageName);
     _ui->imageIdEdit->setText(_application.imageId);
     _ui->containerIdEdit->setText(_application.containerId);
     _ui->containerNameEdit->setText(_application.containerName);
@@ -175,8 +177,7 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
 
     // Add environment
     _ui->envTable->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_ui->envTable, &QTableWidget::customContextMenuRequested, this,
-            &ApplicationEditDialog::ShowEnvironmentContextMenu);
+    connect(_ui->envTable, &QTableWidget::customContextMenuRequested, this, &ApplicationEditDialog::ShowEnvironmentContextMenu);
 
     // Connect double-click
     connect(_ui->envTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {

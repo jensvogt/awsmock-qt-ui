@@ -7,7 +7,10 @@
 
 #include <QTimer>
 
-class BaseService final : public QObject {
+#include <utils/Configuration.h>
+#include <utils/RestManager.h>
+
+class BaseService : public QObject {
     Q_OBJECT
 
 public:
@@ -15,7 +18,6 @@ public:
      * @brief Constructor
      */
     BaseService() {
-
         // Create REST manager
         _restManager = new RestManager();
 
@@ -30,15 +32,26 @@ public:
 
     ~BaseService() override = default;
 
+    static QJsonObject CreateBaseRequest() {
+        QJsonObject jRequest;
+        jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+        jRequest["user"] = Configuration::instance().GetValue<QString>("aws.user", "none");
+        jRequest["requestId"] = QUuid::createUuid().toString();
+        return jRequest;
+    }
+
+    static QUrl GetBaseUrl() {
+        return {Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1")};
+    }
+
 private slots:
     void HandleTimer() const {
-
         _restManager->get(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"),
                           {
                               {"x-awsmock-target", "module"},
                               {"x-awsmock-action", "ping"}
                           },
-                          [](const bool success, const QByteArray &response, int status, const QString &error) {
+                          [](const bool success, const QByteArray &, int status, const QString &error) {
                               if (success) {
                                   Configuration::instance().SetConnectionState(true);
                               } else {
@@ -58,5 +71,6 @@ private:
      */
     QTimer *_timer;
 };
+
 #endif //AWSMOCK_QT_UI_BASE_SERVICE_H
 

@@ -5,9 +5,15 @@
 #ifndef AWSMOCK_QT_UI_S3_BUCKET_EDIT_DIALOG_H
 #define AWSMOCK_QT_UI_S3_BUCKET_EDIT_DIALOG_H
 
+// Qt includes
 #include <QDialog>
+#include <QStandardItemModel>
 
+// AwsMock includes
 #include <modules/s3/S3Service.h>
+#include <modules/s3/S3ObjectMetadataDialog.h>
+#include <utils/IconUtils.h>
+#include <utils/BaseDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -17,7 +23,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class S3BucketEditDialog final : public QDialog {
+class S3BucketEditDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -26,6 +32,11 @@ public:
     ~S3BucketEditDialog() override;
 
     void UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse) const;
+
+    void SetupDefaultMetadataTab();
+
+    void LoadContent() override {
+    };
 
 private slots:
     void HandleAccept();
@@ -52,6 +63,11 @@ private:
      * @brief Changed flag
      */
     bool _changed = false;
+
+    /**
+     *  @brief Table data model
+     */
+    QStandardItemModel *_dataModel{};
 };
 
 

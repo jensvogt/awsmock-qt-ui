@@ -1,15 +1,18 @@
 
+#include <QFileDialog>
 #include <QHeaderView>
 #include <modules/s3/S3ObjectList.h>
 
-#include "modules/s3/S3ObjectEditDialog.h"
-
 S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent) : BasePage(parent),
-    bucketName(bucketName) {
+                                                                                               bucketName(bucketName) {
     // Connect service
     _s3Service = new S3Service();
     connect(_s3Service, &S3Service::ListObjectsSignal, this, &S3ObjectList::HandleListObjectSignal);
     connect(_s3Service, &S3Service::ReloadObjectsSignal, this, &S3ObjectList::HandleReloadObjectSignal);
+
+    // Get the bucket
+    _s3Service->GetBucketDetails(bucketName);
+    connect(_s3Service, &S3Service::GetBucketDetailsSignal, this, &S3ObjectList::HandleBucketDetailsSignal);
 
     // Toolbar
     const auto toolBar = new QHBoxLayout();
@@ -32,12 +35,9 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new object");
-    connect(addButton, &QPushButton::clicked, []() {
-        bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
-            ; ok && !text.isEmpty()) {
-            // AddQueue(text);
-        }
+    connect(addButton, &QPushButton::clicked, [this]() {
+        S3ObjectAddDialog dialog(_bucketDetailsResponse);
+        dialog.exec();
     });
 
     // Toolbar add action
@@ -101,6 +101,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     tableWidget->setColumnHidden(5, true);
+    tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
     connect(tableWidget, &QTableView::doubleClicked, this, [this, bucketName](const QModelIndex &index) {
@@ -134,6 +135,10 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
 
 S3ObjectList::~S3ObjectList() {
     StopAutoUpdate();
+}
+
+void S3ObjectList::HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse) {
+    this->_bucketDetailsResponse = bucketDetailsResponse;
 }
 
 void S3ObjectList::LoadContent() {

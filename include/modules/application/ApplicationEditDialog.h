@@ -33,6 +33,9 @@ public:
 
     ~ApplicationEditDialog() override;
 
+    void LoadContent() override {
+    };
+
 private slots:
     void HandleAccept();
 

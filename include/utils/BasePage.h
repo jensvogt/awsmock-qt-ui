@@ -8,6 +8,7 @@
 #include <QTableWidgetItem>
 
 #include <utils/TableUtils.h>
+#include <utils/Configuration.h>
 
 class BasePage : public QWidget, public TableUtils {
     Q_OBJECT
@@ -18,6 +19,8 @@ public:
     void StartAutoUpdate();
 
     void StopAutoUpdate() const;
+
+    QAction *GetRefreshAction(QWidget *parent) const;
 
     virtual void LoadContent() = 0;
 

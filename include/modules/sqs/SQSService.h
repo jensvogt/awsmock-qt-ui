@@ -1,25 +1,27 @@
 #ifndef SQS_SERVICE_H
 #define SQS_SERVICE_H
 
+// Qt includes
 #include <QMessageBox>
 #include <QObject>
 #include <QTableWidget>
 #include <QElapsedTimer>
 
-#include <dto/sqs/SQSGetMessageDetailsResponse.h>
-#include <dto/sqs/SQSGetQueueDetailsResponse.h>
-#include <dto/sqs/SQSQueueUpdateRequest.h>
+// AwsMock include
 #include <utils/BasePage.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <dto/sqs/SQSGetMessageDetailsResponse.h>
+#include <dto/sqs/SQSGetQueueDetailsResponse.h>
+#include <dto/sqs/SQSQueueUpdateRequest.h>
 #include <dto/sqs/SQSListQueueResponse.h>
 #include <dto/sqs/SQSListMessagesResponse.h>
 #include <dto/sqs/SQSListQueueAttributesResponse.h>
 #include <dto/sqs/SQSListQueueLambdaTriggersResponse.h>
 #include <dto/sqs/SQSSendMessageResponse.h>
-
-#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
-#include "dto/sqs/SQSSendMessageRequest.h"
+#include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
+#include <dto/sqs/SQSSendMessageRequest.h>
 
 class SQSService final : public QObject {
     Q_OBJECT

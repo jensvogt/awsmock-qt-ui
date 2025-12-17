@@ -1,18 +1,23 @@
 #ifndef AWSMOCK_QT_UI_S3_SERVICE_H
 #define AWSMOCK_QT_UI_S3_SERVICE_H
 
+// Qt includes
 #include <QMessageBox>
 #include <QObject>
 #include <QUrlQuery>
+#include <QElapsedTimer>
 
+// AwsMock includes
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <utils/BaseService.h>
+#include <utils/EventBus.h>
 #include <dto/s3/S3ListBucketResult.h>
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 #include <dto/s3/S3GetObjectDetailsResponse.h>
 #include <dto/s3/S3ListObjectResponse.h>
 
-class S3Service final : public QObject {
+class S3Service final : public BaseService {
     Q_OBJECT
 
 public:
@@ -37,6 +42,8 @@ public:
 
     void AddBucket(const QString &bucketName);
 
+    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata);
+
     void DeleteBucket(const QString &bucketName);
 
     void GetBucketDetails(const QString &bucketName);
@@ -44,6 +51,8 @@ public:
     void ListObjects(const QString &bucketName, const QString &prefix);
 
     void GetObjectDetails(const QString &objectId);
+
+    void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
 
     void DeleteObject(const QString &bucketName, const QString &key);
 
@@ -53,6 +62,8 @@ signals:
      *
      * @param bucketListResponse list of buckets
      */
+
+
     void ListBucketSignal(const S3ListBucketResult &bucketListResponse);
 
     /**
@@ -94,7 +105,7 @@ private:
     /**
      * @brief Base URL
      */
-    QUrl url;
+    QUrl _url;
 };
 
 

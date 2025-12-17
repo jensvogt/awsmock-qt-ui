@@ -37,10 +37,10 @@ void ApplicationService::ListApplications(const QString &prefix) {
                                   applicationResponse.FromJson(jsonDoc);
                                   emit ReloadApplicationsSignal(applicationResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                           emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
                       });
@@ -54,11 +54,11 @@ void ApplicationService::UploadApplication(const ApplicationUploadRequest &reque
                           {"x-awsmock-action", "upload-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -71,16 +71,16 @@ void ApplicationService::CreateApplication(const ApplicationCreateRequest &reque
                           {"x-awsmock-action", "create-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   QMessageBox::information(nullptr, "Information", "Application uploaded!");
                                   emit LoadAllApplications();
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -104,10 +104,10 @@ void ApplicationService::GetApplication(const QString &name) {
                                   applicationResponse.FromJson(jsonDoc.object());
                                   emit GetApplicationDetailsSignal(applicationResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -124,11 +124,11 @@ void ApplicationService::UpdateApplication(const Application &application) {
                           {"x-awsmock-action", "update-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -154,7 +154,7 @@ void ApplicationService::EnableApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -180,7 +180,7 @@ void ApplicationService::DisableApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -205,7 +205,7 @@ void ApplicationService::StartApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -230,7 +230,7 @@ void ApplicationService::StopApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -255,7 +255,7 @@ void ApplicationService::RestartApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -272,7 +272,7 @@ void ApplicationService::RestartAllApplications() {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -297,15 +297,14 @@ void ApplicationService::RebuildApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
 
-void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version,
-                                               const QString &applicationCode) {
+void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
     QJsonObject jRequest;
-    jRequest["version"] = applicationName;
+    jRequest["version"] = version;
     jRequest["applicationName"] = applicationName;
     jRequest["applicationCode"] = applicationCode;
     const QJsonDocument requestDoc(jRequest);
@@ -321,7 +320,7 @@ void ApplicationService::UploadApplicationCode(const QString &applicationName, c
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -349,10 +348,10 @@ void ApplicationService::ListApplicationNames() {
                                   }
                                   emit ListApplicationNamedSignal(applicationList);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  qCritical() << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }
@@ -373,7 +372,7 @@ void ApplicationService::DeleteApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              qCritical() << error;
                           }
                       });
 }

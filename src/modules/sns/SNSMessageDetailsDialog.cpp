@@ -3,7 +3,6 @@
 #include "ui_SNSMessageDetailsDialog.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
-
     _ui->setupUi(this);
 
     _snsService = new SNSService();
@@ -13,12 +12,17 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
 
     const QStringList messageAttributeHeaders = QStringList() = {tr("Key"), tr("Value")};
 
+    // Table
+    _dataModel = new QStandardItemModel(this);
+    _dataModel->setHorizontalHeaderLabels(messageAttributeHeaders);
+    _dataModel->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
+
     // Message attribute table
-    _ui->attributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
+    _ui->attributeTable->setModel(_dataModel);
     _ui->attributeTable->setShowGrid(true);
     _ui->attributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->attributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _ui->attributeTable->setHorizontalHeaderLabels(messageAttributeHeaders);
+    //    _ui->attributeTable->setHorizontalHeaderLabels(messageAttributeHeaders);
     _ui->attributeTable->setSortingEnabled(true);
     _ui->attributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->attributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
@@ -49,13 +53,13 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     _ui->bodyPlainTextEdit->setPlainText(response.message);
 
     // Attributes
-    _ui->attributeTable->setRowCount(0);
+    //_ui->attributeTable->setRowCount(0);
     _ui->attributeTable->setSortingEnabled(false); // stop sorting
-    _ui->attributeTable->sortItems(-1);
+    //    _ui->attributeTable->sortItems(-1);
     for (int r = 0; r < response.messageAttributes.count(); r++) {
-        _ui->attributeTable->insertRow(r);
-        _ui->attributeTable->setItem(r, 0, new QTableWidgetItem(response.messageAttributes.at(r).name));
-        _ui->attributeTable->setItem(r, 1, new QTableWidgetItem(response.messageAttributes.at(r).stringValue));
+        // _ui->attributeTable->insertRow(r);
+        // _ui->attributeTable->setItem(r, 0, new QTableWidgetItem(response.messageAttributes.at(r).name));
+        // _ui->attributeTable->setItem(r, 1, new QTableWidgetItem(response.messageAttributes.at(r).stringValue));
     }
 }
 

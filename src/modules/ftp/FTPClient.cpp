@@ -28,7 +28,7 @@ namespace embeddedmz {
       : m_bActive(false),
         m_bNoSignal(true),
         m_bInsecure(false),
-        m_uPort(0),
+        m_uPort(21),
         m_eFtpProtocol(FTP_PROTOCOL::FTP),
         m_eSettingsFlags(NO_FLAGS),
         m_pCurlSession(nullptr),
@@ -195,7 +195,7 @@ namespace embeddedmz {
     * @endcode
     */
    std::string CFTPClient::ParseURL(const std::string &strRemoteFile) const {
-      std::string strURL = m_strServer + "/" + strRemoteFile;
+      std::string strURL = m_strServer + ":" + std::to_string(m_uPort) + "/" + strRemoteFile;
 
       ReplaceString(strURL, "/", "//");
       ReplaceString(strURL, " ", "%20"); //fixes folders with spaces not working
@@ -626,7 +626,7 @@ namespace embeddedmz {
       std::ofstream ofsOutput;
       ofsOutput.open(
 #ifdef WIN32
-      Utf8ToUtf16(strLocalFile),
+         Utf8ToUtf16(strLocalFile),
 #else
          strLocalFile, // UTF-8
 #endif
@@ -954,7 +954,7 @@ namespace embeddedmz {
       if (_wstat64i32(wstrLocalFile.c_str(), reinterpret_cast<struct _stat64i32 *>(&file_info)) == 0) {
          InputFile.open(wstrLocalFile, std::ifstream::in | std::ifstream::binary);
 #else
-         if (stat(strLocalFile.c_str(), &file_info) == 0) {
+      if (stat(strLocalFile.c_str(), &file_info) == 0) {
          InputFile.open(strLocalFile, std::ifstream::in | std::ifstream::binary);
 #endif
          if (!InputFile) {

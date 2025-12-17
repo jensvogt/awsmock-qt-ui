@@ -5,11 +5,14 @@
 #ifndef AWSMOCK_QT_UI_SQS_MESSAGE_ADD_DIALOG_H
 #define AWSMOCK_QT_UI_SQS_MESSAGE_ADD_DIALOG_H
 
+// C++ includes
 #include <utility>
 
+// Qt includes
 #include <QDialog>
 #include <QFileDialog>
 
+// AwsMOck includes
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 #include <modules/sqs/SQSMessageList.h>
@@ -42,6 +45,9 @@ public:
     void HandlePrettyButton(bool checked) const;
 
     void HandleAddAttributeButton() const;
+
+    void LoadContent() override {
+    };
 
 private:
     /**

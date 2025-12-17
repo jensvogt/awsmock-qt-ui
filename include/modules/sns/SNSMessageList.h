@@ -23,10 +23,11 @@
 #include <QtNetwork/QNetworkReply>
 
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
 #include <dto/sns/SNSListMessagesResult.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSMessageDetailsDialog.h>
-#include <utils/IconUtils.h>
+#include <modules/sns/SNSMessageAddDialog.h>
 
 /**
  * @brief Helper widget for the content area.

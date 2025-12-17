@@ -18,6 +18,8 @@ public:
 
 signals:
     void TimerSignal(const QString &name, qint64 elapsed);
+
+    void DockerStatsTimerSignal(const QString &name, qint64 elapsed);
 };
 
 #endif //AWSMOCK_QT_UI_EVENT_BUS_H

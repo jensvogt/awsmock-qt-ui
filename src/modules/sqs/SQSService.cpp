@@ -45,7 +45,7 @@ void SQSService::ListQueues(const QString &prefix, Qt::SortOrder sortOrder) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListQueues", timer.elapsed());
                       });
 }
 
@@ -70,7 +70,7 @@ void SQSService::PurgeQueue(const QString &queueUrl) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("PurgeQueue", timer.elapsed());
                       });
 }
 
@@ -90,7 +90,7 @@ void SQSService::PurgeAllQueues() {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("PurgeAllQueues", timer.elapsed());
                       });
 }
 
@@ -115,7 +115,7 @@ void SQSService::AddQueue(const QString &queueName) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("AddQueue", timer.elapsed());
                       });
 }
 
@@ -136,7 +136,7 @@ void SQSService::UpdateQueue(const SQSQueueUpdateRequest &updateQueueRequest) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UpdateQueue", timer.elapsed());
                       });
 }
 
@@ -178,7 +178,7 @@ void SQSService::ListQueueAttributes(const QString &queueArn, const QString &pre
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListQueueAttributes", timer.elapsed());
                       });
 }
 
@@ -220,7 +220,7 @@ void SQSService::ListQueueLambdaTriggers(const QString &queueArn, const QString 
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListQueueLambdaTriggers", timer.elapsed());
                       });
 }
 
@@ -262,7 +262,7 @@ void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QStri
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -287,7 +287,7 @@ void SQSService::DeleteQueue(const QString &queueUrl) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteQueue", timer.elapsed());
                       });
 }
 
@@ -312,7 +312,7 @@ void SQSService::RedriveQueue(const QString &queueArn) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("RedriveQueue", timer.elapsed());
                       });
 }
 
@@ -342,7 +342,7 @@ void SQSService::GetQueueDetails(const QString &queueArn) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetQueueDetails", timer.elapsed());
                       });
 }
 
@@ -372,7 +372,7 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetSqsMessageDetails", timer.elapsed());
                       });
 }
 
@@ -415,7 +415,7 @@ void SQSService::ListMessages(const QString &queueArn, const QString &prefix) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListMessages", timer.elapsed());
                       });
 }
 
@@ -434,13 +434,13 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                           {"x-awsmock-action", "purge-queue"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("PurgeAllMessages", timer.elapsed());
                       });
 }
 
@@ -468,7 +468,7 @@ void SQSService::SendMessage(const SQSSendMessageRequest &request) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("SendMessage", timer.elapsed());
                       });
 }
 
@@ -494,7 +494,7 @@ void SQSService::DeleteMessage(const QString &queueUrl, const QString &receiptHa
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteMessage", timer.elapsed());
                       });
 }
 
