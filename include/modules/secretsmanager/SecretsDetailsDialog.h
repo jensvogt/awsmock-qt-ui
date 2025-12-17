@@ -11,6 +11,7 @@
 // Qt includes
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QStandardItemModel>
 
 QT_BEGIN_NAMESPACE
 
@@ -54,7 +55,7 @@ public:
     /**
      * @brief Load dialog content
      */
-    void LoadContent();
+    void LoadContent() const;
 
     /**
      * @brief Update secret values
@@ -71,6 +72,13 @@ public:
      */
     void PrettyPrintClicked(bool checked) const;
 
+    /**
+     * @brief Tab widget current tab changed
+     *
+     * @param tabIndex current tab index
+     */
+    void HandleTabChanged(int tabIndex);
+
 private:
     /**
      * @brief UI components
@@ -81,6 +89,11 @@ private:
      * @brief Secret AWS ARN
      */
     QString _secretArn;
+
+    /**
+     * @brief Secret ID
+     */
+    QString _secretId;
 
     /**
      * @brief Service
@@ -96,6 +109,11 @@ private:
      * @brief Secret counter
      */
     SecretCounter _secretCounter;
+
+    /**
+     * @brief Data model
+     */
+    QStandardItemModel *_versionDataModel{};
 };
 
 

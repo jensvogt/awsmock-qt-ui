@@ -24,15 +24,27 @@ SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) :
     // Refresh button
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
+        LoadContent();
+    });
+
+    // Version refreshButton
+    _ui->versionRefreshButton->setText(nullptr);
+    _ui->versionRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
 
     // Pretty print
     _ui->prettyButton->setText(nullptr);
     _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
     connect(_ui->prettyButton, &QPushButton::toggled, this, &SecretsDetailsDialog::PrettyPrintClicked);
+
     // Value edit
     connect(_ui->valueEdit, &QTextEdit::textChanged, this, [this]() {
         _changed = true;
     });
+
+    // Reset tabs
+    connect(_ui->tabWidget, &QTabWidget::currentChanged, this, &SecretsDetailsDialog::HandleTabChanged);
+    _ui->tabWidget->setCurrentIndex(0);
 }
 
 SecretsDetailsDialog::~SecretsDetailsDialog() {
@@ -51,8 +63,8 @@ void SecretsDetailsDialog::HandleReject() {
     accept();
 }
 
-void SecretsDetailsDialog::LoadContent() {
-
+void SecretsDetailsDialog::LoadContent() const {
+    _secretsManagerService->GetSecret(_secretArn);
 }
 
 void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
@@ -68,6 +80,9 @@ void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
     _ui->createdEdit->setText(secretCounter.created.toString("yyyy-mm-dd HH:mm"));
     _ui->modifiedEdit->setText(secretCounter.modified.toString("yyyy-mm-dd HH:mm"));
     _ui->valueEdit->setText(secretCounter.secretString);
+
+    // Save secret ID
+    _secretId = secretCounter.secretId;
 }
 
 void SecretsDetailsDialog::PrettyPrintClicked(const bool checked) const {
@@ -92,12 +107,11 @@ void SecretsDetailsDialog::PrettyPrintClicked(const bool checked) const {
             QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
         }
     }
-    /*
-    if (!_ui->searchEdit->text().isEmpty()) {
-        const QString text = _ui->searchEdit->text();
-        QTextCursor cursor(_ui->valueEdit->document());
-        cursor.movePosition(QTextCursor::Start);
-        _ui->valueEdit->setTextCursor(cursor);
-        _ui->valueEdit->find(text, QTextDocument::FindWholeWords);
-    }*/
+}
+
+void SecretsDetailsDialog::HandleTabChanged(const int tabIndex) {
+    if (tabIndex == 1) {
+        _secretsManagerService->GetVersions(_secretId);
+    }
+
 }

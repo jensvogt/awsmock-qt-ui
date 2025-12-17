@@ -1,3 +1,4 @@
+#include <ui_SecretAddDialog.h>
 #include <modules/secretsmanager/SecretList.h>
 
 SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -6,6 +7,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     // Connect service
     _secretsManagerService = new SecretsManagerService();
     connect(_secretsManagerService, &SecretsManagerService::ReloadSecretsSignal, this, &SecretList::HandleListSecretsSignal);
+    connect(_secretsManagerService, &SecretsManagerService::LoadAllSecrets, this, &SecretList::LoadContent);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -18,16 +20,14 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), nullptr, this);
-    //addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new secret");
-    connect(addButton, &QPushButton::clicked, []() {
-        /*if (LambdaAddDialog dialog; dialog.exec() == QDialog::Accepted) {
-        }*/
+    connect(addButton, &QPushButton::clicked, [this]() {
+        SecretAddDialog dialog;
+        dialog.exec();
     });
 
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), nullptr, this);
-    //refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the secret list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
@@ -137,6 +137,7 @@ void SecretList::LoadContent() {
 void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) {
     const int selectedRow = _tableView->selectionModel()->currentIndex().row();
     _tableView->setSortingEnabled(false);
+    _dataModel->removeRows(0, _dataModel->rowCount());
     for (auto r = 0; r < secretsListResponse.secretCounters.count(); r++) {
         SetColumn(_dataModel, r, 0, secretsListResponse.secretCounters.at(r).name);
         SetColumn(_dataModel, r, 1, secretsListResponse.secretCounters.at(r).secretId);
@@ -206,13 +207,11 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Secret");
     deleteAction->setToolTip("Delete the secret");
-
-
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         SecretsDetailsDialog dialog(secretId);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        //  _lambdaService->DeleteLambda(name);
+        _secretsManagerService->DeleteSecret(secretId);
     }
     LoadContent();
     StartAutoUpdate();

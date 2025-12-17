@@ -230,6 +230,15 @@ set(PROJECT_SOURCES
         include/modules/secretsmanager/SecretsDetailsDialog.h
         src/modules/secretsmanager/SecretsDetailsDialog.ui
         include/dto/secretsmanager/SecretGetResponse.h
+        src/modules/secretsmanager/SecretAddDialog.cpp
+        include/modules/secretsmanager/SecretAddDialog.h
+        src/modules/secretsmanager/SecretAddDialog.ui
+        src/modules/kms/KMSService.cpp
+        include/modules/kms/KMSService.h
+        include/dto/kms/KMSKeyListResponse.h
+        include/dto/kms/KeyCounter.h
+        include/dto/secretsmanager/SecretVersionCounter.h
+        include/dto/secretsmanager/SecretGetVersionsResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
