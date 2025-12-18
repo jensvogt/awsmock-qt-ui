@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.87](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.86...v1.4.87) (2025-12-18)
+
+
+### Bug Fixes
+
+* fix some issues concerning dynamodb queries ([2fc766a](https://github.com/jensvogt/awsmock-qt-ui/commit/2fc766ab4db0ce2a510d9597d3ed3663e6104a42))
+
 ## [1.4.86](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.85...v1.4.86) (2025-12-17)
 
 
