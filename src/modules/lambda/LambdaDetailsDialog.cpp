@@ -2,11 +2,8 @@
 // Created by vogje01 on 11/25/25.
 //
 
-#include <QMenu>
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include "ui_LambdaDetailsDialog.h"
-#include "modules/application/ApplicationEnvironmentEditDialog.h"
-#include "modules/lambda/LambdaEnvironmentDetailDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
 
@@ -24,6 +21,16 @@ LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *pare
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
         _lambdaService->GetLambda(_lambdaArn);
+    });
+
+    // Logs button
+    _ui->logsButton->setText(nullptr);
+    _ui->logsButton->setIcon(IconUtils::GetIcon("logs"));
+    connect(_ui->logsButton, &QPushButton::clicked, [this]() {
+        auto *dialog = new LambdaResultListDialog(_lambdaArn, this);
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
     });
 
     // Setup instances tab
