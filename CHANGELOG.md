@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.88](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.87...v1.4.88) (2025-12-19)
+
+
+### Bug Fixes
+
+* add SSM parameter list ([de36009](https://github.com/jensvogt/awsmock-qt-ui/commit/de36009ba45ffa16e37842dff6b0f463948d448a))
+* add SSM parameter list ([3538ed4](https://github.com/jensvogt/awsmock-qt-ui/commit/3538ed44f34aaa13580479bf9fb18cd1d10e20e9))
+
 ## [1.4.87](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.86...v1.4.87) (2025-12-18)
 
 
