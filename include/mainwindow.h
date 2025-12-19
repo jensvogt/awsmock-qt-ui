@@ -50,6 +50,7 @@
 #define PAGE_LAMBDA 5
 #define PAGE_SECRETS_MANAGER 6
 #define PAGE_SSM 7
+#define PAGE_DYNAMODB 8
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT

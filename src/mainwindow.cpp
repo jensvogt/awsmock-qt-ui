@@ -1,5 +1,7 @@
 #include <mainwindow.h>
 
+#include "modules/ssm/SSMParameterList.h"
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Connect infrastructure signals
     _infraStructureService = new InfraStructureService();
@@ -29,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_navPane->addItem("Application");
     m_navPane->addItem("Lambda");
     m_navPane->addItem("Secrets Manager");
+    m_navPane->addItem("Systems Manager");
+    m_navPane->addItem("DynamoDB");
 
     // Select the first item by default
     m_navPane->setCurrentRow(0);
@@ -407,6 +411,23 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             return secretsManagerPage;
         }
 
+        case PAGE_SSM: {
+            const auto parameterListPage = new SSMParameterList("System Manager Parameter List", m_contentPane);
+
+            // Connect child's signal to update status bar
+            connect(parameterListPage, &SSMParameterList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            return parameterListPage;
+        }
+
+        case PAGE_DYNAMODB: {
+            const auto dynamodbTablesPage = new SecretList("Dynamodb", m_contentPane);
+
+            // Connect child's signal to update status bar
+            connect(dynamodbTablesPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+            return dynamodbTablesPage;
+        }
         default:
             return nullptr;
     }

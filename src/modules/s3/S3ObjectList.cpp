@@ -1,6 +1,4 @@
 
-#include <QFileDialog>
-#include <QHeaderView>
 #include <modules/s3/S3ObjectList.h>
 
 S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent) : BasePage(parent),
