@@ -18,6 +18,7 @@
 
 #include <mainwindow.h>
 
+// Qt includes
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -25,6 +26,7 @@
 #include <QCommandLineParser>
 #include <QScreen>
 
+// AwsMock includes
 #include <utils/Configuration.h>
 #include <utils/IconUtils.h>
 
