@@ -4,6 +4,7 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_SSMParameterDialog.h" resolved
 
+#include <QInputDialog>
 #include <modules/ssm/SSMParameterDialog.h>
 #include "ui_SSMParameterDialog.h"
 
@@ -33,6 +34,9 @@ SSMParameterDialog::~SSMParameterDialog() {
 }
 
 void SSMParameterDialog::HandleAccept() {
+    if (_changed) {
+        _ssmService->UpdateParameter(_parameter);
+    }
     accept();
 }
 
@@ -44,8 +48,12 @@ void SSMParameterDialog::LoadContent() {
     _ssmService->GetParameter(_parameterName);
 }
 
-void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse) const {
+void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse) {
 
+    // Save parameter
+    _parameter = parameterGetResponse.parameter;
+
+    // Fill in UI
     _ui->regionEdit->setText(parameterGetResponse.parameter.region);
     _ui->nameEdit->setText(parameterGetResponse.parameter.name);
     _ui->arnEdit->setText(parameterGetResponse.parameter.arn);
@@ -65,6 +73,17 @@ void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse 
             _ui->secretStringEdit->setEchoMode(QLineEdit::Password);
         }
     });
+    _ui->editValueButton->setText(nullptr);
+    _ui->editValueButton->setIcon(IconUtils::GetIcon("edit"));
+    connect(_ui->editValueButton, &QPushButton::clicked, [this]() {
+        _changed = true;
+        bool ok;
+        auto parameterValue = QString(QByteArray::fromBase64(_parameter.parameterValue.toUtf8()));
+        if (parameterValue = QInputDialog::getText(nullptr, "Change secret value", "Secret String:", QLineEdit::Normal, parameterValue, &ok); ok && !parameterValue.isEmpty()) {
+            _parameter.parameterValue = parameterValue.toUtf8().toBase64();
+            _ui->secretStringEdit->setText(parameterValue);
+        }
+    });
 
     // Description
     _ui->descriptionEdit->setText(parameterGetResponse.parameter.description);
@@ -81,7 +100,6 @@ void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse 
 
     // Reset selection
     _ui->tagsTableView->setSortingEnabled(true);
-    //_ui->tagsTableView->sortByColumn(_sortColumn, _sortOrder);
     _ui->tagsTableView->selectRow(selectedRow);
 }
 
