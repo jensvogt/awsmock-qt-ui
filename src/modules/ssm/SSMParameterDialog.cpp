@@ -18,6 +18,13 @@ SSMParameterDialog::SSMParameterDialog(const QString &parameterName, QWidget *pa
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SSMParameterDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SSMParameterDialog::HandleReject);
 
+    // Setup tabs
+    SetupTagsTab();
+
+    // Set default tab
+    _ui->tabWidget->setCurrentIndex(0);
+
+    // Load content
     SSMParameterDialog::LoadContent();
 }
 
@@ -58,4 +65,54 @@ void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse 
             _ui->secretStringEdit->setEchoMode(QLineEdit::Password);
         }
     });
+
+    // Description
+    _ui->descriptionEdit->setText(parameterGetResponse.parameter.description);
+
+    const int selectedRow = _ui->tagsTableView->selectionModel()->currentIndex().row();
+    _ui->tagsTableView->setSortingEnabled(false);
+    int r = 0, c = 0;
+    for (const auto key: parameterGetResponse.parameter.tags.keys()) {
+        SetColumn(_tagsDataModel, r, c++, key);
+        SetColumn(_tagsDataModel, r, c, parameterGetResponse.parameter.tags[key]);
+        r++;
+        c = 0;
+    }
+
+    // Reset selection
+    _ui->tagsTableView->setSortingEnabled(true);
+    //_ui->tagsTableView->sortByColumn(_sortColumn, _sortOrder);
+    _ui->tagsTableView->selectRow(selectedRow);
+}
+
+void SSMParameterDialog::SetupTagsTab() {
+
+    // Tags refresh button
+    _ui->tagsRefreshButton->setText(nullptr);
+    _ui->tagsRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+
+    // Table
+    const QStringList headers = QStringList() = {
+                                    tr("Name"), tr("Value")
+                                };
+
+    // Table
+    _tagsDataModel = new QStandardItemModel();
+    _tagsDataModel->setHorizontalHeaderLabels(headers);
+    _tagsDataModel->setColumnCount(static_cast<int>(headers.count()));
+
+    // Proxy model for prefix filtering
+    _tagsProxyModel = new PrefixFilterProxyModel(this);
+    _tagsProxyModel->setSourceModel(_tagsDataModel);
+    _ui->tagsTableView->setModel(_tagsProxyModel);
+
+    _ui->tagsTableView->setShowGrid(true);
+    _ui->tagsTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->tagsTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->tagsTableView->setSortingEnabled(true);
+    _ui->tagsTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->tagsTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _ui->tagsTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _ui->tagsTableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _ui->tagsTableView->setColumnHidden(3, true);
 }

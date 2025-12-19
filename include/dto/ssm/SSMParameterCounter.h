@@ -108,9 +108,9 @@ struct SSMParameterCounter {
         created = QDateTime::fromString(jsonObject["Created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["Modified"].toString(), Qt::ISODate);
 
-        if (jsonObject.contains("tags") && jsonObject["Tags"].isObject()) {
+        if (jsonObject.contains("Tags") && jsonObject["Tags"].isObject()) {
             for (const auto &key: jsonObject["Tags"].toObject().keys()) {
-                tags[key] = jsonObject["tags"].toObject()[key].toString();
+                tags[key] = jsonObject["Tags"].toObject()[key].toString();
             }
         }
     }
