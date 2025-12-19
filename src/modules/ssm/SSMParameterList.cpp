@@ -125,13 +125,9 @@ SSMParameterList::~SSMParameterList() {
     StopAutoUpdate();
 }
 
-/*void SSMParameterList::HandleBucketDetailsSignal(const SSMGetBucketDetailsResponse &bucketDetailsResponse) {
-    this->_bucketDetailsResponse = bucketDetailsResponse;
-}*/
-
 void SSMParameterList::LoadContent() {
     if (Configuration::instance().GetConnectionState()) {
-        _ssmService->ListParameters(prefixValue);
+        _ssmService->ListParameters(prefixValue, _sortColumn, _sortOrder);
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
     }
@@ -151,11 +147,6 @@ void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse 
     _tableView->sortByColumn(_sortColumn, _sortOrder);
     _tableView->selectRow(selectedRow);
 }
-
-/*void SSMParameterList::HandleReloadParameterSignal() {
-    _ssmService->ListParameters(prefixValue);
-    NotifyStatusBar();
-}*/
 
 void SSMParameterList::ShowContextMenu(const QPoint &pos) const {
     const QModelIndex index = _tableView->indexAt(pos);

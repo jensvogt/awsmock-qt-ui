@@ -37,7 +37,7 @@ public:
 
     void LoadContent() override;
 
-    void HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse) const;
+    void HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse);
 
     void SetupTagsTab();
 
@@ -66,6 +66,16 @@ private:
      * @brief Data proxy model
      */
     PrefixFilterProxyModel *_tagsProxyModel;
+
+    /**
+     * @brief Changed flag
+     */
+    bool _changed = false;
+
+    /**
+     * @brief Backup copy of the parameter
+     */
+    SSMParameterCounter _parameter;
 };
 
 

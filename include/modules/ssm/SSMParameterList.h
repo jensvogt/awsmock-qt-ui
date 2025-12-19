@@ -93,7 +93,7 @@ private:
      *
      * @par Default sort column is 'messages', index=1
      */
-    int _sortColumn = 1;
+    int _sortColumn = 0;
 
     /**
      * @brief Sort order

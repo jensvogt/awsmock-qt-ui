@@ -28,26 +28,16 @@ public:
      * @brief List SSM parameters
      *
      * @param prefix topic name prefix
+     * @param sortColumn
+     * @param sortDirection
+     * @param sortColumn
+     * @param sortDirection
      */
-    void ListParameters(const QString &prefix);
+    void ListParameters(const QString &prefix, int sortColumn, int sortDirection);
 
     void GetParameter(const QString &name);
 
-    /*    void AddBucket(const QString &bucketName);
-
-        void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata);
-
-        void DeleteBucket(const QString &bucketName);
-
-        void GetBucketDetails(const QString &bucketName);
-
-        void ListObjects(const QString &bucketName, const QString &prefix);
-
-        void GetObjectDetails(const QString &objectId);
-
-        void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
-
-        void DeleteObject(const QString &bucketName, const QString &key);*/
+    void UpdateParameter(const SSMParameterCounter &parameter);
 
 signals:
     /**
