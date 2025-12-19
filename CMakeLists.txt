@@ -239,6 +239,16 @@ set(PROJECT_SOURCES
         include/dto/kms/KeyCounter.h
         include/dto/secretsmanager/SecretVersionCounter.h
         include/dto/secretsmanager/SecretGetVersionsResponse.h
+        include/modules/ssm/SSMParameterList.h
+        include/modules/ssm/SSMService.h
+        include/dto/ssm/SSMParameterListResponse.h
+        src/modules/ssm/SSMParameterList.cpp
+        src/modules/ssm/SSMService.cpp
+        include/dto/ssm/SSMParameterCounter.h
+        include/dto/ssm/SSMParameterGetResponse.h
+        src/modules/ssm/SSMParameterDialog.cpp
+        src/modules/ssm/SSMParameterDialog.ui
+        include/modules/ssm/SSMParameterDialog.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

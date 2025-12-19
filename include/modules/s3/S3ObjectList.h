@@ -3,6 +3,8 @@
 
 #include <QMenu>
 #include <QHBoxLayout>
+#include <QFileDialog>
+#include <QHeaderView>
 #include <QInputDialog>
 #include <QLabel>
 #include <QPushButton>
@@ -38,6 +40,11 @@ public:
      */
     ~S3ObjectList() override;
 
+    /**
+     * @brief Handles the bucket details signal
+     *
+     * @param bucketDetailsResponse bucker response
+     */
     void HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse);
 
     /**
@@ -70,8 +77,7 @@ signals:
      */
     void BackToBucketList();
 
-private slots:
-    /**
+private slots: /**
      * @brief Row context menu
      *
      * @param pos position in table
@@ -100,6 +106,11 @@ private:
     QString prefixValue = "";
 
     /**
+     * @brief Prefix clear button
+     */
+    QPushButton *prefixClear;
+
+    /**
      * @brief Sort column index
      *
      * @par Default sort column is 'objects', index=1
@@ -110,11 +121,6 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 
     /**
      * @brief Bucket details
