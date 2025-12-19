@@ -13,6 +13,8 @@
 #include <utils/IconUtils.h>
 #include <modules/ssm/SSMService.h>
 
+#include "utils/PrefixFilterModel.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -37,6 +39,8 @@ public:
 
     void HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse) const;
 
+    void SetupTagsTab();
+
 private:
     /**
      *  @brief UI components
@@ -52,6 +56,16 @@ private:
      * @brief REST service handler
      */
     SSMService *_ssmService;
+
+    /**
+     *  @brief Table data model
+     */
+    QStandardItemModel *_tagsDataModel;
+
+    /**
+     * @brief Data proxy model
+     */
+    PrefixFilterProxyModel *_tagsProxyModel;
 };
 
 
