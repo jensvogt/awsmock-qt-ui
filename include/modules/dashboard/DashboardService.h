@@ -10,10 +10,11 @@
 #include <utils/Configuration.h>
 #include <utils/ScopedTimer.h>
 #include <utils/RestManager.h>
+#include <utils/BaseService.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <dto/dashboard/DashboardCounterResult.h>
 
-class DashboardService : public QObject {
+class DashboardService : public BaseService {
     Q_OBJECT
 
 public:
@@ -27,7 +28,6 @@ signals:
     void ReloadMonitoringSignal(const DashboardCounter &counter);
 
 private:
-    QUrl _url;
     RestManager *_restManager = nullptr;
     QThread _networkThread;
 };
