@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.88...v1.5.0) (2025-12-20)
+
+
+### Features
+
+* include SSM add dialog ([ab8c295](https://github.com/jensvogt/awsmock-qt-ui/commit/ab8c295b24a5317581b2054563b072db2602cf12))
+
 ## [1.4.88](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.87...v1.4.88) (2025-12-19)
 
 
