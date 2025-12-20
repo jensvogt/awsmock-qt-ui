@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.1...v1.6.2) (2025-12-20)
+
+
+### Bug Fixes
+
+* bug in remote connection of dashboard ([55f4d51](https://github.com/jensvogt/awsmock-qt-ui/commit/55f4d515b3924c3323faa5c4f6eaaf28db97105f))
+* bug in remote connection of dashboard ([5bbd836](https://github.com/jensvogt/awsmock-qt-ui/commit/5bbd83606960dfcb40b241174d318b88e58e0928))
+
 ## [1.6.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.0...v1.6.1) (2025-12-20)
 
 
