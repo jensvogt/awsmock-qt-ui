@@ -252,6 +252,8 @@ set(PROJECT_SOURCES
         src/modules/ssm/SSMParameterAddDialog.cpp
         include/modules/ssm/SSMParameterAddDialog.h
         src/modules/ssm/SSMParameterAddDialog.ui
+        include/dto/sns/SNSListTopicAttributeCountersResponse.h
+        include/dto/sns/SNSTopicAttribute.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

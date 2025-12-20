@@ -7,7 +7,7 @@
 
 struct SNSGetTopicDetailsResponse {
 
-public:
+    QString region;
 
     QString topicName;
 
@@ -23,12 +23,13 @@ public:
 
     QDateTime modified;
 
-    void FromJson(QJsonDocument jsonDoc) {
+    void FromJson(const QJsonDocument &jsonDoc) {
+        region = jsonDoc["region"].toString();
         topicName = jsonDoc["topicName"].toString();
         topicArn = jsonDoc["topicArn"].toString();
         messageCount = jsonDoc["messageCount"].toInteger();
         size = jsonDoc["size"].toInteger();
-        owner = jsonDoc["delay"].toString();
+        owner = jsonDoc["owner"].toString();
         created = QDateTime::fromString(jsonDoc["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonDoc["modified"].toString(), Qt::ISODate);
     }

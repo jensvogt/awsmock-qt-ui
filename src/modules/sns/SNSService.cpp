@@ -67,6 +67,135 @@ void SNSService::ListTopics(const QString &prefix) {
                       });
 }
 
+void SNSService::ListTopicAttributes(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "messages";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["topicArn"] = topicArn;
+    jRequest["prefix"] = "";
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-attribute-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              JsonUtils::WriteJsonString(QJsonDocument::fromJson(response).object());
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  ListTopicAttributesCountersResponse snsResponse;
+                                  snsResponse.FromJson(jsonDoc);
+                                  emit ListTopicAttributesSignal(snsResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("ListTopicAttributes", timer.elapsed());
+                      });
+}
+
+void SNSService::ListTopicTags(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "messages";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["prefix"] = topicArn;
+    jRequest["prefix"] = "";
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-tags-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SNSListTopicResult snsResponse;
+                                  snsResponse.FromJson(jsonDoc);
+                                  emit ListTopicSignal(snsResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("ListTopicTags", timer.elapsed());
+                      });
+}
+
+void SNSService::ListTopicSubscriptions(const QString &topicArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "messages";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["prefix"] = topicArn;
+    jRequest["prefix"] = "";
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-subscriptions-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SNSListTopicResult snsResponse;
+                                  snsResponse.FromJson(jsonDoc);
+                                  emit ListTopicSignal(snsResponse);
+                              } else {
+                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("ListTopicSubscriptions", timer.elapsed());
+                      });
+}
+
 void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
     QElapsedTimer timer;
     timer.start();

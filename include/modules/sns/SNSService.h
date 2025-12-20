@@ -24,6 +24,7 @@
 #include <dto/sns/SNSListTopicResult.h>
 #include <dto/sns/SNSSendMessageResponse.h>
 #include <dto/sns/SNSSendMessageRequest.h>
+#include <dto/sns/SNSListTopicAttributeCountersResponse.h>
 
 class SNSService : public BaseService {
     Q_OBJECT
@@ -49,14 +50,6 @@ public:
     void ListTopics(const QString &prefix);
 
     /**
-     * @brief List SNS messages
-     *
-     * @param topicArn topic ARN
-     * @param prefix topic name prefix
-     */
-    void ListMessages(const QString &topicArn, const QString &prefix);
-
-    /**
      * @brief Purge all messages
      *
      * @param topicArn ARN of the parent topic
@@ -67,6 +60,35 @@ public:
      * @brief Purge all topics
      */
     void PurgeAllTopics();
+
+    /**
+     * @brief List SNS topic attributes
+     *
+     * @param topicArn topic AWS ARN
+     */
+    void ListTopicAttributes(const QString &topicArn);
+
+    /**
+     * @brief List SNS topic tags
+     *
+     * @param topicArn topic AWS ARN
+     */
+    void ListTopicTags(const QString &topicArn);
+
+    /**
+     * @brief List SNS topic subscriptions
+     *
+     * @param topicArn topic AWS ARN
+     */
+    void ListTopicSubscriptions(const QString &topicArn);
+
+    /**
+     * @brief List SNS messages
+     *
+     * @param topicArn topic ARN
+     * @param prefix topic name prefix
+     */
+    void ListMessages(const QString &topicArn, const QString &prefix);
 
     /**
      * @brief Purge all messages of a topic
@@ -115,6 +137,13 @@ signals:
     void ListTopicSignal(const SNSListTopicResult &listTopicResult);
 
     void GetTopicDetailsSignal(const SNSGetTopicDetailsResponse &response);
+
+    /**
+     * @brief Signaled, when topic attributes list arrived.
+     *
+     * @param listTopicAttributesResponse list topic attributes response
+     */
+    void ListTopicAttributesSignal(const ListTopicAttributesCountersResponse &listTopicAttributesResponse);
 
     void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
 
