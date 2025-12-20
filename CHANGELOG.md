@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.0...v1.6.1) (2025-12-20)
+
+
+### Bug Fixes
+
+* bug in datetime localization ([539262e](https://github.com/jensvogt/awsmock-qt-ui/commit/539262e476438eb1b547facddf0b9b0a3234f16a))
+
 ## [1.6.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.5.0...v1.6.0) (2025-12-20)
 
 
