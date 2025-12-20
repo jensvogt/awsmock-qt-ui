@@ -1,14 +1,11 @@
 
 #include <modules/ssm/SSMParameterList.h>
 
-#include "modules/ssm/SSMParameterDialog.h"
-
 SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service
     _ssmService = new SSMService();
     connect(_ssmService, &SSMService::ListParameterSignal, this, &SSMParameterList::HandleParameterListSignal);
-    //connect(_ssmService, &SSMService::ReloadParametersSignal, this, &SSMParameterList::HandleReloadParameterSignal);
 
     // Toolbar
     const auto toolBar = new QHBoxLayout();
@@ -23,8 +20,8 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new parameter");
     connect(addButton, &QPushButton::clicked, [this]() {
-        //SSMParameterAddDialog dialog(_bucketDetailsResponse);
-        //dialog.exec();
+        SSMParameterAddDialog dialog(this);
+        dialog.exec();
     });
 
     // Toolbar refresh action
@@ -99,7 +96,7 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
         const QString parameterName = _dataModel->item(sourceIndex.row(), 0)->text();
 
         // Open details dialog
-        SSMParameterDialog dialog(parameterName, this);
+        SSMParameterEditDialog dialog(parameterName, this);
         dialog.exec();
     });
 

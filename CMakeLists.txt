@@ -246,9 +246,12 @@ set(PROJECT_SOURCES
         src/modules/ssm/SSMService.cpp
         include/dto/ssm/SSMParameterCounter.h
         include/dto/ssm/SSMParameterGetResponse.h
-        src/modules/ssm/SSMParameterDialog.cpp
-        src/modules/ssm/SSMParameterDialog.ui
-        include/modules/ssm/SSMParameterDialog.h
+        src/modules/ssm/SSMParameterEditDialog.cpp
+        src/modules/ssm/SSMParameterEditDialog.ui
+        include/modules/ssm/SSMParameterEditDialog.h
+        src/modules/ssm/SSMParameterAddDialog.cpp
+        include/modules/ssm/SSMParameterAddDialog.h
+        src/modules/ssm/SSMParameterAddDialog.ui
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
