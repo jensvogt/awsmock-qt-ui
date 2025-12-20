@@ -8,6 +8,7 @@
 #include <utils/BaseDialog.h>
 #include <utils/PrefixFilterModel.h>
 #include <utils/IconUtils.h>
+#include <utils/DateTimeUtils.h>
 #include <modules/sns/SNSService.h>
 
 namespace Ui {

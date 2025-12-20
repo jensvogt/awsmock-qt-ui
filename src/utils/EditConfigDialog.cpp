@@ -70,6 +70,14 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     connect(_ui->styleTypeCombo, &QComboBox::currentTextChanged, this, [this]() {
         Configuration::instance().SetValue("ui.style-type", _ui->styleTypeCombo->currentText());
     });
+    for (auto jArray = Configuration::instance().GetValue<QJsonArray>("ui.locales"); const auto &locale: jArray) {
+        _ui->localeCombo->addItem(locale.toString(), locale.toString());
+    }
+    const int index = _ui->localeCombo->findData(Configuration::instance().GetValue<QString>("ui.default-locale", ""));
+    _ui->localeCombo->setCurrentIndex(index);
+    connect(_ui->localeCombo, &QComboBox::currentTextChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.default-locale", _ui->localeCombo->currentText());
+    });
 
     // Default tab
     _ui->tabWidget->setCurrentIndex(0);

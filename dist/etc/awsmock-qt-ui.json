@@ -27,6 +27,12 @@
       "ImportInfrastructure": "/usr/local/awsmock/init",
       "FTPUploadDialog": "/home/vogje01/work/libri/Libri.ONE/PIM/tests"
     },
+    "default-locale": "DE",
+    "locales": [
+      "US",
+      "UK",
+      "DE"
+    ],
     "style": "Fusion",
     "style-type": "Dark"
   }

@@ -35,8 +35,8 @@ void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGe
     _ui->ownerEdit->setText(bucketGetResponse.owner);
     _ui->keysEdit->setText(QString::number(bucketGetResponse.objectCount));
     _ui->sizeEdit->setText(QString::number(bucketGetResponse.size));
-    _ui->createdEdit->setText(bucketGetResponse.created.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->modifiedEdit->setText(bucketGetResponse.modified.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(bucketGetResponse.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(bucketGetResponse.modified));
 
     for (auto it = bucketGetResponse.defaultMetadata.cbegin(); it != bucketGetResponse.defaultMetadata.cend(); ++it) {
         const int row = _dataModel->rowCount();

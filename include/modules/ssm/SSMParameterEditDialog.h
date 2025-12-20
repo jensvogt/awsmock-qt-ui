@@ -16,6 +16,7 @@
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <utils/DateTimeUtils.h>
 #include <modules/ssm/SSMService.h>
 
 QT_BEGIN_NAMESPACE

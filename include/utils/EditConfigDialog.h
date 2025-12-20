@@ -5,8 +5,11 @@
 #ifndef AWSMOCK_QT_UI_EDITCONFIGDIALOG_H
 #define AWSMOCK_QT_UI_EDITCONFIGDIALOG_H
 
+// Qt includes
 #include <QDialog>
+#include <QList>
 
+// AwsMock includes
 #include <utils/Configuration.h>
 
 QT_BEGIN_NAMESPACE
@@ -21,8 +24,16 @@ class EditConfigDialog final : public QDialog {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor
+     *
+     * @param parent parent widget
+     */
     explicit EditConfigDialog(QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~EditConfigDialog() override;
 
 private slots:

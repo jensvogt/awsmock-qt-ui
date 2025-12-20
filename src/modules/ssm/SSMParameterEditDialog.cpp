@@ -57,8 +57,8 @@ void SSMParameterEditDialog::HandleParameterGetSignal(const SSMParameterGetRespo
     _ui->nameEdit->setText(parameterGetResponse.parameter.name);
     _ui->arnEdit->setText(parameterGetResponse.parameter.arn);
     _ui->kmsKeyIdEdit->setText(parameterGetResponse.parameter.kmsKeyArn);
-    _ui->createdEdit->setText(parameterGetResponse.parameter.created.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->modifiedEdit->setText(parameterGetResponse.parameter.modified.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(parameterGetResponse.parameter.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(parameterGetResponse.parameter.modified));
 
     // Value field
     _ui->secretStringEdit->setEchoMode(QLineEdit::Password);

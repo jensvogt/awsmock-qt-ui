@@ -5,6 +5,8 @@
 #include <QStandardItemModel>
 #include <utils/TableUtils.h>
 
+#include "utils/DateTimeUtils.h"
+
 
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const QString &value) {
     tableWidget->setItem(row, col, new QTableWidgetItem(value));
@@ -34,7 +36,7 @@ void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int c
 
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const QDateTime &value) {
     const auto item = new QTableWidgetItem();
-    item->setData(Qt::EditRole, value.toString("yyyy-MM-dd hh:mm:ss"));
+    item->setData(Qt::EditRole, DateTimeUtils::GetDateTimeFormat(value));
     tableWidget->setItem(row, col, item);
 }
 
@@ -92,7 +94,7 @@ void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const i
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QDateTime &value) {
-    dataModel->setItem(row, col, new QStandardItem(value.toString("yyyy-MM-dd hh:mm:ss")));
+    dataModel->setItem(row, col, new QStandardItem(DateTimeUtils::GetDateTimeFormat(value)));
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) {

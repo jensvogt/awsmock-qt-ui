@@ -6,7 +6,6 @@
 
 #include <modules/lambda/LambdaLogsDialog.h>
 #include "ui_LambdaLogsDialog.h"
-#include "utils/StringUtils.h"
 
 LambdaLogsDialog::LambdaLogsDialog(const QString &oid, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaLogsDialog) {
 
@@ -44,7 +43,7 @@ void LambdaLogsDialog::HandleGetResult(const LambdaGetResultsResponse &lambdaLog
     // Header
     _ui->regionEdit->setText(lambdaLogsResult.lambdaLogCounter.region);
     _ui->functionEdit->setText(lambdaLogsResult.lambdaLogCounter.lambdaName);
-    _ui->timestampEdit->setText(lambdaLogsResult.lambdaLogCounter.timestamp.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->timestampEdit->setText(DateTimeUtils::GetDateTimeFormat(lambdaLogsResult.lambdaLogCounter.timestamp));
 
     // Tabs
     _ui->requestEdit->setText(lambdaLogsResult.lambdaLogCounter.requestBody);

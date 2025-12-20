@@ -10,10 +10,11 @@
 #include <QStandardItemModel>
 
 // AwsMock includes
-#include <modules/s3/S3Service.h>
-#include <modules/s3/S3ObjectMetadataDialog.h>
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
+#include <modules/s3/S3Service.h>
+#include <modules/s3/S3ObjectMetadataDialog.h>
 
 QT_BEGIN_NAMESPACE
 

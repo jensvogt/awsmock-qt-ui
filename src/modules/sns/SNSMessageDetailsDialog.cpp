@@ -1,6 +1,7 @@
 
 #include <modules/sns/SNSMessageDetailsDialog.h>
 #include "ui_SNSMessageDetailsDialog.h"
+#include "utils/DateTimeUtils.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
     _ui->setupUi(this);
@@ -46,8 +47,8 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     _ui->messageIdEdit->setText(response.messageId);
     _ui->topicArnEdit->setText(response.topicArn);
     _ui->contentTypeEdit->setText(response.contentType);
-    _ui->createdEdit->setText(response.created.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->modifiedEdit->setText(response.modified.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(response.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(response.modified));
 
     // Body
     _ui->bodyPlainTextEdit->setPlainText(response.message);

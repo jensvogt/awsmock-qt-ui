@@ -6,7 +6,6 @@
 
 #include <modules/application/ApplicationEditDialog.h>
 #include "ui_ApplicationEditDialog.h"
-#include "modules/application/ApplicationLogsDialog.h"
 
 ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent),
                                                                                      _ui(new Ui::ApplicationEditDialog) {
@@ -108,9 +107,9 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->statusEdit->setText(_application.status);
     _ui->enabledCheckBox->setChecked(_application.enabled);
     _ui->descriptionEdit->setText(_application.description);
-    _ui->lastStartedEdit->setText(_application.lastStarted.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->createdEdit->setText(_application.created.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->modifiedEdit->setText(_application.modified.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->lastStartedEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.lastStarted));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.modified));
 
     // Update environment table
     int r = 0;
