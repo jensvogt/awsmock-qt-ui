@@ -1,7 +1,6 @@
 #include <modules/dashboard/DashboardService.h>
 
 DashboardService::DashboardService() {
-    _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 
     // Create RestManager in its own thread
     _restManager = new RestManager();
@@ -37,7 +36,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
         [this, config, json = requestDoc.toJson(), timer]() {
             _restManager = new RestManager();
             _restManager->post(
-                _url,
+                GetBaseUrl(),
                 json,
                 {
                     {"x-awsmock-target", "monitoring"},
