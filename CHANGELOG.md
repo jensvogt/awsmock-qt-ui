@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.5.0...v1.6.0) (2025-12-20)
+
+
+### Features
+
+* add SNS tabs (attributes, tags, subscriptions) ([ff25fd2](https://github.com/jensvogt/awsmock-qt-ui/commit/ff25fd21aa64f54a6518dd0b1ade8095da1b6073))
+
 ## [1.5.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.88...v1.5.0) (2025-12-20)
 
 
