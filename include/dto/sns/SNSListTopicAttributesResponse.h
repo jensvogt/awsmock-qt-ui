@@ -2,8 +2,8 @@
 // Created by vogje01 on 12/20/25.
 //
 
-#ifndef AWSMOCK_QT_UI_SNS_LIST_TOPIC_ATTRIBUTE_COUNTERS_RESPONSE_H
-#define AWSMOCK_QT_UI_SNS_LIST_TOPIC_ATTRIBUTE_COUNTERS_RESPONSE_H
+#ifndef AWSMOCK_QT_UI_SNS_LIST_TOPIC_ATTRIBUTES_RESPONSE_H
+#define AWSMOCK_QT_UI_SNS_LIST_TOPIC_ATTRIBUTES_RESPONSE_H
 
 // Qt includes
 #include <QList>
@@ -11,10 +11,10 @@
 // AwsMock includes
 #include <dto/sns/SNSTopicAttribute.h>
 
-struct ListTopicAttributesCountersResponse {
+struct ListTopicAttributesResponse {
 
     int total{};
- QList<SNSTopicAttribute> topicAttributes{};
+    QList<SNSTopicAttribute> topicAttributes{};
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
@@ -27,4 +27,4 @@ struct ListTopicAttributesCountersResponse {
         }
     }
 };
-#endif //AWSMOCK_QT_UI_SNS_LIST_TOPIC_ATTRIBUTE_COUNTERS_RESPONSE_H
+#endif //AWSMOCK_QT_UI_SNS_LIST_TOPIC_ATTRIBUTES_RESPONSE_H

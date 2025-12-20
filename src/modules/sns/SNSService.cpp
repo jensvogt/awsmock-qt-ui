@@ -73,7 +73,7 @@ void SNSService::ListTopicAttributes(const QString &topicArn) {
 
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["column"] = "key";
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
@@ -95,9 +95,8 @@ void SNSService::ListTopicAttributes(const QString &topicArn) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              JsonUtils::WriteJsonString(QJsonDocument::fromJson(response).object());
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  ListTopicAttributesCountersResponse snsResponse;
+                                  ListTopicAttributesResponse snsResponse;
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListTopicAttributesSignal(snsResponse);
                               } else {
@@ -116,13 +115,13 @@ void SNSService::ListTopicTags(const QString &topicArn) {
 
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["column"] = "name";
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["prefix"] = topicArn;
+    jRequest["topicArn"] = topicArn;
     jRequest["prefix"] = "";
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
@@ -133,16 +132,15 @@ void SNSService::ListTopicTags(const QString &topicArn) {
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
-                          {"x-awsmock-action", "list-tags-counters"},
+                          {"x-awsmock-action", "list-tag-counters"},
                           {"content-type", "application/json"}
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  SNSListTopicResult snsResponse;
+                                  ListTopicTagsResponse snsResponse;
                                   snsResponse.FromJson(jsonDoc);
-                                  emit ListTopicSignal(snsResponse);
+                                  emit ListTopicTagsSignal(snsResponse);
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }
@@ -159,13 +157,13 @@ void SNSService::ListTopicSubscriptions(const QString &topicArn) {
 
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["column"] = "id";
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["prefix"] = topicArn;
+    jRequest["topicArn"] = topicArn;
     jRequest["prefix"] = "";
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
@@ -176,7 +174,7 @@ void SNSService::ListTopicSubscriptions(const QString &topicArn) {
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "sns"},
-                          {"x-awsmock-action", "list-subscriptions-counters"},
+                          {"x-awsmock-action", "list-subscription-counters"},
                           {"content-type", "application/json"}
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {

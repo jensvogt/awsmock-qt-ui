@@ -2,6 +2,7 @@
 #define SNS_SERVICE_H
 
 // Qt includes
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -24,7 +25,8 @@
 #include <dto/sns/SNSListTopicResult.h>
 #include <dto/sns/SNSSendMessageResponse.h>
 #include <dto/sns/SNSSendMessageRequest.h>
-#include <dto/sns/SNSListTopicAttributeCountersResponse.h>
+#include <dto/sns/SNSListTopicAttributesResponse.h>
+#include <dto/sns/SNSListTopicTagsResponse.h>
 
 class SNSService : public BaseService {
     Q_OBJECT
@@ -134,8 +136,18 @@ public:
     void DeleteMessage(const QString &topicArn, const QString &messageId);
 
 signals:
+    /**
+     * @brief Signaled, when a topic arrived
+     *
+     * @param listTopicResult topic list response
+     */
     void ListTopicSignal(const SNSListTopicResult &listTopicResult);
 
+    /**
+     * @brief Signaled, when a topic details arrived.
+     *
+     * @param response SNS topic details response
+     */
     void GetTopicDetailsSignal(const SNSGetTopicDetailsResponse &response);
 
     /**
@@ -143,7 +155,14 @@ signals:
      *
      * @param listTopicAttributesResponse list topic attributes response
      */
-    void ListTopicAttributesSignal(const ListTopicAttributesCountersResponse &listTopicAttributesResponse);
+    void ListTopicAttributesSignal(const ListTopicAttributesResponse &listTopicAttributesResponse);
+
+    /**
+     * @brief Signaled, when topic tag list arrived.
+     *
+     * @param listTopicTagsResponse list topic tag response
+     */
+    void ListTopicTagsSignal(const ListTopicTagsResponse &listTopicTagsResponse);
 
     void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
 
