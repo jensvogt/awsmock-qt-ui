@@ -23,6 +23,8 @@
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
 #include <modules/ssm/SSMService.h>
+#include <modules/ssm/SSMParameterAddDialog.h>
+#include <modules/ssm/SSMParameterEditDialog.h>
 
 class SSMParameterList final : public BasePage {
     Q_OBJECT

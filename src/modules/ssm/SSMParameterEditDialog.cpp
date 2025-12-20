@@ -4,20 +4,19 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_SSMParameterDialog.h" resolved
 
-#include <QInputDialog>
-#include <modules/ssm/SSMParameterDialog.h>
-#include "ui_SSMParameterDialog.h"
+#include <modules/ssm/SSMParameterEditDialog.h>
+#include "ui_SSMParameterEditDialog.h"
 
-SSMParameterDialog::SSMParameterDialog(const QString &parameterName, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SSMParameterDialog), _parameterName(parameterName) {
+SSMParameterEditDialog::SSMParameterEditDialog(QString parameterName, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SSMParameterEditDialog), _parameterName(std::move((parameterName))) {
 
     // Connect service
     _ssmService = new SSMService();
-    connect(_ssmService, &SSMService::GetParameterSignal, this, &SSMParameterDialog::HandleParameterGetSignal);
+    connect(_ssmService, &SSMService::GetParameterSignal, this, &SSMParameterEditDialog::HandleParameterGetSignal);
 
     // Initialize UI components
     _ui->setupUi(this);
-    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SSMParameterDialog::HandleAccept);
-    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SSMParameterDialog::HandleReject);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SSMParameterEditDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SSMParameterEditDialog::HandleReject);
 
     // Setup tabs
     SetupTagsTab();
@@ -26,29 +25,29 @@ SSMParameterDialog::SSMParameterDialog(const QString &parameterName, QWidget *pa
     _ui->tabWidget->setCurrentIndex(0);
 
     // Load content
-    SSMParameterDialog::LoadContent();
+    SSMParameterEditDialog::LoadContent();
 }
 
-SSMParameterDialog::~SSMParameterDialog() {
+SSMParameterEditDialog::~SSMParameterEditDialog() {
     delete _ui;
 }
 
-void SSMParameterDialog::HandleAccept() {
+void SSMParameterEditDialog::HandleAccept() {
     if (_changed) {
         _ssmService->UpdateParameter(_parameter);
     }
     accept();
 }
 
-void SSMParameterDialog::HandleReject() {
+void SSMParameterEditDialog::HandleReject() {
     accept();
 }
 
-void SSMParameterDialog::LoadContent() {
+void SSMParameterEditDialog::LoadContent() {
     _ssmService->GetParameter(_parameterName);
 }
 
-void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse) {
+void SSMParameterEditDialog::HandleParameterGetSignal(const SSMParameterGetResponse &parameterGetResponse) {
 
     // Save parameter
     _parameter = parameterGetResponse.parameter;
@@ -103,7 +102,7 @@ void SSMParameterDialog::HandleParameterGetSignal(const SSMParameterGetResponse 
     _ui->tagsTableView->selectRow(selectedRow);
 }
 
-void SSMParameterDialog::SetupTagsTab() {
+void SSMParameterEditDialog::SetupTagsTab() {
 
     // Tags refresh button
     _ui->tagsRefreshButton->setText(nullptr);
