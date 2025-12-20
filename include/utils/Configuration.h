@@ -37,6 +37,28 @@ public:
     }
 
     template<class T>
+    T GetValue(const QString &path) {
+        const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
+        if constexpr (std::is_same_v<T, int>) {
+            return static_cast<T>(v.toInt());
+        } else if constexpr (std::is_same_v<T, long>) {
+            return static_cast<T>(v.toInteger());
+        } else if constexpr (std::is_same_v<T, double>) {
+            return static_cast<T>(v.toDouble());
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return static_cast<T>(v.toString());
+        } else if constexpr (std::is_same_v<T, bool>) {
+            return static_cast<T>(v.toBool());
+        } else if constexpr (std::is_same_v<T, QJsonObject>) {
+            return static_cast<T>(v.toObject());
+        } else if constexpr (std::is_same_v<T, QJsonArray>) {
+            return static_cast<T>(v.toArray());
+        } else {
+            return {};
+        }
+    }
+
+    template<class T>
     T GetValue(const QString &path, T defaultValue) {
         const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
         if constexpr (std::is_same_v<T, int>) {

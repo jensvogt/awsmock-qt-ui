@@ -135,8 +135,8 @@ void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse 
     _tableView->setSortingEnabled(false);
     for (auto r = 0, c = 0; r < listParameterResponse.parameterCounters.count(); r++, c = 0) {
         SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).name);
-        SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).created.toString("yyyy-MM-dd hh:mm:ss"));
-        SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).modified.toString("yyyy-MM-dd hh:mm:ss"));
+        SetColumn(_dataModel, r, c++, DateTimeUtils::GetDateTimeFormat(listParameterResponse.parameterCounters.at(r).created));
+        SetColumn(_dataModel, r, c++, DateTimeUtils::GetDateTimeFormat(listParameterResponse.parameterCounters.at(r).modified));
         SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).arn);
     }
     // Reset selection

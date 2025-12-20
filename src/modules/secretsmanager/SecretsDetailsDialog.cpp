@@ -1,5 +1,6 @@
 #include <modules/secretsmanager/SecretsDetailsDialog.h>
 #include "ui_SecretsDetailsDialog.h"
+#include "utils/DateTimeUtils.h"
 
 SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SecretsDetailsDialog), _secretArn(std::move(secretArn)) {
 
@@ -89,12 +90,12 @@ void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
     _ui->nameEdit->setText(secretCounter.name);
     _ui->arnEdit->setText(secretCounter.arn);
     _ui->secretIdEdit->setText(secretCounter.secretId);
-    _ui->lastRotatedEdit->setText(secretCounter.lastRotatedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->nextRotationEdit->setText(secretCounter.nextRotatedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->lastAccessedEdit->setText(secretCounter.lastAccessedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->deleteDateEdit->setText(secretCounter.deletedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->createdEdit->setText(secretCounter.created.toString("yyyy-mm-dd HH:mm"));
-    _ui->modifiedEdit->setText(secretCounter.modified.toString("yyyy-mm-dd HH:mm"));
+    _ui->lastRotatedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.lastRotatedDate));
+    _ui->nextRotationEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.nextRotatedDate));
+    _ui->lastAccessedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.lastAccessedDate));
+    _ui->deleteDateEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.deletedDate));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.modified));
     _ui->valueEdit->setText(secretCounter.secretString);
 
     // Save secret ID

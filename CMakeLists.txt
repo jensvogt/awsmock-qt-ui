@@ -258,6 +258,7 @@ set(PROJECT_SOURCES
         include/dto/sns/SNSTopicTag.h
         include/dto/sns/SNSTopicSubscription.h
         include/dto/sns/SNSListTopicSubscriptionsResponse.h
+        include/utils/DateTimeUtils.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

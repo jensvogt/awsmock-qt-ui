@@ -6,6 +6,7 @@
 
 #include <modules/s3/S3ObjectEditDialog.h>
 #include "ui_S3ObjectEditDialog.h"
+#include "utils/DateTimeUtils.h"
 
 S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent) : BaseDialog(parent),
                                                                                    _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
@@ -74,8 +75,8 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
     _ui->ownerEdit->setText(objectDetailsResponse.owner);
     _ui->contentTypeEdit->setText(objectDetailsResponse.contentType);
     _ui->sizeEdit->setText(QString::number(objectDetailsResponse.size));
-    _ui->createdEdit->setText(objectDetailsResponse.created.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->modifiedEdit->setText(objectDetailsResponse.modified.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.modified));
     _ui->bodyTextEdit->setPlainText(objectDetailsResponse.body);
 
     // Meta data

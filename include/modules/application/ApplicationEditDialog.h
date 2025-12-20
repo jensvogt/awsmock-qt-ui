@@ -10,10 +10,12 @@
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
 #include <modules/application/ApplicationService.h>
 #include <modules/application/ApplicationTagDialog.h>
 #include <modules/application/ApplicationEnvironmentEditDialog.h>
 #include <modules/application/ApplicationDependencyDialog.h>
+#include <modules/application/ApplicationLogsDialog.h>
 
 #include "ApplicationLogsDialog.h"
 
