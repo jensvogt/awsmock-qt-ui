@@ -2,6 +2,7 @@
 #define SNS_SERVICE_H
 
 // Qt includes
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -24,6 +25,9 @@
 #include <dto/sns/SNSListTopicResult.h>
 #include <dto/sns/SNSSendMessageResponse.h>
 #include <dto/sns/SNSSendMessageRequest.h>
+#include <dto/sns/SNSListTopicAttributesResponse.h>
+#include <dto/sns/SNSListTopicTagsResponse.h>
+#include <dto/sns/SNSListTopicSubscriptionsResponse.h>
 
 class SNSService : public BaseService {
     Q_OBJECT
@@ -49,14 +53,6 @@ public:
     void ListTopics(const QString &prefix);
 
     /**
-     * @brief List SNS messages
-     *
-     * @param topicArn topic ARN
-     * @param prefix topic name prefix
-     */
-    void ListMessages(const QString &topicArn, const QString &prefix);
-
-    /**
      * @brief Purge all messages
      *
      * @param topicArn ARN of the parent topic
@@ -67,6 +63,35 @@ public:
      * @brief Purge all topics
      */
     void PurgeAllTopics();
+
+    /**
+     * @brief List SNS topic attributes
+     *
+     * @param topicArn topic AWS ARN
+     */
+    void ListTopicAttributes(const QString &topicArn);
+
+    /**
+     * @brief List SNS topic tags
+     *
+     * @param topicArn topic AWS ARN
+     */
+    void ListTopicTags(const QString &topicArn);
+
+    /**
+     * @brief List SNS topic subscriptions
+     *
+     * @param topicArn topic AWS ARN
+     */
+    void ListTopicSubscriptions(const QString &topicArn);
+
+    /**
+     * @brief List SNS messages
+     *
+     * @param topicArn topic ARN
+     * @param prefix topic name prefix
+     */
+    void ListMessages(const QString &topicArn, const QString &prefix);
 
     /**
      * @brief Purge all messages of a topic
@@ -112,9 +137,40 @@ public:
     void DeleteMessage(const QString &topicArn, const QString &messageId);
 
 signals:
+    /**
+     * @brief Signaled, when a topic arrived
+     *
+     * @param listTopicResult topic list response
+     */
     void ListTopicSignal(const SNSListTopicResult &listTopicResult);
 
+    /**
+     * @brief Signaled, when a topic details arrived.
+     *
+     * @param response SNS topic details response
+     */
     void GetTopicDetailsSignal(const SNSGetTopicDetailsResponse &response);
+
+    /**
+     * @brief Signaled, when topic attributes list arrived.
+     *
+     * @param listTopicAttributesResponse list topic attributes response
+     */
+    void ListTopicAttributesSignal(const ListTopicAttributesResponse &listTopicAttributesResponse);
+
+    /**
+     * @brief Signaled, when topic tag list arrived.
+     *
+     * @param listTopicTagsResponse list topic tag response
+     */
+    void ListTopicTagsSignal(const ListTopicTagsResponse &listTopicTagsResponse);
+
+    /**
+     * @brief Signaled, when topic subscription list arrived.
+     *
+     * @param listTopicSubscriptionResponse list topic subscriptions response
+     */
+    void ListTopicSubscriptionsSignal(const ListTopicSubscriptionsResponse &listTopicSubscriptionResponse);
 
     void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
 

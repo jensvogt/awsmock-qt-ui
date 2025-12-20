@@ -164,17 +164,17 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Topic");
-    editAction->setToolTip("Edit the Topic details");
+    editAction->setToolTip("Edit the topic details");
 
     menu.addSeparator();
 
     QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Topic");
-    purgeAction->setToolTip("Purge the Topic");
+    purgeAction->setToolTip("Purge the topic");
 
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Topic");
-    deleteAction->setToolTip("Delete the Topic");
+    deleteAction->setToolTip("Delete the topic");
 
     const QString topicArn = tableWidget->item(row, 7)->text();
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
@@ -182,8 +182,7 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
     } else if (selectedAction == deleteAction) {
         _snsService->DeleteTopic(topicArn);
     } else if (selectedAction == editAction) {
-        if (SNSTopicDetailsDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
-            qDebug() << "SNS Topic edit dialog exit";
-        }
+        SNSTopicDetailsDialog dialog(topicArn);
+        dialog.exec();
     }
 }
