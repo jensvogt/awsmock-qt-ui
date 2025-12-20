@@ -179,11 +179,10 @@ void SNSService::ListTopicSubscriptions(const QString &topicArn) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  SNSListTopicResult snsResponse;
+                                  ListTopicSubscriptionsResponse snsResponse;
                                   snsResponse.FromJson(jsonDoc);
-                                  emit ListTopicSignal(snsResponse);
+                                  emit ListTopicSubscriptionsSignal(snsResponse);
                               } else {
                                   QMessageBox::critical(nullptr, "Error", "Response is not an object!");
                               }

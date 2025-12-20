@@ -70,9 +70,22 @@ private:
      */
     void CurrentTabChanged(int index) const;
 
+    /**
+     * @brief Setup attributes table
+     */
     void SetupAttributesTable();
 
+    /**
+     * @brief Setup tags table
+     */
     void SetupTagsTable();
+
+    /**
+     * @brief Setup subscription table
+     */
+    void SetupSubscriptionsTable();
+
+    void UpdateTopicSubscriptions(const ListTopicSubscriptionsResponse &response) const;
 
     /**
      * @brief UI components
@@ -133,6 +146,26 @@ private:
      * @brief Sort order tags
      */
     Qt::SortOrder _tagsSortOrder = Qt::AscendingOrder;
+
+    /**
+     *  @brief Subscriptions table data model
+     */
+    QStandardItemModel *_subscriptionsDataModel{};
+
+    /**
+     * @brief Subscriptions data proxy model
+     */
+    PrefixFilterProxyModel *_subscriptionsProxyModel{};
+
+    /**
+     * @brief Sort column index for subscriptions
+     */
+    int _subscriptionsSortColumn = 0;
+
+    /**
+     * @brief Sort order subscriptions
+     */
+    Qt::SortOrder _subscriptionsSortOrder = Qt::AscendingOrder;
 };
 
 #endif // SNS_TOPIC_DETAILS_DIALOG_H

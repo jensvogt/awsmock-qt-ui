@@ -13,6 +13,7 @@ SNSTopicDetailsDialog::SNSTopicDetailsDialog(const QString &topicArn, QWidget *p
     connect(_snsService, &SNSService::GetTopicDetailsSignal, this, &SNSTopicDetailsDialog::UpdateTopicDetails);
     connect(_snsService, &SNSService::ListTopicAttributesSignal, this, &SNSTopicDetailsDialog::UpdateTopicAttributes);
     connect(_snsService, &SNSService::ListTopicTagsSignal, this, &SNSTopicDetailsDialog::UpdateTopicTags);
+    connect(_snsService, &SNSService::ListTopicSubscriptionsSignal, this, &SNSTopicDetailsDialog::UpdateTopicSubscriptions);
 
     // Tab widget
     connect(_ui->tabWidget, &QTabWidget::currentChanged, this, &SNSTopicDetailsDialog::CurrentTabChanged);
@@ -21,6 +22,7 @@ SNSTopicDetailsDialog::SNSTopicDetailsDialog(const QString &topicArn, QWidget *p
     // Tables
     SetupAttributesTable();
     SetupTagsTable();
+    SetupSubscriptionsTable();
 
     // Load initial content
     SNSTopicDetailsDialog::LoadContent();
@@ -158,3 +160,54 @@ void SNSTopicDetailsDialog::SetupTagsTable() {
     });
 }
 
+void SNSTopicDetailsDialog::SetupSubscriptionsTable() {
+
+    // Headers  
+    const QStringList subscriptionsHeaders = QStringList() = {tr("Id"), tr("Endpoint"), tr("Protocol"), tr("Owner")};
+    _subscriptionsDataModel = new QStandardItemModel(this);
+    _subscriptionsDataModel->setHorizontalHeaderLabels(subscriptionsHeaders);
+    _subscriptionsDataModel->setColumnCount(static_cast<int>(subscriptionsHeaders.count()));
+
+    // Proxy model for prefix filtering
+    _subscriptionsProxyModel = new PrefixFilterProxyModel(this);
+    _subscriptionsProxyModel->setSourceModel(_subscriptionsDataModel);
+    _ui->subscriptionTable->setModel(_subscriptionsProxyModel);
+
+    _ui->subscriptionTable->setShowGrid(true);
+    _ui->subscriptionTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->subscriptionTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->subscriptionTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
+    _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+    _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents); // name
+    _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents); // name
+
+    // Buttons
+    _ui->subscriptionAddButton->setText(nullptr);
+    _ui->subscriptionAddButton->setIcon(IconUtils::GetIcon("add"));
+
+    _ui->subscriptionRefreshButton->setText(nullptr);
+    _ui->subscriptionRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->subscriptionRefreshButton, &QPushButton::clicked, this, [this]() {
+        _snsService->ListTopicSubscriptions(topicArn);
+    });
+}
+
+void SNSTopicDetailsDialog::UpdateTopicSubscriptions(const ListTopicSubscriptionsResponse &response) const {
+
+    // Save selection
+    const int selectedRow = _ui->subscriptionTable->selectionModel()->currentIndex().row();
+    _ui->subscriptionTable->setSortingEnabled(false);
+
+    for (int r = 0, c = 0; r < response.topicSubscriptions.count(); r++, c = 0) {
+        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).id);
+        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).topicArn);
+        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).protocol);
+        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).owner);
+    }
+
+    // Reset selection
+    _ui->subscriptionTable->setSortingEnabled(true);
+    _ui->subscriptionTable->sortByColumn(_subscriptionsSortColumn, _subscriptionsSortOrder);
+    _ui->subscriptionTable->selectRow(selectedRow);
+}

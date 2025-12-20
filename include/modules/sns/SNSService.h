@@ -27,6 +27,7 @@
 #include <dto/sns/SNSSendMessageRequest.h>
 #include <dto/sns/SNSListTopicAttributesResponse.h>
 #include <dto/sns/SNSListTopicTagsResponse.h>
+#include <dto/sns/SNSListTopicSubscriptionsResponse.h>
 
 class SNSService : public BaseService {
     Q_OBJECT
@@ -163,6 +164,13 @@ signals:
      * @param listTopicTagsResponse list topic tag response
      */
     void ListTopicTagsSignal(const ListTopicTagsResponse &listTopicTagsResponse);
+
+    /**
+     * @brief Signaled, when topic subscription list arrived.
+     *
+     * @param listTopicSubscriptionResponse list topic subscriptions response
+     */
+    void ListTopicSubscriptionsSignal(const ListTopicSubscriptionsResponse &listTopicSubscriptionResponse);
 
     void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
 

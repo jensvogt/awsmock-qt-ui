@@ -157,7 +157,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="attributesTab">
       <attribute name="title">
@@ -282,6 +282,13 @@
           <widget class="QPushButton" name="subscriptionAddButton">
            <property name="text">
             <string>Add</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="subscriptionRefreshButton">
+           <property name="text">
+            <string>Refresh</string>
            </property>
           </widget>
          </item>
