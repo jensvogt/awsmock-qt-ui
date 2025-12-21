@@ -2,59 +2,54 @@
 // Created by vogje01 on 12/21/25.
 //
 
-#ifndef AWSMOCK_QT_UI_DYNAMODB_ADD_TABLE_DIALOG_H
-#define AWSMOCK_QT_UI_DYNAMODB_ADD_TABLE_DIALOG_H
+#ifndef AWSMOCK_QT_UI_DYNAMODB_EDIT_TABLE_DIALOG_H
+#define AWSMOCK_QT_UI_DYNAMODB_EDIT_TABLE_DIALOG_H
 
 // Qt includes
 #include <QDialog>
-#include <QStandardItemModel>
 
 // AwsMock includes
-#include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
-#include <dto/dynamodb/DynamoDbCreateTableRequest.h>
 #include <modules/dynamodb/DynamoDbService.h>
 #include <modules/dynamodb/DynamoDbAddAttributeDialog.h>
-#include <modules/dynamodb/DynamoDbAddKeySchemaDialog.h>
+#include <modules/dynamodb/DynamoDbAddTableDialog.h>
 
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
-    class DynamoDbAddTableDialog;
+    class DynamoDbEditTableDialog;
 }
 
 QT_END_NAMESPACE
 
-class DynamoDbAddTableDialog : public BaseDialog {
+class DynamoDbEditTableDialog : public BaseDialog {
     Q_OBJECT
 
 public:
     /**
      * @brief Constructor
      *
+     * @param tableName name of the table
      * @param parent parent widget
      */
-    explicit DynamoDbAddTableDialog(QWidget *parent = nullptr);
+    explicit DynamoDbEditTableDialog(const QString &tableName, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
-    ~DynamoDbAddTableDialog() override;
+    ~DynamoDbEditTableDialog() override;
 
     /**
      * @brief Load dialog content
      */
     void LoadContent() override;
 
-    /**
-     * @brief Setup attribute tab
-     */
+    void UpdateTable(const DynamoDbDescribeTableResponse &response) const;
+
     void SetupAttributeTab();
 
-    /**
-     * @brief Setup key schema tab
-     */
     void SetupKeySchemaTab();
 
     /**
@@ -67,18 +62,16 @@ public:
      */
     void HandleReject();
 
-    /**
-     * @brief Return the create request
-     *
-     * @return create table request
-     */
-    DynamoDbCreateTableRequest GetCreateTableRequest() { return _createRequest; };
-
 private:
     /**
-     * @brief UI  components
+     * @brief UI components
      */
-    Ui::DynamoDbAddTableDialog *_ui;
+    Ui::DynamoDbEditTableDialog *_ui;
+
+    /**
+     * @brief table name
+     */
+    QString _tableName;
 
     /**
      * @brief REST service handler
@@ -104,12 +97,7 @@ private:
      * @brief KeySchema data proxy model
      */
     PrefixFilterProxyModel *_keySchemaProxyModel{};
-
-    /**
-     * @brief Create table request
-     */
-    DynamoDbCreateTableRequest _createRequest;
 };
 
 
-#endif //AWSMOCK_QT_UI_DYNAMODB_ADD_TABLE_DIALOG_H
+#endif //AWSMOCK_QT_UI_DYNAMODB_EDIT_TABLE_DIALOG_H

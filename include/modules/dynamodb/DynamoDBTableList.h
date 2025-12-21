@@ -75,7 +75,7 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableView *_tableWidget;
+    QTableView *_tableView;
 
     /**
      * @brief Topic prefix search

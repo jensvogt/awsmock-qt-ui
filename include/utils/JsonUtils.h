@@ -18,7 +18,7 @@ public:
         // Convert to compact string
         const QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
 
-        qDebug() << jsonString;
+        qDebug().noquote() << jsonString;
     }
 
     static void WriteJsonString(const QJsonArray &array) {

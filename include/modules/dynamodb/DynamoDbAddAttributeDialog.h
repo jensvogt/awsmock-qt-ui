@@ -23,9 +23,24 @@ class DynamoDbAddAttributeDialog : public QDialog {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor.
+     *
+     * @param parent parent widget
+     */
     explicit DynamoDbAddAttributeDialog(QWidget *parent = nullptr);
 
+    /**
+     * @brief Deconstructor.
+     */
     ~DynamoDbAddAttributeDialog() override;
+
+    /**
+     * @brief Return the attribute
+     *
+     * @return attribute
+     */
+    DynamoDbAttribute GetAttribute() { return _attribute; }
 
     /**
      * @brief Handle OK button

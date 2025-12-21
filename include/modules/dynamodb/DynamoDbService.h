@@ -13,6 +13,9 @@
 #include <utils/BaseService.h>
 #include <utils/EventBus.h>
 #include <dto/dynamodb/DynamoDbListTableResponse.h>
+#include <dto/dynamodb/DynamoDbCreateTableRequest.h>
+#include <dto/dynamodb/DynamoDbCreateTableResponse.h>
+#include <dto/dynamodb/DynamoDbDescribeTableResponse.h>
 
 class DynamoDbService final : public BaseService {
     Q_OBJECT
@@ -24,11 +27,25 @@ public:
     DynamoDbService() = default;
 
     /**
+     * @brief Create a new DynamoDB table
+     *
+     * @param request create table request
+     */
+    void CreateTable(const DynamoDbCreateTableRequest &request);
+
+    /**
      * @brief List DynamoDB tables
      *
      * @param prefix table name prefix
      */
     void ListTables(const QString &prefix);
+
+    /**
+     * @brief Describe a DynamoDB table
+     *
+     * @param tableName name of the table
+     */
+    void DescribeTable(const QString &tableName);
 
     /**
      * @brief Delete a DynamoDB table
@@ -46,10 +63,23 @@ signals:
     void ListTablesSignal(const DynamoDbListTableResponse &listTablesResponse);
 
     /**
-     * @brief Signaled when a bucket list needs to be reloaded
-     *
+     * @brief Signaled when the table list needs to be reloaded
      */
     void ReloadTableListSignal();
+
+    /**
+     * @brief Signaled when new table got created
+     *
+     * @param dynamodbResponse create table response
+     */
+    void CreateTableSignal(DynamoDbCreateTableResponse dynamodbResponse);
+
+    /**
+     * @brief Signaled when new table got created
+     *
+     * @param dynamodbResponse create table response
+     */
+    void DescribeTableSignal(DynamoDbDescribeTableResponse dynamodbResponse);
 
 private:
     /**
