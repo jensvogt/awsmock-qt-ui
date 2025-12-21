@@ -77,8 +77,10 @@ int main(int argc, char *argv[]) {
             qApp->setStyleSheet(f.readAll());
         }
     } else {
-        qApp->setStyleSheet("");
         qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+        if (QFile f(":/styles/styles/light.qss"); f.open(QFile::ReadOnly)) {
+            qApp->setStyleSheet(f.readAll());
+        }
     }
 
     MainWindow w;

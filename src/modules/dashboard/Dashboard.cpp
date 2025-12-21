@@ -6,26 +6,24 @@
 
 #include <modules/dashboard/Dashboard.h>
 #include "ui_Dashboard.h"
-#include "utils/EditConfigDialog.h"
 
-
-Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), ui(new Ui::Dashboard), parent(parent) {
+Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), _ui(new Ui::Dashboard), _parent(parent) {
     // Connect service
-    dashboardService = new DashboardService();
-    connect(dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
+    _dashboardService = new DashboardService();
+    connect(_dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
 
-    ui->setupUi(this);
+    _ui->setupUi(this);
 
     // Toolbar title
-    ui->titleLabel->setText(title);
-    ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
-    ui->refreshButton->setText(nullptr);
+    _ui->titleLabel->setText(title);
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->refreshButton->setText(nullptr);
 
     // Toolbar refresh action
-    ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
-    ui->refreshButton->setToolTip("Refresh the Dashboard");
-    ui->refreshButton->setText(nullptr);
-    connect(ui->refreshButton, &QPushButton::clicked, this, [this]() {
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
+    _ui->refreshButton->setToolTip("Refresh the Dashboard");
+    _ui->refreshButton->setText(nullptr);
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
 
@@ -35,15 +33,16 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     // Edit config dialog
     connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
         if (key == "server.base-url") {
-            chartConfigs.clear();
+            _chartConfigs.clear();
             Initialize();
             LoadContent();
         }
     });
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
 }
 
 Dashboard::~Dashboard() {
-    delete ui;
+    delete _ui;
 }
 
 void Dashboard::Initialize() {
@@ -59,7 +58,7 @@ void Dashboard::Initialize() {
     config.row = 0;
     config.column = 0;
     config.seriesNames = {"total", "system", "user"};
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "AwsMock CPU";
     config.name = "cpu_usage_awsmock";
@@ -72,7 +71,7 @@ void Dashboard::Initialize() {
     config.column = 1;
     config.seriesNames = {"total", "system", "user"};
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Total Memory";
     config.name = "memory_usage_total";
@@ -85,7 +84,7 @@ void Dashboard::Initialize() {
     config.column = 2;
     config.seriesNames = {"total"};
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "AwsMock Memory";
     config.name = "memory_usage_awsmock";
@@ -98,7 +97,7 @@ void Dashboard::Initialize() {
     config.scale = 1024 * 1024;
     config.column = 0;
     config.seriesNames = {"real", "virtual"};
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Total threads";
     config.name = "total_threads";
@@ -111,7 +110,7 @@ void Dashboard::Initialize() {
     config.column = 1;
     config.seriesNames = {"total"};
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Gateway Response Time";
     config.name = "gateway_http_timer";
@@ -124,7 +123,7 @@ void Dashboard::Initialize() {
     config.column = 2;
     config.limit = 5;
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Gateway Requests";
     config.name = "gateway_http_counter";
@@ -137,7 +136,7 @@ void Dashboard::Initialize() {
     config.column = 0;
     config.limit = 5;
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Docker CPU";
     config.name = "docker_cpu_total_counter";
@@ -150,7 +149,7 @@ void Dashboard::Initialize() {
     config.column = 1;
     config.limit = 5;
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);;
 
     config.title = "Docker Memory";
     config.name = "docker_memory_counter";
@@ -163,7 +162,7 @@ void Dashboard::Initialize() {
     config.column = 2;
     config.limit = 5;
     config.scale = -1;
-    chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);
+    _chartConfigs[QUuid::createUuid().toString()] = CreateChart(config);
 }
 
 ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
@@ -191,9 +190,15 @@ ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
     chartView->setAttribute(Qt::WA_NoSystemBackground);
     chartView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     chartView->setRubberBand(QChartView::RectangleRubberBand);
+    chartView->setAutoFillBackground(true);
+    if (Configuration::instance().GetValue<QString>("ui.style-type") == "Dark") {
+        chartView->setStyleSheet("background-color: #2b2b2b;");
+    } else {
+        chartView->setStyleSheet("background-color: white;");
+    }
     chartView->show();
 
-    ui->gridLayout->addWidget(chartView, chartConfig.row, chartConfig.column, 1, 1);
+    _ui->gridLayout->addWidget(chartView, chartConfig.row, chartConfig.column, 1, 1);
     chartConfig.chart = chart;
     return chartConfig;
 }
@@ -203,10 +208,10 @@ void Dashboard::LoadContent() {
         const auto start = QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
         const auto end = QDateTime::currentDateTime();
 
-        for (auto &config: chartConfigs) {
+        for (auto &config: _chartConfigs) {
             config.start = start;
             config.end = end;
-            dashboardService->GetMultiSeriesCounter(config);
+            _dashboardService->GetMultiSeriesCounter(config);
         }
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");

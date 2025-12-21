@@ -1,5 +1,6 @@
 #include <mainwindow.h>
 
+#include "modules/dynamodb/DynamoDBTableList.h"
 #include "modules/ssm/SSMParameterList.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -76,9 +77,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     _timerLabel = new QLabel("", this);
     _statusBar->addWidget(_timerLabel);
-    connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &name, qint64 elapsed) {
-        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" +
-                            QString::number(elapsed) + "ms]";
+    connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &, const qint64 elapsed) {
+        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
         _statusBar->showMessage(msg);
     });
     setStatusBar(_statusBar);
@@ -257,6 +257,7 @@ void MainWindow::NavigationSelectionChanged(const int currentRow) {
     }
     loadedPages[currentRow]->StartAutoUpdate();
     m_contentPane->setCurrentWidget(loadedPages[currentRow]);
+    m_contentPane->update();
 }
 
 void MainWindow::UpdateStatusBar(const QString &text) const {
@@ -421,7 +422,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
         }
 
         case PAGE_DYNAMODB: {
-            const auto dynamodbTablesPage = new SecretList("Dynamodb", m_contentPane);
+            const auto dynamodbTablesPage = new DynamoDbTableList("Dynamodb", m_contentPane);
 
             // Connect child's signal to update status bar
             connect(dynamodbTablesPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
