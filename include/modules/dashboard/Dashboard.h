@@ -17,6 +17,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/Configuration.h>
+#include <utils/EditConfigDialog.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/DashboardService.h>
 #include <modules/dashboard/ChartConfig.h>
@@ -50,27 +51,27 @@ private:
     /**
      * @brief UI components
      */
-    Ui::Dashboard *ui;
+    Ui::Dashboard *_ui;
 
     /**
      * @brief Parent widget
      */
-    QWidget *parent;
+    QWidget *_parent;
 
     /**
      * @brief Toolbar
      */
-    QHBoxLayout toolBar;
+    QHBoxLayout _toolBar;
 
     /**
      * @brief REST service
      */
-    DashboardService *dashboardService;
+    DashboardService *_dashboardService;
 
     /**
      * @brief Charts configuration map
      */
-    QMap<QString, ChartConfig> chartConfigs;
+    QMap<QString, ChartConfig> _chartConfigs;
 };
 
 

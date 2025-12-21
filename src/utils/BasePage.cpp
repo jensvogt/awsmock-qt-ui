@@ -1,6 +1,7 @@
 #include <utils/BasePage.h>
 
 BasePage::BasePage(QWidget *parent) : QWidget(parent), _autoUpdateTimer(nullptr) {
+
     // Function key F5 refresh action
     const auto refreshAction = new QAction(this);
     refreshAction->setShortcut(QKeySequence(Qt::Key_F5));

@@ -1,5 +1,5 @@
 QWidget {
-    background-color: #2b2b2b;
+    background-color: #ffffff;
     color: #dcdcdc;
 }
 
@@ -24,7 +24,7 @@ QDialogButtonBox QPushButton {
 /* Text fields                                                                   */
 /* ============================================================================= */
 QLineEdit, QTextEdit, QPlainTextEdit {
-    background-color: #3c3f41;
+    background-color: #ffffff;
     border: 1px solid #767676;
 }
 
@@ -32,7 +32,7 @@ QLineEdit, QTextEdit, QPlainTextEdit {
 /* Menu                                                                          */
 /* ============================================================================= */
 QMenuBar, QMenu {
-    background-color: #2b2b2b;
+    background-color: #ffffff;
 }
 
 QMenuBar::selected, QMenu::selected {
@@ -62,7 +62,7 @@ QScrollBar::handle:horizontal {
 
 QScrollBar:horizontal {
     height: 12px;
-    background: #2b2b2b;
+    background: #ffffff;
 }
 
 QScrollBar::add-line:horizontal,
@@ -86,7 +86,7 @@ QScrollBar::handle:vertical {
 
 QScrollBar:vertical {
     width: 12px;
-    background: #2b2b2b;
+    background: #ffffff;
     margin: 0px;
 }
 
@@ -137,14 +137,6 @@ QChart {
 /* Checkbox                                                                      */
 /* ============================================================================= */
 QCheckBox {
-    background-color: #2b2b2b;
-    border: 1px solid #5c5c5c;
-}
-
-/* ============================================================================= */
-/* ChartView                                                                     */
-/* ============================================================================= */
-QChartView {
-    background-color: #2b2b2b;
+    background-color: #ffffff;
     border: 1px solid #5c5c5c;
 }
