@@ -111,6 +111,7 @@ void DockerStatsDialog::LoadContent() {
 void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse) {
     const int selectedRow = _ui->statsTable->selectionModel()->currentIndex().row();
     _ui->statsTable->setSortingEnabled(false);
+    _dataModel->removeRows(0, _dataModel->rowCount());
 
     for (int r = 0, c = 0; r < dockerStatsResponse.containerStats.count(); r++, c = 0) {
         SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).name);

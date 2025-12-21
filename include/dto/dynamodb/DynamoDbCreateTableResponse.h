@@ -7,42 +7,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-struct DynamoDbAttribute {
-
-    QString attributeName;
-    QString attributeType;
-
-    void FromJsonObject(const QJsonObject &jsonObject) {
-        attributeName = jsonObject["AttributeName"].toString();
-        attributeType = jsonObject["AttributeType"].toString();
-    }
-
-    [[nodiscard]] QJsonObject ToJsonObject() const {
-        QJsonObject result;
-        result["AttributeName"] = attributeName;
-        result["AttributeType"] = attributeType;
-        return result;
-    }
-};
-
-struct DynamoDbKeySchema {
-
-    QString attributeName;
-    QString keyType;
-
-    void FromJsonObject(const QJsonObject &jsonObject) {
-        attributeName = jsonObject["AttributeName"].toString();
-        keyType = jsonObject["KeyType"].toString();
-    }
-
-    [[nodiscard]] QJsonObject ToJsonObject() const {
-        QJsonObject result;
-        result["AttributeName"] = attributeName;
-        result["KeyType"] = keyType;
-        return result;
-    }
-};
-
 struct DynamoDbCreateTableResponse {
 
     QString tableName;

@@ -275,6 +275,13 @@ set(PROJECT_SOURCES
         src/modules/dynamodb/DynamoDbAddAttributeDialog.cpp
         include/modules/dynamodb/DynamoDbAddAttributeDialog.h
         src/modules/dynamodb/DynamoDbAddAttributeDialog.ui
+        include/modules/dynamodb/DynamoDbAddKeySchemaDialog.h
+        src/modules/dynamodb/DynamoDbAddKeySchemaDialog.cpp
+        include/dto/dynamodb/DynamoDbProvisionedThroughput.h
+        src/modules/dynamodb/DynamoDbEditTableDialog.cpp
+        include/modules/dynamodb/DynamoDbEditTableDialog.h
+        src/modules/dynamodb/DynamoDbEditTableDialog.ui
+        include/dto/dynamodb/DynamoDbDescribeTableResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

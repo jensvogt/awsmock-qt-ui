@@ -1,38 +1,47 @@
 
-#include <modules/dynamodb/DynamoDbAddTableDialog.h>
-#include "ui_DynamoDbAddTableDialog.h"
+#include <modules/dynamodb/DynamoDbEditTableDialog.h>
+#include "ui_DynamoDbEditTableDialog.h"
 
-DynamoDbAddTableDialog::DynamoDbAddTableDialog(QWidget *parent) : BaseDialog(parent), _ui(new Ui::DynamoDbAddTableDialog) {
+DynamoDbEditTableDialog::DynamoDbEditTableDialog(const QString &tableName, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::DynamoDbEditTableDialog), _tableName(tableName) {
 
     // Connect service
     _dynamoDbService = new DynamoDbService();
+    connect(_dynamoDbService, &DynamoDbService::DescribeTableSignal, this, &DynamoDbEditTableDialog::UpdateTable);
 
     // Setup UI
     _ui->setupUi(this);
-    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &DynamoDbAddTableDialog::HandleAccept);
-    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &DynamoDbAddTableDialog::HandleReject);
-
-    // Set defaults
-    _ui->regionEdit->setText(Configuration::instance().GetValue<QString>("aws.region", nullptr));
-    _ui->readCapacityEdit->setText(QString::number(1));
-    _ui->writeCapacityEdit->setText(QString::number(1));
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &DynamoDbEditTableDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &DynamoDbEditTableDialog::HandleReject);
 
     // Setup tabs
     SetupAttributeTab();
     SetupKeySchemaTab();
-
-    // Default tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    DynamoDbEditTableDialog::LoadContent();
 }
 
-DynamoDbAddTableDialog::~DynamoDbAddTableDialog() {
+DynamoDbEditTableDialog::~DynamoDbEditTableDialog() {
     delete _ui;
 }
 
-void DynamoDbAddTableDialog::LoadContent() {
+void DynamoDbEditTableDialog::LoadContent() {
+    _dynamoDbService->DescribeTable(_tableName);
 }
 
-void DynamoDbAddTableDialog::SetupAttributeTab() {
+void DynamoDbEditTableDialog::UpdateTable(const DynamoDbDescribeTableResponse &response) const {
+    _ui->regionEdit->setText(response.region);
+    _ui->nameEdit->setText(response.tableName);
+    _ui->arnEdit->setText(response.tableArn);
+    _ui->readCapacityEdit->setText(QString::number(response.provisionedThroughput.readCapacity));
+    _ui->writeCapacityEdit->setText(QString::number(response.provisionedThroughput.writeCapacity));
+    _ui->sizeEdit->setText(QString::number(response.size));
+    _ui->itemCountEdit->setText(QString::number(response.itemCount));
+    _ui->statusEdit->setText(response.status);
+    _ui->deletionProtectionCheckBox->setCheckState(response.deletionProtection ? Qt::CheckState::Checked : Qt::Unchecked);
+}
+
+void DynamoDbEditTableDialog::SetupAttributeTab() {
 
     // Add button
     _ui->attributeAddButton->setText(nullptr);
@@ -47,7 +56,7 @@ void DynamoDbAddTableDialog::SetupAttributeTab() {
         const DynamoDbAttribute attribute = dialog.GetAttribute();
 
         // Update attribute
-        _createRequest.attributes.append(attribute);
+        //_createRequest.attributes.append(attribute);
 
         // Update table
         const int row = _attributeDataModel->rowCount();
@@ -80,7 +89,8 @@ void DynamoDbAddTableDialog::SetupAttributeTab() {
     _ui->attributeTable->sortByColumn(0, Qt::AscendingOrder);
 }
 
-void DynamoDbAddTableDialog::SetupKeySchemaTab() {
+void DynamoDbEditTableDialog::SetupKeySchemaTab() {
+
     _ui->keySchemaAddButton->setText(nullptr);
     _ui->keySchemaAddButton->setIcon(IconUtils::GetIcon("add"));
 
@@ -97,7 +107,7 @@ void DynamoDbAddTableDialog::SetupKeySchemaTab() {
         const DynamoDbKeySchema keySchema = dialog.GetKeySchema();
 
         // Update attribute
-        _createRequest.keySchema.append(keySchema);
+        //_createRequest.keySchema.append(keySchema);
 
         // Update table
         const int row = _keySchemaDataModel->rowCount();
@@ -130,15 +140,10 @@ void DynamoDbAddTableDialog::SetupKeySchemaTab() {
     _ui->keySchemaTable->sortByColumn(0, Qt::AscendingOrder);
 }
 
-void DynamoDbAddTableDialog::HandleAccept() {
-    _createRequest.tableName = _ui->nameEdit->text();
-    _createRequest.region = _ui->regionEdit->text();
-    _createRequest.provisionedThroughput.readCapacity = _ui->readCapacityEdit->text().toInt();
-    _createRequest.provisionedThroughput.writeCapacity = _ui->writeCapacityEdit->text().toInt();
+void DynamoDbEditTableDialog::HandleAccept() {
     accept();
 }
 
-
-void DynamoDbAddTableDialog::HandleReject() {
+void DynamoDbEditTableDialog::HandleReject() {
     accept();
 }

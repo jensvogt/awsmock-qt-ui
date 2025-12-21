@@ -1,45 +1,33 @@
-#ifndef AWSMOCK_QT_UI_DYNAMODB_CREATE_TABLE_REQUEST_H
-#define AWSMOCK_QT_UI_DYNAMODB_CREATE_TABLE_REQUEST_H
+#ifndef AWSMOCK_QT_UI_DYNAMODB_DESCRIBE_TABLE_RESPONSE_H
+#define AWSMOCK_QT_UI_DYNAMODB_DESCRIBE_TABLE_RESPONSE_H
 
 // Qt includes
+#include <QList>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QJsonDocument>
 
 // AwsMock includes
 #include <dto/dynamodb/DynamoDbAttribute.h>
 #include <dto/dynamodb/DynamoDbKeySchema.h>
 
-#include "DynamoDbProvisionedThroughput.h"
-
-enum DynamoDbTableClass {
-    STANDARD,
-    STANDARD_INFREQUENT_ACCESS
-};
-
-static std::map<DynamoDbTableClass, QString> DynamoDbTableClassNames{
-    {STANDARD, "STANDARD"},
-    {STANDARD_INFREQUENT_ACCESS, "STANDARD_INFREQUENT_ACCESS"},
-};
-
-[[maybe_unused]] static QString DynamoDbTableClassToString(const DynamoDbTableClass &tableClass) {
-    return DynamoDbTableClassNames[tableClass];
-}
-
-[[maybe_unused]] static DynamoDbTableClass DynamoDbTableClassFromString(const QString &tableClass) {
-    for (auto &[fst, snd]: DynamoDbTableClassNames) {
-        if (snd == tableClass) {
-            return fst;
-        }
-    }
-    return STANDARD;
-}
-
-struct DynamoDbCreateTableRequest {
+struct DynamoDbDescribeTableResponse {
 
     QString region;
+
     QString tableName;
 
-    DynamoDbTableClass tableClass = STANDARD;
+    QString tableClass;
+
+    QString tableArn;
+
+    QString status;
+
+    long size;
+
+    long itemCount;
+
+    bool deletionProtection;
 
     QList<DynamoDbAttribute> attributes;
 
@@ -50,7 +38,12 @@ struct DynamoDbCreateTableRequest {
     void FromJson(const QJsonDocument &jsonDoc) {
         region = jsonDoc["Region"].toString();
         tableName = jsonDoc["TableName"].toString();
-        tableClass = DynamoDbTableClassFromString(jsonDoc["TableClass"].toString());
+        tableClass = jsonDoc["TableClass"].toString();
+        tableArn = jsonDoc["TableArn"].toString();
+        size = jsonDoc["TableSizeBytes"].toInteger();
+        itemCount = jsonDoc["ItemCount"].toInteger();
+        status = jsonDoc["TableStatus"].toString();
+        deletionProtection = jsonDoc["DeletionProtectionEnabled"].toBool();
         provisionedThroughput.FromJsonObject(jsonDoc["ProvisionedThroughput"].toObject());
 
         if (!jsonDoc["AttributeDefinitions"].isNull() && jsonDoc["AttributeDefinitions"].isArray() && !jsonDoc["AttributeDefinitions"].toArray().empty()) {
@@ -73,7 +66,9 @@ struct DynamoDbCreateTableRequest {
         QJsonObject result;
         result["Region"] = region;
         result["TableName"] = tableName;
-        result["TableClass"] = DynamoDbTableClassToString(tableClass);
+        result["TableClass"] = tableClass;
+        result["TableSizeBytes"] = static_cast<qint64>(size);
+        result["ItemCount"] = static_cast<qint64>(itemCount);
         result["ProvisionedThroughput"] = provisionedThroughput.ToJsonObject();
 
         if (!attributes.empty()) {
@@ -81,7 +76,7 @@ struct DynamoDbCreateTableRequest {
             for (auto it = attributes.constBegin(); it != attributes.constEnd(); ++it) {
                 jsonAttributes.append(it->ToJsonObject());
             }
-            result["AttributeDefinitions"] = jsonAttributes;
+            result["Attributes"] = jsonAttributes;
         }
         if (!keySchema.empty()) {
             QJsonArray jsonKeySchema;
@@ -94,4 +89,4 @@ struct DynamoDbCreateTableRequest {
     }
 };
 
-#endif // AWSMOCK_QT_UI_DYNAMODB_CREATE_TABLE_REQUEST_H
+#endif // AWSMOCK_QT_UI_DYNAMODB_DESCRIBE_TABLE_RESPONSE_H
