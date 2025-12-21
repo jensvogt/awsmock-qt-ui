@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.2...v1.7.0) (2025-12-21)
+
+
+### Features
+
+* add dynamodb tables add/delete/list tables ([608a33a](https://github.com/jensvogt/awsmock-qt-ui/commit/608a33a7e93071a2ebf7fb723ed39f8277152a58))
+
 ## [1.6.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.1...v1.6.2) (2025-12-20)
 
 
