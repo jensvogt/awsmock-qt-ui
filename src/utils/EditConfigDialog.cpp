@@ -23,19 +23,25 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     // FTP settings
     _ui->ftpUserEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-user", "none"));
     connect(_ui->ftpUserEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui-default-ftp-user", _ui->ftpUserEdit->text());
+        Configuration::instance().SetValue("ui.default-ftp-user", _ui->ftpUserEdit->text());
     });
     _ui->ftpPasswordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", "none"));
     connect(_ui->ftpPasswordEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui-default-ftp-password", _ui->ftpPasswordEdit->text());
+        Configuration::instance().SetValue("ui.default-ftp-password", _ui->ftpPasswordEdit->text());
     });
     _ui->ftpServerEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-server", "localhost"));
     connect(_ui->ftpServerEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui-default-ftp-server", _ui->ftpServerEdit->text());
+        Configuration::instance().SetValue("ui.default-ftp-server", _ui->ftpServerEdit->text());
     });
     _ui->ftpPortEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-port", "2121"));
     connect(_ui->ftpPortEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui-default-ftp-port", _ui->ftpPortEdit->text());
+        Configuration::instance().SetValue("ui.default-ftp-port", _ui->ftpPortEdit->text());
+    });
+    QStringList protocols = {"FTP", "SFTP"};
+    _ui->ftpProtocolCombo->addItems(protocols);
+    _ui->ftpProtocolCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.default-ftp-protocol"));
+    connect(_ui->ftpProtocolCombo, &QComboBox::currentIndexChanged, this, [protocols](const int index) {
+        Configuration::instance().SetValue<QString>("ui.default-ftp-protocol", protocols.at(index));
     });
 
     // AWS settings
@@ -77,6 +83,10 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     _ui->localeCombo->setCurrentIndex(index);
     connect(_ui->localeCombo, &QComboBox::currentTextChanged, this, [this]() {
         Configuration::instance().SetValue("ui.default-locale", _ui->localeCombo->currentText());
+    });
+    _ui->applicationLogLimitEdit->setText(QString::number(Configuration::instance().GetValue<long>("ui.application-log-limit", 1000)));
+    connect(_ui->applicationLogLimitEdit, &QLineEdit::textChanged, this, [this]() {
+        Configuration::instance().SetValue<long>("ui.application-log-limit", _ui->applicationLogLimitEdit->text().toLong());
     });
 
     // Default tab

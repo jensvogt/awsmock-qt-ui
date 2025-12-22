@@ -20,7 +20,7 @@ public:
         Tcp
     };
 
-    DockerLogClient(const QString &containerId, Mode mode, const QString &endpoint, QObject *parent = nullptr);
+    DockerLogClient(const QString &containerId, Mode mode, const QString &endpoint, long limit, QObject *parent);
 
     void ConnectToDocker() const;
 
@@ -45,7 +45,7 @@ private slots:
     static QStringList SanitizeString(const QString &input);
 
 private:
-    void SendRequest() const;
+    void SendRequest(long limit) const;
 
     QString m_containerId;
     QString m_endpoint;
@@ -56,6 +56,11 @@ private:
 
     bool headersParsed = false;
     QByteArray buffer;
+
+    /**
+     * @brief Maximal number of log lines
+     */
+    long _limit = 1000;
 };
 
 #endif //AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H

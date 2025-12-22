@@ -14,13 +14,13 @@
     ]
   },
   "ui": {
-    "version": "1.0",
-    "qt-version": "10.6.0",
+    "application-log-limit": 1000,
     "auto-update-period": 10,
     "default-ftp-user": "DEMODLI",
     "default-ftp-password": "Tg/}2e0m.>_s",
     "default-ftp-server": "localhost",
     "default-ftp-port": 2121,
+    "default-ftp-protocol": "FTP",
     "default-directory": {
       "ApplicationUploadCodeDialog": "/home/vogje01/work/libri/Libri.ONE/PIM/compliance-archive-service/target",
       "ExportInfrastructure": "/usr/local/awsmock/init",
@@ -33,7 +33,9 @@
       "UK",
       "DE"
     ],
+    "qt-version": "6.10.1",
     "style": "Fusion",
-    "style-type": "Dark"
+    "style-type": "Dark",
+    "version": "1.0"
   }
 }
