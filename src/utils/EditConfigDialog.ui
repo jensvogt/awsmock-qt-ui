@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="serverTab">
       <attribute name="title">
@@ -83,21 +83,11 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="1,1">
+          <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="1,1">
            <item row="0" column="0">
             <widget class="QLabel" name="ftpUserLabel">
              <property name="text">
               <string>FTP User:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="ftpPasswordEdit"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="ftpPasswordLabel">
-             <property name="text">
-              <string>FTP Password:</string>
              </property>
             </widget>
            </item>
@@ -108,12 +98,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="ftpServerEdit"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="ftpUserEdit"/>
-           </item>
            <item row="3" column="0">
             <widget class="QLabel" name="ftpPortLabel">
              <property name="text">
@@ -121,8 +105,34 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="ftpPasswordEdit"/>
+           </item>
            <item row="3" column="1">
             <widget class="QLineEdit" name="ftpPortEdit"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="ftpServerEdit"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ftpUserEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="ftpPasswordLabel">
+             <property name="text">
+              <string>FTP Password:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>FTP Protocol:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QComboBox" name="ftpProtocolCombo"/>
            </item>
           </layout>
          </item>
@@ -228,19 +238,13 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="1" column="1">
-            <widget class="QComboBox" name="styleTypeCombo"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="styleTypeLabel">
+          <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,1">
+           <item row="2" column="0">
+            <widget class="QLabel" name="localeLabel">
              <property name="text">
-              <string>Type:</string>
+              <string>Locale:</string>
              </property>
             </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="styleCombo"/>
            </item>
            <item row="0" column="0">
             <widget class="QLabel" name="styleLabel">
@@ -249,15 +253,31 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="localeLabel">
-             <property name="text">
-              <string>Locale:</string>
-             </property>
-            </widget>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="styleTypeCombo"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="styleCombo"/>
            </item>
            <item row="2" column="1">
             <widget class="QComboBox" name="localeCombo"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="styleTypeLabel">
+             <property name="text">
+              <string>Type:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="applicationLogLimitLabel">
+             <property name="text">
+              <string>Application Log Limit:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="applicationLogLimitEdit"/>
            </item>
           </layout>
          </item>

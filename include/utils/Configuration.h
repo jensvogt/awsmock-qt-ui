@@ -82,9 +82,15 @@ public:
 
     template<class T>
     void SetValue(const QString &path, T value) {
-        JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
-        WriteConfigurationFile(filePath);
-        emit ConfigurationChanged(path, value);
+        if constexpr (std::is_same_v<T, long>) {
+            JsonUtils::setByPath(_configurationRoot, path, static_cast<qint64>(value));
+            WriteConfigurationFile(filePath);
+            emit ConfigurationChanged(path, QString::number(value));
+        } else {
+            JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
+            WriteConfigurationFile(filePath);
+            emit ConfigurationChanged(path, value);
+        }
     }
 
     /**

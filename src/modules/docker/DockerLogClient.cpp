@@ -5,8 +5,8 @@
 
 #include <modules/docker/DockerLogClient.h>
 
-DockerLogClient::DockerLogClient(const QString &containerId, const Mode mode, const QString &endpoint, QObject *parent)
-    : QObject(parent), m_containerId(containerId), m_endpoint(endpoint), m_mode(mode) {
+DockerLogClient::DockerLogClient(const QString &containerId, const Mode mode, const QString &endpoint, const long limit, QObject *parent)
+    : QObject(parent), m_containerId(containerId), m_endpoint(endpoint), m_mode(mode), _limit(limit) {
     if (mode == Mode::Tcp) {
         m_tcpSocket = new QTcpSocket(this);
         connect(m_tcpSocket, &QTcpSocket::connected, this, &DockerLogClient::onConnected);
@@ -38,11 +38,11 @@ void DockerLogClient::DisconnectFromDocker() const {
 
 void DockerLogClient::onConnected() {
     emit Connected();
-    SendRequest();
+    SendRequest(_limit);
 }
 
-void DockerLogClient::SendRequest() const {
-    const QByteArray req = "GET /containers/" + m_containerId.toUtf8() + "/logs?stdout=1&stderr=1&follow=1 HTTP/1.1\r\n"
+void DockerLogClient::SendRequest(const long limit) const {
+    const QByteArray req = "GET /containers/" + m_containerId.toUtf8() + "/logs?stdout=1&stderr=1&follow=1&tail=" + std::to_string(limit) + " HTTP/1.1\r\n"
                            "Host: docker\r\n"
                            "Connection: Upgrade\r\n"
                            "Upgrade: tcp\r\n"
