@@ -259,7 +259,7 @@ set(PROJECT_SOURCES
         include/dto/sns/SNSTopicSubscription.h
         include/dto/sns/SNSListTopicSubscriptionsResponse.h
         include/utils/DateTimeUtils.h
-        include/modules/dynamodb/DynamoDBTableList.h
+        include/modules/dynamodb/DynamoDbTableList.h
         include/modules/dynamodb/DynamoDbService.h
         include/dto/dynamodb/DynamoDbListTableResponse.h
         include/dto/dynamodb/DynamoDbTableCounter.h
@@ -282,6 +282,10 @@ set(PROJECT_SOURCES
         include/modules/dynamodb/DynamoDbEditTableDialog.h
         src/modules/dynamodb/DynamoDbEditTableDialog.ui
         include/dto/dynamodb/DynamoDbDescribeTableResponse.h
+        src/modules/dynamodb/DynamoDbItemList.cpp
+        include/modules/dynamodb/DynamoDbItemList.h
+        include/dto/dynamodb/DynamoDbListItemResponse.h
+        include/dto/dynamodb/DynamoDbItem.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

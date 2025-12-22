@@ -100,13 +100,6 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="2">
-      <widget class="QLineEdit" name="modifiedEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="2">
       <widget class="QLabel" name="readCapacityLabel">
        <property name="text">
@@ -139,13 +132,6 @@
       <widget class="QLineEdit" name="readCapacityEdit">
        <property name="enabled">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QLabel" name="modifiedLabel">
-       <property name="text">
-        <string>Modified:</string>
        </property>
       </widget>
      </item>
@@ -228,11 +214,6 @@
           <widget class="QTableView" name="attributeTable"/>
          </item>
         </layout>
-       </widget>
-       <widget class="QWidget" name="tagsTab">
-        <attribute name="title">
-         <string>Tags</string>
-        </attribute>
        </widget>
       </widget>
      </item>

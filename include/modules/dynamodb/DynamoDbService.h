@@ -16,6 +16,7 @@
 #include <dto/dynamodb/DynamoDbCreateTableRequest.h>
 #include <dto/dynamodb/DynamoDbCreateTableResponse.h>
 #include <dto/dynamodb/DynamoDbDescribeTableResponse.h>
+#include <dto/dynamodb/DynamoDbListItemResponse.h>
 
 class DynamoDbService final : public BaseService {
     Q_OBJECT
@@ -54,11 +55,18 @@ public:
      */
     void DeleteTable(const QString &tableName);
 
+    /**
+     * @brief List DynamoDB table items
+     *
+     * @param tableName table name
+     */
+    void ListItems(const QString &tableName);
+
 signals:
     /**
      * @brief Signaled when a table list is available
      *
-     * @param listTablesResponse list of buckets
+     * @param listTablesResponse list of tables
      */
     void ListTablesSignal(const DynamoDbListTableResponse &listTablesResponse);
 
@@ -80,6 +88,13 @@ signals:
      * @param dynamodbResponse create table response
      */
     void DescribeTableSignal(DynamoDbDescribeTableResponse dynamodbResponse);
+
+    /**
+     * @brief Signaled when a table items list is available
+     *
+     * @param listItemsResponse list of table items
+     */
+    void ListItemsSignal(const DynamoDbListItemResponse &listItemsResponse);
 
 private:
     /**

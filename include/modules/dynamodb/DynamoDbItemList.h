@@ -1,6 +1,7 @@
-#ifndef AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H
-#define AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H
+#ifndef AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H
+#define AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H
 
+// Qt includes
 #include <QLabel>
 #include <QMenu>
 #include <QVBoxLayout>
@@ -19,46 +20,58 @@
 #include <QTreeWidget>
 #include <QTimer>
 
+// AwsMock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
-#include <dto/dynamodb/DynamoDbListTableResponse.h>
+//#include <dto/dynamodb/DynamoDbListItemResponse.h>
 #include <modules/dynamodb/DynamoDbService.h>
-#include <modules/dynamodb/DynamoDbAddTableDialog.h>
 
-class DynamoDbTableList final : public BasePage {
+class DynamoDbItemList final : public BasePage {
     Q_OBJECT
 
 public:
     /**
-     * @brief DynamoDB table list
+     * @brief DynamoDB item list
      *
      * @param title widget title
+     * @param tableName name of the parent table
      * @param parent parent widget
      */
-    explicit DynamoDbTableList(const QString &title, QWidget *parent = nullptr);
+    explicit DynamoDbItemList(const QString &title, const QString &tableName, QWidget *parent = nullptr);
 
     /**
      * Destructor
      */
-    ~DynamoDbTableList() override;
+    ~DynamoDbItemList() override;
 
     /**
      * @brief Load page content
      */
     void LoadContent() override;
 
+    void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
+
     /**
      * @brief Load page content
      *
-     * @param listTableResponse
-     * @param listTableResponse
+     * @param listItemResponse
      */
-    void HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse);
+    //void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
 signals:
-    void ShowS3Objects(const QString &bucketName);
+    /**
+     * @brief Show items signal
+     *
+     * @param itemName name of the item
+     */
+    void ShowItemsSignal(const QString &itemName);
+
+    /**
+     * @brief Sends a back navigation to the main window
+     */
+    void BackNavigationSignal();
 
 private slots:
     /**
@@ -68,14 +81,14 @@ private slots:
 
 private:
     /**
-     * @brief AWS region
+     * @brief DynamoDb table name
      */
-    QString _region;
+    QString _tableName;
 
     /**
-     * @brief Qt network manager
+     * @brief Item list view
      */
-    QTableView *_tableView;
+    QListView *_itemView;
 
     /**
      * @brief Topic prefix search
@@ -88,7 +101,7 @@ private:
     DynamoDbService *_dynamoDbService;
 
     /**
-     *  @brief Table data model
+     *  @brief Item data model
      */
     QStandardItemModel *_dataModel;
 
@@ -115,4 +128,4 @@ private:
     QPushButton *_prefixClear;
 };
 
-#endif // AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H
+#endif // AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H
