@@ -75,7 +75,7 @@ signals:
     /**
      * @brief Sends a back object to the main window
      */
-    void BackToBucketList();
+    void BackNavigationSignal();
 
 private slots: /**
      * @brief Row context menu

@@ -23,7 +23,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     backButton->setToolTip("Add a new object");
     connect(backButton, &QPushButton::clicked, [this]() {
         StopAutoUpdate();
-        emit BackToBucketList();
+        emit BackNavigationSignal();
     });
 
     // Toolbar label

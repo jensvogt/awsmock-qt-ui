@@ -40,7 +40,9 @@
 #include <modules/lambda/LambdaList.h>
 #include <modules/infrastructure/InfrastructureService.h>
 #include <modules/docker/DockerStatsDialog.h>
+#include <modules/ssm/SSMParameterList.h>
 #include <modules/secretsmanager/SecretList.h>
+#include <modules/dynamodb/DynamoDbTableList.h>
 
 #define PAGE_DASHBOARD 0
 #define PAGE_SQS 1

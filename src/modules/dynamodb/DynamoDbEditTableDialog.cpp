@@ -39,6 +39,34 @@ void DynamoDbEditTableDialog::UpdateTable(const DynamoDbDescribeTableResponse &r
     _ui->itemCountEdit->setText(QString::number(response.itemCount));
     _ui->statusEdit->setText(response.status);
     _ui->deletionProtectionCheckBox->setCheckState(response.deletionProtection ? Qt::CheckState::Checked : Qt::Unchecked);
+
+    // Update attribute table
+    const int attributeSelectedRow = _ui->attributeTable->selectionModel()->currentIndex().row();
+    _ui->attributeTable->setSortingEnabled(false);
+    _attributeDataModel->removeRows(0, _attributeDataModel->rowCount());
+
+    for (int r = 0, c = 0; r < response.attributes.count(); r++, c = 0) {
+        SetColumn(_attributeDataModel, r, c++, response.attributes.at(r).attributeName);
+        SetColumn(_attributeDataModel, r, c++, DynamoDbAttributeTypeToString(response.attributes.at(r).attributeType));
+    }
+    // Reset selection
+    _ui->attributeTable->setSortingEnabled(true);
+    _ui->attributeTable->sortByColumn(_attributeSortColumn, _attributeSortOrder);
+    _ui->attributeTable->selectRow(attributeSelectedRow);
+
+    // Update key schema table
+    const int selectedRow = _ui->keySchemaTable->selectionModel()->currentIndex().row();
+    _ui->keySchemaTable->setSortingEnabled(false);
+    _keySchemaDataModel->removeRows(0, _keySchemaDataModel->rowCount());
+
+    for (int r = 0, c = 0; r < response.keySchema.count(); r++, c = 0) {
+        SetColumn(_keySchemaDataModel, r, c++, response.keySchema.at(r).attributeName);
+        SetColumn(_keySchemaDataModel, r, c++, DynamoDbKeyTypeToString(response.keySchema.at(r).keyType));
+    }
+    // Reset selection
+    _ui->keySchemaTable->setSortingEnabled(true);
+    _ui->keySchemaTable->sortByColumn(_keySchemaSortColumn, _keySchemaSortOrder);
+    _ui->keySchemaTable->selectRow(selectedRow);
 }
 
 void DynamoDbEditTableDialog::SetupAttributeTab() {
@@ -81,8 +109,8 @@ void DynamoDbEditTableDialog::SetupAttributeTab() {
     _ui->attributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->attributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     _ui->attributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _ui->attributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch); // name
-    _ui->attributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents); //status
+    _ui->attributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _ui->attributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
     // Enable sorting, default on and sorted ascending by name
     _ui->attributeTable->setSortingEnabled(true);
@@ -132,8 +160,8 @@ void DynamoDbEditTableDialog::SetupKeySchemaTab() {
     _ui->keySchemaTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->keySchemaTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     _ui->keySchemaTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _ui->keySchemaTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
-    _ui->keySchemaTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+    _ui->keySchemaTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _ui->keySchemaTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
     // Enable sorting, default on and sorted ascending by name
     _ui->keySchemaTable->setSortingEnabled(true);

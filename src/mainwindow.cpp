@@ -1,7 +1,6 @@
 #include <mainwindow.h>
 
-#include "modules/dynamodb/DynamoDBTableList.h"
-#include "modules/ssm/SSMParameterList.h"
+#include "modules/dynamodb/DynamoDbItemList.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Connect infrastructure signals
@@ -285,6 +284,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             // Route to the message list
             connect(queueListPage, &SQSQueueList::ShowMessages, this,
                     [this, queueListPage](const QString &queueArn, const QString &queueUrl) {
+
                         // Stop the auto updater
                         queueListPage->StopAutoUpdate();
 
@@ -292,19 +292,17 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
                         const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
 
                         // Create the message list page
-                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn,
-                                                                        queueUrl, nullptr);
+                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, nullptr);
 
                         // Add it to the loaded pages list
                         m_contentPane->addWidget(messageListPage);
                         m_contentPane->setCurrentWidget(messageListPage);
 
-                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
+                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
                         // Connect the back button
                         connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&]() {
-                            NavigationSelectionChanged(1);
+                            NavigationSelectionChanged(PAGE_SQS);
                         });
 
                         // Start auto updater
@@ -341,7 +339,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
 
                         // Connect the back button
                         connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&]() {
-                            NavigationSelectionChanged(2);
+                            NavigationSelectionChanged(PAGE_SNS);
                         });
 
                         // Start auto updater
@@ -360,22 +358,21 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             // Route to the S3 object list
             connect(bucketListPage, &S3BucketList::ShowS3Objects, this,
                     [this,bucketListPage](const QString &bucketName) {
+
                         // Stop the auto updater
                         bucketListPage->StopAutoUpdate();
 
                         // Create the message list page
-                        const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName,
-                                                                     nullptr);
+                        const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName, nullptr);
 
                         // Add it to the loaded pages list
                         m_contentPane->addWidget(objectListPage);
                         m_contentPane->setCurrentWidget(objectListPage);
-                        connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
+                        connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
                         // Connect the back button
-                        connect(objectListPage, &S3ObjectList::BackToBucketList, this, [&]() {
-                            NavigationSelectionChanged(3);
+                        connect(objectListPage, &S3ObjectList::BackNavigationSignal, this, [&]() {
+                            NavigationSelectionChanged(PAGE_S3);
                         });
 
                         // Start auto updater
@@ -427,6 +424,29 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
             // Connect child's signal to update status bar
             connect(dynamodbTablesPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
 
+            // Route to the S3 object list
+            connect(dynamodbTablesPage, &DynamoDbTableList::ShowItemsSignal, this,
+                    [this, dynamodbTablesPage](const QString &tableName) {
+
+                        // Stop the auto updater
+                        dynamodbTablesPage->StopAutoUpdate();
+
+                        // Create the message list page
+                        const auto itemListPage = new DynamoDbItemList("Dynamodb Item List: " + tableName, tableName, nullptr);
+
+                        // Add it to the loaded pages list
+                        m_contentPane->addWidget(itemListPage);
+                        m_contentPane->setCurrentWidget(itemListPage);
+                        connect(itemListPage, &S3ObjectList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
+
+                        // Connect the back button
+                        connect(itemListPage, &DynamoDbItemList::BackNavigationSignal, this, [&]() {
+                            NavigationSelectionChanged(PAGE_DYNAMODB);
+                        });
+
+                        // Start auto updater
+                        itemListPage->StartAutoUpdate();
+                    });
             return dynamodbTablesPage;
         }
         default:

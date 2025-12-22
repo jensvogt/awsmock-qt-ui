@@ -97,6 +97,26 @@ private:
      * @brief KeySchema data proxy model
      */
     PrefixFilterProxyModel *_keySchemaProxyModel{};
+
+    /**
+     * @brief Sort column index
+     */
+    int _attributeSortColumn = 0;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _attributeSortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Sort column index
+     */
+    int _keySchemaSortColumn = 0;
+
+    /**
+     * @brief Sort order
+     */
+    Qt::SortOrder _keySchemaSortOrder = Qt::AscendingOrder;
 };
 
 

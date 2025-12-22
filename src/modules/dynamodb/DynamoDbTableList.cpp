@@ -1,7 +1,4 @@
-#include <ui_DynamoDbAddTableDialog.h>
-#include <modules/dynamodb/DynamoDBTableList.h>
-
-#include "modules/dynamodb/DynamoDbEditTableDialog.h"
+#include <modules/dynamodb/DynamoDbTableList.h>
 
 DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : BasePage(parent) {
     // Set region
@@ -102,15 +99,14 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
 
     // Connect double-click
     connect(_tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
 
-        // Extract ARN and URL
-        const QString tableName = _dataModel->item(row, 0)->text();
+        const QModelIndex sourceIndex = _proxyModel->mapToSource(index);
 
-        // Open edit dialog
-        DynamoDbEditTableDialog dialog(tableName);
-        dialog.exec();
+        // Get container
+        const QString tableName = _dataModel->item(sourceIndex.row(), 0)->text();
+
+        // Send notification to main window
+        emit ShowItemsSignal(tableName);
     });
 
     // Add context menu
@@ -176,7 +172,7 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
 
     // Get container
     const QString tableName = _dataModel->item(sourceIndex.row(), 0)->text();
-    const QString tableArn = _dataModel->item(sourceIndex.row(), 5)->text();
+    // const QString tableArn = _dataModel->item(sourceIndex.row(), 5)->text();
 
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Table");
@@ -192,13 +188,12 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Table");
     deleteAction->setToolTip("Delete the table");
 
-    if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos));
-        selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
         //_dynamoDbService->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {
         _dynamoDbService->DeleteTable(tableName);
     } else if (selectedAction == editAction) {
-        //S3BucketEditDialog dialog(bucketName);
-        //dialog.exec();
+        DynamoDbEditTableDialog dialog(tableName);
+        dialog.exec();
     }
 }

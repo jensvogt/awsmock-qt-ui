@@ -31,6 +31,14 @@ public:
         qDebug() << jsonString;
     }
 
+    static QString WriteJsonToString(const QJsonObject &object) {
+        // Convert to JSON document
+        const QJsonDocument doc(object);
+
+        // Convert to compact string
+        return QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
+    }
+
     /**
      * @brief Return a json value by path
      *
