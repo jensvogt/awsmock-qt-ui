@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.7.0...v1.8.0) (2025-12-22)
+
+
+### Features
+
+* add dynamodb items list ([9abeabd](https://github.com/jensvogt/awsmock-qt-ui/commit/9abeabdb76cad7c43cc5876f60471867b67b8b5d))
+* add dynamodb items list ([b0fd9e5](https://github.com/jensvogt/awsmock-qt-ui/commit/b0fd9e51ee855b6a9b1266c9af54c9a38768c99e))
+
 ## [1.7.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.2...v1.7.0) (2025-12-21)
 
 
