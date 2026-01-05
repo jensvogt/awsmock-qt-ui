@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.0...v1.8.1) (2025-12-22)
+
+
+### Bug Fixes
+
+* fix bug in preferences, FTP protocol added, application log limit added ([d685c31](https://github.com/jensvogt/awsmock-qt-ui/commit/d685c31098b3a530f9eb6e2f7b08d8dee355cb85))
+* fix bug in preferences, FTP protocol added, application log limit added ([a2f44e8](https://github.com/jensvogt/awsmock-qt-ui/commit/a2f44e80206b556a22eb97ebca1fbb1c8c7ee535))
+
 ## [1.8.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.7.0...v1.8.0) (2025-12-22)
 
 
