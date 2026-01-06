@@ -74,6 +74,8 @@ public:
 
     void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
 
+    void UpdateObject(const QString &region, const QString &bucketName, const QString &key, const QByteArray &content, const QString &storageClass, const QMap<QString, QString> &metadata);
+
     void DeleteObject(const QString &bucketName, const QString &key);
 
 signals:

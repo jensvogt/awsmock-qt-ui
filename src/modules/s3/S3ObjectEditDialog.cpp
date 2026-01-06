@@ -23,6 +23,11 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
         _s3Service->GetObjectDetails(objectId);
     });
 
+    // Storage type combo box
+    connect(_ui->storageTypeCombo, &QComboBox::currentIndexChanged, this, [this]() {
+        this->_changed = true;
+    });
+
     // Set tab width
     const QFontMetrics fm(_ui->bodyTextEdit->font());
     const int tabWidth = fm.horizontalAdvance(' ') * 2;
@@ -44,6 +49,9 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     // Body refresh button
     _ui->bodyRefreshButton->setText(nullptr);
     _ui->bodyRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->bodyRefreshButton, &QAbstractButton::clicked, this, [this, objectId]() {
+        _s3Service->GetObjectDetails(objectId);
+    });
 
     // Metadata add button
     _ui->metadataAddButton->setText(nullptr);
@@ -58,6 +66,25 @@ S3ObjectEditDialog::~S3ObjectEditDialog() {
 }
 
 void S3ObjectEditDialog::HandleAccept() {
+    if (_changed) {
+        QMap<QString, QString> metadata;
+        for (int row = 0; row < _ui->metadataTable->rowCount(); ++row) {
+            QString key, value;
+            for (int col = 0; col < _ui->metadataTable->columnCount(); ++col) {
+                const QTableWidgetItem *item = _ui->metadataTable->item(row, col);
+                if (!item) {
+                    continue;
+                }
+                if (col == 0) {
+                    key = item->text();
+                } else if (col == 1) {
+                    value = item->text();
+                }
+            }
+            metadata[key] = value;
+        }
+        _s3Service->UpdateObject(_ui->regionEdit->text(), _ui->bucketEdit->text(), _ui->keyEdit->text(), _ui->bodyTextEdit->toPlainText().toUtf8(), _ui->storageTypeCombo->currentText(), metadata);
+    }
     accept();
 }
 
