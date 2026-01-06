@@ -18,7 +18,15 @@ S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *paren
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &S3BucketEditDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &S3BucketEditDialog::HandleReject);
 
+    // Versioned check box
+    connect(_ui->versionedCheckBox, &QCheckBox::checkStateChanged, this, [this]() {
+        this->_changed = true;
+    });
+
     // Setup tabs
+    SetupLambdaNotifications();
+    SetupQueueNotifications();
+    SetupTopicNotifications();
     SetupDefaultMetadataTab();
 
     _ui->tabWidget->setCurrentIndex(0);
@@ -35,27 +43,41 @@ void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGe
     _ui->ownerEdit->setText(bucketGetResponse.owner);
     _ui->keysEdit->setText(QString::number(bucketGetResponse.objectCount));
     _ui->sizeEdit->setText(QString::number(bucketGetResponse.size));
+    _ui->versionedCheckBox->setCheckState(bucketGetResponse.versioned ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(bucketGetResponse.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(bucketGetResponse.modified));
 
+    // Default metadata
     for (auto it = bucketGetResponse.defaultMetadata.cbegin(); it != bucketGetResponse.defaultMetadata.cend(); ++it) {
-        const int row = _dataModel->rowCount();
-        SetColumn(_dataModel, row, 0, it.key());
-        SetColumn(_dataModel, row, 1, bucketGetResponse.defaultMetadata[it.key()]);
+        const int row = _defaultMetadataDataModel->rowCount();
+        SetColumn(_defaultMetadataDataModel, row, 0, it.key());
+        SetColumn(_defaultMetadataDataModel, row, 1, bucketGetResponse.defaultMetadata[it.key()]);
+    }
+
+    // Lambda notifications
+    for (auto it = bucketGetResponse.lambdaNotifications.begin(); it != bucketGetResponse.lambdaNotifications.cend(); ++it) {
+        const int row = _lambdaNotificationDataModel->rowCount();
+        SetColumn(_lambdaNotificationDataModel, row, 0, it->id);
+        SetColumn(_lambdaNotificationDataModel, row, 1, it->lambdaArn);
+    }
+
+    // Queue notifications
+    for (auto it = bucketGetResponse.queueNotifications.begin(); it != bucketGetResponse.queueNotifications.cend(); ++it) {
+        const int row = _queueNotificationDataModel->rowCount();
+        SetColumn(_queueNotificationDataModel, row, 0, it->id);
+        SetColumn(_queueNotificationDataModel, row, 1, it->queueArn);
     }
 }
 
 void S3BucketEditDialog::SetupDefaultMetadataTab() {
 
-    const QStringList headers = QStringList() = {
-                                    tr("Key"), tr("Value")
-                                };
+    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
 
     // Table
-    _dataModel = new QStandardItemModel(this);
-    _dataModel->setHorizontalHeaderLabels(headers);
-    _dataModel->setColumnCount(static_cast<int>(headers.count()));
-    _ui->defaultMetadataTable->setModel(_dataModel);
+    _defaultMetadataDataModel = new QStandardItemModel(this);
+    _defaultMetadataDataModel->setHorizontalHeaderLabels(headers);
+    _defaultMetadataDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->defaultMetadataTable->setModel(_defaultMetadataDataModel);
 
     _ui->defaultMetadataTable->setShowGrid(true);
     _ui->defaultMetadataTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -73,9 +95,108 @@ void S3BucketEditDialog::SetupDefaultMetadataTab() {
     connect(_ui->defaultMetadataAddButton, &QAbstractButton::clicked, this, [this]() {
         S3ObjectMetadataDialog metadataAdd(this, true);
         metadataAdd.exec();
-        const int row = _dataModel->rowCount();
-        SetColumn(_dataModel, row, 0, metadataAdd.GetKey());
-        SetColumn(_dataModel, row, 1, metadataAdd.GetValue());
+        const int row = _defaultMetadataDataModel->rowCount();
+        SetColumn(_defaultMetadataDataModel, row, 0, metadataAdd.GetKey());
+        SetColumn(_defaultMetadataDataModel, row, 1, metadataAdd.GetValue());
+        this->_changed = true;
+    });
+}
+
+void S3BucketEditDialog::SetupLambdaNotifications() {
+
+    const QStringList headers = QStringList() = {tr("ID"), tr("ARN")};
+
+    // Table
+    _lambdaNotificationDataModel = new QStandardItemModel(this);
+    _lambdaNotificationDataModel->setHorizontalHeaderLabels(headers);
+    _lambdaNotificationDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->lambdaNotificationTable->setModel(_lambdaNotificationDataModel);
+
+    _ui->lambdaNotificationTable->setShowGrid(true);
+    _ui->lambdaNotificationTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->lambdaNotificationTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->lambdaNotificationTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->lambdaNotificationTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
+    _ui->lambdaNotificationTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+
+    // Enable sorting, default on and sorted ascending by name
+    _ui->lambdaNotificationTable->setSortingEnabled(true);
+    _ui->lambdaNotificationTable->sortByColumn(0, Qt::AscendingOrder);
+
+    _ui->lambdaNotificationAddButton->setText(nullptr);
+    _ui->lambdaNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->lambdaNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
+        /*S3ObjectMetadataDialog metadataAdd(this, true);
+        metadataAdd.exec();
+        const int row = _lambdaNotificationDataModel->rowCount();
+        SetColumn(_lambdaNotificationDataModel, row, 0, metadataAdd.GetKey());
+        SetColumn(_lambdaNotificationDataModel, row, 1, metadataAdd.GetValue());*/
+        this->_changed = true;
+    });
+}
+
+void S3BucketEditDialog::SetupQueueNotifications() {
+
+    const QStringList headers = QStringList() = {tr("ID"), tr("ARN")};
+
+    // Table
+    _queueNotificationDataModel = new QStandardItemModel(this);
+    _queueNotificationDataModel->setHorizontalHeaderLabels(headers);
+    _queueNotificationDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->queueNotificationTable->setModel(_queueNotificationDataModel);
+
+    _ui->queueNotificationTable->setShowGrid(true);
+    _ui->queueNotificationTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->queueNotificationTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->queueNotificationTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->queueNotificationTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
+    _ui->queueNotificationTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+
+    // Enable sorting, default on and sorted ascending by name
+    _ui->queueNotificationTable->setSortingEnabled(true);
+    _ui->queueNotificationTable->sortByColumn(0, Qt::AscendingOrder);
+
+    _ui->queueNotificationAddButton->setText(nullptr);
+    _ui->queueNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->queueNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
+        /*S3ObjectMetadataDialog metadataAdd(this, true);
+        metadataAdd.exec();
+        const int row = _queueNotificationDataModel->rowCount();
+        SetColumn(_queueNotificationDataModel, row, 0, metadataAdd.GetKey());
+        SetColumn(_queueNotificationDataModel, row, 1, metadataAdd.GetValue());*/
+        this->_changed = true;
+    });
+}
+
+void S3BucketEditDialog::SetupTopicNotifications() {
+
+    const QStringList headers = QStringList() = {tr("ID"), tr("ARN")};
+
+    // Table
+    _topicNotificationDataModel = new QStandardItemModel(this);
+    _topicNotificationDataModel->setHorizontalHeaderLabels(headers);
+    _topicNotificationDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->topicNotificationTable->setModel(_topicNotificationDataModel);
+
+    _ui->topicNotificationTable->setShowGrid(true);
+    _ui->topicNotificationTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->topicNotificationTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->topicNotificationTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->topicNotificationTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
+    _ui->topicNotificationTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+
+    // Enable sorting, default on and sorted ascending by name
+    _ui->topicNotificationTable->setSortingEnabled(true);
+    _ui->topicNotificationTable->sortByColumn(0, Qt::AscendingOrder);
+
+    _ui->topicNotificationAddButton->setText(nullptr);
+    _ui->topicNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->topicNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
+        /*S3ObjectMetadataDialog metadataAdd(this, true);
+        metadataAdd.exec();
+        const int row = _topicNotificationDataModel->rowCount();
+        SetColumn(_topicNotificationDataModel, row, 0, metadataAdd.GetKey());
+        SetColumn(_topicNotificationDataModel, row, 1, metadataAdd.GetValue());*/
         this->_changed = true;
     });
 }
@@ -83,12 +204,12 @@ void S3BucketEditDialog::SetupDefaultMetadataTab() {
 void S3BucketEditDialog::HandleAccept() {
     if (this->_changed) {
         QMap<QString, QString> defaultMetadata;
-        for (int i = 0; i < _dataModel->rowCount(); i++) {
-            QModelIndex col1 = _dataModel->index(i, 0);
-            QModelIndex col2 = _dataModel->index(i, 1);
-            defaultMetadata[_dataModel->data(col1).toString()] = _dataModel->data(col2).toString();
+        for (int i = 0; i < _defaultMetadataDataModel->rowCount(); i++) {
+            QModelIndex col1 = _defaultMetadataDataModel->index(i, 0);
+            QModelIndex col2 = _defaultMetadataDataModel->index(i, 1);
+            defaultMetadata[_defaultMetadataDataModel->data(col1).toString()] = _defaultMetadataDataModel->data(col2).toString();
         }
-        _s3Service->UpdateBucket(_ui->nameEdit->text(), defaultMetadata);
+        _s3Service->UpdateBucket(_ui->nameEdit->text(), defaultMetadata, _ui->versionedCheckBox->checkState() ? "enabled" : "disabled");
     }
     accept();
 }

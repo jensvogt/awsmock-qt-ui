@@ -15,7 +15,7 @@ void SNSService::AddTopic(const QString &topicName) {
                           {"x-awsmock-action", "create-topic"},
                           {"content-type", "application/json"}
                       },
-                      [this,timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this,timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
@@ -52,7 +52,6 @@ void SNSService::ListTopics(const QString &prefix) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SNSListTopicResult snsResponse;
                                   snsResponse.FromJson(jsonDoc);

@@ -3,8 +3,6 @@
 
 // Qt includes
 #include <QMessageBox>
-#include <QObject>
-#include <QUrlQuery>
 #include <QElapsedTimer>
 
 // AwsMock includes
@@ -40,12 +38,34 @@ public:
      */
     void PurgeBucket(const QString &bucketName);
 
+    /**
+     * @brief Add a new bucket
+     *
+     * @param bucketName name of the bucket
+     */
     void AddBucket(const QString &bucketName);
 
-    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata);
+    /**
+     * @brief Update bucket
+     *
+     * @param bucketName bucket name
+     * @param metadata bucket metadata array
+     * @param versionStatus version status, can be either 'enabled' or 'disabled'.
+     */
+    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, const QString &versionStatus);
 
+    /**
+     * @brief delete the bucket
+     *
+     * @param bucketName name of the bucket
+     */
     void DeleteBucket(const QString &bucketName);
 
+    /**
+     * @brief Get the bucket details
+     *
+     * @param bucketName name of the bucket
+     */
     void GetBucketDetails(const QString &bucketName);
 
     void ListObjects(const QString &bucketName, const QString &prefix);

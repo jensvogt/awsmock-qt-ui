@@ -2,14 +2,14 @@
 // Created by vogje01 on 11/24/25.
 //
 
-#ifndef AWSMOCK_QT_UI_S3OBJECTEDITDIALOG_H
-#define AWSMOCK_QT_UI_S3OBJECTEDITDIALOG_H
+#ifndef AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
+#define AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
 
-#include <QDialog>
-
+// AwsMock includes
 #include <modules/s3/S3Service.h>
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -23,18 +23,41 @@ class S3ObjectEditDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor
+     *
+     * @param objectId S3 object ID
+     * @param parent parent widget
+     */
     explicit S3ObjectEditDialog(const QString &objectId, QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~S3ObjectEditDialog() override;
 
+    /**
+     * @brief Handle accept ebemts
+     */
     void HandleAccept();
 
+    /**
+     * @brief Handle cancel event
+     */
     void HandleReject();
 
+    /**
+     * @brief Handle update object response
+     *
+     * @param objectDetailsResponse object details REST response
+     */
     void UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) const;
 
+    /**
+     * @brief Load dialog content
+     */
     void LoadContent() override {
-    };
+    }
 
 private:
     /**
@@ -66,4 +89,4 @@ private:
 };
 
 
-#endif //AWSMOCK_QT_UI_S3OBJECTEDITDIALOG_H
+#endif // AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
