@@ -86,6 +86,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _metadataSortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Changed flag
+     */
+    bool _changed = false;
 };
 
 

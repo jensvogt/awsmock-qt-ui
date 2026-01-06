@@ -294,6 +294,43 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
                       });
 }
 
+void S3Service::UpdateObject(const QString &region, const QString &bucketName, const QString &key, const QByteArray &content, const QString &storageClass, const QMap<QString, QString> &metadata) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jMetadata;
+    for (const auto &k: metadata.keys()) {
+        jMetadata[k] = metadata[k];
+    }
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["region"] = region;
+    jRequest["bucket"] = bucketName;
+    jRequest["key"] = key;
+    jRequest["content"] = QString(content.toBase64());
+    jRequest["storageClass"] = storageClass;
+    jRequest["contentType"] = "application/json";
+    jRequest["metadata"] = jMetadata;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(_url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "UpdateObject"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadObjectsSignal();
+                          } else {
+                              qCritical() << error;
+                          }
+                          emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
+                      });
+}
+
+
 void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
     QElapsedTimer timer;
     timer.start();

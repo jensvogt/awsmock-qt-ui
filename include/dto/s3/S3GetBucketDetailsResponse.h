@@ -160,7 +160,7 @@ struct S3GetBucketDetailsResponse {
         bucketArn = jsonDoc["arn"].toString();
         objectCount = jsonDoc["keys"].toInteger();
         size = jsonDoc["size"].toInteger();
-        owner = jsonDoc["delay"].toString();
+        owner = jsonDoc["owner"].toString();
         versioningStatus = jsonDoc["versionStatus"].toString();
         versioned = jsonDoc["versionStatus"].toString() == "enabled";
         created = QDateTime::fromString(jsonDoc["created"].toString(), Qt::ISODate);
