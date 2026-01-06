@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.1...v1.8.2) (2026-01-06)
+
+
+### Bug Fixes
+
+* S3 notification tabs ([6dd506f](https://github.com/jensvogt/awsmock-qt-ui/commit/6dd506f5b4d518af82d7fbc33161d1363b99e9e9))
+* S3 notification tabs ([9bf64cc](https://github.com/jensvogt/awsmock-qt-ui/commit/9bf64cc44c8595f06d62255769a919931c49581f))
+
 ## [1.8.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.0...v1.8.1) (2025-12-22)
 
 
