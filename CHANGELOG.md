@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.2...v1.8.3) (2026-01-06)
+
+
+### Bug Fixes
+
+* S3 bucket owner ([2db51f2](https://github.com/jensvogt/awsmock-qt-ui/commit/2db51f2bc5aa9f8f5b00690d7f6bfdb366d20720))
+
 ## [1.8.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.1...v1.8.2) (2026-01-06)
 
 
