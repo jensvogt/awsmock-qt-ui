@@ -36,6 +36,12 @@ public:
 
     void SetupDefaultMetadataTab();
 
+    void SetupLambdaNotifications();
+
+    void SetupQueueNotifications();
+
+    void SetupTopicNotifications();
+
     void LoadContent() override {
     };
 
@@ -66,9 +72,24 @@ private:
     bool _changed = false;
 
     /**
-     *  @brief Table data model
+     * @brief Default metadata table data model
      */
-    QStandardItemModel *_dataModel{};
+    QStandardItemModel *_defaultMetadataDataModel{};
+
+    /**
+     * @brief Lambda notification table model
+     */
+    QStandardItemModel *_lambdaNotificationDataModel{};
+
+    /**
+     * @brief Queue notification table model
+     */
+    QStandardItemModel *_queueNotificationDataModel{};
+
+    /**
+     * @brief Topic notification table model
+     */
+    QStandardItemModel *_topicNotificationDataModel{};
 };
 
 

@@ -20,25 +20,25 @@ enum class NotificationEventType {
 };
 
 
-static std::map<NotificationEventType, std::string> EventTypeNames{
-    {NotificationEventType::REDUCED_REDUNDANCY_LOST_OBJECT, "ReducedRedundancyLostObject "},
+static std::map<NotificationEventType, QString> EventTypeNames{
+    {NotificationEventType::REDUCED_REDUNDANCY_LOST_OBJECT, "ReducedRedundancyLostObject"},
     {NotificationEventType::OBJECT_CREATED, "ObjectCreated"},
     {NotificationEventType::OBJECT_REMOVED, "ObjectRemoved"},
     {NotificationEventType::OBJECT_RESTORED, "ObjectRestore"},
     {NotificationEventType::REPLICATION, "Replication"},
     {NotificationEventType::OBJECT_RESTORE, "ObjectRestore"},
-    {NotificationEventType::OBJECT_LIFECYCLE_TRANSITION, "LifecycleTransition "},
-    {NotificationEventType::INTELLIGENT_TIERING, "IntelligentTiering "},
+    {NotificationEventType::OBJECT_LIFECYCLE_TRANSITION, "LifecycleTransition"},
+    {NotificationEventType::INTELLIGENT_TIERING, "IntelligentTiering"},
     {NotificationEventType::OBJECT_ACL, "ObjectAcl"},
     {NotificationEventType::LIFECYCLE_EXPIRATION, "LifecycleExpiration"},
     {NotificationEventType::OBJECT_TAGGING, "ObjectTagging"},
 };
 
-[[maybe_unused]] static std::string EventTypeToString(const NotificationEventType eventType) {
+[[maybe_unused]] static QString EventTypeToString(const NotificationEventType eventType) {
     return EventTypeNames[eventType];
 }
 
-[[maybe_unused]] static NotificationEventType EventTypeFromString(const std::string &nameType) {
+[[maybe_unused]] static NotificationEventType EventTypeFromString(const QString &nameType) {
     for (auto &[fst, snd]: EventTypeNames) {
         if (snd == nameType) {
             return fst;
@@ -74,10 +74,58 @@ struct LambdaNotification {
             FilterRule rule;
             rule.FromJson(filterRule.toObject());
         }
+        for (const auto &event: jsonObject["events"].toArray()) {
+            events.append(EventTypeFromString(event.toString()));
+        }
+    }
+};
+
+struct QueueNotification {
+    QString id;
+
+    QString queueArn;
+
+    QList<FilterRule> filterRules;
+
+    QList<NotificationEventType> events;
+
+    void FromJson(const QJsonObject &jsonObject) {
+        id = jsonObject["id"].toString();
+        queueArn = jsonObject["queueArn"].toString();
+        for (const auto &filterRule: jsonObject["filterRules"].toArray()) {
+            FilterRule rule;
+            rule.FromJson(filterRule.toObject());
+        }
+        for (const auto &event: jsonObject["events"].toArray()) {
+            events.append(EventTypeFromString(event.toString()));
+        }
+    }
+};
+
+struct TopicNotification {
+    QString id;
+
+    QString topicArn;
+
+    QList<FilterRule> filterRules;
+
+    QList<NotificationEventType> events;
+
+    void FromJson(const QJsonObject &jsonObject) {
+        id = jsonObject["id"].toString();
+        topicArn = jsonObject["topicArn"].toString();
+        for (const auto &filterRule: jsonObject["filterRules"].toArray()) {
+            FilterRule rule;
+            rule.FromJson(filterRule.toObject());
+        }
+        for (const auto &event: jsonObject["events"].toArray()) {
+            events.append(EventTypeFromString(event.toString()));
+        }
     }
 };
 
 struct S3GetBucketDetailsResponse {
+
     QString region;
 
     QString bucketName;
@@ -92,7 +140,15 @@ struct S3GetBucketDetailsResponse {
 
     QString owner;
 
+    bool versioned;
+
     QMap<QString, QString> defaultMetadata;
+
+    QList<LambdaNotification> lambdaNotifications;
+
+    QList<QueueNotification> queueNotifications;
+
+    QList<TopicNotification> topicNotifications;
 
     QDateTime created;
 
@@ -105,6 +161,8 @@ struct S3GetBucketDetailsResponse {
         objectCount = jsonDoc["keys"].toInteger();
         size = jsonDoc["size"].toInteger();
         owner = jsonDoc["delay"].toString();
+        versioningStatus = jsonDoc["versionStatus"].toString();
+        versioned = jsonDoc["versionStatus"].toString() == "enabled";
         created = QDateTime::fromString(jsonDoc["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonDoc["modified"].toString(), Qt::ISODate);
 
@@ -112,6 +170,23 @@ struct S3GetBucketDetailsResponse {
             for (const auto &element: jsonDoc["lambdaConfigurations"].toArray()) {
                 LambdaNotification lambdaConfig;
                 lambdaConfig.FromJson(element.toObject());
+                lambdaNotifications.push_back(lambdaConfig);
+            }
+        }
+
+        if (!jsonDoc["queueConfigurations"].isNull() && jsonDoc["queueConfigurations"].isArray()) {
+            for (const auto &element: jsonDoc["queueConfigurations"].toArray()) {
+                QueueNotification queueConfig;
+                queueConfig.FromJson(element.toObject());
+                queueNotifications.push_back(queueConfig);
+            }
+        }
+
+        if (!jsonDoc["topicConfigurations"].isNull() && jsonDoc["topicConfigurations"].isArray()) {
+            for (const auto &element: jsonDoc["topicConfigurations"].toArray()) {
+                TopicNotification topicConfig;
+                topicConfig.FromJson(element.toObject());
+                topicNotifications.push_back(topicConfig);
             }
         }
 

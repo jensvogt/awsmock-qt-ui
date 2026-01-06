@@ -2,11 +2,8 @@
 // Created by vogje01 on 11/24/25.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_S3ObjectEditDialog.h" resolved
-
 #include <modules/s3/S3ObjectEditDialog.h>
 #include "ui_S3ObjectEditDialog.h"
-#include "utils/DateTimeUtils.h"
 
 S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent) : BaseDialog(parent),
                                                                                    _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
@@ -69,6 +66,7 @@ void S3ObjectEditDialog::HandleReject() {
 }
 
 void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) const {
+
     _ui->regionEdit->setText(objectDetailsResponse.region);
     _ui->bucketEdit->setText(objectDetailsResponse.bucketName);
     _ui->keyEdit->setText(objectDetailsResponse.key);
@@ -78,6 +76,11 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.modified));
     _ui->bodyTextEdit->setPlainText(objectDetailsResponse.body);
+
+    // Storage classes
+    const QStringList storageClasses = {"STANDARD", "STANDARD_IA", "ONEZONE_IA", "EXPRESS_ONEZONE", "GLACIER", "GLACIER_IR", "DEEP_ARCHIVE", "INTELLIGENT_TIERING", "REDUCED_REDUNDANCY"};
+    _ui->storageTypeCombo->addItems(storageClasses);
+    _ui->storageTypeCombo->setCurrentText(objectDetailsResponse.storageClass);
 
     // Meta data
     if (!objectDetailsResponse.metadata.empty()) {

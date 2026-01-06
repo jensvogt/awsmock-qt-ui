@@ -96,7 +96,7 @@ void S3Service::AddBucket(const QString &bucketName) {
                       });
 }
 
-void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata) {
+void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, const QString &versionStatus) {
     QElapsedTimer timer;
     timer.start();
 
@@ -106,11 +106,13 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
     }
 
     QJsonObject jBucket = CreateBaseRequest();
-    jBucket["bucketName"] = bucketName;
-    jBucket["defaultMetadata"] = jMetadata;
+    jBucket["Region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    jBucket["BucketName"] = bucketName;
+    jBucket["DefaultMetadata"] = jMetadata;
+    jBucket["VersionStatus"] = versionStatus;
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["bucket"] = jBucket;
+    jRequest["Bucket"] = jBucket;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(_url,
