@@ -36,7 +36,7 @@ public:
 
     void SetupDefaultMetadataTab();
 
-    void ShowDefaultMetadataContextMenu(const QPoint &pos) const;
+    void ShowDefaultMetadataContextMenu(const QPoint &pos);
 
     void SetupLambdaNotifications();
 

@@ -119,28 +119,32 @@ void S3BucketEditDialog::SetupDefaultMetadataTab() {
     connect(_ui->defaultMetadataTable, &QTableWidget::customContextMenuRequested, this, &S3BucketEditDialog::ShowDefaultMetadataContextMenu);
 }
 
-void S3BucketEditDialog::ShowDefaultMetadataContextMenu(const QPoint &pos) const {
+void S3BucketEditDialog::ShowDefaultMetadataContextMenu(const QPoint &pos) {
     const QModelIndex index = _ui->defaultMetadataTable->indexAt(pos);
-    if (!index.isValid()) return;
+    if (!index.isValid()) {
+        return;
+    }
 
-    const int row = index.row();
-
+    // Context menu
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Metadata");
     editAction->setToolTip("Edit the bucket default metadata");
-
     menu.addSeparator();
-
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Metadata");
     deleteAction->setToolTip("Delete the bucket default metadata");
 
-    const QString key = _defaultMetadataDataModel->item(row, 0)->text();
-    const QString value = _defaultMetadataDataModel->item(row, 1)->text();
+    // Get the metadata attributes
+    const QString key = _defaultMetadataDataModel->item(index.row(), 0)->text();
+    const QString value = _defaultMetadataDataModel->item(index.row(), 1)->text();
+
+    // Context menu callbacks
     if (const QAction *selectedAction = menu.exec(_ui->defaultMetadataTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
         S3BucketMetadataDialog dialog(nullptr, key, value);
         dialog.exec();
+        _changed = true;
     } else if (selectedAction == deleteAction) {
-        //_s3Service->DeleteDefaultMetadata(bucketName);
+        _defaultMetadataDataModel->removeRow(index.row());
+        _changed = true;
     }
 }
 

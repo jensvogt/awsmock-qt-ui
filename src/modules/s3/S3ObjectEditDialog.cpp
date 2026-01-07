@@ -2,8 +2,10 @@
 // Created by vogje01 on 11/24/25.
 //
 
+#include <QMenu>
 #include <modules/s3/S3ObjectEditDialog.h>
 #include "ui_S3ObjectEditDialog.h"
+#include "modules/s3/S3ObjectMetadataDialog.h"
 
 S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent) : BaseDialog(parent),
                                                                                    _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
@@ -46,6 +48,16 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
+    // Connect double-click
+    connect(_ui->metadataTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString key = _ui->metadataTable->item(index.row(), 0)->text();
+        const QString value = _ui->metadataTable->item(index.row(), 1)->text();
+        S3ObjectMetadataDialog dialog(key, value);
+        dialog.exec();
+        _ui->metadataTable->item(index.row(), 1)->setText(dialog.GetValue());
+        _changed = true;
+    });
+
     // Body refresh button
     _ui->bodyRefreshButton->setText(nullptr);
     _ui->bodyRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
@@ -56,9 +68,51 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     // Metadata add button
     _ui->metadataAddButton->setText(nullptr);
     _ui->metadataAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->metadataAddButton, &QAbstractButton::clicked, this, [this]() {
+        S3ObjectMetadataDialog metadataAdd(this);
+        metadataAdd.exec();
+        const int row = _ui->metadataTable->rowCount();
+        _ui->metadataTable->insertRow(row);
+        SetColumn(_ui->metadataTable, row, 0, metadataAdd.GetKey());
+        SetColumn(_ui->metadataTable, row, 1, metadataAdd.GetValue());
+        _changed = true;
+    });
+
+    // Add default metadata context menu
+    _ui->metadataTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->metadataTable, &QTableWidget::customContextMenuRequested, this, &S3ObjectEditDialog::ShowDefaultMetadataContextMenu);
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
+}
+
+void S3ObjectEditDialog::ShowDefaultMetadataContextMenu(const QPoint &pos) {
+    const QModelIndex index = _ui->metadataTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    // Context menu
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Metadata");
+    editAction->setToolTip("Edit the bucket default metadata");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Metadata");
+    deleteAction->setToolTip("Delete the bucket default metadata");
+
+    // Get the metadata attributes
+    const QString key = _ui->metadataTable->item(index.row(), 0)->text();
+    const QString value = _ui->metadataTable->item(index.row(), 1)->text();
+
+    // Context menu callbacks
+    if (const QAction *selectedAction = menu.exec(_ui->metadataTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        S3ObjectMetadataDialog dialog(key, value);
+        dialog.exec();
+        _changed = true;
+    } else if (selectedAction == deleteAction) {
+        _ui->metadataTable->removeRow(index.row());
+        _changed = true;
+    }
 }
 
 S3ObjectEditDialog::~S3ObjectEditDialog() {
@@ -67,23 +121,13 @@ S3ObjectEditDialog::~S3ObjectEditDialog() {
 
 void S3ObjectEditDialog::HandleAccept() {
     if (_changed) {
-        QMap<QString, QString> metadata;
-        for (int row = 0; row < _ui->metadataTable->rowCount(); ++row) {
-            QString key, value;
-            for (int col = 0; col < _ui->metadataTable->columnCount(); ++col) {
-                const QTableWidgetItem *item = _ui->metadataTable->item(row, col);
-                if (!item) {
-                    continue;
-                }
-                if (col == 0) {
-                    key = item->text();
-                } else if (col == 1) {
-                    value = item->text();
-                }
-            }
-            metadata[key] = value;
+        QMap<QString, QString> defaultMetadata;
+        for (int i = 0; i < _ui->metadataTable->rowCount(); i++) {
+            const QString key = _ui->metadataTable->item(i, 0)->text();
+            const QString value = _ui->metadataTable->item(i, 1)->text();
+            defaultMetadata[key] = value;
         }
-        _s3Service->UpdateObject(_ui->regionEdit->text(), _ui->bucketEdit->text(), _ui->keyEdit->text(), _ui->bodyTextEdit->toPlainText().toUtf8(), _ui->storageTypeCombo->currentText(), metadata);
+        _s3Service->UpdateObject(_ui->regionEdit->text(), _ui->bucketEdit->text(), _ui->keyEdit->text(), _ui->bodyTextEdit->toPlainText().toUtf8(), _ui->storageTypeCombo->currentText(), defaultMetadata);
     }
     accept();
 }

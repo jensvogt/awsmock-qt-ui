@@ -5,15 +5,27 @@
 #include <modules/s3/S3ObjectMetadataDialog.h>
 #include "ui_S3ObjectMetadataDialog.h"
 
-S3ObjectMetadataDialog::S3ObjectMetadataDialog(QWidget *parent, bool isAdded) : QDialog(parent), _ui(new Ui::S3ObjectMetadataDialog) {
+S3ObjectMetadataDialog::S3ObjectMetadataDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::S3ObjectMetadataDialog) {
 
-    _ui->setupUi(this);
-    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &S3ObjectMetadataDialog::HandleAccept);
-    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &S3ObjectMetadataDialog::HandleReject);
+    Initialize();
+}
+
+S3ObjectMetadataDialog::S3ObjectMetadataDialog(const QString &key, const QString &value, QWidget *parent) : QDialog(parent), _ui(new Ui::S3ObjectMetadataDialog) {
+    Initialize();
+    _ui->nameEdit->setText(key);
+    _ui->nameEdit->setDisabled(true);
+    _ui->valueEdit->setText(value);
 }
 
 S3ObjectMetadataDialog::~S3ObjectMetadataDialog() {
     delete _ui;
+}
+
+void S3ObjectMetadataDialog::Initialize() {
+
+    _ui->setupUi(this);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &S3ObjectMetadataDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &S3ObjectMetadataDialog::HandleReject);
 }
 
 void S3ObjectMetadataDialog::HandleAccept() {

@@ -6,10 +6,10 @@
 #define AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
 
 // AwsMock includes
-#include <modules/s3/S3Service.h>
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
 #include <utils/DateTimeUtils.h>
+#include <modules/s3/S3Service.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -37,7 +37,14 @@ public:
     ~S3ObjectEditDialog() override;
 
     /**
-     * @brief Handle accept ebemts
+     * @brief Show context menu
+     *
+     * @param pos mouse position
+     */
+    void ShowDefaultMetadataContextMenu(const QPoint &pos);
+
+    /**
+     * @brief Handle accept events
      */
     void HandleAccept();
 
