@@ -94,10 +94,15 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     tableWidget->setSortingEnabled(true);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    tableWidget->horizontalHeaderItem(0)->setToolTip("S3 object key");
     tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeaderItem(1)->setToolTip("Mime type");
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    tableWidget->horizontalHeaderItem(2)->setToolTip("Object size in bytes");
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeaderItem(3)->setToolTip("Created timestamp");
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeaderItem(4)->setToolTip("Modified timestamp");
     tableWidget->setColumnHidden(5, true);
     tableWidget->addAction(GetRefreshAction(this));
 
