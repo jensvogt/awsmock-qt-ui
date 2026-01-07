@@ -25,8 +25,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setToolTip("Add a new Bucket");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal,
-                                                             "", &ok); ok && !bucketName.isEmpty()) {
+        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal, "", &ok); ok && !bucketName.isEmpty()) {
             _s3Service->AddBucket(bucketName);
         }
     });
@@ -74,7 +73,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
 
     // Table
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Keys"), tr("Size [kb]"), tr("Created"), tr("Modified"),
+                                    tr("Name"), tr("Keys"), tr("Size"), tr("Created"), tr("Modified"),
                                     tr("BucketArn")
                                 };
     tableWidget = new QTableWidget(this);
@@ -86,10 +85,15 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     tableWidget->setSortingEnabled(true);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    tableWidget->horizontalHeaderItem(0)->setToolTip("Name of the bucket");
     tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    tableWidget->horizontalHeaderItem(1)->setToolTip("Total number of object keys");
     tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    tableWidget->horizontalHeaderItem(2)->setToolTip("Total bucket size in bytes");
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeaderItem(3)->setToolTip("Created timestamp");
     tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeaderItem(4)->setToolTip("Modified timestamp");
     tableWidget->setColumnHidden(5, true);
     tableWidget->addAction(GetRefreshAction(this));
 
@@ -143,7 +147,7 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
         tableWidget->insertRow(r);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketName);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).objectCount);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).size / 1024);
+        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).size);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).created);
         SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).modified);
         SetHiddenColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketArn);

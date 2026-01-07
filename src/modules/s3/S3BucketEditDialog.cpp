@@ -4,8 +4,11 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_S3BucketEditDialog.h" resolved
 
+#include <QMenu>
+#include <ui_S3BucketMetadataDialog.h>
 #include <modules/s3/S3BucketEditDialog.h>
 #include "ui_S3BucketEditDialog.h"
+#include "modules/s3/S3BucketMetadataDialog.h"
 
 S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3BucketEditDialog) {
 
@@ -93,13 +96,56 @@ void S3BucketEditDialog::SetupDefaultMetadataTab() {
     _ui->defaultMetadataAddButton->setText(nullptr);
     _ui->defaultMetadataAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->defaultMetadataAddButton, &QAbstractButton::clicked, this, [this]() {
-        S3ObjectMetadataDialog metadataAdd(this, true);
+        S3BucketMetadataDialog metadataAdd(this);
         metadataAdd.exec();
         const int row = _defaultMetadataDataModel->rowCount();
         SetColumn(_defaultMetadataDataModel, row, 0, metadataAdd.GetKey());
         SetColumn(_defaultMetadataDataModel, row, 1, metadataAdd.GetValue());
         this->_changed = true;
     });
+
+    // Connect double-click
+    connect(_ui->defaultMetadataTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString key = _defaultMetadataDataModel->item(index.row(), 0)->text();
+        const QString value = _defaultMetadataDataModel->item(index.row(), 1)->text();
+        S3BucketMetadataDialog dialog(nullptr, key, value);
+        dialog.exec();
+        _defaultMetadataDataModel->item(index.row(), 1)->setText(dialog.GetValue());
+        _changed = true;
+    });
+
+    // Add default metadata context menu
+    _ui->defaultMetadataTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->defaultMetadataTable, &QTableWidget::customContextMenuRequested, this, &S3BucketEditDialog::ShowDefaultMetadataContextMenu);
+}
+
+void S3BucketEditDialog::ShowDefaultMetadataContextMenu(const QPoint &pos) {
+    const QModelIndex index = _ui->defaultMetadataTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    // Context menu
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Metadata");
+    editAction->setToolTip("Edit the bucket default metadata");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Metadata");
+    deleteAction->setToolTip("Delete the bucket default metadata");
+
+    // Get the metadata attributes
+    const QString key = _defaultMetadataDataModel->item(index.row(), 0)->text();
+    const QString value = _defaultMetadataDataModel->item(index.row(), 1)->text();
+
+    // Context menu callbacks
+    if (const QAction *selectedAction = menu.exec(_ui->defaultMetadataTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        S3BucketMetadataDialog dialog(nullptr, key, value);
+        dialog.exec();
+        _changed = true;
+    } else if (selectedAction == deleteAction) {
+        _defaultMetadataDataModel->removeRow(index.row());
+        _changed = true;
+    }
 }
 
 void S3BucketEditDialog::SetupLambdaNotifications() {
