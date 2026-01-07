@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.3...v1.8.4) (2026-01-07)
+
+
+### Bug Fixes
+
+* Add bucket betadata edit/add ([72ff4f8](https://github.com/jensvogt/awsmock-qt-ui/commit/72ff4f8d37c23fadd3b849c882c24ec2139148b1))
+* Add object metadata edit/add ([8420f60](https://github.com/jensvogt/awsmock-qt-ui/commit/8420f603e3b8d047a6534cdfabfec5b76860e4d9))
+
 ## [1.8.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.2...v1.8.3) (2026-01-06)
 
 
