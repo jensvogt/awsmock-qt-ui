@@ -47,6 +47,46 @@ static std::map<NotificationEventType, QString> EventTypeNames{
     return NotificationEventType::OBJECT_CREATED;
 }
 
+enum class StorageClass {
+    STANDARD,
+    STANDARD_IA,
+    ONEZONE_IA,
+    EXPRESS_ONEZONE,
+    GLACIER,
+    GLACIER_IR,
+    DEEP_ARCHIVE,
+    INTELLIGENT_TIERING,
+    REDUCED_REDUNDANCY,
+    UNKNOWN,
+};
+
+
+static std::map<StorageClass, QString> StorageClassTypeNames{
+    {StorageClass::STANDARD, "Standard"},
+    {StorageClass::STANDARD_IA, "StandardIA"},
+    {StorageClass::ONEZONE_IA, "OnezoneIA"},
+    {StorageClass::EXPRESS_ONEZONE, "ExpressOnezone"},
+    {StorageClass::GLACIER, "Glacier"},
+    {StorageClass::GLACIER_IR, "GlacierIR"},
+    {StorageClass::DEEP_ARCHIVE, "DeepArchive"},
+    {StorageClass::INTELLIGENT_TIERING, "IntelligentTiering"},
+    {StorageClass::REDUCED_REDUNDANCY, "ReducedRedundency"},
+    {StorageClass::UNKNOWN, "Unknown"}
+};
+
+[[maybe_unused]] static QString StorageClassToString(const StorageClass storageClass) {
+    return StorageClassTypeNames[storageClass];
+}
+
+[[maybe_unused]] static StorageClass StorageClassFromString(const QString &storageClass) {
+    for (auto &[fst, snd]: StorageClassTypeNames) {
+        if (snd == storageClass) {
+            return fst;
+        }
+    }
+    return StorageClass::STANDARD;
+}
+
 struct FilterRule {
     QString name;
 
@@ -124,6 +164,42 @@ struct TopicNotification {
     }
 };
 
+struct LifecycleTransition {
+
+    QDateTime date;
+
+    int days;
+
+    StorageClass storageClass;
+
+    void FromJson(const QJsonObject &jsonObject) {
+        date = QDateTime::fromString(jsonObject["Date"].toString(), Qt::ISODate);
+        days = jsonObject["Status"].toInt();
+        storageClass = StorageClassFromString(jsonObject["Prefix"].toString());
+    }
+};
+
+struct LifecycleRule {
+    QString id;
+
+    QString status;
+
+    QString prefix;
+
+    QVector<LifecycleTransition> transitions;
+
+    void FromJson(const QJsonObject &jsonObject) {
+        id = jsonObject["ID"].toString();
+        status = jsonObject["Status"].toString();
+        prefix = jsonObject["Prefix"].toString();
+        if (jsonObject.contains("Transitions")) {
+            LifecycleTransition transition;
+            transition.FromJson(jsonObject["Transitions"].toObject());
+            transitions.append(transition);
+        }
+    }
+};
+
 struct S3GetBucketDetailsResponse {
 
     QString region;
@@ -149,6 +225,8 @@ struct S3GetBucketDetailsResponse {
     QList<QueueNotification> queueNotifications;
 
     QList<TopicNotification> topicNotifications;
+
+    QList<LifecycleRule> lifecycleRules;
 
     QDateTime created;
 
@@ -193,6 +271,14 @@ struct S3GetBucketDetailsResponse {
         if (!jsonDoc["defaultMetadata"].isNull() && jsonDoc["defaultMetadata"].isObject()) {
             for (const auto &key: jsonDoc["defaultMetadata"].toObject().keys()) {
                 defaultMetadata[key] = jsonDoc["defaultMetadata"].toObject()[key].toString();
+            }
+        }
+
+        if (!jsonDoc["lifecycleRules"].isNull() && jsonDoc["lifecycleRules"].isArray()) {
+            for (const auto &element: jsonDoc["lifecycleRules"].toArray()) {
+                LifecycleRule lifecycleRule;
+                lifecycleRule.FromJson(element.toObject());
+                lifecycleRules.push_back(lifecycleRule);
             }
         }
     }

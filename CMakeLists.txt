@@ -288,6 +288,9 @@ set(PROJECT_SOURCES
         include/dto/dynamodb/DynamoDbItem.h
         include/modules/s3/S3BucketMetadataDialog.h
         src/modules/s3/S3BucketMetadataDialog.cpp
+        src/modules/s3/S3BucketLifecycleDialog.cpp
+        include/modules/s3/S3BucketLifecycleDialog.h
+        src/modules/s3/S3BucketLifecycleDialog.ui
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

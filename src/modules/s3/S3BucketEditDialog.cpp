@@ -4,11 +4,8 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_S3BucketEditDialog.h" resolved
 
-#include <QMenu>
-#include <ui_S3BucketMetadataDialog.h>
 #include <modules/s3/S3BucketEditDialog.h>
 #include "ui_S3BucketEditDialog.h"
-#include "modules/s3/S3BucketMetadataDialog.h"
 
 S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3BucketEditDialog) {
 
@@ -30,6 +27,7 @@ S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *paren
     SetupLambdaNotifications();
     SetupQueueNotifications();
     SetupTopicNotifications();
+    SetupLifecycles();
     SetupDefaultMetadataTab();
 
     _ui->tabWidget->setCurrentIndex(0);
@@ -39,7 +37,12 @@ S3BucketEditDialog::~S3BucketEditDialog() {
     delete _ui;
 }
 
-void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse) const {
+void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse) {
+
+    // Save REST response
+    _bucketGetResponse = bucketGetResponse;
+
+    // Update fields
     _ui->regionEdit->setText(bucketGetResponse.region);
     _ui->nameEdit->setText(bucketGetResponse.bucketName);
     _ui->arnEdit->setText(bucketGetResponse.bucketArn);
@@ -69,6 +72,13 @@ void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGe
         const int row = _queueNotificationDataModel->rowCount();
         SetColumn(_queueNotificationDataModel, row, 0, it->id);
         SetColumn(_queueNotificationDataModel, row, 1, it->queueArn);
+    }
+
+    // Lifecycle rules
+    for (auto it = bucketGetResponse.lifecycleRules.begin(); it != bucketGetResponse.lifecycleRules.cend(); ++it) {
+        const int row = _lifecycleDataModel->rowCount();
+        SetColumn(_lifecycleDataModel, row, 0, it->id);
+        SetColumn(_lifecycleDataModel, row, 1, it->status);
     }
 }
 
@@ -245,6 +255,85 @@ void S3BucketEditDialog::SetupTopicNotifications() {
         SetColumn(_topicNotificationDataModel, row, 1, metadataAdd.GetValue());*/
         this->_changed = true;
     });
+}
+
+void S3BucketEditDialog::SetupLifecycles() {
+
+    const QStringList headers = QStringList() = {tr("ID"), tr("Status")};
+
+    // Table
+    _lifecycleDataModel = new QStandardItemModel(this);
+    _lifecycleDataModel->setHorizontalHeaderLabels(headers);
+    _lifecycleDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->lifecycleTable->setModel(_lifecycleDataModel);
+
+    _ui->lifecycleTable->setShowGrid(true);
+    _ui->lifecycleTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->lifecycleTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->lifecycleTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->lifecycleTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch); // name
+    _ui->lifecycleTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents); //status
+
+    // Enable sorting, default on and sorted ascending by name
+    _ui->lifecycleTable->setSortingEnabled(true);
+    _ui->lifecycleTable->sortByColumn(0, Qt::AscendingOrder);
+
+    _ui->lifecycleAddButton->setText(nullptr);
+    _ui->lifecycleAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->lifecycleAddButton, &QAbstractButton::clicked, this, [this]() {
+        if (S3BucketLifecycleDialog dialog(nullptr); dialog.exec() == Accepted) {
+            const LifecycleRule lifecycleRule = dialog.GetLifecycleRule();
+            _lifecycleDataModel->item(_lifecycleDataModel->rowCount(), 0)->setText(lifecycleRule.id);
+            _lifecycleDataModel->item(_lifecycleDataModel->rowCount(), 1)->setText(lifecycleRule.status);
+            this->_changed = true;
+        }
+    });
+
+    // Connect double-click
+    connect(_ui->lifecycleTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        LifecycleRule lifecycleRule = _bucketGetResponse.lifecycleRules.at(index.row());
+        S3BucketLifecycleDialog dialog(lifecycleRule, nullptr);
+        dialog.exec();
+        lifecycleRule = dialog.GetLifecycleRule();
+        _lifecycleDataModel->item(index.row(), 1)->setText(lifecycleRule.status);
+        _changed = true;
+    });
+
+    // Add lifecycle context menu
+    _ui->lifecycleTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->lifecycleTable, &QTableWidget::customContextMenuRequested, this, &S3BucketEditDialog::ShowLifecycleContextMenu);
+}
+
+void S3BucketEditDialog::ShowLifecycleContextMenu(const QPoint &pos) {
+    const QModelIndex index = _ui->lifecycleTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    // Context menu
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Lifecycle");
+    editAction->setToolTip("Edit the bucket lifecycle rules");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lifecycle");
+    deleteAction->setToolTip("Delete the bucket lifecycle rule");
+
+    // Get the metadata attributes
+    const QString key = _lifecycleDataModel->item(index.row(), 0)->text();
+    const QString value = _lifecycleDataModel->item(index.row(), 1)->text();
+
+    // Context menu callbacks
+    if (const QAction *selectedAction = menu.exec(_ui->lifecycleTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        LifecycleRule lifecycleRule = _bucketGetResponse.lifecycleRules.at(index.row());
+        S3BucketLifecycleDialog dialog(lifecycleRule, nullptr);
+        dialog.exec();
+        lifecycleRule = dialog.GetLifecycleRule();
+        _lifecycleDataModel->item(index.row(), 1)->setText(lifecycleRule.status);
+        _changed = true;
+    } else if (selectedAction == deleteAction) {
+        _defaultMetadataDataModel->removeRow(index.row());
+        _changed = true;
+    }
 }
 
 void S3BucketEditDialog::HandleAccept() {

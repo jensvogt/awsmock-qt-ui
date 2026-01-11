@@ -175,7 +175,6 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an JSON document
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               S3GetBucketDetailsResponse bucketResponse;
                               bucketResponse.FromJson(jsonDoc);
