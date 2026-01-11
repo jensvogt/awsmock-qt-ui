@@ -283,8 +283,9 @@ void S3BucketEditDialog::SetupLifecycles() {
     connect(_ui->lifecycleAddButton, &QAbstractButton::clicked, this, [this]() {
         if (S3BucketLifecycleDialog dialog(nullptr); dialog.exec() == Accepted) {
             const LifecycleRule lifecycleRule = dialog.GetLifecycleRule();
-            _lifecycleDataModel->item(_lifecycleDataModel->rowCount(), 0)->setText(lifecycleRule.id);
-            _lifecycleDataModel->item(_lifecycleDataModel->rowCount(), 1)->setText(lifecycleRule.status);
+            const int row = _lifecycleDataModel->rowCount();
+            SetColumn(_lifecycleDataModel, row, 0, lifecycleRule.id);
+            SetColumn(_lifecycleDataModel, row, 1, lifecycleRule.status);
             this->_changed = true;
         }
     });

@@ -7,9 +7,11 @@
 
 // Qt includes
 #include <QDialog>
+#include <QStandardItemModel>
 
 // AwsMock includes
 #include <dto/s3/S3GetBucketDetailsResponse.h>
+#include <utils/BaseDialog.h>
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -18,7 +20,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class S3BucketLifecycleDialog : public QDialog {
+class S3BucketLifecycleDialog : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -47,8 +49,20 @@ public:
      */
     void Initialize();
 
+    /**
+     * @brief Load content
+     */
+    void LoadContent() override {
+    };
+
+    /**
+     * @brief Handle ok button callback
+     */
     void HandleAccept();
 
+    /**
+     * @brief Handle cancel button callback
+     */
     void HandleReject();
 
     /**
@@ -66,6 +80,11 @@ private:
      * Lifecycle rule
      */
     LifecycleRule _lifecycleRule;
+
+    /**
+     * @brief Transitions
+     */
+    QStandardItemModel *_transitionsDataModel{};
 };
 
 

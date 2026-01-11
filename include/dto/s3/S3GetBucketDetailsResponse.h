@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <utils/JsonUtils.h>
+
 enum class NotificationEventType {
     REDUCED_REDUNDANCY_LOST_OBJECT,
     OBJECT_CREATED,
@@ -61,25 +63,25 @@ enum class StorageClass {
 };
 
 
-static std::map<StorageClass, QString> StorageClassTypeNames{
-    {StorageClass::STANDARD, "Standard"},
-    {StorageClass::STANDARD_IA, "StandardIA"},
-    {StorageClass::ONEZONE_IA, "OnezoneIA"},
-    {StorageClass::EXPRESS_ONEZONE, "ExpressOnezone"},
-    {StorageClass::GLACIER, "Glacier"},
-    {StorageClass::GLACIER_IR, "GlacierIR"},
-    {StorageClass::DEEP_ARCHIVE, "DeepArchive"},
-    {StorageClass::INTELLIGENT_TIERING, "IntelligentTiering"},
-    {StorageClass::REDUCED_REDUNDANCY, "ReducedRedundency"},
-    {StorageClass::UNKNOWN, "Unknown"}
+static std::map<StorageClass, QString> StorageClassNames{
+    {StorageClass::STANDARD, "STANDARD"},
+    {StorageClass::STANDARD_IA, "STANDARD_IA"},
+    {StorageClass::ONEZONE_IA, "ONEZONE_IA"},
+    {StorageClass::EXPRESS_ONEZONE, "EXPRESS_ONEZONE"},
+    {StorageClass::GLACIER, "GLACIER"},
+    {StorageClass::GLACIER_IR, "GLACIER_IR"},
+    {StorageClass::DEEP_ARCHIVE, "DEEP_ARCHIVE"},
+    {StorageClass::INTELLIGENT_TIERING, "INTELLIGENT_TIERING"},
+    {StorageClass::REDUCED_REDUNDANCY, "REDUCED_REDUNDANCY"},
+    {StorageClass::UNKNOWN, "UNKNOWN"}
 };
 
 [[maybe_unused]] static QString StorageClassToString(const StorageClass storageClass) {
-    return StorageClassTypeNames[storageClass];
+    return StorageClassNames[storageClass];
 }
 
 [[maybe_unused]] static StorageClass StorageClassFromString(const QString &storageClass) {
-    for (auto &[fst, snd]: StorageClassTypeNames) {
+    for (auto &[fst, snd]: StorageClassNames) {
         if (snd == storageClass) {
             return fst;
         }
@@ -173,14 +175,16 @@ struct LifecycleTransition {
     StorageClass storageClass;
 
     void FromJson(const QJsonObject &jsonObject) {
+        JsonUtils::WriteJsonString(jsonObject);
         date = QDateTime::fromString(jsonObject["Date"].toString(), Qt::ISODate);
-        days = jsonObject["Status"].toInt();
-        storageClass = StorageClassFromString(jsonObject["Prefix"].toString());
+        days = jsonObject["Days"].toInt();
+        storageClass = StorageClassFromString(jsonObject["StorageClass"].toString());
     }
 };
 
 struct LifecycleRule {
-    QString id;
+
+    QString id = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
     QString status;
 
@@ -192,10 +196,12 @@ struct LifecycleRule {
         id = jsonObject["ID"].toString();
         status = jsonObject["Status"].toString();
         prefix = jsonObject["Prefix"].toString();
-        if (jsonObject.contains("Transitions")) {
-            LifecycleTransition transition;
-            transition.FromJson(jsonObject["Transitions"].toObject());
-            transitions.append(transition);
+        if (jsonObject.contains("Transitions") && jsonObject["Transitions"].isArray()) {
+            for (const auto &transitionElement: jsonObject["Transitions"].toArray()) {
+                LifecycleTransition transition;
+                transition.FromJson(transitionElement.toObject());
+                transitions.append(transition);
+            }
         }
     }
 };
