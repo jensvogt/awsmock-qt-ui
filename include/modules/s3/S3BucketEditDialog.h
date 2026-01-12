@@ -6,6 +6,7 @@
 #define AWSMOCK_QT_UI_S3_BUCKET_EDIT_DIALOG_H
 
 // Qt includes
+#include <QMenu>
 #include <QDialog>
 #include <QStandardItemModel>
 
@@ -15,6 +16,8 @@
 #include <utils/DateTimeUtils.h>
 #include <modules/s3/S3Service.h>
 #include <modules/s3/S3ObjectMetadataDialog.h>
+#include <modules/s3/S3BucketLifecycleDialog.h>
+#include <modules/s3/S3BucketMetadataDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -32,7 +35,7 @@ public:
 
     ~S3BucketEditDialog() override;
 
-    void UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse) const;
+    void UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse);
 
     void SetupDefaultMetadataTab();
 
@@ -43,6 +46,10 @@ public:
     void SetupQueueNotifications();
 
     void SetupTopicNotifications();
+
+    void SetupLifecycles();
+
+    void ShowLifecycleContextMenu(const QPoint &pos);
 
     void LoadContent() override {
     };
@@ -74,6 +81,11 @@ private:
     bool _changed = false;
 
     /**
+     * @brief Get REST response
+     */
+    S3GetBucketDetailsResponse _bucketGetResponse;
+
+    /**
      * @brief Default metadata table data model
      */
     QStandardItemModel *_defaultMetadataDataModel{};
@@ -92,6 +104,11 @@ private:
      * @brief Topic notification table model
      */
     QStandardItemModel *_topicNotificationDataModel{};
+
+    /**
+     * @brief Lifecycle rules
+     */
+    QStandardItemModel *_lifecycleDataModel{};
 };
 
 

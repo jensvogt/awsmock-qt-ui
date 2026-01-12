@@ -96,7 +96,7 @@ void S3Service::AddBucket(const QString &bucketName) {
                       });
 }
 
-void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, const QString &versionStatus) {
+void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, QVector<LifecycleRule> &lifecycleRules, const QString &versionStatus) {
     QElapsedTimer timer;
     timer.start();
 
@@ -105,11 +105,17 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
         jMetadata[k] = metadata[k];
     }
 
+    QJsonArray jLifecycleRules;
+    for (auto &lifecycleRule: lifecycleRules) {
+        jLifecycleRules.append(lifecycleRule.ToJson());
+    }
+
     QJsonObject jBucket = CreateBaseRequest();
     jBucket["Region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jBucket["BucketName"] = bucketName;
     jBucket["DefaultMetadata"] = jMetadata;
     jBucket["VersionStatus"] = versionStatus;
+    jBucket["LifecycleRules"] = jLifecycleRules;
 
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["Bucket"] = jBucket;
@@ -175,7 +181,6 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an JSON document
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               S3GetBucketDetailsResponse bucketResponse;
                               bucketResponse.FromJson(jsonDoc);
