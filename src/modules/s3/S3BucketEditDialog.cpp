@@ -296,7 +296,9 @@ void S3BucketEditDialog::SetupLifecycles() {
         S3BucketLifecycleDialog dialog(lifecycleRule, nullptr);
         dialog.exec();
         lifecycleRule = dialog.GetLifecycleRule();
+        _lifecycleDataModel->item(index.row(), 0)->setText(lifecycleRule.id);
         _lifecycleDataModel->item(index.row(), 1)->setText(lifecycleRule.status);
+        _bucketGetResponse.lifecycleRules[index.row()] = lifecycleRule;
         _changed = true;
     });
 
@@ -345,7 +347,7 @@ void S3BucketEditDialog::HandleAccept() {
             QModelIndex col2 = _defaultMetadataDataModel->index(i, 1);
             defaultMetadata[_defaultMetadataDataModel->data(col1).toString()] = _defaultMetadataDataModel->data(col2).toString();
         }
-        _s3Service->UpdateBucket(_ui->nameEdit->text(), defaultMetadata, _ui->versionedCheckBox->checkState() ? "enabled" : "disabled");
+        _s3Service->UpdateBucket(_ui->nameEdit->text(), defaultMetadata, _bucketGetResponse.lifecycleRules, _ui->versionedCheckBox->checkState() ? "enabled" : "disabled");
     }
     accept();
 }

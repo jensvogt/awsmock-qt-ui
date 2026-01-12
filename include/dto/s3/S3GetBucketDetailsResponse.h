@@ -175,10 +175,17 @@ struct LifecycleTransition {
     StorageClass storageClass;
 
     void FromJson(const QJsonObject &jsonObject) {
-        JsonUtils::WriteJsonString(jsonObject);
         date = QDateTime::fromString(jsonObject["Date"].toString(), Qt::ISODate);
         days = jsonObject["Days"].toInt();
         storageClass = StorageClassFromString(jsonObject["StorageClass"].toString());
+    }
+
+    QJsonObject ToJson() const {
+        QJsonObject jsonObject;
+        jsonObject["Date"] = date.toString(Qt::ISODate);
+        jsonObject["Days"] = days;
+        jsonObject["StoreClass"] = StorageClassToString(storageClass);
+        return jsonObject;
     }
 };
 
@@ -203,6 +210,21 @@ struct LifecycleRule {
                 transitions.append(transition);
             }
         }
+    }
+
+    QJsonObject ToJson() {
+        QJsonObject jsonObject;
+        jsonObject["ID"] = id;
+        jsonObject["Status"] = status;
+        jsonObject["Prefix"] = prefix;
+        if (!transitions.isEmpty()) {
+            QJsonArray jsonArray;
+            for (const auto &transition: transitions) {
+                jsonArray.append(transition.ToJson());
+            }
+            jsonObject["Transitions"] = jsonArray;
+        }
+        return jsonObject;
     }
 };
 

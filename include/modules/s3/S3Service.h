@@ -50,9 +50,10 @@ public:
      *
      * @param bucketName bucket name
      * @param metadata bucket metadata array
+     * @param lifecycleRules
      * @param versionStatus version status, can be either 'enabled' or 'disabled'.
      */
-    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, const QString &versionStatus);
+    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, QVector<LifecycleRule> &lifecycleRules, const QString &versionStatus);
 
     /**
      * @brief delete the bucket

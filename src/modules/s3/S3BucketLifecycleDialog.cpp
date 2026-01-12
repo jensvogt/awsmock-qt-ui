@@ -6,6 +6,7 @@
 
 #include <modules/s3/S3BucketLifecycleDialog.h>
 #include "ui_S3BucketLifecycleDialog.h"
+#include "utils/IconUtils.h"
 
 S3BucketLifecycleDialog::S3BucketLifecycleDialog(QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3BucketLifecycleDialog) {
     Initialize();
@@ -29,7 +30,7 @@ void S3BucketLifecycleDialog::Initialize() {
     _ui->idEdit->setText(_lifecycleRule.id);
     _ui->prefixEdit->setText(_lifecycleRule.prefix);
 
-    _ui->statusCombo->addItems({"Enabled", "Disabled"});
+    _ui->statusCombo->addItems({"enabled", "disabled"});
     _ui->statusCombo->setCurrentIndex(_lifecycleRule.status.toInt());
 
     const QStringList headers = QStringList() = {tr("Date"), tr("Days"), tr("Storage Class")};
@@ -58,12 +59,17 @@ void S3BucketLifecycleDialog::Initialize() {
         }
     }
 
+    // Add button
+    _ui->transitionAddButton->setText(nullptr);
+    _ui->transitionAddButton->setIcon(IconUtils::GetIcon("add"));
+
     _ui->tabWidget->removeTab(1);
 }
 
 void S3BucketLifecycleDialog::HandleAccept() {
     _lifecycleRule.id = _ui->idEdit->text();
     _lifecycleRule.prefix = _ui->prefixEdit->text();
+    _lifecycleRule.status = _ui->statusCombo->currentText();
     accept();
 }
 
