@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.4...v1.9.0) (2026-01-12)
+
+
+### Features
+
+* Add S3 lifecycles ([15e9719](https://github.com/jensvogt/awsmock-qt-ui/commit/15e971952c8d76aef4cb8fe681ee1705d950e5df))
+
 ## [1.8.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.3...v1.8.4) (2026-01-07)
 
 
