@@ -60,12 +60,14 @@ public:
      */
     //void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
-signals:
+    signals:
     /**
      * @brief Show items signal
      *
      * @param itemName name of the item
      */
+    
+
     void ShowItemsSignal(const QString &itemName);
 
     /**
@@ -73,10 +75,13 @@ signals:
      */
     void BackNavigationSignal();
 
-private slots:
+private
+    slots:
     /**
      * @brief Context menu callback
      */
+    
+
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
@@ -108,7 +113,7 @@ private:
     /**
      * @brief Data proxy model
      */
-    PrefixFilterProxyModel *_proxyModel;
+    PrefixFilterProxyModel *_proxyModel{};
 
     /**
      * @brief Sort column index

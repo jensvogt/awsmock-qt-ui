@@ -189,7 +189,7 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
     deleteAction->setToolTip("Delete the table");
 
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
-        //_dynamoDbService->PurgeBucket(bucketName);
+        _dynamoDbService->PurgeTable(tableName);
     } else if (selectedAction == deleteAction) {
         _dynamoDbService->DeleteTable(tableName);
     } else if (selectedAction == editAction) {

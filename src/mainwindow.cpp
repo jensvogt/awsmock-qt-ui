@@ -1,7 +1,5 @@
 #include <mainwindow.h>
 
-#include "modules/dynamodb/DynamoDbItemList.h"
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Connect infrastructure signals
     _infraStructureService = new InfraStructureService();
@@ -124,6 +122,10 @@ void MainWindow::SetupMenuBar() {
     connect(cleanAction, &QAction::triggered, this, &MainWindow::CleanInfrastructure);
     fileMenu->addAction(cleanAction);
 
+    const auto showAction = new QAction(IconUtils::GetIcon("show"), tr("&Show infrastructure file"), this);
+    connect(showAction, &QAction::triggered, this, &MainWindow::ShowInfrastructureDialog);
+    fileMenu->addAction(showAction);
+
     fileMenu->addSeparator();
 
     const auto exitAction = new QAction(IconUtils::GetIcon("exit"), tr("E&xit"), this);
@@ -220,6 +222,11 @@ void MainWindow::CleanInfrastructure() const {
 
 void MainWindow::CleanInfrastructureResponse() {
     QMessageBox::information(nullptr, "Information", "Infrastructure cleaned");
+}
+
+void MainWindow::ShowInfrastructureDialog() const {
+    ShowInfrastructure dialog;
+    dialog.exec();
 }
 
 void MainWindow::FtpUpload() {
