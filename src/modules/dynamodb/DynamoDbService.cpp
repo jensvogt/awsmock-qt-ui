@@ -156,3 +156,34 @@ void DynamoDbService::ListItems(const QString &tableName) {
                           emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
                       });
 }
+
+void DynamoDbService::PurgeTable(const QString &tableName) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["TableName"] = tableName;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "dynamodb"},
+                          {"x-awsmock-action", "delete-all-items"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  DynamoDbListItemResponse dynamodbResponse;
+                                  dynamodbResponse.FromJson(jsonDoc);
+                                  emit ListItemsSignal(dynamodbResponse);
+                              } else {
+                                  qCritical() << "Response is not an object!";
+                              }
+                          } else {
+                              qCritical() << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
+                      });
+}

@@ -28,6 +28,7 @@
 #include <utils/EventBus.h>
 #include <utils/BasePage.h>
 #include <utils/ScopedTimer.h>
+#include <utils/ShowInfrastructure.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
 #include <modules/ftp/FTPUploadDialog.h>
@@ -43,6 +44,7 @@
 #include <modules/ssm/SSMParameterList.h>
 #include <modules/secretsmanager/SecretList.h>
 #include <modules/dynamodb/DynamoDbTableList.h>
+#include <modules/dynamodb/DynamoDbItemList.h>
 
 #define PAGE_DASHBOARD 0
 #define PAGE_SQS 1
@@ -82,6 +84,8 @@ private:
     void CleanInfrastructure() const;
 
     static void CleanInfrastructureResponse();
+
+    void ShowInfrastructureDialog() const;
 
     void FtpUpload();
 

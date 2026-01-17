@@ -19,8 +19,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
 
     // Toolbar back action
     const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
-    backButton->setIconSize(QSize(16, 16));
-    backButton->setToolTip("Add a new object");
+    backButton->setToolTip("Go back to bucket list");
     connect(backButton, &QPushButton::clicked, [this]() {
         StopAutoUpdate();
         emit BackNavigationSignal();

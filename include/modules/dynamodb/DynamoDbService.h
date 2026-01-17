@@ -62,6 +62,13 @@ public:
      */
     void ListItems(const QString &tableName);
 
+    /**
+     * @brief Purge a table
+     *
+     * @param tableName table name
+     */
+    void PurgeTable(const QString &tableName);
+
 signals:
     /**
      * @brief Signaled when a table list is available

@@ -186,8 +186,6 @@ ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
 
     const auto chartView = new CrosshairChartView(chart, this);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setAttribute(Qt::WA_OpaquePaintEvent);
-    chartView->setAttribute(Qt::WA_NoSystemBackground);
     chartView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     chartView->setRubberBand(QChartView::RectangleRubberBand);
     chartView->setAutoFillBackground(true);

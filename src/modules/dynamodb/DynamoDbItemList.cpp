@@ -12,9 +12,16 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
 
     // Define toolbar
     const auto toolBar = new QHBoxLayout();
-    toolBar->addWidget(titleLabel);
     const auto spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    // Toolbar back action
+    const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
+    backButton->setToolTip("Go back to table list");
+    connect(backButton, &QPushButton::clicked, [this]() {
+        StopAutoUpdate();
+        emit BackNavigationSignal();
+    });
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
@@ -33,8 +40,8 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
     // Toolbar add action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "", this);
     purgeAllButton->setToolTip("Purge all items");
-    connect(purgeAllButton, &QPushButton::clicked, [this]() {
-        //  _s3Service->PurgeAllBuckets();
+    connect(purgeAllButton, &QPushButton::clicked, [this, tableName]() {
+        _dynamoDbService->PurgeTable(tableName);
     });
 
     // Toolbar refresh action
@@ -44,6 +51,8 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
         LoadContent();
     });
 
+    toolBar->addWidget(backButton);
+    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
@@ -66,9 +75,6 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
         _prefixClear->setDisabled(true);
     });
     prefixLayout->addWidget(_prefixClear);
-
-    // Item
-    const QStringList headers = QStringList() = {tr("Items")};
 
     // Item
     _itemView = new QListView(this);
