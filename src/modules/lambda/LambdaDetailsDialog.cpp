@@ -71,7 +71,7 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     connect(_lambdaService, &LambdaService::ListLambdaInstancesSignal, this, &LambdaDetailsDialog::UpdateLambdaInstances);
 
     // Table
-    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Port"), tr("Status"), tr("Last Invocation")};
+    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Private Port"), tr("Public Port"), tr("Status"), tr("Last Invocation")};
     _ui->instanceTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->instanceTable->setShowGrid(true);
     _ui->instanceTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -81,8 +81,8 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     _ui->instanceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
 
@@ -100,7 +100,8 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).instanceId);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).containerId);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).hostname);
-        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).port);
+        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).privatePort);
+        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).publicPort);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).status);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).lastInvocation);
     }
