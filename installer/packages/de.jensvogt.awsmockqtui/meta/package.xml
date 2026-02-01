@@ -3,7 +3,7 @@
     <DisplayName>AwsMockQtUI</DisplayName>
     <Description>AwsMock UI</Description>
     <Version>1.8.1</Version>
-    <ReleaseDate>2026-01-17 14:10:18</ReleaseDate>
+    <ReleaseDate>2026-02-01 14:10:15</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
     <RequiresAdminRights>true</RequiresAdminRights>

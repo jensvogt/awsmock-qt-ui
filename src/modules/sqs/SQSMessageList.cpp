@@ -1,9 +1,7 @@
 
 #include <modules/sqs/SQSMessageList.h>
 
-SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl,
-                               QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)),
-                                                  _queueUrl(queueUrl) {
+SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, const bool isDlq, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl), _isDlq(isDlq) {
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
@@ -27,7 +25,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     // Toolbar add message action
     const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
     addButton->setIconSize(QSize(16, 16));
-    addButton->setToolTip("Add a new SQS message");
+    addButton->setToolTip("Add a new message");
     connect(addButton, &QPushButton::clicked, [this]() {
         SQSMessageAddDialog dialog(_queueUrl);
         dialog.exec();
@@ -36,7 +34,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     // Toolbar purge action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
-    purgeAllButton->setToolTip("Purge all Queues");
+    purgeAllButton->setToolTip("Purge all messages");
     connect(purgeAllButton, &QPushButton::clicked, [this,queueUrl]() {
         _sqsService->PurgeAllMessages(queueUrl);
     });
@@ -44,7 +42,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("dark", "refresh"), "");
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the queue list");
+    refreshButton->setToolTip("Refresh the message list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
         LoadContent();
     });
@@ -181,16 +179,20 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    /*    QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
-        purgeAction->setToolTip("Purge the Queue");
-        QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
-        redriveAction->setToolTip("Redrive all messages");*/
-    //menu.addSeparator();
+    QAction *resendAction = menu.addAction(IconUtils::GetIcon("resend"), "Resend Message");
+    resendAction->setToolTip("Resend message");
+    if (_isDlq) {
+        resendAction->setEnabled(false);
+    }
+    menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
-        selectedAction == deleteAction) {
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == resendAction) {
+        const QString queueArn = tableWidget->item(row, 7)->text();
+        const QString messageId = tableWidget->item(row, 0)->text();
+        _sqsService->ResendMessage(queueArn, messageId);
+    } else if (selectedAction == deleteAction) {
         const QString queueUrl = tableWidget->item(row, 6)->text();
         const QString receiptHandle = tableWidget->item(row, 8)->text();
         _sqsService->DeleteMessage(queueUrl, receiptHandle);

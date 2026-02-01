@@ -135,6 +135,14 @@ public:
     void SendMessage(const SQSSendMessageRequest &request);
 
     /**
+     * @brief Resends a message, which is still in the queue.
+     *
+     * @param queueArn SQS queue ARN
+     * @param messageId message ID
+     */
+    void ResendMessage(const QString &queueArn, const QString &messageId);
+
+    /**
      * @brief Delete a message
      *
      * @param queueUrl message ID
@@ -143,10 +151,25 @@ public:
     void DeleteMessage(const QString &queueUrl, const QString &receiptHandle);
 
 signals:
+    /**
+     * @brief Signal is send, when a list queue message arrived.
+     *
+     * @param listQueueResponse list queue response
+     */
     void ListQueuesSignal(const SQSQueueListResponse &listQueueResponse);
 
+    /**
+     * @brief Signal is send, when a queue details message arrived.
+     *
+     * @param response queue details response
+     */
     void GetQueueDetailsSignal(const SQSGetQueueDetailsResponse &response);
 
+    /**
+     * @brief Signal is send, when a list queue attributes message arrived.
+     *
+     * @param listQueueAttributeResponse list queue attributes response
+     */
     void ListQueueAttributesSignal(const SQSQueueAttributeListResponse &listQueueAttributeResponse);
 
     void ListQueueLambdaTriggersSignal(const SQSListQueueLambdaTriggersResponse &listQueueLambdaTriggersResponse);

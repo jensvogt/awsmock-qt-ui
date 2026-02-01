@@ -34,6 +34,7 @@
 #define INITIAL_HEIGHT 1200
 
 int main(int argc, char *argv[]) {
+
     QApplication app(argc, argv);
 
     // Set icon

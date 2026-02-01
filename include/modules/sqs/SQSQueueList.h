@@ -58,7 +58,7 @@ public:
     void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse);
 
 signals:
-    void ShowMessages(const QString &QueueArn, const QString &QueueUrl);
+    void ShowMessages(const QString &QueueArn, const QString &QueueUrl, bool isDql);
 
 private slots:
     void ShowContextMenu(const QPoint &pos) const;
