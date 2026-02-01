@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.0...v1.9.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* fix resend SQS message ([02b5cfc](https://github.com/jensvogt/awsmock-qt-ui/commit/02b5cfc50c1bb6909ed308d478ca356fc287eadb))
+* public/private port for lambdas ([037ab64](https://github.com/jensvogt/awsmock-qt-ui/commit/037ab64431d8291f57e9ab58979b9ee490479316))
+
 ## [1.9.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.4...v1.9.0) (2026-01-12)
 
 
