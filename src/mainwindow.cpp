@@ -290,7 +290,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
 
             // Route to the message list
             connect(queueListPage, &SQSQueueList::ShowMessages, this,
-                    [this, queueListPage](const QString &queueArn, const QString &queueUrl) {
+                    [this, queueListPage](const QString &queueArn, const QString &queueUrl, const bool isDlq) {
 
                         // Stop the auto updater
                         queueListPage->StopAutoUpdate();
@@ -299,7 +299,7 @@ BasePage *MainWindow::CreatePage(const int currentRow) {
                         const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
 
                         // Create the message list page
-                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, nullptr);
+                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, isDlq, nullptr);
 
                         // Add it to the loaded pages list
                         m_contentPane->addWidget(messageListPage);

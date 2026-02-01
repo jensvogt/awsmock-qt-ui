@@ -42,9 +42,10 @@ public:
      * @param title widget title
      * @param queueArn queue ARN
      * @param queueUrl queue URL
+     * @param isDlq DQL flag
      * @param parent parent widget
      */
-    SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent = nullptr);
+    SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, bool isDlq, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -124,6 +125,11 @@ private:
      * @brief SQS queue URL
      */
     QString _queueUrl;
+
+    /**
+     * @brief DQL flag
+     */
+    bool _isDlq = false;
 
     /**
      * @brief Sort column index

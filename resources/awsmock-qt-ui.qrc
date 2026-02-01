@@ -27,6 +27,7 @@
         <file>light/rebuild.svg</file>
         <file>light/redrive.svg</file>
         <file>light/refresh.svg</file>
+        <file>light/resend.svg</file>
         <file>light/restart.svg</file>
         <file>light/running.svg</file>
         <file>light/save.svg</file>
@@ -64,6 +65,7 @@
         <file>dark/redrive.svg</file>
         <file>dark/refresh.svg</file>
         <file>dark/restart.svg</file>
+        <file>dark/resend.svg</file>
         <file>dark/running.svg</file>
         <file>dark/save.svg</file>
         <file>dark/search.svg</file>

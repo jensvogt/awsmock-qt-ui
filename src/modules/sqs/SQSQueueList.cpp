@@ -103,9 +103,10 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
         // Extract ARN and URL
         const QString queueUrl = tableWidget->item(row, 7)->text();
         const QString queueArn = tableWidget->item(row, 8)->text();
+        const bool isDql = tableWidget->item(row, 9)->checkState();
 
         // Send notification
-        emit ShowMessages(queueArn, queueUrl);
+        emit ShowMessages(queueArn, queueUrl, isDql);
     });
 
     // Add context menu
