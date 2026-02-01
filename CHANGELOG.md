@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.9.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.4...v1.9.0) (2026-01-12)
+
+
+### Features
+
+* Add S3 lifecycles ([15e9719](https://github.com/jensvogt/awsmock-qt-ui/commit/15e971952c8d76aef4cb8fe681ee1705d950e5df))
+
+## [1.8.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.3...v1.8.4) (2026-01-07)
+
+
+### Bug Fixes
+
+* Add bucket betadata edit/add ([72ff4f8](https://github.com/jensvogt/awsmock-qt-ui/commit/72ff4f8d37c23fadd3b849c882c24ec2139148b1))
+* Add object metadata edit/add ([8420f60](https://github.com/jensvogt/awsmock-qt-ui/commit/8420f603e3b8d047a6534cdfabfec5b76860e4d9))
+
+## [1.8.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.2...v1.8.3) (2026-01-06)
+
+
+### Bug Fixes
+
+* S3 bucket owner ([2db51f2](https://github.com/jensvogt/awsmock-qt-ui/commit/2db51f2bc5aa9f8f5b00690d7f6bfdb366d20720))
+
+## [1.8.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.1...v1.8.2) (2026-01-06)
+
+
+### Bug Fixes
+
+* S3 notification tabs ([6dd506f](https://github.com/jensvogt/awsmock-qt-ui/commit/6dd506f5b4d518af82d7fbc33161d1363b99e9e9))
+* S3 notification tabs ([9bf64cc](https://github.com/jensvogt/awsmock-qt-ui/commit/9bf64cc44c8595f06d62255769a919931c49581f))
+
 ## [1.8.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.0...v1.8.1) (2025-12-22)
 
 
