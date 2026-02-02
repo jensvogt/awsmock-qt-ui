@@ -6,6 +6,7 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     // Connect service
     _ssmService = new SSMService();
     connect(_ssmService, &SSMService::ListParameterSignal, this, &SSMParameterList::HandleParameterListSignal);
+    connect(_ssmService, &SSMService::ReloadParameterListSignal, this, &SSMParameterList::LoadContent);
 
     // Toolbar
     const auto toolBar = new QHBoxLayout();
@@ -133,6 +134,7 @@ void SSMParameterList::LoadContent() {
 void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse &listParameterResponse) const {
     const int selectedRow = _tableView->selectionModel()->currentIndex().row();
     _tableView->setSortingEnabled(false);
+    _dataModel->removeRows(0, _dataModel->rowCount());
     for (auto r = 0, c = 0; r < listParameterResponse.parameterCounters.count(); r++, c = 0) {
         SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).name);
         SetColumn(_dataModel, r, c++, DateTimeUtils::GetDateTimeFormat(listParameterResponse.parameterCounters.at(r).created));
@@ -146,33 +148,23 @@ void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse 
 }
 
 void SSMParameterList::ShowContextMenu(const QPoint &pos) const {
-    const QModelIndex index = _tableView->indexAt(pos);
-    if (!index.isValid()) return;
+    const QModelIndex proxyIndex = _tableView->indexAt(pos);
+    if (!proxyIndex.isValid()) return;
 
-    const int row = index.row();
+    const QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
 
     QMenu menu;
-    //QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
-    //purgeAction->setToolTip("Purge the bucket");
-    /*QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
-    redriveAction->setToolTip("Redrive all parameters");*/
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Parameter");
     editAction->setToolTip("Edit the SSM parameter");
-    QAction *touchAction = menu.addAction(IconUtils::GetIcon("touch"), "Touch Parameter");
-    touchAction->setToolTip("Touch the parameter");
     menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Parameter");
     deleteAction->setToolTip("Delete the parameter");
 
-    /*const QString key = tableView->item(row, 0)->text();
-    const QString parameterId = tableView->item(row, 5)->text();
-    if (const auto selectedAction = menu.exec(tableView->viewport()->mapToGlobal(pos));
-        selectedAction == deleteAction) {
-        _ssmService->DeleteParameter(bucketName, key);
-    } else if (selectedAction == touchAction) {
-        _ssmService->DeleteParameter(bucketName, key);
+    const QString parameterName = _dataModel->item(sourceIndex.row(), 0)->text();
+    if (const auto selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+        _ssmService->DeleteParameter(parameterName);
     } else if (selectedAction == editAction) {
-        SSMParameterEditDialog dialog(parameterId);
+        SSMParameterEditDialog dialog(parameterName);
         dialog.exec();
-    }*/
+    }
 }

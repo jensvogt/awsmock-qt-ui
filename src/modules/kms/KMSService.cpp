@@ -27,7 +27,6 @@ void KMSService::ListKmsKeys() {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array contains an array of docker statistics
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   KMSKeyListResponse kmsResponse;
                                   kmsResponse.FromJson(jsonDoc);
