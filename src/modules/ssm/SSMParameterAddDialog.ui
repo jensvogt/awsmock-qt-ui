@@ -97,6 +97,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>regionEdit</tabstop>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>valueEdit</tabstop>
+  <tabstop>kmsKeyCombo</tabstop>
+  <tabstop>descriptionEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

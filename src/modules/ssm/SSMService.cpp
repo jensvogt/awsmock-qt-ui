@@ -1,6 +1,36 @@
 
 #include <modules/ssm/SSMService.h>
 
+void SSMService::CreateParameter(const SSMParameterCounter &parameter) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["region"] = parameter.region;
+    jRequest["name"] = parameter.name;
+    jRequest["value"] = parameter.parameterValue;
+    jRequest["description"] = parameter.description;
+    jRequest["type"] = ParameterTypeToString(parameter.type);
+    jRequest["kmsKeyArn"] = parameter.kmsKeyArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "ssm"},
+                          {"x-awsmock-action", "create-parameter-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadParameterListSignal();
+                          } else {
+                              qCritical() << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListParameters", timer.elapsed());
+                      });
+}
+
 void SSMService::ListParameters(const QString &prefix, const int sortColumn, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
@@ -119,5 +149,30 @@ void SSMService::UpdateParameter(const SSMParameterCounter &parameter) {
                               qCritical() << error;
                           }
                           emit EventBus::instance().TimerSignal("ListParameters", timer.elapsed());
+                      });
+}
+
+void SSMService::DeleteParameter(const QString &parameterName) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["Name"] = parameterName;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "ssm"},
+                          {"x-awsmock-action", "delete-parameter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this,timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadParameterListSignal();
+                          } else {
+                              qCritical() << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteParameter", timer.elapsed());
                       });
 }

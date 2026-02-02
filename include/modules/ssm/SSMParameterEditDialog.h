@@ -18,6 +18,7 @@
 #include <utils/PrefixFilterModel.h>
 #include <utils/DateTimeUtils.h>
 #include <modules/ssm/SSMService.h>
+#include <modules/kms/KMSService.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -83,7 +84,7 @@ private:
     QString _parameterName;
 
     /**
-     * @brief REST service handler
+     * @brief SSM REST service handler
      */
     SSMService *_ssmService;
 

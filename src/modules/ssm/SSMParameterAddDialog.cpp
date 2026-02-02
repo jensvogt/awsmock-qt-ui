@@ -37,6 +37,13 @@ SSMParameterAddDialog::~SSMParameterAddDialog() {
 }
 
 void SSMParameterAddDialog::HandleAccept() {
+    SSMParameterCounter parameter;
+    parameter.name = _ui->nameEdit->text();
+    parameter.parameterValue = _ui->valueEdit->text();
+    parameter.kmsKeyArn = _ui->kmsKeyCombo->currentText();
+    parameter.region = _ui->regionEdit->text();
+    parameter.description = _ui->descriptionEdit->toPlainText();
+    _ssmService->CreateParameter(parameter);
     accept();
 }
 
