@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.1...v1.9.2) (2026-02-03)
+
+
+### Bug Fixes
+
+* kms import/export ([957fc18](https://github.com/jensvogt/awsmock-qt-ui/commit/957fc186d69f7a9d370fe926ade4beee0a9a2f7d))
+* kms import/export ([606d96b](https://github.com/jensvogt/awsmock-qt-ui/commit/606d96b80f37e2e44bd0677b718ff34107b649ad))
+
 ## [1.9.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.0...v1.9.1) (2026-02-01)
 
 
