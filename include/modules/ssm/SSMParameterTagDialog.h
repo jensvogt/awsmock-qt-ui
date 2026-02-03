@@ -16,26 +16,40 @@
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
-    class SSMParameterAddTagDialog;
+    class SSMParameterTagDialog;
 }
 
 QT_END_NAMESPACE
 
-class SSMParameterAddTagDialog : public BaseDialog {
+class SSMParameterTagDialog : public BaseDialog {
     Q_OBJECT
 
 public:
     /**
-     * @brief Constructure
+     * @brief Constructor for a new tag
      *
      * @param parent Parent widget
      */
-    explicit SSMParameterAddTagDialog(QWidget *parent = nullptr);
+    explicit SSMParameterTagDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief Constructor for a existing tag
+     *
+     * @param key tag key
+     * @param value tag value
+     * @param parent parent widget
+     */
+    SSMParameterTagDialog(const QString &key, const QString &value, QWidget *parent = nullptr);
+
+    /**
+     * @brief Initialize dialog
+     */
+    void Initialize();
 
     /**
      * @brief Destructor
      */
-    ~SSMParameterAddTagDialog() override;
+    ~SSMParameterTagDialog() override;
 
     /**
      * @brief Handle OK button
@@ -71,7 +85,7 @@ private:
     /**
      * @brief UI components
      */
-    Ui::SSMParameterAddTagDialog *_ui;
+    Ui::SSMParameterTagDialog *_ui;
 
     /**
      * @brief Key

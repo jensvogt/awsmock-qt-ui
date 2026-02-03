@@ -118,7 +118,7 @@ void SSMParameterEditDialog::SetupTagsTab() {
     connect(_ui->addTagButton, &QPushButton::clicked, [this]() {
 
         // OPen add tag dialog
-        SSMParameterAddTagDialog dialog;
+        SSMParameterTagDialog dialog;
         dialog.exec();
 
         // Process results
@@ -164,4 +164,66 @@ void SSMParameterEditDialog::SetupTagsTab() {
     _ui->tagsTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     _ui->tagsTableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     _ui->tagsTableView->setColumnHidden(3, true);
+
+    // Connect double-click
+    connect(_ui->tagsTableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+
+        // Cell index
+        if (!index.isValid()) return;
+
+        const QModelIndex sourceIndex = _tagsProxyModel->mapToSource(index);
+
+        // Get key/value
+        const QString key = _tagsDataModel->item(sourceIndex.row(), 0)->text();
+        const QString value = _tagsDataModel->item(sourceIndex.row(), 1)->text();
+
+        // Open details dialog
+        SSMParameterTagDialog dialog(key, value);
+        dialog.exec();
+
+        // Get key/value
+        _parameter.tags[key] = dialog.GetValue();
+        SetColumn(_tagsDataModel, sourceIndex.row(), 1, dialog.GetValue());
+        _ssmService->UpdateParameter(_parameter);
+    });
+
+    // Add context menu
+    _ui->tagsTableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->tagsTableView, &QTableView::customContextMenuRequested, this, &SSMParameterEditDialog::ShowContextMenu);
+}
+
+void SSMParameterEditDialog::ShowContextMenu(const QPoint &pos) {
+
+    const QModelIndex proxyIndex = _ui->tagsTableView->indexAt(pos);
+    if (!proxyIndex.isValid()) return;
+
+    const QModelIndex sourceIndex = _tagsProxyModel->mapToSource(proxyIndex);
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Tag");
+    editAction->setToolTip("Edit the SSM parameter tag");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Tag");
+    deleteAction->setToolTip("Delete the parameter tag");
+
+    const QString key = _tagsDataModel->item(sourceIndex.row(), 0)->text();
+    const QString value = _tagsDataModel->item(sourceIndex.row(), 1)->text();
+    if (const auto selectedAction = menu.exec(_ui->tagsTableView->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+
+        // Remove row from datamodel and from parameter and update parameter
+        _tagsDataModel->removeRow(sourceIndex.row());
+        _parameter.tags.remove(key);
+        _ssmService->UpdateParameter(_parameter);
+
+    } else if (selectedAction == editAction) {
+
+        // Open tag dialog
+        SSMParameterTagDialog dialog(key, value);
+        dialog.exec();
+
+        // Get key/value
+        _parameter.tags[key] = dialog.GetValue();
+        SetColumn(_tagsDataModel, sourceIndex.row(), 1, dialog.GetValue());
+        _ssmService->UpdateParameter(_parameter);
+    }
 }
