@@ -28,7 +28,7 @@
 #include <utils/EventBus.h>
 #include <utils/BasePage.h>
 #include <utils/ScopedTimer.h>
-#include <utils/ShowInfrastructure.h>
+#include <modules/module/ShowInfrastructure.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
 #include <modules/ftp/FTPUploadDialog.h>
@@ -39,7 +39,7 @@
 #include <modules/sqs/SQSQueueList.h>
 #include <modules/sqs/SQSMessageList.h>
 #include <modules/lambda/LambdaList.h>
-#include <modules/infrastructure/InfrastructureService.h>
+#include <modules/module/ModuleService.h>
 #include <modules/docker/DockerStatsDialog.h>
 #include <modules/ssm/SSMParameterList.h>
 #include <modules/secretsmanager/SecretList.h>
@@ -85,7 +85,7 @@ private:
 
     static void CleanInfrastructureResponse();
 
-    void ShowInfrastructureDialog() const;
+    static void ShowInfrastructureDialog();
 
     void FtpUpload();
 
@@ -125,7 +125,7 @@ private:
     /**
      * @brief Infrastructure service
      */
-    InfraStructureService *_infraStructureService{};
+    ModuleService *_moduleService{};
 
     /**
      * @brief Status bar
