@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.3...v1.9.4) (2026-02-03)
+
+
+### Bug Fixes
+
+* infrastructure dialog ([b61e0ba](https://github.com/jensvogt/awsmock-qt-ui/commit/b61e0ba9e0b1119541804136c434839a5e83eeb6))
+
 ## [1.9.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.2...v1.9.3) (2026-02-03)
 
 
