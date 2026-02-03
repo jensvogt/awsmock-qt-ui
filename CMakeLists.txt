@@ -295,13 +295,15 @@ set(PROJECT_SOURCES
         include/modules/module/ShowInfrastructure.h
         src/modules/module/ShowInfrastructure.ui
         include/dto/ssm/SSMParameterPutResponse.h
-        src/modules/ssm/SSMParameterAddTagDialog.cpp
-        include/modules/ssm/SSMParameterAddTagDialog.h
-        src/modules/ssm/SSMParameterAddTagDialog.ui
+        src/modules/ssm/SSMParameterTagDialog.cpp
+        include/modules/ssm/SSMParameterTagDialog.h
+        src/modules/ssm/SSMParameterTagDialog.ui
         src/modules/module/ModuleService.cpp
         include/utils/ImageUtils.h
         include/utils/ImageUtils.h
         src/utils/ImageUtils.cpp
+        include/modules/ssm/SSMParameterTagDialog.h
+        src/modules/ssm/SSMParameterTagDialog.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

@@ -3,7 +3,6 @@
 BaseDialog::BaseDialog(QWidget *parent) : QDialog(parent), _autoUpdateTimer(nullptr) {
 }
 
-
 void BaseDialog::StartAutoUpdate() {
 
     // Initial load

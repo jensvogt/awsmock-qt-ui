@@ -10,6 +10,7 @@
 
 // Qt includes
 #include <QDialog>
+#include <QMenu>
 #include <QClipboard>
 #include <QInputDialog>
 
@@ -20,7 +21,7 @@
 #include <utils/DateTimeUtils.h>
 #include <modules/ssm/SSMService.h>
 #include <modules/kms/KMSService.h>
-#include <modules/ssm/SSMParameterAddTagDialog.h>
+#include <modules/ssm/SSMParameterTagDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -73,6 +74,8 @@ public:
      * @brief Setup tabs widget
      */
     void SetupTagsTab();
+
+    void ShowContextMenu(const QPoint &pos);
 
 private:
     /**

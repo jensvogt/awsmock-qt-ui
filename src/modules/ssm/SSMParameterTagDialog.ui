@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SSMParameterAddTagDialog</class>
- <widget class="QDialog" name="SSMParameterAddTagDialog">
+ <class>SSMParameterTagDialog</class>
+ <widget class="QDialog" name="SSMParameterTagDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SSM Parameter Add Tag</string>
+   <string/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
