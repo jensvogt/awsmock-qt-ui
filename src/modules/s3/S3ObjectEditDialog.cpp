@@ -228,11 +228,9 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
 
 bool S3ObjectEditDialog::eventFilter(QObject *watched, QEvent *event) {
     if ((watched == _imageScrollArea->viewport() || watched == _imageLabel) && event->type() == QEvent::Wheel) {
-        auto *wheelEvent = static_cast<QWheelEvent *>(event);
-        if (wheelEvent->modifiers().testFlag(Qt::ControlModifier)) {
+        if (const auto *wheelEvent = dynamic_cast<QWheelEvent *>(event); wheelEvent->modifiers().testFlag(Qt::ControlModifier)) {
             _imageFitToWindow = false;
-            const int delta = wheelEvent->angleDelta().y();
-            if (delta > 0) {
+            if (const int delta = wheelEvent->angleDelta().y(); delta > 0) {
                 SetImageZoom(_imageZoom * 1.1);
             } else if (delta < 0) {
                 SetImageZoom(_imageZoom / 1.1);
