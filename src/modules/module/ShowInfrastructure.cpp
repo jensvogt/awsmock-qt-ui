@@ -119,6 +119,7 @@ void ShowInfrastructure::SaveData() {
             return;
         }
 
+        // Save JSON data
         const QByteArray jsonData = _ui->infrastructureText->toPlainText().toUtf8();
         _currentFile->write(jsonData);
         qDebug() << jsonData;
