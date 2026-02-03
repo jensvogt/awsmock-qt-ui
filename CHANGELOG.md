@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.6...v1.9.7) (2026-02-03)
+
+
+### Bug Fixes
+
+* add/edit parameter tag ([42ede53](https://github.com/jensvogt/awsmock-qt-ui/commit/42ede535bae0fe23dfa28e78d86bdb92b89b65ca))
+
 ## [1.9.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.5...v1.9.6) (2026-02-03)
 
 
