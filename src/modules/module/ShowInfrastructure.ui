@@ -34,6 +34,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="prettyPrintButton">
+       <property name="toolTip">
+        <string>Pretty print JSON file</string>
+       </property>
        <property name="text">
         <string>PushButton</string>
        </property>
@@ -52,22 +55,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="searchFileButton">
-       <property name="toolTip">
-        <string>Search for attribute</string>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="refreshButton">
        <property name="toolTip">
         <string>Refresh the infrastructure JSON</string>
        </property>
        <property name="text">
         <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="searchFileButton">
+       <property name="toolTip">
+        <string>Open local file</string>
+       </property>
+       <property name="text">
+        <string>Browse</string>
        </property>
       </widget>
      </item>

@@ -2,10 +2,16 @@
 // Created by vogje01 on 11/24/25.
 //
 
+#include <QEvent>
 #include <QMenu>
+#include <QScrollArea>
+#include <QShortcut>
+#include <QWheelEvent>
+#include <QtGlobal>
 #include <modules/s3/S3ObjectEditDialog.h>
 #include "ui_S3ObjectEditDialog.h"
 #include "modules/s3/S3ObjectMetadataDialog.h"
+#include "utils/ImageUtils.h"
 
 S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent) : BaseDialog(parent),
                                                                                    _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
@@ -30,10 +36,34 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
         this->_changed = true;
     });
 
-    // Set tab width
-    const QFontMetrics fm(_ui->bodyTextEdit->font());
+    // Plain text edit
+    _plaintextEdit = new QPlainTextEdit();
+    const QFontMetrics fm(_plaintextEdit->font());
     const int tabWidth = fm.horizontalAdvance(' ') * 2;
-    _ui->bodyTextEdit->setTabStopDistance(tabWidth);
+    _plaintextEdit->setTabStopDistance(tabWidth);
+
+    // Image widget (inside scroll area)
+    _imageLabel = new QLabel();
+    _imageLabel->setAlignment(Qt::AlignCenter);
+    _imageLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    _imageLabel->setScaledContents(false);
+    _imageScrollArea = new QScrollArea();
+    _imageScrollArea->setWidgetResizable(false);
+    _imageScrollArea->setAlignment(Qt::AlignCenter);
+    _imageScrollArea->setWidget(_imageLabel);
+    _imageScrollArea->viewport()->installEventFilter(this);
+    _imageLabel->installEventFilter(this);
+
+    // Remove placeholder pages from the .ui so indices don't point at empty pages.
+    while (_ui->stackedWidget->count() > 0) {
+        QWidget *page = _ui->stackedWidget->widget(0);
+        _ui->stackedWidget->removeWidget(page);
+        delete page;
+    }
+
+    // Add to stacked widget
+    _ui->stackedWidget->addWidget(_plaintextEdit);
+    _ui->stackedWidget->addWidget(_imageScrollArea);
 
     // Metadata table
     const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
@@ -84,6 +114,18 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    // Image zoom shortcuts
+    new QShortcut(QKeySequence::ZoomIn, this, [this]() { SetImageZoom(_imageZoom * 1.1); });
+    new QShortcut(QKeySequence::ZoomOut, this, [this]() { SetImageZoom(_imageZoom / 1.1); });
+    /*    new QShortcut(QKeySequence::ZoomReset, this, [this]() {
+            _imageFitToWindow = false;
+            SetImageZoom(1.0);
+        });*/
+    new QShortcut(QKeySequence(tr("Ctrl+F")), this, [this]() {
+        _imageFitToWindow = !_imageFitToWindow;
+        FitImageToViewport();
+    });
 }
 
 void S3ObjectEditDialog::ShowDefaultMetadataContextMenu(const QPoint &pos) {
@@ -127,7 +169,7 @@ void S3ObjectEditDialog::HandleAccept() {
             const QString value = _ui->metadataTable->item(i, 1)->text();
             defaultMetadata[key] = value;
         }
-        _s3Service->UpdateObject(_ui->regionEdit->text(), _ui->bucketEdit->text(), _ui->keyEdit->text(), _ui->bodyTextEdit->toPlainText().toUtf8(), _ui->storageTypeCombo->currentText(), defaultMetadata);
+        _s3Service->UpdateObject(_ui->regionEdit->text(), _ui->bucketEdit->text(), _ui->keyEdit->text(), _plaintextEdit->toPlainText().toUtf8(), _ui->storageTypeCombo->currentText(), defaultMetadata);
     }
     accept();
 }
@@ -136,7 +178,7 @@ void S3ObjectEditDialog::HandleReject() {
     accept();
 }
 
-void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) const {
+void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) {
 
     _ui->regionEdit->setText(objectDetailsResponse.region);
     _ui->bucketEdit->setText(objectDetailsResponse.bucketName);
@@ -146,7 +188,18 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
     _ui->sizeEdit->setText(QString::number(objectDetailsResponse.size));
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.modified));
-    _ui->bodyTextEdit->setPlainText(objectDetailsResponse.body);
+    if (ImageUtils::IsImageContentType(objectDetailsResponse.contentType)) {
+        QPixmap pix;
+        pix.loadFromData(objectDetailsResponse.body);
+        _imageOriginal = pix;
+        _imageFitToWindow = false;
+        _imageZoom = 1.0;
+        ApplyImageScale();
+        _ui->stackedWidget->setCurrentWidget(_imageScrollArea);
+    } else {
+        _plaintextEdit->setPlainText(objectDetailsResponse.body);
+        _ui->stackedWidget->setCurrentWidget(_plaintextEdit);
+    }
 
     // Storage classes
     const QStringList storageClasses = {"STANDARD", "STANDARD_IA", "ONEZONE_IA", "EXPRESS_ONEZONE", "GLACIER", "GLACIER_IR", "DEEP_ARCHIVE", "INTELLIGENT_TIERING", "REDUCED_REDUNDANCY"};
@@ -171,4 +224,57 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
         _ui->metadataTable->sortItems(_metadataSortColumn, _metadataSortOrder);
         _ui->metadataTable->selectRow(selectedRow);
     }
+}
+
+bool S3ObjectEditDialog::eventFilter(QObject *watched, QEvent *event) {
+    if ((watched == _imageScrollArea->viewport() || watched == _imageLabel) && event->type() == QEvent::Wheel) {
+        auto *wheelEvent = static_cast<QWheelEvent *>(event);
+        if (wheelEvent->modifiers().testFlag(Qt::ControlModifier)) {
+            _imageFitToWindow = false;
+            const int delta = wheelEvent->angleDelta().y();
+            if (delta > 0) {
+                SetImageZoom(_imageZoom * 1.1);
+            } else if (delta < 0) {
+                SetImageZoom(_imageZoom / 1.1);
+            }
+            return true;
+        }
+    }
+    if ((watched == _imageScrollArea->viewport() || watched == _imageLabel) && event->type() == QEvent::Resize) {
+        if (_imageFitToWindow) {
+            FitImageToViewport();
+        }
+    }
+    return BaseDialog::eventFilter(watched, event);
+}
+
+void S3ObjectEditDialog::SetImageZoom(const qreal zoom) {
+    _imageZoom = qBound(0.1, zoom, 10.0);
+    ApplyImageScale();
+}
+
+void S3ObjectEditDialog::ApplyImageScale() const {
+    if (_imageOriginal.isNull()) {
+        return;
+    }
+    if (_imageFitToWindow) {
+        FitImageToViewport();
+        return;
+    }
+    const QSizeF targetSize = (_imageOriginal.size() * _imageZoom).toSizeF();
+    _imageLabel->setPixmap(_imageOriginal.scaled(targetSize.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    _imageLabel->adjustSize();
+}
+
+void S3ObjectEditDialog::FitImageToViewport() const {
+    if (_imageOriginal.isNull() || !_imageScrollArea) {
+        return;
+    }
+    const QSize viewportSize = _imageScrollArea->viewport()->size();
+    if (viewportSize.isEmpty()) {
+        return;
+    }
+    const QSize scaled = _imageOriginal.size().scaled(viewportSize, Qt::KeepAspectRatio);
+    _imageLabel->setPixmap(_imageOriginal.scaled(scaled, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    _imageLabel->adjustSize();
 }

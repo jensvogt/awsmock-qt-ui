@@ -4,7 +4,6 @@
 
 #include <modules/module/ShowInfrastructure.h>
 #include "ui_ShowInfrastructure.h"
-#include "utils/DateTimeUtils.h"
 
 ShowInfrastructure::ShowInfrastructure(QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::ShowInfrastructure) {
 
@@ -65,7 +64,10 @@ ShowInfrastructure::~ShowInfrastructure() {
 
 void ShowInfrastructure::HandleGetInfrastructure(const QString &infrastructureJson) const {
     _ui->infrastructureText->setPlainText(infrastructureJson);
-    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetDateTimeFormat(QDateTime::currentDateTime()));
+    if (_ui->prettyPrintButton->isChecked()) {
+        PrettyPrintClicked(true);
+    }
+    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetTimeFormat(QDateTime::currentDateTime()));
 }
 
 void ShowInfrastructure::HandleAccept() {

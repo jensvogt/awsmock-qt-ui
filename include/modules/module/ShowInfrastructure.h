@@ -14,8 +14,8 @@
 // AwsMock includes
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
-
-#include "modules/module/ModuleService.h"
+#include <utils/DateTimeUtils.h>
+#include <modules/module/ModuleService.h>
 
 QT_BEGIN_NAMESPACE
 

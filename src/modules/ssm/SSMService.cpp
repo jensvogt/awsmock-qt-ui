@@ -90,7 +90,7 @@ void SSMService::GetParameter(const QString &name) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              JsonUtils::WriteJsonString(QJsonDocument::fromJson(response).object());
+                              //JsonUtils::WriteJsonString(QJsonDocument::fromJson(response).object());
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SSMParameterGetResponse ssmResponse;
                                   ssmResponse.FromJson(jsonDoc);
