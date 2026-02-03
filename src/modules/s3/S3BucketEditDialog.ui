@@ -153,7 +153,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="lambdaTab">
       <attribute name="title">
@@ -363,6 +363,28 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>regionEdit</tabstop>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>arnEdit</tabstop>
+  <tabstop>ownerEdit</tabstop>
+  <tabstop>keysEdit</tabstop>
+  <tabstop>sizeEdit</tabstop>
+  <tabstop>versionedCheckBox</tabstop>
+  <tabstop>createdEdit</tabstop>
+  <tabstop>modifiedEdit</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lifecycleTable</tabstop>
+  <tabstop>lambdaNotificationAddButton</tabstop>
+  <tabstop>queueNotificationAddButton</tabstop>
+  <tabstop>topicNotificationAddButton</tabstop>
+  <tabstop>lifecycleAddButton</tabstop>
+  <tabstop>defaultMetadataAddButton</tabstop>
+  <tabstop>defaultMetadataTable</tabstop>
+  <tabstop>lambdaNotificationTable</tabstop>
+  <tabstop>topicNotificationTable</tabstop>
+  <tabstop>queueNotificationTable</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

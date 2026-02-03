@@ -9,7 +9,7 @@
 #include <dto/ssm/SSMParameterCounter.h>
 
 struct SSMParameterGetResponse {
-    long total;
+    long total{};
 
     SSMParameterCounter parameter;
 
