@@ -10,6 +10,7 @@
 
 // Qt includes
 #include <QDialog>
+#include <QClipboard>
 #include <QInputDialog>
 
 // AwsMock includes
@@ -19,6 +20,7 @@
 #include <utils/DateTimeUtils.h>
 #include <modules/ssm/SSMService.h>
 #include <modules/kms/KMSService.h>
+#include <modules/ssm/SSMParameterAddTagDialog.h>
 
 QT_BEGIN_NAMESPACE
 

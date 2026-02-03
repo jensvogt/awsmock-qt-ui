@@ -24,6 +24,14 @@ SSMParameterEditDialog::SSMParameterEditDialog(QString parameterName, QWidget *p
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 
+    // Setup value buttons
+    _ui->clipboardButton->setText(nullptr);
+    _ui->clipboardButton->setIcon(IconUtils::GetIcon("clipboard"));
+    connect(_ui->clipboardButton, &QPushButton::clicked, this, [this]() {
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        clipboard->setText(_ui->secretStringEdit->text());
+    });
+
     // Load content
     SSMParameterEditDialog::LoadContent();
 }
@@ -105,8 +113,32 @@ void SSMParameterEditDialog::HandleParameterGetSignal(const SSMParameterGetRespo
 void SSMParameterEditDialog::SetupTagsTab() {
 
     // Tags refresh button
+    _ui->addTagButton->setText(nullptr);
+    _ui->addTagButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->addTagButton, &QPushButton::clicked, [this]() {
+
+        // OPen add tag dialog
+        SSMParameterAddTagDialog dialog;
+        dialog.exec();
+
+        // Process results
+        const QString key = dialog.GetKey();
+        const QString value = dialog.GetValue();
+        _parameter.tags[key] = value;
+        _changed = true;
+
+        // Update table
+        const int row = _tagsDataModel->rowCount();
+        SetColumn(_tagsDataModel, row, 0, key);
+        SetColumn(_tagsDataModel, row, 1, value);
+    });
+
+    // Tags refresh button
     _ui->tagsRefreshButton->setText(nullptr);
     _ui->tagsRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->tagsRefreshButton, &QPushButton::clicked, [this]() {
+        LoadContent();
+    });
 
     // Table
     const QStringList headers = QStringList() = {

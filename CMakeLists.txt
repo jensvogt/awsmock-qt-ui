@@ -295,6 +295,9 @@ set(PROJECT_SOURCES
         include/utils/ShowInfrastructure.h
         src/utils/ShowInfrastructure.ui
         include/dto/ssm/SSMParameterPutResponse.h
+        src/modules/ssm/SSMParameterAddTagDialog.cpp
+        include/modules/ssm/SSMParameterAddTagDialog.h
+        src/modules/ssm/SSMParameterAddTagDialog.ui
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

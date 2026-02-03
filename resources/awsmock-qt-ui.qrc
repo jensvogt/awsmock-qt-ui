@@ -7,6 +7,7 @@
         <file>light/browse.svg</file>
         <file>light/clean.svg</file>
         <file>light/clear.svg</file>
+        <file>light/clipboard.svg</file>
         <file>light/close.svg</file>
         <file>light/connect.svg</file>
         <file>light/delete.svg</file>
@@ -44,6 +45,7 @@
         <file>dark/browse.svg</file>
         <file>dark/clean.svg</file>
         <file>dark/clear.svg</file>
+        <file>dark/clipboard.svg</file>
         <file>dark/close.svg</file>
         <file>dark/connect.svg</file>
         <file>dark/delete.svg</file>

@@ -90,6 +90,7 @@ void SSMService::GetParameter(const QString &name) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
+                              JsonUtils::WriteJsonString(QJsonDocument::fromJson(response).object());
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SSMParameterGetResponse ssmResponse;
                                   ssmResponse.FromJson(jsonDoc);
@@ -126,6 +127,14 @@ void SSMService::UpdateParameter(const SSMParameterCounter &parameter) {
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
     jRequest["sortColumns"] = jSortingArray;
+
+    if (!parameter.tags.isEmpty()) {
+        QJsonObject jTagsObject;
+        for (auto it = parameter.tags.cbegin(); it != parameter.tags.cend(); ++it) {
+            jTagsObject.insert(it.key(), it.value());
+        }
+        jRequest["tags"] = jTagsObject;
+    }
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
