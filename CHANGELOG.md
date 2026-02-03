@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.2...v1.9.3) (2026-02-03)
+
+
+### Bug Fixes
+
+* add SSM tags ([6401595](https://github.com/jensvogt/awsmock-qt-ui/commit/6401595c4c79938303ffa92ac92db0ad34b67689))
+
 ## [1.9.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.1...v1.9.2) (2026-02-03)
 
 
