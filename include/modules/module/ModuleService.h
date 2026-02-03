@@ -6,11 +6,11 @@
 #define AWSMOCK_QT_UI_MODULE_SERVICE_H
 
 // Qt includes
-#include <QFile>
-#include <QJsonDocument>
 #include <QMessageBox>
+#include <QElapsedTimer>
 
 // Awsmock includes
+#include <utils/EventBus.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <dto/gateway/GatewayConfig.h>
@@ -55,17 +55,42 @@ public:
      */
     void GetServerConfig();
 
+    /**
+     * @brief Get infrafstructure JSON from server
+     */
     void GetInfrastructure();
 
 signals:
+    /**
+     * @brief Handler for import callbacks
+     */
     void ImportResponseSignal();
 
+    /**
+     * @brief Handler for export callbacks
+     *
+     * @param exportFile file to export
+     * @param exportResponse response from export call
+     */
     void ExportResponseSignal(const QString &exportFile, const QString &exportResponse);
 
+    /**
+     * @brief Clean response callbacks
+     */
     void CleanResponseSignal();
 
+    /**
+     * @brief Clean response callbacks
+     *
+     * @param serverConfig erver config DTO
+     */
     void GetServerConfigSignal(const GatewayConfig &serverConfig);
 
+    /**
+     * @brief Handler for the get infrastructure callback
+     *
+     * @param infrastructure infrastructure JSON
+     */
     void GetInfrastructureSignal(const QString &infrastructure);
 
 private:

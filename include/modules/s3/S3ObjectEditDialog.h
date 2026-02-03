@@ -5,6 +5,10 @@
 #ifndef AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
 #define AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
 
+// Qt includes
+#include <QPlainTextEdit>
+#include <QPixmap>
+
 // AwsMock includes
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
@@ -18,6 +22,8 @@ namespace Ui {
 }
 
 QT_END_NAMESPACE
+
+class QScrollArea;
 
 class S3ObjectEditDialog final : public BaseDialog {
     Q_OBJECT
@@ -58,7 +64,7 @@ public:
      *
      * @param objectDetailsResponse object details REST response
      */
-    void UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) const;
+    void UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse);
 
     /**
      * @brief Load dialog content
@@ -66,7 +72,16 @@ public:
     void LoadContent() override {
     }
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
+    void ApplyImageScale() const;
+
+    void SetImageZoom(qreal zoom);
+
+    void FitImageToViewport() const;
+
     /**
      * @brief UI components
      */
@@ -98,6 +113,36 @@ private:
      * @brief Changed flag
      */
     bool _changed = false;
+
+    /**
+     * @brief Plain text edit
+     */
+    QPlainTextEdit *_plaintextEdit;
+
+    /**
+     * @brief Image label
+     */
+    QLabel *_imageLabel;
+
+    /**
+     * @brief Image scroll area
+     */
+    QScrollArea *_imageScrollArea;
+
+    /**
+     * @brief Original image
+     */
+    QPixmap _imageOriginal;
+
+    /**
+     * @brief Current zoom factor
+     */
+    qreal _imageZoom = 1.0;
+
+    /**
+     * @brief Fit-to-window toggle
+     */
+    bool _imageFitToWindow = false;
 };
 
 

@@ -5,7 +5,9 @@
 #ifndef AWSMOCK_QT_UI_MODULE_GATEWAY_CONFIG_H
 #define AWSMOCK_QT_UI_MODULE_GATEWAY_CONFIG_H
 
+// Qt includes
 #include <QString>
+#include <QJsonObject>
 
 /**
  * Gateway configuration

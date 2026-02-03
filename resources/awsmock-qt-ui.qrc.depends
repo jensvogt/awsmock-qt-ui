@@ -7,6 +7,7 @@
         <file>light/browse.svg</file>
         <file>light/clean.svg</file>
         <file>light/clear.svg</file>
+        <file>light/clipboard.svg</file>
         <file>light/close.svg</file>
         <file>light/connect.svg</file>
         <file>light/delete.svg</file>
@@ -27,9 +28,12 @@
         <file>light/rebuild.svg</file>
         <file>light/redrive.svg</file>
         <file>light/refresh.svg</file>
+        <file>light/resend.svg</file>
         <file>light/restart.svg</file>
         <file>light/running.svg</file>
+        <file>light/save.svg</file>
         <file>light/search.svg</file>
+        <file>light/show.svg</file>
         <file>light/start.svg</file>
         <file>light/stop.svg</file>
         <file>light/stopped.svg</file>
@@ -41,6 +45,7 @@
         <file>dark/browse.svg</file>
         <file>dark/clean.svg</file>
         <file>dark/clear.svg</file>
+        <file>dark/clipboard.svg</file>
         <file>dark/close.svg</file>
         <file>dark/connect.svg</file>
         <file>dark/delete.svg</file>
@@ -62,8 +67,11 @@
         <file>dark/redrive.svg</file>
         <file>dark/refresh.svg</file>
         <file>dark/restart.svg</file>
+        <file>dark/resend.svg</file>
         <file>dark/running.svg</file>
+        <file>dark/save.svg</file>
         <file>dark/search.svg</file>
+        <file>dark/show.svg</file>
         <file>dark/start.svg</file>
         <file>dark/stop.svg</file>
         <file>dark/stopped.svg</file>

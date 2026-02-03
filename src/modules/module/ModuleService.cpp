@@ -1,3 +1,4 @@
+
 #include <modules/module/ModuleService.h>
 
 ModuleService::ModuleService() {
@@ -5,6 +6,8 @@ ModuleService::ModuleService() {
 }
 
 void ModuleService::ExportInfrastructure(const QString &exportFilename) {
+    QElapsedTimer timer;
+    timer.start();
 
     QJsonArray array;
     array.append({"sqs"});
@@ -34,17 +37,20 @@ void ModuleService::ExportInfrastructure(const QString &exportFilename) {
                           {"x-awsmock-action", "export"},
                           {"content-type", "application/json"}
                       },
-                      [this,exportFilename](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this,exportFilename, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an infrastructure object
                               emit ExportResponseSignal(exportFilename, response.toStdString().data());
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
 void ModuleService::ImportInfrastructure(const QString &content) {
+    QElapsedTimer timer;
+    timer.start();
 
     _restManager.post(url,
                       content.toUtf8(),
@@ -53,17 +59,20 @@ void ModuleService::ImportInfrastructure(const QString &content) {
                           {"x-awsmock-action", "export"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               // The API returns an infrastructure object
                               emit ImportResponseSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
 void ModuleService::CleanInfrastructure() {
+    QElapsedTimer timer;
+    timer.start();
 
     QJsonArray array;
     array.append({"sqs"});
@@ -83,17 +92,20 @@ void ModuleService::CleanInfrastructure() {
                           {"x-awsmock-action", "clean-objects"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               // The API returns an infrastructure object
                               emit CleanResponseSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
+                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
 void ModuleService::GetServerConfig() {
+    QElapsedTimer timer;
+    timer.start();
 
     _restManager.get(url,
                      {
@@ -101,9 +113,8 @@ void ModuleService::GetServerConfig() {
                          {"x-awsmock-action", "get-config"},
                          {"content-type", "application/json"}
                      },
-                     [this](const bool success, const QByteArray &response, int, const QString &error) {
+                     [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                          if (success) {
-                             // The API returns an infrastructure object
                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                              GatewayConfig serverConfig;
                              serverConfig.FromJson(jsonDoc.object());
@@ -111,10 +122,13 @@ void ModuleService::GetServerConfig() {
                          } else {
                              QMessageBox::critical(nullptr, "Error", error);
                          }
+                         emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                      });
 }
 
 void ModuleService::GetInfrastructure() {
+    QElapsedTimer timer;
+    timer.start();
 
     _restManager.get(url,
                      {
@@ -122,12 +136,13 @@ void ModuleService::GetInfrastructure() {
                          {"x-awsmock-action", "get-infrastructure"},
                          {"content-type", "application/json"}
                      },
-                     [this](const bool success, const QByteArray &response, int, const QString &error) {
+                     [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                          if (success) {
                              // The API returns an infrastructure object as string
                              emit GetInfrastructureSignal(QString(response));
                          } else {
                              QMessageBox::critical(nullptr, "Error", error);
                          }
+                         emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                      });
 }
