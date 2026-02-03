@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.5...v1.9.6) (2026-02-03)
+
+
+### Bug Fixes
+
+* image support for S3 objects ([d38481d](https://github.com/jensvogt/awsmock-qt-ui/commit/d38481de08983f154b756c4cb715adab3573910d))
+* image support for S3 objects ([a93792d](https://github.com/jensvogt/awsmock-qt-ui/commit/a93792da448cf833264fe96d7a71227f40a7d6f8))
+
 ## [1.9.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.9.4...v1.9.5) (2026-02-03)
 
 
