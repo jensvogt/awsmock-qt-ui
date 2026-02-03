@@ -1,12 +1,10 @@
-#include <QJsonDocument>
-#include <QMessageBox>
-#include <modules/infrastructure/InfrastructureService.h>
+#include <modules/module/ModuleService.h>
 
-InfraStructureService::InfraStructureService() {
+ModuleService::ModuleService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 }
 
-void InfraStructureService::ExportInfrastructure(const QString &exportFilename) {
+void ModuleService::ExportInfrastructure(const QString &exportFilename) {
 
     QJsonArray array;
     array.append({"sqs"});
@@ -46,7 +44,7 @@ void InfraStructureService::ExportInfrastructure(const QString &exportFilename) 
                       });
 }
 
-void InfraStructureService::ImportInfrastructure(const QString &content) {
+void ModuleService::ImportInfrastructure(const QString &content) {
 
     _restManager.post(url,
                       content.toUtf8(),
@@ -65,7 +63,7 @@ void InfraStructureService::ImportInfrastructure(const QString &content) {
                       });
 }
 
-void InfraStructureService::CleanInfrastructure() {
+void ModuleService::CleanInfrastructure() {
 
     QJsonArray array;
     array.append({"sqs"});
@@ -95,7 +93,7 @@ void InfraStructureService::CleanInfrastructure() {
                       });
 }
 
-void InfraStructureService::GetServerConfig() {
+void ModuleService::GetServerConfig() {
 
     _restManager.get(url,
                      {
@@ -110,6 +108,24 @@ void InfraStructureService::GetServerConfig() {
                              GatewayConfig serverConfig;
                              serverConfig.FromJson(jsonDoc.object());
                              emit GetServerConfigSignal(serverConfig);
+                         } else {
+                             QMessageBox::critical(nullptr, "Error", error);
+                         }
+                     });
+}
+
+void ModuleService::GetInfrastructure() {
+
+    _restManager.get(url,
+                     {
+                         {"x-awsmock-target", "module"},
+                         {"x-awsmock-action", "get-infrastructure"},
+                         {"content-type", "application/json"}
+                     },
+                     [this](const bool success, const QByteArray &response, int, const QString &error) {
+                         if (success) {
+                             // The API returns an infrastructure object as string
+                             emit GetInfrastructureSignal(QString(response));
                          } else {
                              QMessageBox::critical(nullptr, "Error", error);
                          }

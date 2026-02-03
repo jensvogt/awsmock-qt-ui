@@ -2,10 +2,10 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Connect infrastructure signals
-    _infraStructureService = new InfraStructureService();
-    connect(_infraStructureService, &InfraStructureService::ImportResponseSignal, this, &ImportInfrastructureResponse);
-    connect(_infraStructureService, &InfraStructureService::ExportResponseSignal, this, &WriteInfrastructureExport);
-    connect(_infraStructureService, &InfraStructureService::CleanResponseSignal, this, &CleanInfrastructureResponse);
+    _moduleService = new ModuleService();
+    connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
+    connect(_moduleService, &ModuleService::ExportResponseSignal, this, &WriteInfrastructureExport);
+    connect(_moduleService, &ModuleService::CleanResponseSignal, this, &CleanInfrastructureResponse);
 
     setWindowTitle("AwsMock UI v" + QString(APP_VERSION));
     resize(1600, 900);
@@ -175,7 +175,7 @@ void MainWindow::ImportInfrastructure() const {
         const QByteArray jsonData = file.readAll();
         file.close();
 
-        _infraStructureService->ImportInfrastructure(jsonData);
+        _moduleService->ImportInfrastructure(jsonData);
         Configuration::instance().SetValue<QString>("ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
@@ -191,7 +191,7 @@ void MainWindow::ExportInfrastructure() const {
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
                                                               filter); !filePath.isEmpty()) {
-        _infraStructureService->ExportInfrastructure(filePath);
+        _moduleService->ExportInfrastructure(filePath);
         Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
@@ -217,14 +217,14 @@ void MainWindow::WriteInfrastructureExport(const QString &filename, const QStrin
 }
 
 void MainWindow::CleanInfrastructure() const {
-    _infraStructureService->CleanInfrastructure();
+    _moduleService->CleanInfrastructure();
 }
 
 void MainWindow::CleanInfrastructureResponse() {
     QMessageBox::information(nullptr, "Information", "Infrastructure cleaned");
 }
 
-void MainWindow::ShowInfrastructureDialog() const {
+void MainWindow::ShowInfrastructureDialog() {
     ShowInfrastructure dialog;
     dialog.exec();
 }

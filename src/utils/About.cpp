@@ -8,8 +8,8 @@
 #include "ui_About.h"
 
 About::About(QWidget *parent) : QDialog(parent), _ui(new Ui::About) {
-    _infraStructureService = new InfraStructureService();
-    connect(_infraStructureService, &InfraStructureService::GetServerConfigSignal, this, &About::UpdateServerConfig);
+    _infraStructureService = new ModuleService();
+    connect(_infraStructureService, &ModuleService::GetServerConfigSignal, this, &About::UpdateServerConfig);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, [this]() {

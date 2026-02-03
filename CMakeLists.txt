@@ -57,8 +57,8 @@ set(PROJECT_SOURCES
         include/modules/dashboard/DashboardService.h
         include/modules/dashboard/ChartConfig.h
         include/modules/dashboard/CrossHairChartView.h
-        src/modules/infrastructure/InfrastructureService.cpp
-        include/modules/infrastructure/InfrastructureService.h
+        src/modules/module/ModuleService.cpp
+        include/modules/module/ModuleService.h
         src/modules/application/ApplicationList.cpp
         include/modules/application/ApplicationList.h
         src/modules/application/ApplicationService.cpp
@@ -291,13 +291,14 @@ set(PROJECT_SOURCES
         src/modules/s3/S3BucketLifecycleDialog.cpp
         include/modules/s3/S3BucketLifecycleDialog.h
         src/modules/s3/S3BucketLifecycleDialog.ui
-        src/utils/ShowInfrastructure.cpp
-        include/utils/ShowInfrastructure.h
-        src/utils/ShowInfrastructure.ui
+        src/modules/module/ShowInfrastructure.cpp
+        include/modules/module/ShowInfrastructure.h
+        src/modules/module/ShowInfrastructure.ui
         include/dto/ssm/SSMParameterPutResponse.h
         src/modules/ssm/SSMParameterAddTagDialog.cpp
         include/modules/ssm/SSMParameterAddTagDialog.h
         src/modules/ssm/SSMParameterAddTagDialog.ui
+        src/modules/module/ModuleService.cpp
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

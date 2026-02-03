@@ -15,6 +15,8 @@
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 
+#include "modules/module/ModuleService.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -40,6 +42,13 @@ public:
     ~ShowInfrastructure() override;
 
     /**
+     * @brief Callback for the asynchronous REST call.
+     *
+     * @param infrastructureJson infrastructure JSON as string
+     */
+    void HandleGetInfrastructure(const QString &infrastructureJson) const;
+
+    /**
      * @brief Handle OK button
      */
     void HandleAccept();
@@ -53,13 +62,15 @@ public:
 
     void ReadData() const;
 
-    void SaveData() const;
+    void SaveData();
 
     void FindNext() const;
 
     void FindPrevious() const;
 
     void ClearSearch() const;
+
+    void PrettyPrintClicked(bool checked) const;
 
     /**
      * @brief Load content
@@ -76,7 +87,12 @@ private:
     /**
      * @brief Current file
      */
-    QFile *_currentFile;
+    QFile *_currentFile{};
+
+    /**
+     * @brief Module service
+     */
+    ModuleService *_moduleService{};
 };
 
 
