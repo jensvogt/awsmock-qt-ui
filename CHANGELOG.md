@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.8](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.7...v1.9.8) (2026-02-04)
+
+
+### Bug Fixes
+
+* import of infrastructure ([27b682d](https://github.com/jensvogt/awsmock-qt-ui/commit/27b682de9f9add47b0c9555b923e1562b5647547))
+
 ## [1.9.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.6...v1.9.7) (2026-02-03)
 
 
