@@ -77,9 +77,9 @@ set(PROJECT_SOURCES
         include/modules/application/ApplicationUploadCodeDialog.h
         src/modules/application/ApplicationUploadCodeDialog.cpp
         include/modules/application/ApplicationUploadCodeDialog.h
-        src/modules/application/ApplicationEnvironmentEditDialog.cpp
-        src/modules/application/ApplicationEnvironmentEditDialog.ui
-        include/modules/application/ApplicationEnvironmentEditDialog.h
+        src/modules/application/ApplicationEnvironmentDialog.cpp
+        src/modules/application/ApplicationEnvironmentDialog.ui
+        include/modules/application/ApplicationEnvironmentDialog.h
         src/modules/application/ApplicationTagDialog.cpp
         src/modules/application/ApplicationTagDialog.ui
         include/modules/application/ApplicationTagDialog.h

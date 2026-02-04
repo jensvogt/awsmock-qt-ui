@@ -14,7 +14,6 @@
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
 #include <modules/lambda/LambdaService.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
-#include <modules/application/ApplicationEnvironmentEditDialog.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
 
