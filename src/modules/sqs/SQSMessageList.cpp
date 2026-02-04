@@ -58,6 +58,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for the message ID");
     connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -66,6 +67,7 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("Clear the message ID prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -179,6 +181,7 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *resendAction = menu.addAction(IconUtils::GetIcon("resend"), "Resend Message");
     resendAction->setToolTip("Resend message");
     if (_isDlq) {

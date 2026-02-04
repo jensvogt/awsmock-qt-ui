@@ -177,6 +177,7 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
     // const QString tableArn = _dataModel->item(sourceIndex.row(), 5)->text();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Table");
     editAction->setToolTip("Edit the table details");
 
