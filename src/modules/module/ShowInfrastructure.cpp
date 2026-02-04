@@ -33,7 +33,12 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : ::BaseDialog(parent), 
     _ui->prettyPrintButton->toggle();
     connect(_ui->prettyPrintButton, &QPushButton::toggled, this, &ShowInfrastructure::PrettyPrintClicked);
 
-    // Save
+    // Save locally
+    _ui->importButton->setText(nullptr);
+    _ui->importButton->setIcon(IconUtils::GetIcon("import"));
+    connect(_ui->importButton, &QPushButton::clicked, this, &ShowInfrastructure::ImportData);
+
+    // Save locally
     _ui->saveButton->setText(nullptr);
     _ui->saveButton->setIcon(IconUtils::GetIcon("save"));
     connect(_ui->saveButton, &QPushButton::clicked, this, &ShowInfrastructure::SaveData);
@@ -101,6 +106,13 @@ void ShowInfrastructure::ReadData() const {
     _currentFile->close();
 
     _ui->infrastructureText->setPlainText(QString(jsonData));
+}
+
+void ShowInfrastructure::ImportData() const {
+    _moduleService->ImportInfrastructure(_ui->infrastructureText->toPlainText());
+    connect(_moduleService, &ModuleService::ImportResponseSignal, this, []() {
+        QMessageBox::information(nullptr, "Info", "JSON file imported");
+    });
 }
 
 void ShowInfrastructure::SaveData() {

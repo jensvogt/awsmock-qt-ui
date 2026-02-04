@@ -62,6 +62,8 @@ public:
 
     void ReadData() const;
 
+    void ImportData() const;
+
     void SaveData();
 
     void FindNext() const;

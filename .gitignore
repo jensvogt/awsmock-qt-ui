@@ -139,3 +139,5 @@ src/service/btst/srv_sqs_service
 **/ui_*
 **/*.idx
 **/*.user
+**/deps
+**/timestamp

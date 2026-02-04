@@ -44,7 +44,7 @@ void ModuleService::ExportInfrastructure(const QString &exportFilename) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ExportInfrastructure", timer.elapsed());
                       });
 }
 
@@ -56,7 +56,7 @@ void ModuleService::ImportInfrastructure(const QString &content) {
                       content.toUtf8(),
                       {
                           {"x-awsmock-target", "module"},
-                          {"x-awsmock-action", "export"},
+                          {"x-awsmock-action", "import"},
                           {"content-type", "application/json"}
                       },
                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
@@ -66,7 +66,7 @@ void ModuleService::ImportInfrastructure(const QString &content) {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ImportInfrastructure", timer.elapsed());
                       });
 }
 
@@ -99,7 +99,7 @@ void ModuleService::CleanInfrastructure() {
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
-                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("CleanInfrastructure", timer.elapsed());
                       });
 }
 
@@ -122,7 +122,7 @@ void ModuleService::GetServerConfig() {
                          } else {
                              QMessageBox::critical(nullptr, "Error", error);
                          }
-                         emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                         emit EventBus::instance().TimerSignal("GetServerConfig", timer.elapsed());
                      });
 }
 
@@ -143,6 +143,6 @@ void ModuleService::GetInfrastructure() {
                          } else {
                              QMessageBox::critical(nullptr, "Error", error);
                          }
-                         emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                         emit EventBus::instance().TimerSignal("GetInfrastructure", timer.elapsed());
                      });
 }
