@@ -113,13 +113,11 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
 
     // Update environment table
     int r = 0;
-    _ui->envTable->setSortingEnabled(false);
     for (auto [key, value]: _application.environment.asKeyValueRange()) {
         SetColumn(_envDataModel, r, 0, key);
         SetColumn(_envDataModel, r, 1, value);
         r++;
     }
-    _ui->envTable->setSortingEnabled(true);
 
     // Update tag table
     r = 0;
@@ -133,7 +131,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     }
     _ui->tagTable->setRowCount(static_cast<int>(_application.tags.count()));
     _ui->tagTable->setSortingEnabled(true);
-    _ui->tagTable->sortItems(_sortColumnTag, _sortOrderTag);
+    _ui->tagTable->sortItems(_tagSortColumn, _tagSortOrder);
 
     // Update dependencies tab
     r = 0;
@@ -180,12 +178,13 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
     // Proxy model for prefix filtering
     _envProxyModel = new PrefixFilterProxyModel(this);
     _envProxyModel->setSourceModel(_envDataModel);
+    _envProxyModel->sort(_envSortColumn, _envSortOrder);
     _ui->envTable->setModel(_envProxyModel);
 
     _ui->envTable->setShowGrid(true);
+    _ui->envTable->setSortingEnabled(true);
     _ui->envTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->envTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _ui->envTable->setSortingEnabled(true);
     _ui->envTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->envTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     _ui->envTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);

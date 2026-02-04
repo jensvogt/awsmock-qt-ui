@@ -43,6 +43,7 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for parameter name");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -51,6 +52,7 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("Clear the parameter name prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -154,8 +156,9 @@ void SSMParameterList::ShowContextMenu(const QPoint &pos) const {
     const QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Parameter");
-    editAction->setToolTip("Edit the SSM parameter");
+    editAction->setToolTip("Edit the parameter");
     menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Parameter");
     deleteAction->setToolTip("Delete the parameter");

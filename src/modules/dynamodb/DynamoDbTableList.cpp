@@ -56,18 +56,20 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
-    _prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    prefixEdit->setToolTip("Prefix to the table name");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         _prefixClear->setDisabled(false);
         _proxyModel->setFilterColumn(0);
         _proxyModel->setFilterPrefix(prefixEdit->text());
     });
-    prefixLayout->addWidget(prefixEdit);
+    _prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     _prefixClear->setDisabled(true);
+    _prefixClear->setToolTip("Clear the table name prefix");
     connect(_prefixClear, &QPushButton::clicked, this, [this]() {
         _proxyModel->clearFilter();
         _prefixClear->setDisabled(true);
     });
+    prefixLayout->addWidget(prefixEdit);
     prefixLayout->addWidget(_prefixClear);
 
     // Table
