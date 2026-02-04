@@ -13,11 +13,12 @@
 #include <utils/DateTimeUtils.h>
 #include <modules/application/ApplicationService.h>
 #include <modules/application/ApplicationTagDialog.h>
-#include <modules/application/ApplicationEnvironmentEditDialog.h>
+#include <modules/application/ApplicationEnvironmentDialog.h>
 #include <modules/application/ApplicationDependencyDialog.h>
 #include <modules/application/ApplicationLogsDialog.h>
 
 #include "ApplicationLogsDialog.h"
+#include "utils/PrefixFilterModel.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -107,6 +108,16 @@ private:
      * @brief Container ID
      */
     QString _containerId;
+
+    /**
+     *  @brief Table data model
+     */
+    QStandardItemModel *_envDataModel;
+
+    /**
+     * @brief Data proxy model
+     */
+    PrefixFilterProxyModel *_envProxyModel;
 };
 
 

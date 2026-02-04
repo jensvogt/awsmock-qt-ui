@@ -210,7 +210,7 @@ void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
     const QString value = _ui->environmentTable->item(row, 1)->text();
     if (const QAction *selectedAction = menu.exec(_ui->environmentTable->viewport()->mapToGlobal(pos));
         selectedAction == editAction) {
-        if (ApplicationEnvironmentEditDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog(key, value, false); dialog.exec() == Accepted) {
             SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
             //   _application.environment[key] = dialog.GetValue();
             //            _changed = true;
