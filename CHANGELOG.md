@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.9...v1.9.10) (2026-02-04)
+
+
+### Bug Fixes
+
+* application environment tab ([cc89f17](https://github.com/jensvogt/awsmock-qt-ui/commit/cc89f17a9eaba5809a4350c78052c5a7b0ea36ae))
+* application environment tab ([c14bf44](https://github.com/jensvogt/awsmock-qt-ui/commit/c14bf4408347769049fd36883cb9a126ac28a0d8))
+
 ## [1.9.9](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.8...v1.9.9) (2026-02-04)
 
 
