@@ -59,6 +59,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for the message ID");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -67,6 +68,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("CLear the message ID prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -180,7 +182,7 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
-    //    menu.addSeparator();
+    menu.setToolTipsVisible(true);
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
     if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {

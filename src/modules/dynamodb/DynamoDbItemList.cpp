@@ -62,6 +62,7 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for the item ID");
     _prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         _prefixClear->setDisabled(false);
@@ -70,6 +71,7 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
     });
     prefixLayout->addWidget(prefixEdit);
     _prefixClear->setDisabled(true);
+    _prefixClear->setToolTip("Clear the prefix for the item ID");
     connect(_prefixClear, &QPushButton::clicked, this, [this]() {
         _proxyModel->clearFilter();
         _prefixClear->setDisabled(true);
@@ -147,6 +149,7 @@ void DynamoDbItemList::ShowContextMenu(const QPoint &pos) const {
     const QString itemArn = _dataModel->item(sourceIndex.row(), 5)->text();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Item");
     editAction->setToolTip("Edit the item details");
 

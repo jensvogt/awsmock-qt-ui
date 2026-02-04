@@ -80,34 +80,9 @@ private:
     bool _changed = false;
 
     /**
-     * @brief Sort column index environment table
-     */
-    int _sortColumnEnv = 0;
-
-    /**
      * @brief Application logs dialog
      */
     ApplicationLogsDialog *_applicationLogsDialog;
-
-    /**
-     * @brief Sort order environment table
-     */
-    Qt::SortOrder _sortOrderEnv = Qt::AscendingOrder;
-
-    /**
-     * @brief Sort column index tags table
-     */
-    int _sortColumnTag = 1;
-
-    /**
-     * @brief Sort order tag table
-     */
-    Qt::SortOrder _sortOrderTag = Qt::AscendingOrder;
-
-    /**
-     * @brief Container ID
-     */
-    QString _containerId;
 
     /**
      *  @brief Table data model
@@ -118,6 +93,31 @@ private:
      * @brief Data proxy model
      */
     PrefixFilterProxyModel *_envProxyModel;
+
+    /**
+     * @brief Sort column index environment table
+     */
+    int _envSortColumn = 0;
+
+    /**
+     * @brief Sort order environment table
+     */
+    Qt::SortOrder _envSortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Sort column index tags table
+     */
+    int _tagSortColumn = 0;
+
+    /**
+     * @brief Sort order tag table
+     */
+    Qt::SortOrder _tagSortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Container ID
+     */
+    QString _containerId;
 };
 
 

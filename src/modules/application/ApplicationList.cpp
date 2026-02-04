@@ -54,6 +54,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for the application name");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -62,6 +63,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("Clear the application name prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -178,6 +180,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     const QString containerId = tableWidget->item(row, 9)->text();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
 
@@ -217,7 +220,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Application");
-    deleteAction->setToolTip("Delete the Topic");
+    deleteAction->setToolTip("Delete the application");
 
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
         selectedAction == editAction) {
