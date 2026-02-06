@@ -1,6 +1,6 @@
 #include <modules/kms/KMSService.h>
 
-void KMSService::ListKmsKeys() {
+void KMSService::ListKmsKeys(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
 
@@ -28,7 +28,7 @@ void KMSService::ListKmsKeys() {
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  KMSKeyListResponse kmsResponse;
+                                  KMSListKeysResponse kmsResponse;
                                   kmsResponse.FromJson(jsonDoc);
                                   emit ListKeysSignal(kmsResponse);
                               } else {
@@ -38,5 +38,30 @@ void KMSService::ListKmsKeys() {
                               qCritical() << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("ListKmsKeys", timer.elapsed());
+                      });
+}
+
+void KMSService::DeleteKey(const QString &keyId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["keyId"] = keyId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "kms"},
+                          {"x-awsmock-action", "delete-key"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, QByteArray, int, const QString &error) {
+                          if (success) {
+                              emit ReloadKeySignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteKey", timer.elapsed());
                       });
 }

@@ -44,12 +44,20 @@ endif ()
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
-
-set(PROJECT_SOURCES
-        src/main.cpp
-        src/mainwindow.cpp
-        include/mainwindow.h
-        ${TS_FILES}
+set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessageAddDialog.ui
+        include/modules/sqs/SQSMessageAddDialog.h src/modules/sqs/SQSMessageDetailsDialog.cpp
+        src/modules/sqs/SQSMessageDetailsDialog.ui include/modules/sqs/SQSMessageDetailsDialog.h
+        src/modules/sqs/SQSQueueDetailsDialog.cpp src/modules/sqs/SQSQueueDetailsDialog.ui
+        include/modules/sqs/SQSQueueDetailsDialog.h src/modules/sqs/SQSService.cpp include/modules/sqs/SQSService.h
+        src/modules/sqs/SQSQueueList.cpp include/modules/sqs/SQSQueueList.h src/modules/sqs/SQSMessageList.cpp
+        include/modules/sqs/SQSMessageList.h)
+set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
+        include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
+        include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
+        src/modules/kms/KMSKeyEditDialog.cpp include/modules/kms/KMSKeyEditDialog.h src/modules/kms/KMSKeyEditDialog.ui)
+set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
+        src/MainWidget.ui include/MainRouter.h)
+set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES}
         src/modules/dashboard/Dashboard.cpp
         include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui
@@ -94,21 +102,6 @@ set(PROJECT_SOURCES
         include/modules/ftp/FTPUploadDialog.h
         include/modules/ftp/FTPClient.h
         include/modules/ftp/CurlHandle.h
-        src/modules/sqs/SQSMessageAddDialog.cpp
-        src/modules/sqs/SQSMessageAddDialog.ui
-        include/modules/sqs/SQSMessageAddDialog.h
-        src/modules/sqs/SQSMessageDetailsDialog.cpp
-        src/modules/sqs/SQSMessageDetailsDialog.ui
-        include/modules/sqs/SQSMessageDetailsDialog.h
-        src/modules/sqs/SQSQueueDetailsDialog.cpp
-        src/modules/sqs/SQSQueueDetailsDialog.ui
-        include/modules/sqs/SQSQueueDetailsDialog.h
-        src/modules/sqs/SQSService.cpp
-        include/modules/sqs/SQSService.h
-        src/modules/sqs/SQSQueueList.cpp
-        include/modules/sqs/SQSQueueList.h
-        src/modules/sqs/SQSMessageList.cpp
-        include/modules/sqs/SQSMessageList.h
         src/modules/sns/SNSMessageDetailsDialog.cpp
         src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h
@@ -233,10 +226,6 @@ set(PROJECT_SOURCES
         src/modules/secretsmanager/SecretAddDialog.cpp
         include/modules/secretsmanager/SecretAddDialog.h
         src/modules/secretsmanager/SecretAddDialog.ui
-        src/modules/kms/KMSService.cpp
-        include/modules/kms/KMSService.h
-        include/dto/kms/KMSKeyListResponse.h
-        include/dto/kms/KeyCounter.h
         include/dto/secretsmanager/SecretVersionCounter.h
         include/dto/secretsmanager/SecretGetVersionsResponse.h
         include/modules/ssm/SSMParameterList.h
@@ -304,10 +293,6 @@ set(PROJECT_SOURCES
         src/utils/ImageUtils.cpp
         include/modules/ssm/SSMParameterTagDialog.h
         src/modules/ssm/SSMParameterTagDialog.cpp
-        src/MainWidget.cpp
-        include/MainWidget.h
-        src/MainWidget.ui
-        include/MainRouter.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

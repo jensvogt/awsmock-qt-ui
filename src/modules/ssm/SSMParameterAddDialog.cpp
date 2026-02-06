@@ -13,7 +13,7 @@ SSMParameterAddDialog::SSMParameterAddDialog(QWidget *parent) : BaseDialog(paren
     _ssmService = new SSMService();
     _kmsService = new KMSService();
     _kmsService->ListKmsKeys();
-    connect(_kmsService, &KMSService::ListKeysSignal, this, [this](const KMSKeyListResponse &kmsResponse) {
+    connect(_kmsService, &KMSService::ListKeysSignal, this, [this](const KMSListKeysResponse &kmsResponse) {
         QStringList keys;
         for (const auto &key: kmsResponse.keyCounters) {
             keys.append(key.arn);

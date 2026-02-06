@@ -25,6 +25,7 @@
 // Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
+#include <utils/EventBus.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include <modules/sqs/SQSMessageAddDialog.h>

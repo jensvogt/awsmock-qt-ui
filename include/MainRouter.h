@@ -14,6 +14,7 @@
 // Awsmock includes
 #include <utils/BasePage.h>
 #include <modules/dashboard/Dashboard.h>
+#include <modules/kms/KMSKeyList.h>
 #include <modules/sqs/SQSQueueList.h>
 #include <modules/sqs/SQSMessageList.h>
 #include <modules/sns/SNSTopicList.h>
@@ -76,6 +77,9 @@ public:
             },
             {
                 "DynamoDB Item List", new DynamoDbItemList("DynamoDB Item List", parent)
+            },
+            {
+                "KMS", new KMSKeyList("KMS", parent)
             }
         };
         connect(&EventBus::instance(), &EventBus::RouteChanged, this, [this](const QString &pageName, const QMap<QString, QString> &arguments) {
