@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.3...v1.10.4) (2026-02-06)
+
+
+### Bug Fixes
+
+* some KMS list issues ([96d8440](https://github.com/jensvogt/awsmock-qt-ui/commit/96d84403299233761e588616f82b624cbe1b0397))
+
 ## [1.10.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.2...v1.10.3) (2026-02-06)
 
 
