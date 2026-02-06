@@ -2,7 +2,6 @@
 #include <modules/secretsmanager/SecretList.h>
 
 SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent) {
-    setAttribute(Qt::WA_DeleteOnClose);
 
     // Connect service
     _secretsManagerService = new SecretsManagerService();
@@ -117,9 +116,6 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addLayout(toolBar, 0);
     layout->addLayout(prefixLayout, 0);
     layout->addWidget(_tableView, 2);
-
-    // List containers
-    StartAutoUpdate();
 }
 
 SecretList::~SecretList() {
@@ -127,11 +123,7 @@ SecretList::~SecretList() {
 }
 
 void SecretList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _secretsManagerService->ListSecrets();
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _secretsManagerService->ListSecrets();
 }
 
 void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) const {

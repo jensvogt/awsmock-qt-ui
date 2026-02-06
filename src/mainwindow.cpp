@@ -12,9 +12,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("AwsMock UI v" + QString(APP_VERSION));
     resize(1600, 900);
 
+    // Start pinging server
+    StartServerPing();
+
     // Setup menu bar
     SetupMenuBar();
 
+    // Main widget
     QWidget *mainWidget = new MainWidget(this);
 
     // Set the splitter as the central widget of the QMainWindow
@@ -39,6 +43,32 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow() = default;
+
+void MainWindow::StartServerPing() {
+
+    const int interval = Configuration::instance().GetValue<int>("ui.auto-update-period", 10);
+
+    _pingThread = new QThread(this);
+    _pingTimer = new QTimer();
+    _pingTimer->setInterval(interval * 1000);
+
+    // Move timer to thread
+    _pingTimer->moveToThread(_pingThread);
+
+    // Start the timer when the thread starts. By connecting directly to the timer, Qt uses a 'QueuedConnection'
+    // to cross the thread boundary safely.
+    connect(_pingThread, &QThread::started, _pingTimer, QOverload<>::of(&QTimer::start));
+
+    // Perform the ping
+    connect(_pingTimer, &QTimer::timeout, this, [this]() {
+        _moduleService->PingServer();
+    });
+
+    // Cleanup
+    connect(_pingThread, &QThread::finished, _pingTimer, &QObject::deleteLater);
+
+    _pingThread->start();
+}
 
 void MainWindow::SetupMenuBar() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));

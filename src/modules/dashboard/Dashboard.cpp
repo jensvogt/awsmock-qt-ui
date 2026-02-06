@@ -13,17 +13,16 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     _dashboardService = new DashboardService();
     connect(_dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
 
+    // Setup UI components
     _ui->setupUi(this);
 
     // Toolbar title
     _ui->titleLabel->setText(title);
-    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
-    _ui->refreshButton->setText(nullptr);
 
     // Toolbar refresh action
-    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
-    _ui->refreshButton->setToolTip("Refresh the Dashboard");
     _ui->refreshButton->setText(nullptr);
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    _ui->refreshButton->setToolTip("Refresh the dashboard");
     connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
     });
@@ -31,7 +30,7 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     // Initialize charts
     Initialize();
 
-    // Edit config dialog
+    // Handle configuration changes, specially when the base URL changes
     connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
         if (key == "server.base-url") {
             _chartConfigs.clear();
@@ -39,7 +38,6 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
             LoadContent();
         }
     });
-    _ui->refreshButton->setIcon(IconUtils::GetIcon("dark", "refresh"));
 }
 
 Dashboard::~Dashboard() {
@@ -203,19 +201,14 @@ ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
 }
 
 void Dashboard::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        const auto start = QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
-        const auto end = QDateTime::currentDateTime();
+    const auto start = QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
+    const auto end = QDateTime::currentDateTime();
 
-        for (auto &config: _chartConfigs) {
-            config.start = start;
-            config.end = end;
-            _dashboardService->GetMultiSeriesCounter(config);
-        }
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
+    for (auto &config: _chartConfigs) {
+        config.start = start;
+        config.end = end;
+        _dashboardService->GetMultiSeriesCounter(config);
     }
-    NotifyStatusBar();
 }
 
 void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {

@@ -128,6 +128,8 @@ void MainWidget::OnMessageReceived(const QString &message) const {
 }
 
 void MainWidget::SetupStatusbar() {
+
+    // Set base URL
     const auto baseUrl = Configuration::instance().GetValue<QString>("server.base-url");
     _ui->connectionLabel->setText(baseUrl);
     connect(&Configuration::instance(), &Configuration::ConfigurationChanged, [this](const QString &key, const QString &value) {
@@ -136,8 +138,20 @@ void MainWidget::SetupStatusbar() {
         }
     });
 
+    // Set status
     connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &, const qint64 elapsed) {
         const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
         _ui->statusLabel->setText(msg);
+    });
+
+    // Set ping status
+    _ui->pingStatusLabel->setText(nullptr);
+    _ui->pingStatusLabel->setPixmap(IconUtils::GetIcon("connected").pixmap(20, 20));
+    connect(&EventBus::instance(), &EventBus::PingSignal, [this](const bool success) {
+        if (success) {
+            _ui->pingStatusLabel->setPixmap(IconUtils::GetIcon("connected").pixmap(20, 20));
+        } else {
+            _ui->pingStatusLabel->setPixmap(IconUtils::GetIcon("disconnected").pixmap(20, 20));
+        }
     });
 }

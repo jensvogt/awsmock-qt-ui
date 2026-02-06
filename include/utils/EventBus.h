@@ -24,6 +24,8 @@ signals:
     void RouteChanged(const QString &name, const QMap<QString, QString> &arguments = {});
 
     void MainStatusSignal(const QString &message);
+
+    void PingSignal(bool result);
 };
 
 #endif //AWSMOCK_QT_UI_EVENT_BUS_H

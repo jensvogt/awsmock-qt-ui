@@ -17,18 +17,7 @@ public:
     /**
      * @brief Constructor
      */
-    BaseService() {
-        // Create REST manager
-        _restManager = new RestManager();
-
-        // Create a new timer
-        _timer = new QTimer();
-
-        // Connect its timeout signal to a slot/lambda
-        connect(_timer, &QTimer::timeout, this, &BaseService::HandleTimer);
-
-        _timer->start(5000);
-    }
+    BaseService() = default;
 
     ~BaseService() override = default;
 
@@ -42,22 +31,6 @@ public:
 
     static QUrl GetBaseUrl() {
         return {Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1")};
-    }
-
-private slots:
-    void HandleTimer() const {
-        _restManager->get(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"),
-                          {
-                              {"x-awsmock-target", "module"},
-                              {"x-awsmock-action", "ping"}
-                          },
-                          [](const bool success, const QByteArray &, int status, const QString &error) {
-                              if (success) {
-                                  Configuration::instance().SetConnectionState(true);
-                              } else {
-                                  Configuration::instance().SetConnectionState(false);
-                              }
-                          });
     }
 
 private:

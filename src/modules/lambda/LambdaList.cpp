@@ -135,11 +135,7 @@ LambdaList::~LambdaList() {
 }
 
 void LambdaList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _lambdaService->ListLambdas(prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _lambdaService->ListLambdas(prefixValue);
 }
 
 void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) {

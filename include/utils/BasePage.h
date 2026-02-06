@@ -65,7 +65,7 @@ private:
     /**
      * @brief Auto update timer
      */
-    QTimer *_autoUpdateTimer;
+    QTimer *_autoUpdateTimer{};
 
     /**
      * @brief Page arguments

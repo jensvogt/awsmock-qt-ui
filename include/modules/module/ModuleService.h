@@ -56,9 +56,14 @@ public:
     void GetServerConfig();
 
     /**
-     * @brief Get infrafstructure JSON from server
+     * @brief Get infrastructure JSON from server
      */
     void GetInfrastructure();
+
+    /**
+     * @brief Send a ping to the server
+     */
+    void PingServer();
 
 signals:
     /**

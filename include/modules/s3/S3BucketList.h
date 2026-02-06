@@ -52,7 +52,7 @@ public:
      *
      * @param listBucketResult bucket counter list
      */
-    void HandleListBucketSignal(const S3ListBucketResult &listBucketResult);
+    void HandleListBucketSignal(const S3ListBucketResult &listBucketResult) const;
 
 signals:
     void ShowS3Objects(const QString &bucketName);

@@ -56,7 +56,7 @@ public:
      *
      * @param listObjectResponse object counter list
      */
-    void HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse);
+    void HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse) const;
 
     /**
      * @brief Handle object reload
@@ -87,12 +87,12 @@ private:
     /**
      * @brief Parent bucket name
      */
-    QString bucketName;
+    QString _bucketName;
 
     /**
      * @brief Object table
      */
-    QTableWidget *tableWidget;
+    QTableWidget *_tableWidget;
 
     /**
      * @brief REST service handler
@@ -102,12 +102,12 @@ private:
     /**
      * @brief Prefix search
      */
-    QString prefixValue = "";
+    QString _prefixValue = "";
 
     /**
      * @brief Prefix clear button
      */
-    QPushButton *prefixClear;
+    QPushButton *_prefixClear;
 
     /**
      * @brief Sort column index
