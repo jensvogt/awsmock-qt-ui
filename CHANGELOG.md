@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.10...v1.10.0) (2026-02-06)
+
+
+### Features
+
+* add logging panel ([0f040cb](https://github.com/jensvogt/awsmock-qt-ui/commit/0f040cb6a8a6a603b1290091733a87bf4bf61023))
+
 ## [1.9.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.9...v1.9.10) (2026-02-04)
 
 
