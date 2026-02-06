@@ -27,6 +27,7 @@
         <file>light/pretty.svg</file>
         <file>light/preferences.svg</file>
         <file>light/purge.svg</file>
+        <file>light/reconnect.svg</file>
         <file>light/rebuild.svg</file>
         <file>light/redrive.svg</file>
         <file>light/refresh.svg</file>
@@ -69,6 +70,7 @@
         <file>dark/pretty.svg</file>
         <file>dark/purge.svg</file>
         <file>dark/rebuild.svg</file>
+        <file>dark/reconnect.svg</file>
         <file>dark/redrive.svg</file>
         <file>dark/refresh.svg</file>
         <file>dark/restart.svg</file>

@@ -68,7 +68,7 @@ private:
     /**
      *  @brief Log item data model
      */
-    QStringListModel *_logDataModel{};
+    QStandardItemModel *_logDataModel{};
 
     /**
      * @brief Content pane
@@ -84,6 +84,8 @@ private:
      * @brief Websocket URL
      */
     QString _websocketUrl;
+
+    QTimer *_reconnectTimer;
 };
 
 

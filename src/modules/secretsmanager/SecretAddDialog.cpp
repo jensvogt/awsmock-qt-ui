@@ -12,7 +12,7 @@ SecretAddDialog::SecretAddDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     // Initialize services
     _secretsManagerService = new SecretsManagerService();
     _kmsService = new KMSService();
-    connect(_kmsService, &KMSService::ListKeysSignal, this, [this](const KMSKeyListResponse &kmsResponse) {
+    connect(_kmsService, &KMSService::ListKeysSignal, this, [this](const KMSListKeysResponse &kmsResponse) {
         QStringList keys;
         for (const auto &key: kmsResponse.keyCounters) {
             keys.append(key.arn);

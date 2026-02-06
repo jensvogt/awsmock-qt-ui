@@ -9,7 +9,7 @@
 #include <dto/sqs/SQSQueueCounter.h>
 #include <dto/kms/KeyCounter.h>
 
-struct KMSKeyListResponse {
+struct KMSListKeysResponse {
 
     long total{};
 

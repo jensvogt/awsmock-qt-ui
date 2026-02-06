@@ -5,8 +5,14 @@
 #ifndef AWSMOCK_QT_UI_KMS_KEY_COUNTER_H
 #define AWSMOCK_QT_UI_KMS_KEY_COUNTER_H
 
+// Qt includes
 #include <QString>
 #include <QDateTime>
+
+// Awsmock includes
+#include <dto/kms/KeySpec.h>
+#include <dto/kms/KeyUsage.h>
+#include <dto/kms/KeyState.h>
 
 struct KeyCounter {
 
@@ -28,17 +34,17 @@ struct KeyCounter {
     /**
      * Key specification
      */
-    //KeySpec keySpec = KeySpec::SYMMETRIC_DEFAULT;
+    KeySpec keySpec = KeySpec::SYMMETRIC_DEFAULT;
 
     /**
      * Key usage
      */
-    //KeyUsage keyUsage = KeyUsage::ENCRYPT_DECRYPT;
+    KeyUsage keyUsage = KeyUsage::ENCRYPT_DECRYPT;
 
     /**
      * Key state
      */
-    //KeyState keyState = KeyState::UNAVAILABLE;
+    KeyState keyState = KeyState::UNAVAILABLE;
 
     /**
      * Multi region
@@ -69,7 +75,7 @@ struct KeyCounter {
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
 
-    QJsonObject ToJsonObject() const {
+    [[nodiscard]] QJsonObject ToJsonObject() const {
         QJsonObject jsonObject;
         jsonObject["region"] = region;
         jsonObject["keyId"] = keyId;

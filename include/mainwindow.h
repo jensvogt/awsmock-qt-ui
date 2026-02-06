@@ -69,7 +69,10 @@ public:
 
     void StartServerPing();
 
-private slots:
+private
+    slots:
+    
+
     void UpdateStatusBar(const QString &text) const;
 
 private:
@@ -129,7 +132,7 @@ private:
      * @brief Server label in status bar
      */
     QLabel *_timerLabel{};
-    QThread *_pingThread;
+    QThread *_pingThread{};
 
     /**
      * @brief Pin server timer

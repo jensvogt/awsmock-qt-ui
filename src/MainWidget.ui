@@ -118,6 +118,13 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="reconnectButton">
+           <property name="text">
+            <string>Reconnect</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="scrollButton">
            <property name="text">
             <string>Scolling</string>
@@ -130,7 +137,7 @@
          <item>
           <widget class="QPushButton" name="logClearButton">
            <property name="text">
-            <string>PushButton</string>
+            <string>Clear</string>
            </property>
           </widget>
          </item>

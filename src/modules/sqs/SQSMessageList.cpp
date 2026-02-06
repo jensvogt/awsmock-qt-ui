@@ -1,8 +1,6 @@
 
 #include <modules/sqs/SQSMessageList.h>
 
-#include "utils/EventBus.h"
-
 SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service events
