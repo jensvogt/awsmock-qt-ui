@@ -38,7 +38,7 @@ struct SNSTopicSubscription final {
 
     void FromJson(const QJsonDocument &jsonDoc) {
         id = jsonDoc["id"].toString();
-        topicArn = jsonDoc["topicArn"].toString();
+        topicArn = jsonDoc["_topicArn"].toString();
         protocol = jsonDoc["protocol"].toString();
         subscriptionArn = jsonDoc["subscriptionArn"].toString();
         owner = jsonDoc["owner"].toString();
@@ -46,7 +46,7 @@ struct SNSTopicSubscription final {
 
     void FromJson(const QJsonObject &jsonObject) {
         id = jsonObject["id"].toString();
-        topicArn = jsonObject["topicArn"].toString();
+        topicArn = jsonObject["_topicArn"].toString();
         protocol = jsonObject["protocol"].toString();
         subscriptionArn = jsonObject["subscriptionArn"].toString();
         owner = jsonObject["owner"].toString();
@@ -55,7 +55,7 @@ struct SNSTopicSubscription final {
     [[nodiscard]] QString ToJson() const {
         QJsonObject jObject;
         jObject["id"] = id;
-        jObject["topicArn"] = topicArn;
+        jObject["_topicArn"] = topicArn;
         jObject["protocol"] = protocol;
         jObject["subscriptionArn"] = subscriptionArn;
         jObject["owner"] = owner;

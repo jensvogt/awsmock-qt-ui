@@ -30,10 +30,9 @@ public:
      * @brief SQSQueueList
      *
      * @param title widget title
-     * @param bucketName ARN of the parent topic
      * @param parent parent widget
      */
-    S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent = nullptr);
+    explicit S3ObjectList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor

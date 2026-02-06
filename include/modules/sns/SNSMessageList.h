@@ -1,5 +1,5 @@
-#ifndef SNS_MESSAGE_LIST_H
-#define SNS_MESSAGE_LIST_H
+#ifndef AWSMOCK_QT_UI_SNS_MESSAGE_LIST_H
+#define AWSMOCK_QT_UI_SNS_MESSAGE_LIST_H
 
 #include <QLabel>
 #include <QMenu>
@@ -41,10 +41,9 @@ public:
      * @brief SQSQueueList
      *
      * @param title widget title
-     * @param topicArn ARN of the parent topic
      * @param parent parent widget
      */
-    SNSMessageList(const QString &title, const QString &topicArn, QWidget *parent = nullptr);
+    explicit SNSMessageList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -76,11 +75,6 @@ signals:
      */
     void ShowMessages(const QString &topicArn);
 
-    /**
-     * @brief Sends a back message to the main window
-     */
-    void BackToTopicList();
-
 private slots:
     /**
      * @brief Row context menu
@@ -89,21 +83,16 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos) const;
 
-    void OnBackClicked() {
-        StopAutoUpdate();
-        emit BackToTopicList();
-    }
-
 private:
     /**
      * @brief Parent topic ARN
      */
-    QString topicArn;
+    QString _topicArn;
 
     /**
      * @brief Qt network manager
      */
-    QTableWidget *tableWidget;
+    QTableWidget *_tableWidget;
 
     /**
      * @brief REST service handler
@@ -113,7 +102,7 @@ private:
     /**
      * @brief Prefix search
      */
-    QString prefixValue = "";
+    QString _prefixValue = "";
 
     /**
      * @brief Sort column index
@@ -130,7 +119,7 @@ private:
     /**
      * @brief Prefix clear button
      */
-    QPushButton *prefixClear;
+    QPushButton *_prefixClear;
 };
 
-#endif // SNS_MESSAGE_LIST_H
+#endif // AWSMOCK_QT_UI_SNS_MESSAGE_LIST_H

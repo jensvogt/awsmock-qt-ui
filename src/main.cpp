@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
         Configuration::instance().SetFilePath(DEFAULT_CONFIGURATION_FILE_PATH);
     }
 
-    // set style
+    // Set style
     app.setStyle(Configuration::instance().GetValue<QString>("ui.style", ""));
     if (Configuration::instance().GetValue<QString>("ui.style-type", "") == "Dark") {
         qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));

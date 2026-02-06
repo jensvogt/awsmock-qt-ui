@@ -26,7 +26,7 @@ struct SNSTopicCounter {
     QDateTime modified;
 
     void FromJson(const QJsonObject &jsonObject) {
-        topicArn = jsonObject["topicArn"].toString();
+        topicArn = jsonObject["_topicArn"].toString();
         topicName = jsonObject["topicName"].toString();
         retentionPeriod = jsonObject["retentionPeriod"].toInt();
         maxMessageSize = jsonObject["maxMessageSize"].toInt();

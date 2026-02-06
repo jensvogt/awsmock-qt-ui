@@ -12,7 +12,7 @@
 #include <utils/JsonUtils.h>
 
 #ifdef _WIN32
-#define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files\\awsmock-qt-ui\\awsmock-qt-ui.json")
+#define DEFAULT_CONFIGURATION_FILE_PATH QString("C:\\Program Files\\awsmock-qt-_ui\\awsmock-qt-_ui.json")
 #else
 #define DEFAULT_CONFIGURATION_FILE_PATH QString("/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui.json")
 #endif
@@ -84,11 +84,11 @@ public:
     void SetValue(const QString &path, T value) {
         if constexpr (std::is_same_v<T, long>) {
             JsonUtils::setByPath(_configurationRoot, path, static_cast<qint64>(value));
-            WriteConfigurationFile(filePath);
+            WriteConfigurationFile(_filePath);
             emit ConfigurationChanged(path, QString::number(value));
         } else {
             JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
-            WriteConfigurationFile(filePath);
+            WriteConfigurationFile(_filePath);
             emit ConfigurationChanged(path, value);
         }
     }
@@ -119,14 +119,14 @@ public:
      *
      * @param connected connection state.
      */
-    void SetConnectionState(bool connected) { this->connected = connected; }
+    void SetConnectionState(bool connected) { this->_connected = connected; }
 
     /**
      * @brief Sets the default directory.
      *
      * @return connection state
      */
-    [[nodiscard]] bool GetConnectionState() const { return this->connected; }
+    [[nodiscard]] bool GetConnectionState() const { return this->_connected; }
 
 signals:
     /**
@@ -146,12 +146,12 @@ private:
     /**
      * @brief File path
      */
-    QString filePath = DEFAULT_CONFIGURATION_FILE_PATH;
+    QString _filePath = DEFAULT_CONFIGURATION_FILE_PATH;
 
     /**
      * @brief Connection flag
      */
-    bool connected = true;
+    bool _connected = true;
 };
 
 #endif // CONFIGURATION_H

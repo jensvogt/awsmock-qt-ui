@@ -1,5 +1,4 @@
 #include <modules/sqs/SQSQueueList.h>
-#include "utils/IconUtils.h"
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
     // Connect service
@@ -103,12 +102,13 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
         const int row = index.row();
 
         // Extract ARN and URL
-        const QString queueUrl = tableWidget->item(row, 7)->text();
-        const QString queueArn = tableWidget->item(row, 8)->text();
-        const bool isDql = tableWidget->item(row, 9)->checkState();
+        QMap<QString, QString> arguments;
+        arguments["queueUrl"] = tableWidget->item(row, 7)->text();
+        arguments["queueArn"] = tableWidget->item(row, 8)->text();
+        arguments["isDlq"] = tableWidget->item(row, 9)->checkState() ? "true" : "false";
 
         // Send notification
-        emit ShowMessages(queueArn, queueUrl, isDql);
+        emit EventBus::instance().RouteChanged("SQS Message List", arguments);
     });
 
     // Add context menu

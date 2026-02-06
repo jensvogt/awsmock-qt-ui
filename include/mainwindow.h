@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef AWSMOCK_QT_UI_MAIN_WINDOW_H
+#define AWSMOCK_QT_UI_MAIN_WINDOW_H
 
 #include <utility>
 
@@ -23,6 +23,7 @@
 #include <QImageReader>
 
 #include <Version.h>
+#include <MainWidget.h>
 #include <utils/About.h>
 #include <utils/EditConfigDialog.h>
 #include <utils/EventBus.h>
@@ -46,6 +47,8 @@
 #include <modules/dynamodb/DynamoDbTableList.h>
 #include <modules/dynamodb/DynamoDbItemList.h>
 
+#include "MainRouter.h"
+
 #define PAGE_DASHBOARD 0
 #define PAGE_SQS 1
 #define PAGE_SNS 2
@@ -65,12 +68,12 @@ public:
     ~MainWindow() override;
 
 private slots:
-    void NavigationSelectionChanged(int currentRow);
-
     void UpdateStatusBar(const QString &text) const;
 
 private:
-    // Setup menu bar
+    /**
+     * Setup menu bar
+     */
     void SetupMenuBar();
 
     void ImportInfrastructure() const;
@@ -93,34 +96,12 @@ private:
 
     static void EditPreferences();
 
-    BasePage *CreatePage(int currentRow);
-
     static void Exit();
 
     /**
      * @brief Main menu bar
      */
-    QMenuBar *mainMenuBar{};
-
-    /**
-     * @brief Navigation pane
-     */
-    QListWidget *m_navPane;
-
-    /**
-     * @brief Content pane
-     */
-    QStackedWidget *m_contentPane;
-
-    /**
-     * @brief List of loaded pages
-     */
-    QMap<int, BasePage *> loadedPages;
-
-    /**
-     * @brief Current widget shown in the content pane
-     */
-    int currentWidgetIndex = 0;
+    QMenuBar *_mainMenuBar{};
 
     /**
      * @brief Infrastructure service
@@ -147,4 +128,4 @@ private:
      */
     QLabel *_timerLabel{};
 };
-#endif // MAINWINDOW_H
+#endif // AWSMOCK_QT_UI_MAIN_WINDOW_H

@@ -55,6 +55,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for the lambda name");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -63,6 +64,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("Clear the lambda name prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -182,6 +184,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     const QString containerId = tableWidget->item(row, 9)->text();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Lambda");
     editAction->setToolTip("Edit the lambda details.");
 

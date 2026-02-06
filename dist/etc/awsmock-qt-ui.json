@@ -11,7 +11,8 @@
       "http://localhost:4566",
       "http://vogje01-desktop:4566",
       "http://192.168.178.46:4566"
-    ]
+    ],
+    "websocket-url": "ws://localhost:4569"
   },
   "ui": {
     "application-log-limit": 1000,

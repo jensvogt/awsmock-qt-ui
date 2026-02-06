@@ -155,7 +155,7 @@ struct TopicNotification {
 
     void FromJson(const QJsonObject &jsonObject) {
         id = jsonObject["id"].toString();
-        topicArn = jsonObject["topicArn"].toString();
+        topicArn = jsonObject["_topicArn"].toString();
         for (const auto &filterRule: jsonObject["filterRules"].toArray()) {
             FilterRule rule;
             rule.FromJson(filterRule.toObject());

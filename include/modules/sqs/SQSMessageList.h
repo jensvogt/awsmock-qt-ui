@@ -1,5 +1,5 @@
-#ifndef SQSMESSAGELIST_H
-#define SQSMESSAGELIST_H
+#ifndef AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
+#define AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
 
 #include <QLabel>
 #include <QMenu>
@@ -22,6 +22,7 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 
+// Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <modules/sqs/SQSService.h>
@@ -40,12 +41,9 @@ public:
      * @brief SQSQueueList
      *
      * @param title widget title
-     * @param queueArn queue ARN
-     * @param queueUrl queue URL
-     * @param isDlq DQL flag
      * @param parent parent widget
      */
-    SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, bool isDlq, QWidget *parent = nullptr);
+    explicit SQSMessageList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -66,11 +64,6 @@ signals:
     void ShowMessages(const QString &QueueArn);
 
     /**
-     * @brief Sends a back message to the main window
-     */
-    void BackToQueueList();
-
-    /**
      * @brief Sends a reload message list to the message list
      */
     void ReloadMessagesSignal();
@@ -82,11 +75,6 @@ private slots:
      * @param pos position in table
      */
     void ShowContextMenu(const QPoint &pos) const;
-
-    void OnBackClicked() {
-        StopAutoUpdate();
-        emit BackToQueueList();
-    }
 
     /**
      * @brief Handle message list request
@@ -149,4 +137,4 @@ private:
     QPushButton *prefixClear;
 };
 
-#endif // SQSMESSAGELIST_H
+#endif // AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H

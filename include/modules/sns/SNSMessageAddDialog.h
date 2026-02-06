@@ -11,13 +11,15 @@
 // Qt includes
 #include <QDialog>
 #include <QFileDialog>
+#include <QFormLayout>
+#include <QLineEdit>
 
 // AwsMock includes
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
-#include <modules/sns/SNSMessageList.h>
 #include <dto/sns/SNSSendMessageRequest.h>
 #include <dto/sns/SNSSendMessageResponse.h>
+#include <modules/sns/SNSService.h>
 
 QT_BEGIN_NAMESPACE
 

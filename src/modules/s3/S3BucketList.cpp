@@ -56,6 +56,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix for the bucket name");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -64,6 +65,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("Clear the bucket name prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -103,10 +105,11 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
         const int row = index.row();
 
         // Extract ARN and URL
-        const QString bucketName = tableWidget->item(row, 0)->text();
+        QMap<QString, QString> arguments;
+        arguments["bucketName"] = tableWidget->item(row, 0)->text();
 
         // Send notification
-        emit ShowS3Objects(bucketName);
+        emit EventBus::instance().RouteChanged("S3 Object List", arguments);
     });
 
     // Add context menu
@@ -166,6 +169,7 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
     editAction->setToolTip("Edit the bucket details");
 
