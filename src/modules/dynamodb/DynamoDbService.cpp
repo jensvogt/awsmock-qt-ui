@@ -16,7 +16,6 @@ void DynamoDbService::CreateTable(const DynamoDbCreateTableRequest &request) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   DynamoDbCreateTableResponse dynamodbResponse;
                                   dynamodbResponse.FromJson(jsonDoc);

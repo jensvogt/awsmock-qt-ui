@@ -135,14 +135,10 @@ S3BucketList::~S3BucketList() {
 }
 
 void S3BucketList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _s3Service->ListBuckets(prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _s3Service->ListBuckets(prefixValue);
 }
 
-void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) {
+void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) const {
     const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
     tableWidget->setRowCount(0);
     tableWidget->setSortingEnabled(false);
@@ -159,7 +155,6 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
     tableWidget->setSortingEnabled(true);
     tableWidget->sortItems(_sortColumn, _sortOrder);
     tableWidget->selectRow(selectedRow);
-    NotifyStatusBar();
 }
 
 void S3BucketList::ShowContextMenu(const QPoint &pos) const {

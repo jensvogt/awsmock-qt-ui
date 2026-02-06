@@ -130,11 +130,7 @@ SNSTopicList::~SNSTopicList() {
 }
 
 void SNSTopicList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _snsService->ListTopics(prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _snsService->ListTopics(prefixValue);
 }
 
 void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult) {

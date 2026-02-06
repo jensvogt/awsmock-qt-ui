@@ -146,3 +146,15 @@ void ModuleService::GetInfrastructure() {
                          emit EventBus::instance().TimerSignal("GetInfrastructure", timer.elapsed());
                      });
 }
+
+void ModuleService::PingServer() {
+    _restManager.get(url,
+                     {
+                         {"x-awsmock-target", "module"},
+                         {"x-awsmock-action", "ping"},
+                         {"content-type", "application/json"}
+                     },
+                     [](const bool success, const QByteArray &, int, const QString &) {
+                         emit EventBus::instance().PingSignal(success);
+                     });
+}

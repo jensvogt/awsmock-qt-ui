@@ -67,6 +67,8 @@ public:
 
     ~MainWindow() override;
 
+    void StartServerPing();
+
 private slots:
     void UpdateStatusBar(const QString &text) const;
 
@@ -127,5 +129,11 @@ private:
      * @brief Server label in status bar
      */
     QLabel *_timerLabel{};
+    QThread *_pingThread;
+
+    /**
+     * @brief Pin server timer
+     */
+    QTimer *_pingTimer{};
 };
 #endif // AWSMOCK_QT_UI_MAIN_WINDOW_H

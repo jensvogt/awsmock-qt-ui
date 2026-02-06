@@ -127,9 +127,6 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     layout->addLayout(toolBar, 0);
     layout->addLayout(prefixLayout, 0);
     layout->addWidget(_tableView, 2);
-
-    // Initialization
-    LoadContent();
 }
 
 DynamoDbTableList::~DynamoDbTableList() {
@@ -137,11 +134,7 @@ DynamoDbTableList::~DynamoDbTableList() {
 }
 
 void DynamoDbTableList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _dynamoDbService->ListTables(_prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _dynamoDbService->ListTables(_prefixValue);
 }
 
 void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) {

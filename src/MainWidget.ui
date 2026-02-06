@@ -160,6 +160,19 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="pingStatusLabel">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>pingStatus</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="connectionLabel">
         <property name="layoutDirection">
          <enum>Qt::LayoutDirection::LeftToRight</enum>

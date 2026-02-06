@@ -5,7 +5,6 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
     // Connect service
     _dynamoDbService = new DynamoDbService();
     connect(_dynamoDbService, &DynamoDbService::ListItemsSignal, this, &DynamoDbItemList::HandleListItemSignal);
-    //connect(_dynamoDbService, &DynamoDbService::ReloadItemListSignal, this, &DynamoDbItemList::LoadContent);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -18,9 +17,8 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
     // Toolbar back action
     const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
     backButton->setToolTip("Go back to table list");
-    connect(backButton, &QPushButton::clicked, [this]() {
-        StopAutoUpdate();
-        emit BackNavigationSignal();
+    connect(backButton, &QPushButton::clicked, []() {
+        emit EventBus::instance().RouteChanged("DynamoDB");
     });
 
     // Toolbar add action

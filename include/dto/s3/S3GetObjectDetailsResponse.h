@@ -35,7 +35,7 @@ struct S3GetObjectDetailsResponse {
 
     void FromJson(const QJsonObject &jsonObject) {
         region = jsonObject["region"].toString();
-        bucketName = jsonObject["bucketName"].toString();
+        bucketName = jsonObject["_bucketName"].toString();
         key = jsonObject["key"].toString();
         contentType = jsonObject["contentType"].toString();
         storageClass = jsonObject["storageClass"].toString();

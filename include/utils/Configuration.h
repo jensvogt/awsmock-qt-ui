@@ -114,20 +114,6 @@ public:
      */
     void SetFilePath(const QString &filePath);
 
-    /**
-     * @brief Sets the connection state
-     *
-     * @param connected connection state.
-     */
-    void SetConnectionState(bool connected) { this->_connected = connected; }
-
-    /**
-     * @brief Sets the default directory.
-     *
-     * @return connection state
-     */
-    [[nodiscard]] bool GetConnectionState() const { return this->_connected; }
-
 signals:
     /**
      * @brief Send when a preferences changed

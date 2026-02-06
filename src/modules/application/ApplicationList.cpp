@@ -115,7 +115,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &ApplicationList::ShowContextMenu);
 
     // Save sort column
-    auto *header = tableWidget->horizontalHeader();
+    const auto *header = tableWidget->horizontalHeader();
     connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
         _sortColumn = column;
         _sortOrder = order;
@@ -133,11 +133,7 @@ ApplicationList::~ApplicationList() {
 }
 
 void ApplicationList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _applicationService->ListApplications(prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _applicationService->ListApplications(prefixValue);
 }
 
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) {

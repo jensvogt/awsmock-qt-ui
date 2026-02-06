@@ -37,7 +37,7 @@ public:
      * @param parent parent widget
      */
     explicit MainRouter(QWidget *parent = nullptr) : _contentPane(nullptr) {
-        routes = {
+        _routes = {
             {
                 "Dashboard", new Dashboard("Dashboard", parent)
             },
@@ -79,7 +79,7 @@ public:
             }
         };
         connect(&EventBus::instance(), &EventBus::RouteChanged, this, [this](const QString &pageName, const QMap<QString, QString> &arguments) {
-            if (routes.contains(pageName)) {
+            if (_routes.contains(pageName)) {
                 SetRoute(pageName, arguments);
             }
         });
@@ -107,11 +107,10 @@ public:
     void SetRoute(const QString &pageName, const QMap<QString, QString> &arguments = {}) {
 
         // Setup content pane
-        if (routes.contains(pageName)) {
-
+        if (_routes.contains(pageName)) {
 
             // Set arguments
-            BasePage *basePage = routes[pageName];
+            BasePage *basePage = _routes[pageName];
             basePage->SetArguments(arguments);
 
             // Set content
@@ -120,7 +119,10 @@ public:
             _contentPane->update();
 
             // Start auto updater
-            basePage->StartAutoUpdate();
+            ResetAutoUpdater(basePage);
+
+            // Set current
+            _currentRoute = pageName;
         }
     }
 
@@ -129,23 +131,43 @@ signals:
 
 private slots:
     void ChangeRoute(const QString &pageName, const QMap<QString, QString> &arguments) {
-        if (routes.contains(pageName)) {
+        if (_routes.contains(pageName)) {
 
             // Set content
-            _contentPane->addWidget(routes[pageName]);
-            _contentPane->setCurrentWidget(routes[pageName]);
+            _contentPane->addWidget(_routes[pageName]);
+            _contentPane->setCurrentWidget(_routes[pageName]);
             _contentPane->update();
 
             // Start auto updater
-            routes[pageName]->StartAutoUpdate();
+            _routes[pageName]->StartAutoUpdate();
         }
     }
 
 private:
     /**
+     * @brif Stops the old auto updater and start the new one
+     *
+     * @param basePage new base pase
+     */
+    void ResetAutoUpdater(BasePage *basePage) {
+
+        // Stop autoupdate on old route
+        if (!_currentRoute.isEmpty()) {
+            const BasePage *_currentPage = _routes[_currentRoute];
+            _currentPage->StopAutoUpdate();
+        }
+        basePage->StartAutoUpdate();
+    }
+
+    /**
+     * @brief current route
+     */
+    QString _currentRoute;
+
+    /**
      * @brief Routine map
      */
-    QMap<QString, BasePage *> routes;
+    QMap<QString, BasePage *> _routes;
 
     /**
      * @brief Content pane
