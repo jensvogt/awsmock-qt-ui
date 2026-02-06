@@ -100,10 +100,11 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
         const int row = index.row();
 
         // Extract ARN and URL
-        const QString topicArn = tableWidget->item(row, 7)->text();
+        QMap<QString, QString> arguments;
+        arguments["topicArn"] = tableWidget->item(row, 7)->text();
 
         // Send notification
-        emit ShowSnsMessages(topicArn);
+        emit EventBus::instance().RouteChanged("SNS Message List", arguments);
     });
 
     // Add context menu

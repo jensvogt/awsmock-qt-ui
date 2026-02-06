@@ -1,8 +1,7 @@
 
 #include <modules/s3/S3ObjectList.h>
 
-S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent) : BasePage(parent),
-                                                                                               bucketName(bucketName) {
+S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(parent) {
     // Connect service
     _s3Service = new S3Service();
     connect(_s3Service, &S3Service::ListObjectsSignal, this, &S3ObjectList::HandleListObjectSignal);
@@ -20,9 +19,8 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     // Toolbar back action
     const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
     backButton->setToolTip("Go back to bucket list");
-    connect(backButton, &QPushButton::clicked, [this]() {
-        StopAutoUpdate();
-        emit BackNavigationSignal();
+    connect(backButton, &QPushButton::clicked, []() {
+        emit EventBus::instance().RouteChanged("S3");
     });
 
     // Toolbar label
@@ -41,7 +39,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all objects");
-    connect(purgeAllButton, &QPushButton::clicked, [this,bucketName]() {
+    connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _s3Service->PurgeBucket(bucketName);
     });
 
@@ -64,6 +62,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     auto *prefixLayout = new QHBoxLayout();
     auto *prefixEdit = new QLineEdit(this);
     prefixEdit->setPlaceholderText("Prefix");
+    prefixEdit->setToolTip("Prefix fot the object key");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
         prefixValue = prefixEdit->text();
         prefixClear->setEnabled(true);
@@ -72,6 +71,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     prefixLayout->addWidget(prefixEdit);
     prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
     prefixClear->setDisabled(true);
+    prefixClear->setToolTip("Clear the object key prefix");
     connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
         prefixValue = "";
@@ -106,7 +106,7 @@ S3ObjectList::S3ObjectList(const QString &title, const QString &bucketName, QWid
     tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this, bucketName](const QModelIndex &index) {
+    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
@@ -183,6 +183,7 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
     const int row = index.row();
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     //QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
     //purgeAction->setToolTip("Purge the bucket");
     /*QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");

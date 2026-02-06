@@ -20,6 +20,10 @@ signals:
     void TimerSignal(const QString &name, qint64 elapsed);
 
     void DockerStatsTimerSignal(const QString &name, qint64 elapsed);
+
+    void RouteChanged(const QString &name, const QMap<QString, QString> &arguments = {});
+
+    void MainStatusSignal(const QString &message);
 };
 
 #endif //AWSMOCK_QT_UI_EVENT_BUS_H

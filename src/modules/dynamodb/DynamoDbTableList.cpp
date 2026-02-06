@@ -104,11 +104,12 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
 
         const QModelIndex sourceIndex = _proxyModel->mapToSource(index);
 
-        // Get container
-        const QString tableName = _dataModel->item(sourceIndex.row(), 0)->text();
+        // Extract table name
+        QMap<QString, QString> arguments;
+        arguments["tableName"] = _dataModel->item(sourceIndex.row(), 0)->text();
 
         // Send notification to main window
-        emit ShowItemsSignal(tableName);
+        emit EventBus::instance().RouteChanged("DynamoDB Item List", arguments);
     });
 
     // Add context menu

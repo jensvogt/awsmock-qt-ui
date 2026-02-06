@@ -36,10 +36,9 @@ public:
      * @brief DynamoDB item list
      *
      * @param title widget title
-     * @param tableName name of the parent table
      * @param parent parent widget
      */
-    explicit DynamoDbItemList(const QString &title, const QString &tableName, QWidget *parent = nullptr);
+    explicit DynamoDbItemList(const QString &title, QWidget *parent);
 
     /**
      * Destructor
@@ -60,13 +59,13 @@ public:
      */
     //void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
-    signals:
+signals:
     /**
      * @brief Show items signal
      *
      * @param itemName name of the item
      */
-    
+
 
     void ShowItemsSignal(const QString &itemName);
 
@@ -76,11 +75,11 @@ public:
     void BackNavigationSignal();
 
 private
-    slots:
+slots:
     /**
      * @brief Context menu callback
      */
-    
+
 
     void ShowContextMenu(const QPoint &pos) const;
 

@@ -1,6 +1,8 @@
 #include <mainwindow.h>
 
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+
     // Connect infrastructure signals
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -13,92 +15,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Setup menu bar
     SetupMenuBar();
 
-    // 1. Create the main layout container (QSplitter)
-    const auto mainSplitter = new QSplitter(this);
-    mainSplitter->setOrientation(Qt::Horizontal);
+    QWidget *mainWidget = new MainWidget(this);
 
-    // 2. Create the Navigation Pane (QListWidget)
-    m_navPane = new QListWidget(mainSplitter);
-    m_navPane->setMaximumWidth(200); // Set a maximum width for the navigation bar
-    m_navPane->setMinimumWidth(150);
+    // Set the splitter as the central widget of the QMainWindow
+    setCentralWidget(mainWidget);
 
-    m_navPane->addItem("Dashboard");
-    m_navPane->addItem("SQS");
-    m_navPane->addItem("SNS");
-    m_navPane->addItem("S3");
-    m_navPane->addItem("Application");
-    m_navPane->addItem("Lambda");
-    m_navPane->addItem("Secrets Manager");
-    m_navPane->addItem("Systems Manager");
-    m_navPane->addItem("DynamoDB");
-
-    // Select the first item by default
-    m_navPane->setCurrentRow(0);
-
-    // 3. Create the Content Pane (QStackedWidget)
-    // QStackedWidget allows us to stack multiple widgets and show only one at a time.
-    m_contentPane = new QStackedWidget(this);
-    m_contentPane->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    // 4. Add the panes to the splitter
-    mainSplitter->addWidget(m_navPane);
-    mainSplitter->addWidget(m_contentPane);
-
-    // Set initial proportional sizes for the panes (e.g., 20% nav, 80% content)
-    QList<int> sizes;
-    sizes << 200 << 600; // Initial widths in pixels (QSplitter prefers list of sizes)
-    mainSplitter->setSizes(sizes);
-
-    // 5. Set the splitter as the central widget of the QMainWindow
-    setCentralWidget(mainSplitter);
-
-    // 6. Connect navigation signal to content slot
-    // When the selected row in the list changes, update the content pane index.
-    connect(m_navPane, &QListWidget::currentRowChanged, this, &MainWindow::NavigationSelectionChanged);
-
-    // Create dashboard
-    NavigationSelectionChanged(0);
-
-    // "Status bar" at the bottom
-    _serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""),
-                             this);
-    _statusBar = new QStatusBar(this);
-    _statusBar->showMessage("Ready");
-    _statusBar->addPermanentWidget(_serverName);
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this,
-            [this](const QString &key, const QString &value) {
-                if (key == "server.base-url") {
-                    _serverName->setText(value);
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
+        if (key == "ui.style") {
+            qApp->setStyle(QStyleFactory::create(value));
+        }
+        if (key == "ui.style-type") {
+            if (value == "Dark") {
+                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+                if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
+                    qApp->setStyleSheet(f.readAll());
                 }
-            });
-
-    _timerLabel = new QLabel("", this);
-    _statusBar->addWidget(_timerLabel);
-    connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &, const qint64 elapsed) {
-        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
-        _statusBar->showMessage(msg);
+            } else {
+                qApp->setStyleSheet("");
+                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+            }
+        }
     });
-    setStatusBar(_statusBar);
-
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged,
-            [&](const QString &key, const QString &value) {
-                if (key == "ui.style") {
-                    qApp->setStyle(QStyleFactory::create(value));
-                }
-                if (key == "ui.style-type") {
-                    if (value == "Dark") {
-                        qApp->setStyle(
-                            QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
-                        if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
-                            qApp->setStyleSheet(f.readAll());
-                        }
-                    } else {
-                        qApp->setStyleSheet("");
-                        qApp->setStyle(
-                            QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
-                    }
-                }
-            });
 }
 
 MainWindow::~MainWindow() = default;
@@ -163,7 +100,7 @@ void MainWindow::SetupMenuBar() {
 void MainWindow::ImportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("_ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-_ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -176,7 +113,7 @@ void MainWindow::ImportInfrastructure() const {
         file.close();
 
         _moduleService->ImportInfrastructure(jsonData);
-        Configuration::instance().SetValue<QString>("ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("_ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -187,12 +124,12 @@ void MainWindow::ImportInfrastructureResponse() {
 void MainWindow::ExportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("_ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-_ui");
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
                                                               filter); !filePath.isEmpty()) {
         _moduleService->ExportInfrastructure(filePath);
-        Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("_ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -248,217 +185,9 @@ void MainWindow::EditPreferences() {
     dialog.exec();
 }
 
-void MainWindow::NavigationSelectionChanged(const int currentRow) {
-    currentWidgetIndex = currentRow;
-    if (!loadedPages.contains(currentRow)) {
-        // Lazy load page
-        BasePage *page = CreatePage(currentRow);
-        loadedPages[currentRow] = page;
-        m_contentPane->addWidget(page);
-    }
-    for (const auto &loadedPage: loadedPages) {
-        if (loadedPage) {
-            loadedPage->StopAutoUpdate();
-        }
-    }
-    loadedPages[currentRow]->StartAutoUpdate();
-    m_contentPane->setCurrentWidget(loadedPages[currentRow]);
-    m_contentPane->update();
-}
-
 void MainWindow::UpdateStatusBar(const QString &text) const {
     if (_statusBar)
         _statusBar->showMessage(text);
-}
-
-BasePage *MainWindow::CreatePage(const int currentRow) {
-    switch (currentRow) {
-        case PAGE_DASHBOARD: {
-            const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(dashboardPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return dashboardPage;
-        }
-
-        case PAGE_SQS: {
-            const auto queueListPage = new SQSQueueList("SQS Queue List");
-
-            // Connect child's signal to update status bar
-            connect(queueListPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the message list
-            connect(queueListPage, &SQSQueueList::ShowMessages, this,
-                    [this, queueListPage](const QString &queueArn, const QString &queueUrl, const bool isDlq) {
-
-                        // Stop the auto updater
-                        queueListPage->StopAutoUpdate();
-
-                        // Get the Queue name
-                        const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
-
-                        // Create the message list page
-                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn, queueUrl, isDlq, nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(messageListPage);
-                        m_contentPane->setCurrentWidget(messageListPage);
-
-                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&]() {
-                            NavigationSelectionChanged(PAGE_SQS);
-                        });
-
-                        // Start auto updater
-                        messageListPage->StartAutoUpdate();
-                    });
-            return queueListPage;
-        }
-
-        case PAGE_SNS: {
-            const auto topicListPage = new SNSTopicList("SNS Topic List");
-
-            // Connect child's signal to update status bar
-            connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the message list
-            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this,
-                    [this, topicListPage](const QString &topicArn) {
-                        // Stop the auto updater
-                        topicListPage->StopAutoUpdate();
-
-                        // Get the Queue name
-                        const QString topicName = topicArn.mid(topicArn.lastIndexOf(":") + 1);
-
-                        // Create the message list page
-                        const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn,
-                                                                        nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(messageListPage);
-                        m_contentPane->setCurrentWidget(messageListPage);
-
-                        connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&]() {
-                            NavigationSelectionChanged(PAGE_SNS);
-                        });
-
-                        // Start auto updater
-                        messageListPage->StartAutoUpdate();
-                    });
-
-            return topicListPage;
-        }
-
-        case PAGE_S3: {
-            const auto bucketListPage = new S3BucketList("S3 Bucket List");
-
-            // Connect child's signal to update status bar
-            connect(bucketListPage, &S3BucketList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the S3 object list
-            connect(bucketListPage, &S3BucketList::ShowS3Objects, this,
-                    [this,bucketListPage](const QString &bucketName) {
-
-                        // Stop the auto updater
-                        bucketListPage->StopAutoUpdate();
-
-                        // Create the message list page
-                        const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName, nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(objectListPage);
-                        m_contentPane->setCurrentWidget(objectListPage);
-                        connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(objectListPage, &S3ObjectList::BackNavigationSignal, this, [&]() {
-                            NavigationSelectionChanged(PAGE_S3);
-                        });
-
-                        // Start auto updater
-                        objectListPage->StartAutoUpdate();
-                    });
-
-            return bucketListPage;
-        }
-
-        case PAGE_APPLICATION: {
-            const auto applicationPage = new ApplicationList("Applications", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(applicationPage, &ApplicationList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return applicationPage;
-        }
-
-        case PAGE_LAMBDA: {
-            const auto lambdaPage = new LambdaList("Lambdas", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(lambdaPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return lambdaPage;
-        }
-
-        case PAGE_SECRETS_MANAGER: {
-            const auto secretsManagerPage = new SecretList("SecretsManager", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(secretsManagerPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return secretsManagerPage;
-        }
-
-        case PAGE_SSM: {
-            const auto parameterListPage = new SSMParameterList("System Manager Parameter List", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(parameterListPage, &SSMParameterList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return parameterListPage;
-        }
-
-        case PAGE_DYNAMODB: {
-            const auto dynamodbTablesPage = new DynamoDbTableList("Dynamodb", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(dynamodbTablesPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the S3 object list
-            connect(dynamodbTablesPage, &DynamoDbTableList::ShowItemsSignal, this,
-                    [this, dynamodbTablesPage](const QString &tableName) {
-
-                        // Stop the auto updater
-                        dynamodbTablesPage->StopAutoUpdate();
-
-                        // Create the message list page
-                        const auto itemListPage = new DynamoDbItemList("Dynamodb Item List: " + tableName, tableName, nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(itemListPage);
-                        m_contentPane->setCurrentWidget(itemListPage);
-                        connect(itemListPage, &S3ObjectList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(itemListPage, &DynamoDbItemList::BackNavigationSignal, this, [&]() {
-                            NavigationSelectionChanged(PAGE_DYNAMODB);
-                        });
-
-                        // Start auto updater
-                        itemListPage->StartAutoUpdate();
-                    });
-            return dynamodbTablesPage;
-        }
-        default:
-            return nullptr;
-    }
 }
 
 void MainWindow::Exit() {

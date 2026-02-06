@@ -41,7 +41,7 @@ else ()
 endif ()
 
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 
@@ -304,6 +304,10 @@ set(PROJECT_SOURCES
         src/utils/ImageUtils.cpp
         include/modules/ssm/SSMParameterTagDialog.h
         src/modules/ssm/SSMParameterTagDialog.cpp
+        src/MainWidget.cpp
+        include/MainWidget.h
+        src/MainWidget.ui
+        include/MainRouter.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
@@ -312,9 +316,9 @@ qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICO
 target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS})
 if (WIN32)
     target_link_directories(awsmock-qt-ui PRIVATE ${CMAKE_SOURCE_DIR}/extern/lib)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg libcurl_imp)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets libcurl_imp)
 else ()
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg curl)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets curl)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES

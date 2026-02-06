@@ -126,11 +126,7 @@ SSMParameterList::~SSMParameterList() {
 }
 
 void SSMParameterList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _ssmService->ListParameters(prefixValue, _sortColumn, _sortOrder);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _ssmService->ListParameters(prefixValue, _sortColumn, _sortOrder == Qt::AscendingOrder ? 1 : -1);
 }
 
 void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse &listParameterResponse) const {

@@ -1,7 +1,8 @@
 
 #include <modules/sns/SNSMessageList.h>
 
-SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QWidget *parent) : BasePage(parent), topicArn(topicArn) {
+SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage(parent) {
+
     // Connect service
     _snsService = new SNSService();
     connect(_snsService, &SNSService::ListMessagesSignal, this, &SNSMessageList::HandleListMessageSignal);
@@ -17,7 +18,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Go back to the topic list");
     connect(backButton, &QPushButton::clicked, [this]() {
-        OnBackClicked();
+        emit EventBus::instance().RouteChanged("SNS");
     });
 
     // Toolbar label
@@ -27,8 +28,8 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new topic");
-    connect(addButton, &QPushButton::clicked, [topicArn]() {
-        SNSMessageAddDialog dialog(topicArn);
+    connect(addButton, &QPushButton::clicked, [this]() {
+        SNSMessageAddDialog dialog(_topicArn);
         dialog.exec();
     });
 
@@ -36,8 +37,8 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all messages");
-    connect(purgeAllButton, &QPushButton::clicked, [this,topicArn]() {
-        _snsService->PurgeMessages(topicArn);
+    connect(purgeAllButton, &QPushButton::clicked, [this]() {
+        _snsService->PurgeMessages(_topicArn);
     });
 
     // Toolbar refresh action
@@ -61,20 +62,20 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     prefixEdit->setPlaceholderText("Prefix");
     prefixEdit->setToolTip("Prefix for the message ID");
     connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
+        _prefixValue = prefixEdit->text();
+        _prefixClear->setEnabled(true);
         LoadContent();
     });
     prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    prefixClear->setToolTip("CLear the message ID prefix");
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
+    _prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
+    _prefixClear->setDisabled(true);
+    _prefixClear->setToolTip("CLear the message ID prefix");
+    connect(_prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
         prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
+        _prefixValue = "";
+        _prefixClear->setEnabled(false);
     });
-    prefixLayout->addWidget(prefixClear);
+    prefixLayout->addWidget(_prefixClear);
 
     // Table
     const QStringList headers = QStringList() << tr("ID")
@@ -86,42 +87,42 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
                                 << tr("Modified")
                                 << tr("TopicArn");
 
-    tableWidget = new QTableWidget();
+    _tableWidget = new QTableWidget();
 
-    tableWidget->setColumnCount(static_cast<int>(headers.count()));
-    tableWidget->setShowGrid(true);
-    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableWidget->setHorizontalHeaderLabels(headers);
-    tableWidget->setSortingEnabled(true);
-    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(7, true);
-    tableWidget->addAction(GetRefreshAction(this));
+    _tableWidget->setColumnCount(static_cast<int>(headers.count()));
+    _tableWidget->setShowGrid(true);
+    _tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    _tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _tableWidget->setHorizontalHeaderLabels(headers);
+    _tableWidget->setSortingEnabled(true);
+    _tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    _tableWidget->setColumnHidden(7, true);
+    _tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+    connect(_tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
         const int row = index.row();
 
-        const QString messageId = tableWidget->item(row, 0)->text();
+        const QString messageId = _tableWidget->item(row, 0)->text();
         if (SNSMessageDetailsDialog dialog(messageId); dialog.exec() == QDialog::Accepted) {
             qDebug() << "SQS Queue edit dialog exit";
         }
     });
 
     // Add context menu
-    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSMessageList::ShowContextMenu);
+    _tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_tableWidget, &QTableWidget::customContextMenuRequested, this, &SNSMessageList::ShowContextMenu);
 
     // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
+    const QHeaderView *header = _tableWidget->horizontalHeader();
     connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
         _sortColumn = column;
         _sortOrder = order;
@@ -131,7 +132,7 @@ SNSMessageList::SNSMessageList(const QString &title, const QString &topicArn, QW
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
     layout->addLayout(prefixLayout, 1);
-    layout->addWidget(tableWidget, 2);
+    layout->addWidget(_tableWidget, 2);
 }
 
 SNSMessageList::~SNSMessageList() {
@@ -139,44 +140,46 @@ SNSMessageList::~SNSMessageList() {
 }
 
 void SNSMessageList::LoadContent() {
+    _topicArn = GetArgument<QString>("_topicArn");
+
     if (Configuration::instance().GetConnectionState()) {
-        _snsService->ListMessages(topicArn, prefixValue);
+        _snsService->ListMessages(_topicArn, _prefixValue);
     } else {
         QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
     }
 }
 
 void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) {
-    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
-    tableWidget->clearContents();
-    tableWidget->setRowCount(0);
-    tableWidget->setSortingEnabled(false);
-    tableWidget->sortItems(-1);
+    const int selectedRow = _tableWidget->selectionModel()->currentIndex().row();
+    _tableWidget->clearContents();
+    _tableWidget->setRowCount(0);
+    _tableWidget->setSortingEnabled(false);
+    _tableWidget->sortItems(-1);
     for (auto r = 0, c = 0; r < listMessageResult.messageCounters.count(); r++, c = 0) {
-        tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).messageId);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).contentType);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).size);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).messageStatus);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).lastSend);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).created);
-        SetColumn(tableWidget, r, c++, listMessageResult.messageCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, c, listMessageResult.messageCounters.at(r).topicArn);
+        _tableWidget->insertRow(r);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).messageId);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).contentType);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).size);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).messageStatus);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).lastSend);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).created);
+        SetColumn(_tableWidget, r, c++, listMessageResult.messageCounters.at(r).modified);
+        SetHiddenColumn(_tableWidget, r, c, listMessageResult.messageCounters.at(r).topicArn);
     }
-    tableWidget->setRowCount(static_cast<int>(listMessageResult.messageCounters.count()));
-    tableWidget->setSortingEnabled(true);
-    tableWidget->sortItems(_sortColumn, _sortOrder);
-    tableWidget->selectRow(selectedRow);
+    _tableWidget->setRowCount(static_cast<int>(listMessageResult.messageCounters.count()));
+    _tableWidget->setSortingEnabled(true);
+    _tableWidget->sortItems(_sortColumn, _sortOrder);
+    _tableWidget->selectRow(selectedRow);
     NotifyStatusBar();
 }
 
 void SNSMessageList::HandleReloadMessageSignal() {
-    _snsService->ListMessages(topicArn, prefixValue);
+    _snsService->ListMessages(_topicArn, _prefixValue);
     NotifyStatusBar();
 }
 
 void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
-    const QModelIndex index = tableWidget->indexAt(pos);
+    const QModelIndex index = _tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
     const int row = index.row();
@@ -185,8 +188,8 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
     menu.setToolTipsVisible(true);
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
-    if (const auto selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
-        const QString messageId = tableWidget->item(row, 0)->text();
-        _snsService->DeleteMessage(topicArn, messageId);
+    if (const auto selectedAction = menu.exec(_tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+        const QString messageId = _tableWidget->item(row, 0)->text();
+        _snsService->DeleteMessage(_topicArn, messageId);
     }
 }

@@ -1,7 +1,10 @@
 
 #include <modules/sqs/SQSMessageList.h>
 
-SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, const bool isDlq, QWidget *parent) : BasePage(parent), _queueArn(std::move(queueArn)), _queueUrl(queueUrl), _isDlq(isDlq) {
+#include "utils/EventBus.h"
+
+SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage(parent) {
+
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
@@ -15,8 +18,8 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     const auto backButton = new QPushButton(IconUtils::GetIcon("dark", "back"), "");
     backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Go back to the queue list");
-    connect(backButton, &QPushButton::clicked, [this]() {
-        OnBackClicked();
+    connect(backButton, &QPushButton::clicked, []() {
+        emit EventBus::instance().RouteChanged("SQS");
     });
 
     // Toolbar label
@@ -35,8 +38,8 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("dark", "purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all messages");
-    connect(purgeAllButton, &QPushButton::clicked, [this,queueUrl]() {
-        _sqsService->PurgeAllMessages(queueUrl);
+    connect(purgeAllButton, &QPushButton::clicked, [this]() {
+        _sqsService->PurgeAllMessages(_queueUrl);
     });
 
     // Toolbar refresh action
@@ -115,16 +118,14 @@ SQSMessageList::SQSMessageList(const QString &title, QString queueArn, const QSt
 
     // Add context menu
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this,
-            &SQSMessageList::ShowContextMenu);
+    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
 
     // Save sort column
     const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this,
-            [this](const int column, const Qt::SortOrder order) {
-                _sortColumn = column;
-                _sortOrder = order;
-            });
+    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
+        _sortColumn = column;
+        _sortOrder = order;
+    });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
@@ -138,11 +139,10 @@ SQSMessageList::~SQSMessageList() {
 }
 
 void SQSMessageList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _sqsService->ListMessages(_queueArn, prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _queueArn = GetArgument<QString>("queueArn");
+    _queueUrl = GetArgument<QString>("queueUrl");
+    _isDlq = GetArgument<bool>("isDlq");
+    _sqsService->ListMessages(_queueArn, prefixValue);
 }
 
 void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) {

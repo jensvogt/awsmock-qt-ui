@@ -1,10 +1,10 @@
 #ifndef AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H
 #define AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H
 
-#include <modules/sqs/SQSService.h>
+#include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
-
-#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
+#include <modules/sqs/SQSService.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 
 namespace Ui {
     class SQSQueueDetailsDialog;

@@ -1,5 +1,5 @@
-#ifndef SNS_TOPIC_LIST_H
-#define SNS_TOPIC_LIST_H
+#ifndef AWSMOCK_QT_UI_SNS_QUEUE_LIST_H
+#define AWSMOCK_QT_UI_SNS_QUEUE_LIST_H
 
 #include <QLabel>
 #include <QMenu>
@@ -20,9 +20,9 @@
 #include <QTimer>
 
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSTopicDetailsDialog.h>
-#include <utils/IconUtils.h>
 
 /**
  * @brief Helper widget for the content area.
@@ -102,4 +102,4 @@ private:
     QPushButton *prefixClear;
 };
 
-#endif // SNS_TOPIC_LIST_H
+#endif // AWSMOCK_QT_UI_SNS_QUEUE_LIST_H

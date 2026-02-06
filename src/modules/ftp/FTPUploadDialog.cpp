@@ -182,7 +182,7 @@ void FTPUploadDialog::VerifyConnectInputs() {
         return;
     }
 
-    // UploadFile(filePath);
+    // UploadFile(_filePath);
     InitFtpClient();
 }
 

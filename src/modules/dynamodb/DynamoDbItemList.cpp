@@ -1,6 +1,6 @@
 #include <modules/dynamodb/DynamoDbItemList.h>
 
-DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableName, QWidget *parent) : BasePage(parent), _tableName(tableName) {
+DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service
     _dynamoDbService = new DynamoDbService();
@@ -40,8 +40,8 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
     // Toolbar add action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "", this);
     purgeAllButton->setToolTip("Purge all items");
-    connect(purgeAllButton, &QPushButton::clicked, [this, tableName]() {
-        _dynamoDbService->PurgeTable(tableName);
+    connect(purgeAllButton, &QPushButton::clicked, [this]() {
+        _dynamoDbService->PurgeTable(_tableName);
     });
 
     // Toolbar refresh action
@@ -110,9 +110,6 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, const QString &tableNam
     layout->addLayout(toolBar, 0);
     layout->addLayout(prefixLayout, 0);
     layout->addWidget(_itemView, 2);
-
-    // Initialization
-    LoadContent();
 }
 
 DynamoDbItemList::~DynamoDbItemList() {
@@ -120,11 +117,8 @@ DynamoDbItemList::~DynamoDbItemList() {
 }
 
 void DynamoDbItemList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _dynamoDbService->ListItems(_tableName);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _tableName = GetArgument<QString>("tableName");
+    _dynamoDbService->ListItems(_tableName);
 }
 
 void DynamoDbItemList::HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse) {

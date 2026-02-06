@@ -2,7 +2,7 @@
 #include <utils/Configuration.h>
 
 void Configuration::SetFilePath(const QString &filePath) {
-    this->filePath = filePath;
+    _filePath = filePath;
     ReadConfigurationFile(filePath);
 }
 
@@ -36,7 +36,7 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
 void Configuration::WriteConfigurationFile(const QString &filePath) {
 
     if (!filePath.isEmpty()) {
-        this->filePath = filePath;
+        this->_filePath = filePath;
     }
 
     // Wrap it in a QJsonDocument

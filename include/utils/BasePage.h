@@ -24,6 +24,31 @@ public:
 
     virtual void LoadContent() = 0;
 
+    void SetArguments(const QMap<QString, QString> &arguments) {
+        _arguments = arguments;
+    }
+
+    QMap<QString, QString> GetArguments() {
+        return _arguments;
+    }
+
+    template<class T>
+    T GetArgument(const QString &name) {
+        const QVariant *v = new QVariant(_arguments[name]);
+        if constexpr (std::is_same_v<T, int>) {
+            return static_cast<T>(v->toInt());
+        } else if constexpr (std::is_same_v<T, long>) {
+            return static_cast<T>(v->toInt());
+        } else if constexpr (std::is_same_v<T, double>) {
+            return static_cast<T>(v->toDouble());
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return static_cast<T>(v->toString());
+        } else if constexpr (std::is_same_v<T, bool>) {
+            return static_cast<T>(v->toString() == "true");
+        }
+        return {};
+    }
+
 signals:
     void StatusUpdateRequested(const QString &text);
 
@@ -37,7 +62,15 @@ public slots:
     }
 
 private:
+    /**
+     * @brief Auto update timer
+     */
     QTimer *_autoUpdateTimer;
+
+    /**
+     * @brief Page arguments
+     */
+    QMap<QString, QString> _arguments;
 };
 
 #endif // AWSMOCK_QT_UI_UTILS_BASE_PAGE_H

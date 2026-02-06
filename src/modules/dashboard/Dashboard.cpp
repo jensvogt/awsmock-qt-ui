@@ -8,6 +8,7 @@
 #include "ui_Dashboard.h"
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), _ui(new Ui::Dashboard), _parent(parent) {
+
     // Connect service
     _dashboardService = new DashboardService();
     connect(_dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
