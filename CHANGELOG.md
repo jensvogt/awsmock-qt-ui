@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.0...v1.10.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* add Qt6 websockets ([9e07745](https://github.com/jensvogt/awsmock-qt-ui/commit/9e07745f7409e203a2e776dce8e478e4e5322599))
+
 ## [1.10.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.10...v1.10.0) (2026-02-06)
 
 
