@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.2...v1.10.3) (2026-02-06)
+
+
+### Bug Fixes
+
+* configuration default file name ([b930d7d](https://github.com/jensvogt/awsmock-qt-ui/commit/b930d7d6cc5f88173eb7bda8d0aff3235990daf3))
+
 ## [1.10.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.1...v1.10.2) (2026-02-06)
 
 
