@@ -71,6 +71,10 @@ private:
      * @brief Page arguments
      */
     QMap<QString, QString> _arguments;
+
+    /**
+     */
+    QAction *_refreshAction{};
 };
 
 #endif // AWSMOCK_QT_UI_UTILS_BASE_PAGE_H

@@ -8,7 +8,6 @@
 #include "ui_MainWidget.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidget) {
-
     // Get the websocket URL for logging
     _websocketUrl = Configuration::instance().GetValue<QString>("server.websocket-url");
 
@@ -37,7 +36,6 @@ MainWidget::~MainWidget() {
 }
 
 void MainWidget::SetupNavPane() {
-
     // Create the Navigation Pane (QListWidget)
     _ui->navigationListView->setGridSize(QSize(0, 20));
 
@@ -75,7 +73,6 @@ void MainWidget::SetupContentPane() {
 }
 
 void MainWidget::SetupLogPane() {
-
     // Setup server logs
     SetupServerLogs();
 
@@ -87,7 +84,6 @@ void MainWidget::SetupLogPane() {
 }
 
 void MainWidget::SetupServerLogs() {
-
     // Create websocket
     _webSocket = new QWebSocket();
 
@@ -148,7 +144,6 @@ void MainWidget::SetupServerLogs() {
 }
 
 void MainWidget::SetupLocalLogs() {
-
     // Data model
     _localLogDataModel = new QStandardItemModel(_ui->serverLogsTab);
     _ui->localLogListView->setModel(_localLogDataModel);
@@ -177,7 +172,7 @@ void MainWidget::SetupLocalLogs() {
     });
 
     // Connect log events
-    connect(&LogSignaler::instance(), &LogSignaler::newLog, this, [this](const int level, const QString &message) {
+    connect(&LogSignaler::instance(), &LogSignaler::newLog, this, [this](const QString &message) {
         _localLogDataModel->appendRow(new QStandardItem(message));
     });
 }
@@ -193,7 +188,6 @@ void MainWidget::OnConnected() const {
 }
 
 void MainWidget::OnMessageReceived(const QString &message) const {
-
     // Add item with colors
     const auto item = new QStandardItem(message);
     if (message.contains("[error]")) {
@@ -212,7 +206,6 @@ void MainWidget::OnMessageReceived(const QString &message) const {
 }
 
 void MainWidget::SetupStatusbar() {
-
     // Set base URL
     const auto baseUrl = Configuration::instance().GetValue<QString>("server.base-url");
     _ui->connectionLabel->setText(baseUrl);
