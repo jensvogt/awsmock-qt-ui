@@ -1,5 +1,7 @@
 #include <modules/kms/KMSKeyList.h>
 
+#include "modules/kms/KMSKeyDialog.h"
+
 KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent) {
     // Set region
     _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
@@ -7,7 +9,7 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
     // Connect service
     _kmsService = new KMSService();
     connect(_kmsService, &KMSService::ListKeysSignal, this, &KMSKeyList::HandleListKeysSignal);
-    connect(_kmsService, &KMSService::ReloadKeySignal, this, &KMSKeyList::LoadContent);
+    connect(_kmsService, &KMSService::ReloadKeysSignal, this, &KMSKeyList::LoadContent);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -20,12 +22,13 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
-    addButton->setToolTip("Add a new table");
+    addButton->setToolTip("Add a new key");
     connect(addButton, &QPushButton::clicked, [this]() {
-        //
-        // // Initialize dialog
-        // DynamoDbAddTableDialog dialog;
-        // dialog.exec();
+
+        // Initialize dialog
+        KMSKeyDialog dialog(this);
+        dialog.exec();
+
         //
         // // Get request
         // const DynamoDbCreateTableRequest request = dialog.GetCreateTableRequest();
@@ -105,12 +108,12 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
 
         const QModelIndex sourceIndex = _proxyModel->mapToSource(index);
 
-        // Extract table name
-        QMap<QString, QString> arguments;
-        arguments["tableName"] = _dataModel->item(sourceIndex.row(), 0)->text();
+        // Extract Key ID
+        const QString keyId = _dataModel->item(sourceIndex.row(), 0)->text();
 
-        // Send notification to main window
-        emit EventBus::instance().RouteChanged("DynamoDB Item List", arguments);
+        KMSKeyDialog dialog(keyId, this);
+        dialog.exec();
+
     });
 
     // Add context menu
@@ -181,8 +184,8 @@ void KMSKeyList::ShowContextMenu(const QPoint &pos) const {
     deleteAction->setToolTip("Delete the key");
 
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        //DynamoDbEditTableDialog dialog(tableName);
-        //dialog.exec();
+        KMSKeyDialog dialog(keyId);
+        dialog.exec();
     } else if (selectedAction == deleteAction) {
         _kmsService->DeleteKey(keyId);
     }

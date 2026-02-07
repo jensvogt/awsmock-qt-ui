@@ -54,7 +54,10 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
-        src/modules/kms/KMSKeyEditDialog.cpp include/modules/kms/KMSKeyEditDialog.h src/modules/kms/KMSKeyEditDialog.ui)
+        src/modules/kms/KMSKeyDialog.cpp include/modules/kms/KMSKeyDialog.h src/modules/kms/KMSKeyDialog.ui
+        include/dto/kms/KMSGetKeyCounterResponse.h
+        include/dto/kms/KMSUpdateKeyCounterRequest.h
+        include/dto/kms/Origin.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES}
@@ -293,6 +296,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES}
         src/utils/ImageUtils.cpp
         include/modules/ssm/SSMParameterTagDialog.h
         src/modules/ssm/SSMParameterTagDialog.cpp
+        include/dto/kms/KMSCreateKeyRequest.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

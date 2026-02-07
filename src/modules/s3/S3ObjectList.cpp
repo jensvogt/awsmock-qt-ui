@@ -8,7 +8,6 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     connect(_s3Service, &S3Service::ReloadObjectsSignal, this, &S3ObjectList::HandleReloadObjectSignal);
 
     // Get the bucket
-    _s3Service->GetBucketDetails(_bucketName);
     connect(_s3Service, &S3Service::GetBucketDetailsSignal, this, &S3ObjectList::HandleBucketDetailsSignal);
 
     // Toolbar

@@ -38,4 +38,12 @@ static std::map<KeyUsage, QString> KeyUsageNames{
     return KeyUsage::ENCRYPT_DECRYPT;
 }
 
+static QStringList GetKeyUsageNames() {
+    QStringList keyStates;
+    for (auto &snd: KeyUsageNames | std::views::values) {
+        keyStates << snd;
+    }
+    return keyStates;
+}
+
 #endif// AWSMOCK_QT_UI_KMS_KEY_USAGE_H

@@ -41,6 +41,58 @@ void KMSService::ListKmsKeys(const QString &prefix) {
                       });
 }
 
+void KMSService::GetKeyCounter(const QString &keyId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["keyId"] = keyId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "kms"},
+                          {"x-awsmock-action", "get-key-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  KMSGetKeyCounterResponse kmsResponse;
+                                  kmsResponse.FromJson(jsonDoc);
+                                  emit GetKeyCounterSignal(kmsResponse);
+                              } else {
+                                  qCritical() << "Response is not an object!";
+                              }
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("GetKeyCounter", timer.elapsed());
+                      });
+}
+
+void KMSService::UpdateKeyCounter(const KMSUpdateKeyCounterRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "kms"},
+                          {"x-awsmock-action", "update-key-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadKeysSignal();
+                          } else {
+                              QMessageBox::critical(nullptr, "Error", error);
+                          }
+                          emit EventBus::instance().TimerSignal("UpdateKeyCounter", timer.elapsed());
+                      });
+}
+
 void KMSService::DeleteKey(const QString &keyId) {
     QElapsedTimer timer;
     timer.start();
@@ -58,7 +110,7 @@ void KMSService::DeleteKey(const QString &keyId) {
                       },
                       [this, timer](const bool success, QByteArray, int, const QString &error) {
                           if (success) {
-                              emit ReloadKeySignal();
+                              emit ReloadKeysSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

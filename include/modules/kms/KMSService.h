@@ -4,9 +4,6 @@
 // QT includes
 #include <QMessageBox>
 #include <QElapsedTimer>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
 
 // Awsmock includes
 #include <utils/Configuration.h>
@@ -15,6 +12,10 @@
 #include <utils/BaseService.h>
 #include <dto/kms/KMSListKeysRequest.h>
 #include <dto/kms/KMSListKeysResponse.h>
+#include <dto/kms/KMSGetKeyCounterResponse.h>
+#include <dto/kms/KMSUpdateKeyCounterRequest.h>
+
+struct KMSGetKeyCounterResponse;
 
 class KMSService final : public BaseService {
     Q_OBJECT
@@ -33,6 +34,20 @@ public:
     void ListKmsKeys(const QString &prefix = {});
 
     /**
+     * @brief Gets a key counter
+     *
+     * @param keyId KMS key ID
+     */
+    void GetKeyCounter(const QString &keyId);
+
+    /**
+     * @brief Update an existing key couter
+     *
+     * @param request update request
+     */
+    void UpdateKeyCounter(const KMSUpdateKeyCounterRequest &request);
+
+    /**
      * @brief Deletes a KMS key
      *
      * @param keyId KMS key ID
@@ -48,9 +63,16 @@ signals:
     void ListKeysSignal(const KMSListKeysResponse &kmsKeyListResponse);
 
     /**
+     * @brief Send when a new key counter is available
+     *
+     * @param getKeyCounterResponse KMS get key response
+     */
+    void GetKeyCounterSignal(const KMSGetKeyCounterResponse &getKeyCounterResponse);
+
+    /**
      * @brief Send when a new key list is available
      */
-    void ReloadKeySignal();
+    void ReloadKeysSignal();
 
 private:
     /**
