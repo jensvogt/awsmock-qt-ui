@@ -13,6 +13,7 @@
 #include <QString>
 
 // Awsmock includes
+#include <iostream>
 #include <utils/EventBus.h>
 #include <utils/DateTimeUtils.h>
 
@@ -130,16 +131,23 @@ inline int ToValueLogLevel(const QtMsgType &logLevel) {
 }
 
 inline void myCustomMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+
     // Format the string with a timestamp
     const QString timestamp = DateTimeUtils::GetLogDateTimeFormat(QDateTime::currentDateTime());
-    // Remove prefix from filename
-#ifdef _win32
-    const char *lastSlash = strrchr(context.file, '/');
+
+    QString finalMsg;
+    if (context.file) {
+        // Remove prefix from filename
+#ifdef _WIN32
+        const char *lastSlash = strrchr(context.file, '\\');
 #else
-    const char *lastSlash = strrchr(context.file, '\\');
+        const char *lastSlash = strrchr(context.file, '/');
 #endif
-    const QString fileStr = lastSlash ? lastSlash + 1 : context.file;
-    const QString finalMsg = QString("%1 [%2] [%3:%4] %5").arg(timestamp).arg(ToStrLogLevel(type)).arg(fileStr).arg(context.line).arg(msg);
+        const QString fileStr = lastSlash ? lastSlash + 1 : context.file;
+        finalMsg = QString("%1 [%2] [%3:%4] %5").arg(timestamp).arg(ToStrLogLevel(type)).arg(fileStr).arg(context.line).arg(msg);
+    } else {
+        finalMsg = QString("%1 [%2] %3").arg(timestamp).arg(ToStrLogLevel(type)).arg(msg);
+    }
 
     // Emit the signal via our Singleton
     if (ToValueLogLevel(type) >= LogSignaler::instance().GetLevel()) {

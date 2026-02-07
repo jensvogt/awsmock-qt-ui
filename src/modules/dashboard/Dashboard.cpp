@@ -209,6 +209,7 @@ void Dashboard::LoadContent() {
         config.end = end;
         _dashboardService->GetMultiSeriesCounter(config);
     }
+    logInfo << "Dashboard updated";
 }
 
 void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {

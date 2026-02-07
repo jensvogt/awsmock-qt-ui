@@ -146,7 +146,7 @@ void MainWidget::SetupServerLogs() {
 void MainWidget::SetupLocalLogs() {
     // Data model
     _localLogDataModel = new QStandardItemModel(_ui->serverLogsTab);
-    _ui->localLogListView->setModel(_localLogDataModel);
+    _ui->localLogList->setModel(_localLogDataModel);
 
     // Scroll button
     _ui->localScrollButton->setText(nullptr);
@@ -174,6 +174,10 @@ void MainWidget::SetupLocalLogs() {
     // Connect log events
     connect(&LogSignaler::instance(), &LogSignaler::newLog, this, [this](const QString &message) {
         _localLogDataModel->appendRow(new QStandardItem(message));
+        // Auto-scroll to bottom
+        if (_localScrolling) {
+            _ui->localLogList->scrollToBottom();
+        }
     });
 }
 
