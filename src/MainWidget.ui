@@ -201,7 +201,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QListView" name="localLogListView"/>
+            <widget class="QListView" name="localLogList"/>
            </item>
           </layout>
          </widget>
