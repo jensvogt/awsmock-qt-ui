@@ -19,9 +19,11 @@ void SNSService::AddTopic(const QString &topicName) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
@@ -57,12 +59,14 @@ void SNSService::ListTopics(const QString &prefix) {
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListTopicSignal(snsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListTopics", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListTopics", timer.elapsed());
                       });
 }
 
@@ -99,12 +103,14 @@ void SNSService::ListTopicAttributes(const QString &topicArn) {
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListTopicAttributesSignal(snsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListTopicAttributes", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListTopicAttributes", timer.elapsed());
                       });
 }
 
@@ -141,12 +147,14 @@ void SNSService::ListTopicTags(const QString &topicArn) {
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListTopicTagsSignal(snsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListTopicTags", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListTopicTags", timer.elapsed());
                       });
 }
 
@@ -183,12 +191,14 @@ void SNSService::ListTopicSubscriptions(const QString &topicArn) {
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListTopicSubscriptionsSignal(snsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListTopicSubscriptions", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListTopicSubscriptions", timer.elapsed());
                       });
 }
 
@@ -226,12 +236,14 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
                                   snsResponse.FromJson(jsonDoc);
                                   emit ListMessagesSignal(snsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", error);
+                                  logError << error;
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListMessages", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListMessages", timer.elapsed());
                       });
 }
 
@@ -254,9 +266,11 @@ void SNSService::PurgeTopic(const QString &topicArn) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeTopic", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeTopic", timer.elapsed());
                       });
 }
 
@@ -274,9 +288,11 @@ void SNSService::PurgeAllTopics() {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeAllTopics", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeAllTopics", timer.elapsed());
                       });
 }
 
@@ -299,9 +315,11 @@ void SNSService::PurgeMessages(const QString &topicArn) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeMessages", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeMessages", timer.elapsed());
                       });
 }
 
@@ -328,9 +346,11 @@ void SNSService::GetTopicDetails(const QString &topicArn) {
                               snsResponse.FromJson(jsonDoc);
                               emit GetTopicDetailsSignal(snsResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetTopicDetails", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetTopicDetails", timer.elapsed());
                       });
 }
 
@@ -353,9 +373,11 @@ void SNSService::DeleteTopic(const QString &topicArn) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteTopic", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteTopic", timer.elapsed());
                       });
 }
 
@@ -391,9 +413,11 @@ void SNSService::SendMessage(const SNSSendMessageRequest &request) {
                               snsResponse.FromJson(jsonDoc);
                               emit SendMessagesSignal(snsResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("SendMessage", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("SendMessage", timer.elapsed());
                       });
 }
 
@@ -417,7 +441,7 @@ void SNSService::GetSnsMessageDetails(const QString &messageId) {
                               snsResponse.FromJson(jsonDoc["message"].toObject());
                               emit GetMessageDetailsSignal(snsResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                       });
 }
@@ -439,7 +463,7 @@ void SNSService::DeleteMessage(const QString &topicArn, const QString &messageId
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                       });
 }

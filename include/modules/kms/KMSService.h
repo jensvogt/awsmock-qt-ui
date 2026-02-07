@@ -10,6 +10,7 @@
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
 #include <utils/BaseService.h>
+#include <utils/Logging.h>
 #include <dto/kms/KMSListKeysRequest.h>
 #include <dto/kms/KMSListKeysResponse.h>
 #include <dto/kms/KMSGetKeyCounterResponse.h>

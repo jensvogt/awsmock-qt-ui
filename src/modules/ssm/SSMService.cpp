@@ -1,5 +1,6 @@
-
 #include <modules/ssm/SSMService.h>
+
+#include "utils/Logging.h"
 
 void SSMService::CreateParameter(const SSMParameterCounter &parameter) {
     QElapsedTimer timer;
@@ -25,7 +26,7 @@ void SSMService::CreateParameter(const SSMParameterCounter &parameter) {
                           if (success) {
                               emit ReloadParameterListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListParameters", timer.elapsed());
                       });
@@ -63,10 +64,10 @@ void SSMService::ListParameters(const QString &prefix, const int sortColumn, con
                                   ssmResponse.FromJson(jsonDoc);
                                   emit ListParameterSignal(ssmResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListParameters", timer.elapsed());
                       });
@@ -96,10 +97,10 @@ void SSMService::GetParameter(const QString &name) {
                                   ssmResponse.FromJson(jsonDoc);
                                   emit GetParameterSignal(ssmResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListParameters", timer.elapsed());
                       });
@@ -152,10 +153,10 @@ void SSMService::UpdateParameter(const SSMParameterCounter &parameter) {
                                   ssmResponse.FromJson(jsonDoc);
                                   emit ListParameterSignal(ssmResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListParameters", timer.elapsed());
                       });
@@ -180,7 +181,7 @@ void SSMService::DeleteParameter(const QString &parameterName) {
                           if (success) {
                               emit ReloadParameterListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteParameter", timer.elapsed());
                       });

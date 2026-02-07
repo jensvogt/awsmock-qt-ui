@@ -16,6 +16,7 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
+#include <utils/Logging.h>
 #include <dto/application/ApplicationListResponse.h>
 #include <dto/application/ApplicationUploadRequest.h>
 #include <dto/application/ApplicationCreateRequest.h>

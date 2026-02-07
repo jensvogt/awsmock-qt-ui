@@ -1,6 +1,8 @@
 
 #include <modules/dynamodb/DynamoDbService.h>
 
+#include "utils/Logging.h"
+
 void DynamoDbService::CreateTable(const DynamoDbCreateTableRequest &request) {
     QElapsedTimer timer;
     timer.start();
@@ -21,10 +23,10 @@ void DynamoDbService::CreateTable(const DynamoDbCreateTableRequest &request) {
                                   dynamodbResponse.FromJson(jsonDoc);
                                   emit CreateTableSignal(dynamodbResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logError << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
                       });
@@ -62,10 +64,10 @@ void DynamoDbService::ListTables(const QString &prefix) {
                                   dynamodbResponse.FromJson(jsonDoc);
                                   emit ListTablesSignal(dynamodbResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
                       });
@@ -94,7 +96,7 @@ void DynamoDbService::DescribeTable(const QString &tableName) {
                                   emit DescribeTableSignal(dynamodbResponse);
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DescribeTable", timer.elapsed());
                       });
@@ -119,7 +121,7 @@ void DynamoDbService::DeleteTable(const QString &tableName) {
                           if (success) {
                               emit ReloadTableListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteTable", timer.elapsed());
                       });
@@ -147,10 +149,10 @@ void DynamoDbService::ListItems(const QString &tableName) {
                                   dynamodbResponse.FromJson(jsonDoc);
                                   emit ListItemsSignal(dynamodbResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
                       });
@@ -178,10 +180,10 @@ void DynamoDbService::PurgeTable(const QString &tableName) {
                                   dynamodbResponse.FromJson(jsonDoc);
                                   emit ListItemsSignal(dynamodbResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
                       });

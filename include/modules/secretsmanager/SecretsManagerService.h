@@ -17,6 +17,7 @@
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
 #include <utils/BaseService.h>
+#include <utils/Logging.h>
 #include <dto/secretsmanager/SecretsManagerListSecretsResponse.h>
 #include <dto/secretsmanager/SecretGetResponse.h>
 #include <dto/secretsmanager/SecretGetVersionsResponse.h>

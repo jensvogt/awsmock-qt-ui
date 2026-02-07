@@ -20,12 +20,15 @@ public:
         if (const auto locale = Configuration::instance().GetValue<QString>("ui.default-locale"); locale == "US") {
             const QLocale us(QLocale::English, QLocale::UnitedStates);
             return us.toString(dateTime, QLocale::ShortFormat);
-        } else if (locale == "UK") {
-            const QLocale uk(QLocale::English, QLocale::UnitedKingdom);
-            return uk.toString(dateTime, QLocale::ShortFormat);
-        } else if (locale == "DE") {
-            const QLocale de(QLocale::German, QLocale::Germany);
-            return de.toString(dateTime, QLocale::ShortFormat);
+        } else {
+            if (locale == "UK") {
+                const QLocale uk(QLocale::English, QLocale::UnitedKingdom);
+                return uk.toString(dateTime, QLocale::ShortFormat);
+            }
+            if (locale == "DE") {
+                const QLocale de(QLocale::German, QLocale::Germany);
+                return de.toString(dateTime, QLocale::ShortFormat);
+            }
         }
         return "Unknown locale";
     }
@@ -37,12 +40,35 @@ public:
         if (const auto locale = Configuration::instance().GetValue<QString>("ui.default-locale"); locale == "US") {
             const QLocale us(QLocale::English, QLocale::UnitedStates);
             return us.toString(dateTime, QLocale::ShortFormat);
-        } else if (locale == "UK") {
-            const QLocale uk(QLocale::English, QLocale::UnitedKingdom);
-            return uk.toString(dateTime, QLocale::ShortFormat);
-        } else if (locale == "DE") {
-            const QLocale de(QLocale::German, QLocale::Germany);
-            return de.toString(dateTime, QLocale::ShortFormat);
+        } else {
+            if (locale == "UK") {
+                const QLocale uk(QLocale::English, QLocale::UnitedKingdom);
+                return uk.toString(dateTime, QLocale::ShortFormat);
+            }
+            if (locale == "DE") {
+                const QLocale de(QLocale::German, QLocale::Germany);
+                return de.toString(dateTime, QLocale::ShortFormat);
+            }
+        }
+        return "Unknown locale";
+    }
+
+    static QString GetLogDateTimeFormat(const QDateTime &dateTime) {
+        if (!Configuration::instance().GetValue<QString>("ui.datetime-format").isEmpty()) {
+            return dateTime.toString(Configuration::instance().GetValue<QString>("ui.datetime-format") + ".zzz");
+        }
+        if (const auto locale = Configuration::instance().GetValue<QString>("ui.datetime-locale"); locale == "US") {
+            const QLocale us(QLocale::English, QLocale::UnitedStates);
+            return us.toString(dateTime, QLocale::ShortFormat);
+        } else {
+            if (locale == "UK") {
+                const QLocale uk(QLocale::English, QLocale::UnitedKingdom);
+                return uk.toString(dateTime, QLocale::ShortFormat);
+            }
+            if (locale == "DE") {
+                const QLocale de(QLocale::German, QLocale::Germany);
+                return de.toString(dateTime, QLocale::ShortFormat);
+            }
         }
         return "Unknown locale";
     }

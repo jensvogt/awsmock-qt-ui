@@ -11,6 +11,9 @@
 #include <utils/BasePage.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <utils/EventBus.h>
+#include <utils/Logging.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <dto/sqs/SQSGetQueueDetailsResponse.h>
 #include <dto/sqs/SQSQueueUpdateRequest.h>

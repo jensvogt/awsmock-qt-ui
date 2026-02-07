@@ -26,6 +26,8 @@ signals:
     void MainStatusSignal(const QString &message);
 
     void PingSignal(bool result);
+
+    void LogSignal(int logLevel, const QString &message);
 };
 
 #endif //AWSMOCK_QT_UI_EVENT_BUS_H

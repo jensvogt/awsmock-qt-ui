@@ -25,10 +25,10 @@ void SecretsManagerService::CreateSecret(const SecretCounter &secretCounter) {
                                   s.FromJson(jsonDoc.object());
                                   emit LoadAllSecrets();
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("UpdateSecret", timer.elapsed());
                       });
@@ -67,10 +67,10 @@ void SecretsManagerService::ListSecrets() {
                                   secretsListResponse.FromJson(jsonDoc);
                                   emit ReloadSecretsSignal(secretsListResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListSecrets", timer.elapsed());
                       });
@@ -99,10 +99,10 @@ void SecretsManagerService::GetSecret(const QString &secretId) {
                                   secretCounter.FromJson(jsonDoc.object());
                                   emit GetSecretsDetailsSignal(secretCounter);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("GetSecret", timer.elapsed());
                       });
@@ -136,16 +136,15 @@ void SecretsManagerService::GetVersions(const QString &secretId) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
-                              // The API returns an JSON secretsManager counter list
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SecretGetVersionResponse secretVersionResponse;
                                   secretVersionResponse.FromJson(jsonDoc.object());
                                   emit GetSecretsVersionsSignal(secretVersionResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("GetVersions", timer.elapsed());
                       });
@@ -168,16 +167,15 @@ void SecretsManagerService::UpdateSecret(const SecretCounter &secretCounter) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an JSON secretsManager counter list
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SecretCounter s;
                                   s.FromJson(jsonDoc.object());
                                   emit GetSecretsDetailsSignal(s);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("UpdateSecret", timer.elapsed());
                       });
@@ -204,7 +202,7 @@ void SecretsManagerService::DeleteSecret(const QString &secretId) {
                           if (success) {
                               emit LoadAllSecrets();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteSecret", timer.elapsed());
                       });

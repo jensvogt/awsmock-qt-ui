@@ -29,6 +29,10 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidge
 }
 
 MainWidget::~MainWidget() {
+    if (_webSocket) {
+        _webSocket->disconnected();
+        _webSocket->deleteLater();
+    }
     delete _ui;
 }
 
@@ -72,59 +76,109 @@ void MainWidget::SetupContentPane() {
 
 void MainWidget::SetupLogPane() {
 
+    // Setup server logs
+    SetupServerLogs();
+
+    // Setup server logs
+    SetupLocalLogs();
+
+    // Default log tab
+    _ui->logTabWidget->setCurrentIndex(0);
+}
+
+void MainWidget::SetupServerLogs() {
+
+    // Create websocket
+    _webSocket = new QWebSocket();
+
     // Reconnect timer
     _reconnectTimer = new QTimer(this);
     _reconnectTimer->setInterval(5000);
 
     // Connect signals
-    connect(&_webSocket, &QWebSocket::connected, this, &MainWidget::OnConnected);
-    connect(&_webSocket, &QWebSocket::textMessageReceived, this, &MainWidget::OnMessageReceived);
-    connect(&_webSocket, &QWebSocket::disconnected, this, [this]() {
+    connect(_webSocket, &QWebSocket::connected, this, &MainWidget::OnConnected);
+    connect(_webSocket, &QWebSocket::textMessageReceived, this, &MainWidget::OnMessageReceived);
+    connect(_webSocket, &QWebSocket::disconnected, this, [this]() {
         _reconnectTimer->start();
     });
-    connect(&_webSocket, &QWebSocket::errorOccurred, [this](const QAbstractSocket::SocketError error) {
+    connect(_webSocket, &QWebSocket::errorOccurred, [this](const QAbstractSocket::SocketError error) {
         // Even if it fails to connect, ensure the timer keeps running
         if (!_reconnectTimer->isActive()) {
             _reconnectTimer->start();
         }
     });
     connect(_reconnectTimer, &QTimer::timeout, this, [this]() {
-        _webSocket.open(QUrl(_websocketUrl));
+        _webSocket->open(QUrl(_websocketUrl));
     });
 
     // Open the connection
-    _webSocket.open(QUrl(_websocketUrl));
+    _webSocket->open(QUrl(_websocketUrl));
 
     // Data model
-    _logDataModel = new QStandardItemModel(_ui->logListView);
-    _ui->logListView->setModel(_logDataModel);
+    _serverLogDataModel = new QStandardItemModel(_ui->serverLogList);
+    _ui->serverLogList->setModel(_serverLogDataModel);
 
     // Scroll button
-    _ui->scrollButton->setText(nullptr);
-    _ui->scrollButton->setIcon(IconUtils::GetIcon("scroll"));
-    _ui->scrollButton->setToolTip("Start/stop scrolling");
-    connect(_ui->scrollButton, &QPushButton::toggled, this, [this](const bool value) {
-        _scrolling = value;
+    _ui->serverScrollButton->setText(nullptr);
+    _ui->serverScrollButton->setIcon(IconUtils::GetIcon("scroll"));
+    _ui->serverScrollButton->setToolTip("Start/stop scrolling");
+    connect(_ui->serverScrollButton, &QPushButton::toggled, this, [this](const bool value) {
+        _serverScrolling = value;
     });
 
     // Clear button
-    _ui->logClearButton->setText(nullptr);
-    _ui->logClearButton->setIcon(IconUtils::GetIcon("clear"));
-    _ui->logClearButton->setToolTip("Clear the log message list");
-    connect(_ui->logClearButton, &QPushButton::clicked, [this]() {
-        _logDataModel->removeRows(0, _logDataModel->rowCount());
+    _ui->serverLogClearButton->setText(nullptr);
+    _ui->serverLogClearButton->setIcon(IconUtils::GetIcon("clear"));
+    _ui->serverLogClearButton->setToolTip("Clear the log message list");
+    connect(_ui->serverLogClearButton, &QPushButton::clicked, [this]() {
+        _serverLogDataModel->removeRows(0, _serverLogDataModel->rowCount());
     });
 
     // Reconnect button
-    _ui->reconnectButton->setText(nullptr);
-    _ui->reconnectButton->setIcon(IconUtils::GetIcon("reconnect"));
-    _ui->reconnectButton->setToolTip("Reconnect to the server websocket");
-    connect(_ui->reconnectButton, &QPushButton::clicked, this, [this]() {
-        if (_webSocket.state() == QAbstractSocket::ConnectedState) {
-            _webSocket.disconnected();
-            _webSocket.close();
+    _ui->serverReconnectButton->setText(nullptr);
+    _ui->serverReconnectButton->setIcon(IconUtils::GetIcon("reconnect"));
+    _ui->serverReconnectButton->setToolTip("Reconnect to the server websocket");
+    connect(_ui->serverReconnectButton, &QPushButton::clicked, this, [this]() {
+        if (_webSocket->state() == QAbstractSocket::ConnectedState) {
+            _webSocket->disconnected();
+            _webSocket->close();
         }
         _reconnectTimer->start();
+    });
+}
+
+void MainWidget::SetupLocalLogs() {
+
+    // Data model
+    _localLogDataModel = new QStandardItemModel(_ui->serverLogsTab);
+    _ui->localLogListView->setModel(_localLogDataModel);
+
+    // Scroll button
+    _ui->localScrollButton->setText(nullptr);
+    _ui->localScrollButton->setIcon(IconUtils::GetIcon("scroll"));
+    _ui->localScrollButton->setToolTip("Start/stop local scrolling");
+    connect(_ui->localScrollButton, &QPushButton::toggled, this, [this](const bool value) {
+        _localScrolling = value;
+    });
+
+    // Clear button
+    _ui->localClearButton->setText(nullptr);
+    _ui->localClearButton->setIcon(IconUtils::GetIcon("clear"));
+    _ui->localClearButton->setToolTip("Clear the local log message list");
+    connect(_ui->localClearButton, &QPushButton::clicked, [this]() {
+        _localLogDataModel->removeRows(0, _localLogDataModel->rowCount());
+    });
+
+    // Log level combo
+    _ui->localLogLevelCombo->addItems(GetLogLevelNames());
+    _ui->localLogLevelCombo->setCurrentText(LogLevelToString(_localLogLevel));
+    connect(_ui->localLogLevelCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        LogSignaler::instance().SetLevel(LogLevelToValue(LogLevelFromString(text)));
+    });
+
+    // Connect log events
+    connect(&LogSignaler::instance(), &LogSignaler::newLog, this, [this](const int level, const QString &message) {
+        _localLogDataModel->appendRow(new QStandardItem(message));
     });
 }
 
@@ -132,10 +186,10 @@ void MainWidget::OnConnected() const {
     _reconnectTimer->stop();
 
     const auto item = new QStandardItem("Connect to server websocket, URL: " + _websocketUrl);
-    _logDataModel->appendRow(item);
+    _serverLogDataModel->appendRow(item);
 
     // Auto-scroll to bottom
-    _ui->logListView->scrollToBottom();
+    _ui->serverLogList->scrollToBottom();
 }
 
 void MainWidget::OnMessageReceived(const QString &message) const {
@@ -149,11 +203,11 @@ void MainWidget::OnMessageReceived(const QString &message) const {
     } else if (message.contains("[debug]")) {
         item->setForeground(Qt::green);
     }
-    _logDataModel->appendRow(item);
+    _serverLogDataModel->appendRow(item);
 
     // Auto-scroll to bottom
-    if (_scrolling) {
-        _ui->logListView->scrollToBottom();
+    if (_serverScrolling) {
+        _ui->serverLogList->scrollToBottom();
     }
 }
 

@@ -1,5 +1,7 @@
 #include <modules/docker/DockerService.h>
 
+#include "utils/Logging.h"
+
 void DockerService::ListDockerContainer(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
@@ -17,16 +19,15 @@ void DockerService::ListDockerContainer(const QString &prefix) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array contains an array of docker statistics
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   DockerContainersResponse dockerResponse;
                                   dockerResponse.FromJson(jsonDoc);
                                   emit ReloadDockerContainerSignal(dockerResponse);
                               } else {
-                                  qCritical() << "Response is not an array!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("ListDockerContainer", timer.elapsed());
                       });
@@ -52,10 +53,10 @@ void DockerService::ListDockerStats() {
                                   dockerResponse.FromJson(jsonDoc);
                                   emit ReloadDockerStatsSignal(dockerResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("ListDockerStats", timer.elapsed());
                       });
@@ -80,7 +81,7 @@ void DockerService::StartContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("StartContainer", timer.elapsed());
                       });
@@ -105,7 +106,7 @@ void DockerService::StopContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("StopContainer", timer.elapsed());
                       });
@@ -130,7 +131,7 @@ void DockerService::RestartContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("RestartContainer", timer.elapsed());
                       });
@@ -155,7 +156,7 @@ void DockerService::KillContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("KillContainer", timer.elapsed());
                       });
@@ -180,7 +181,7 @@ void DockerService::DeleteContainer(const QString &containerId) {
                           if (success) {
                               emit ReloadContainerList();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("KillContainer", timer.elapsed());
                       });

@@ -41,6 +41,10 @@ public:
 
     void SetupLogPane();
 
+    void SetupServerLogs();
+
+    void SetupLocalLogs();
+
     void OnConnected() const;
 
     void OnMessageReceived(const QString &message) const;
@@ -53,7 +57,10 @@ private:
      */
     Ui::MainWidget *_ui;
 
-    QWebSocket _webSocket;
+    /**
+     * @brief Websocket for the server logs
+     */
+    QWebSocket *_webSocket{};
 
     /**
      *  @brief Navigation item data model
@@ -68,7 +75,12 @@ private:
     /**
      *  @brief Log item data model
      */
-    QStandardItemModel *_logDataModel{};
+    QStandardItemModel *_serverLogDataModel{};
+
+    /**
+     *  @brief Local log item data model
+     */
+    QStandardItemModel *_localLogDataModel{};
 
     /**
      * @brief Content pane
@@ -76,16 +88,29 @@ private:
     QStackedWidget *_contentPane{};
 
     /**
-     * @brief Scrolling flag
+     * @brief Server scrolling flag
      */
-    bool _scrolling = true;
+    bool _serverScrolling = true;
+
+    /**
+     * @brief Local scrolling flag
+     */
+    bool _localScrolling = true;
 
     /**
      * @brief Websocket URL
      */
     QString _websocketUrl;
 
-    QTimer *_reconnectTimer;
+    /**
+     * @brief Reconnect timer
+     */
+    QTimer *_reconnectTimer{};
+
+    /**
+     * @brief Local scrolling flag
+     */
+    LogLevel _localLogLevel = INFO;
 };
 
 

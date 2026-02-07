@@ -1,4 +1,3 @@
-
 #include <modules/s3/S3Service.h>
 
 S3Service::S3Service() {
@@ -38,12 +37,14 @@ void S3Service::ListBuckets(const QString &prefix) {
                                   s3Response.FromJson(jsonDoc);
                                   emit ListBucketSignal(s3Response);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
@@ -65,9 +66,11 @@ void S3Service::PurgeBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeBucket", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeBucket", timer.elapsed());
                       });
 }
 
@@ -90,9 +93,11 @@ void S3Service::AddBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("AddBucket", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("AddBucket", timer.elapsed());
                       });
 }
 
@@ -132,9 +137,11 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UpdateBucket", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UpdateBucket", timer.elapsed());
                       });
 }
 
@@ -158,9 +165,11 @@ void S3Service::DeleteBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteBucket", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteBucket", timer.elapsed());
                       });
 }
 
@@ -186,9 +195,11 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                               bucketResponse.FromJson(jsonDoc);
                               emit GetBucketDetailsSignal(bucketResponse);
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetBucketDetails", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetBucketDetails", timer.elapsed());
                       });
 }
 
@@ -226,12 +237,14 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
                                   s3Response.FromJson(jsonDoc);
                                   emit ListObjectsSignal(s3Response);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListObjects", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListObjects", timer.elapsed());
                       });
 }
 
@@ -258,9 +271,11 @@ void S3Service::GetObjectDetails(const QString &objectId) {
                               objectDetailsResponse.FromJson(jsonDoc["objectCounter"].toObject());
                               emit GetObjectDetailsSignal(objectDetailsResponse);
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetObjectDetails", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetObjectDetails", timer.elapsed());
                       });
 }
 
@@ -293,9 +308,11 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UploadObject", timer.elapsed());
                       });
 }
 
@@ -329,9 +346,11 @@ void S3Service::UpdateObject(const QString &region, const QString &bucketName, c
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UploadObject", timer.elapsed());
                       });
 }
 
@@ -357,9 +376,10 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteObject", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteObject", timer.elapsed());
                       });
 }
-
