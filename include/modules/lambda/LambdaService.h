@@ -13,6 +13,7 @@
 #include <QtNetwork/QNetworkRequest>
 
 // Awsmock Qt includes
+#include <utils/Logging.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>

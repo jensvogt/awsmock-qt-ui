@@ -11,6 +11,7 @@
 #include <utils/ScopedTimer.h>
 #include <utils/RestManager.h>
 #include <utils/BaseService.h>
+#include <utils/Logging.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <dto/dashboard/DashboardCounterResult.h>
 

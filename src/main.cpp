@@ -29,6 +29,7 @@
 // AwsMock includes
 #include <utils/Configuration.h>
 #include <utils/IconUtils.h>
+#include <utils/Logging.h>
 
 #define INITIAL_WIDTH 2000
 #define INITIAL_HEIGHT 1200
@@ -36,6 +37,9 @@
 int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
+
+    // Install the redirection
+    qInstallMessageHandler(myCustomMessageHandler);
 
     // Set icon
     QApplication::setWindowIcon(IconUtils::GetCommonIcon("awsmock"));

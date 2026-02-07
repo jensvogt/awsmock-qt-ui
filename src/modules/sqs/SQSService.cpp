@@ -1,8 +1,4 @@
-
 #include <modules/sqs/SQSService.h>
-
-#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
-#include "utils/EventBus.h"
 
 SQSService::SQSService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
@@ -40,12 +36,14 @@ void SQSService::ListQueues(const QString &prefix, Qt::SortOrder sortOrder) {
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueuesSignal(sqsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueues", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListQueues", timer.elapsed());
                       });
 }
 
@@ -68,9 +66,11 @@ void SQSService::PurgeQueue(const QString &queueUrl) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeQueue", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeQueue", timer.elapsed());
                       });
 }
 
@@ -88,9 +88,11 @@ void SQSService::PurgeAllQueues() {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeAllQueues", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeAllQueues", timer.elapsed());
                       });
 }
 
@@ -113,9 +115,11 @@ void SQSService::AddQueue(const QString &queueName) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("AddQueue", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("AddQueue", timer.elapsed());
                       });
 }
 
@@ -134,9 +138,11 @@ void SQSService::UpdateQueue(const SQSQueueUpdateRequest &updateQueueRequest) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UpdateQueue", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UpdateQueue", timer.elapsed());
                       });
 }
 
@@ -173,12 +179,14 @@ void SQSService::ListQueueAttributes(const QString &queueArn, const QString &pre
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueueAttributesSignal(sqsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueAttributes", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListQueueAttributes", timer.elapsed());
                       });
 }
 
@@ -215,12 +223,14 @@ void SQSService::ListQueueLambdaTriggers(const QString &queueArn, const QString 
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueueLambdaTriggersSignal(sqsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueLambdaTriggers", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListQueueLambdaTriggers", timer.elapsed());
                       });
 }
 
@@ -257,12 +267,14 @@ void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QStri
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueueDefaultAttributesSignal(sqsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -285,9 +297,11 @@ void SQSService::DeleteQueue(const QString &queueUrl) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteQueue", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteQueue", timer.elapsed());
                       });
 }
 
@@ -310,9 +324,11 @@ void SQSService::RedriveQueue(const QString &queueArn) {
                           if (success) {
                               emit ReloadQueuesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("RedriveQueue", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("RedriveQueue", timer.elapsed());
                       });
 }
 
@@ -340,9 +356,11 @@ void SQSService::GetQueueDetails(const QString &queueArn) {
 
                               emit GetQueueDetailsSignal(sqsResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetQueueDetails", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetQueueDetails", timer.elapsed());
                       });
 }
 
@@ -370,9 +388,11 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                               sqsResponse.region = jsonDoc.object()["region"].toString();
                               emit GetSqsMessageDetailsSignal(sqsResponse);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetSqsMessageDetails", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetSqsMessageDetails", timer.elapsed());
                       });
 }
 
@@ -413,9 +433,11 @@ void SQSService::ListMessages(const QString &queueArn, const QString &prefix) {
                                   QMessageBox::critical(nullptr, "Error", "Failed to parse API response.");
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListMessages", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListMessages", timer.elapsed());
                       });
 }
 
@@ -438,9 +460,11 @@ void SQSService::PurgeAllMessages(const QString &QueueUrl) {
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeAllMessages", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("PurgeAllMessages", timer.elapsed());
                       });
 }
 
@@ -463,12 +487,14 @@ void SQSService::SendMessage(const SQSSendMessageRequest &request) {
                                   sqsResponse.FromJson(jsonDoc);
                                   emit SendMessagesSignal(sqsResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("SendMessage", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("SendMessage", timer.elapsed());
                       });
 }
 
@@ -492,9 +518,11 @@ void SQSService::ResendMessage(const QString &queueArn, const QString &messageId
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ResendMessage", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ResendMessage", timer.elapsed());
                       });
 }
 
@@ -518,9 +546,10 @@ void SQSService::DeleteMessage(const QString &queueUrl, const QString &receiptHa
                           if (success) {
                               emit ReloadMessagesSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteMessage", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteMessage", timer.elapsed());
                       });
 }
-

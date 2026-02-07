@@ -297,6 +297,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES}
         include/modules/ssm/SSMParameterTagDialog.h
         src/modules/ssm/SSMParameterTagDialog.cpp
         include/dto/kms/KMSCreateKeyRequest.h
+        include/utils/Logging.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

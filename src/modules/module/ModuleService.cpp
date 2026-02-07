@@ -1,5 +1,6 @@
-
 #include <modules/module/ModuleService.h>
+
+#include "utils/Logging.h"
 
 ModuleService::ModuleService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
@@ -42,7 +43,7 @@ void ModuleService::ExportInfrastructure(const QString &exportFilename) {
                               // The API returns an infrastructure object
                               emit ExportResponseSignal(exportFilename, response.toStdString().data());
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ExportInfrastructure", timer.elapsed());
                       });
@@ -64,7 +65,7 @@ void ModuleService::ImportInfrastructure(const QString &content) {
                               // The API returns an infrastructure object
                               emit ImportResponseSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ImportInfrastructure", timer.elapsed());
                       });
@@ -97,7 +98,7 @@ void ModuleService::CleanInfrastructure() {
                               // The API returns an infrastructure object
                               emit CleanResponseSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("CleanInfrastructure", timer.elapsed());
                       });
@@ -120,7 +121,7 @@ void ModuleService::GetServerConfig() {
                              serverConfig.FromJson(jsonDoc.object());
                              emit GetServerConfigSignal(serverConfig);
                          } else {
-                             QMessageBox::critical(nullptr, "Error", error);
+                             logError << error;
                          }
                          emit EventBus::instance().TimerSignal("GetServerConfig", timer.elapsed());
                      });
@@ -141,7 +142,7 @@ void ModuleService::GetInfrastructure() {
                              // The API returns an infrastructure object as string
                              emit GetInfrastructureSignal(QString(response));
                          } else {
-                             QMessageBox::critical(nullptr, "Error", error);
+                             logError << error;
                          }
                          emit EventBus::instance().TimerSignal("GetInfrastructure", timer.elapsed());
                      });

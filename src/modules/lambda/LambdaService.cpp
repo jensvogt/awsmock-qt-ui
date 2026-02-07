@@ -33,12 +33,14 @@ void LambdaService::ListLambdas(const QString &prefix) {
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit ReloadLambdasSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListLambdas", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListLambdas", timer.elapsed());
                       });
 }
 
@@ -64,12 +66,14 @@ void LambdaService::GetLambda(const QString &lambdaArn) {
                                   lambdaResponse.FromJson(jsonDoc.object());
                                   emit GetLambdaDetailsSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetLambda", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetLambda", timer.elapsed());
                       });
 }
 
@@ -106,12 +110,14 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit ListLambdaInstancesSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetLambdaInstances", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetLambdaInstances", timer.elapsed());
                       });
 }
 
@@ -148,12 +154,14 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit ListLambdaEnvironmentSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetLambdaEnvironment", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetLambdaEnvironment", timer.elapsed());
                       });
 }
 
@@ -178,9 +186,11 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
                           if (success) {
                               emit LoadLambdaEnvironment();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("AddLambdaEnvironment", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("AddLambdaEnvironment", timer.elapsed());
                       });
 }
 
@@ -204,9 +214,11 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
                           if (success) {
                               emit LoadLambdaEnvironment();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("RemoveLambdaEnvironment", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("RemoveLambdaEnvironment", timer.elapsed());
                       });
 }
 
@@ -232,12 +244,14 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit ListLambdaResultsSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListLambdaLogs", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("ListLambdaLogs", timer.elapsed());
                       });
 }
 
@@ -263,12 +277,14 @@ void LambdaService::GetLambdaResult(const QString &oid) {
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit GetLambdaResultSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetLambdaResult", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetLambdaResult", timer.elapsed());
                       });
 }
 
@@ -294,13 +310,15 @@ void LambdaService::GetLambdaResults(const QString &oid) {
                                   lambdaResponse.FromJson(jsonDoc);
                                   emit ListLambdaEnvironmentSignal(lambdaResponse);
                               } else {
-                                  QMessageBox::critical(nullptr, "Error", "Response is not an object!");
+                                  logWarning << "Response is not an object!";
                               }
                               //emit ListLambdaLogsSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetLambdaResults", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetLambdaResults", timer.elapsed());
                       });
 }
 
@@ -325,9 +343,11 @@ void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
                           if (success) {
                               emit LoadAllLambdas();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UploadLambdaCode", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UploadLambdaCode", timer.elapsed());
                       });
 }
 
@@ -351,9 +371,11 @@ void LambdaService::UpdateLambda(const QString &lambdaArn, const bool enabled) {
                           if (success) {
                               emit LoadAllLambdas();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UpdateLambda", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UpdateLambda", timer.elapsed());
                       });
 }
 
@@ -377,9 +399,11 @@ void LambdaService::DeleteLambda(const QString &name) {
                           if (success) {
                               emit LoadLambdaEnvironment();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
                       });
 }
 
@@ -402,8 +426,10 @@ void LambdaService::DeleteLambdaResults(const QString &lambdaArn) {
                           if (success) {
                               emit ListLambdaLogs(lambdaArn);
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteLambdaResults", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteLambdaResults", timer.elapsed());
                       });
 }

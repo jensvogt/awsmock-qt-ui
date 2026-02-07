@@ -35,7 +35,7 @@ void KMSService::ListKmsKeys(const QString &prefix) {
                                   qCritical() << "Response is not an array!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("ListKmsKeys", timer.elapsed());
                       });
@@ -63,12 +63,13 @@ void KMSService::GetKeyCounter(const QString &keyId) {
                                   kmsResponse.FromJson(jsonDoc);
                                   emit GetKeyCounterSignal(kmsResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetKeyCounter", timer.elapsed());
+                          emit EventBus::instance().
+                                  TimerSignal("GetKeyCounter", timer.elapsed());
                       });
 }
 
@@ -87,9 +88,11 @@ void KMSService::UpdateKeyCounter(const KMSUpdateKeyCounterRequest &request) {
                           if (success) {
                               emit ReloadKeysSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("UpdateKeyCounter", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("UpdateKeyCounter", timer.elapsed());
                       });
 }
 
@@ -112,8 +115,10 @@ void KMSService::DeleteKey(const QString &keyId) {
                           if (success) {
                               emit ReloadKeysSignal();
                           } else {
-                              QMessageBox::critical(nullptr, "Error", error);
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("DeleteKey", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("DeleteKey", timer.elapsed());
                       });
 }

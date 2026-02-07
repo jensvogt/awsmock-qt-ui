@@ -37,12 +37,14 @@ void ApplicationService::ListApplications(const QString &prefix) {
                                   applicationResponse.FromJson(jsonDoc);
                                   emit ReloadApplicationsSignal(applicationResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance()
+                                  .
+                                  TimerSignal("GetMultiSeriesCounter", timer.elapsed());
                       });
 }
 
@@ -58,7 +60,7 @@ void ApplicationService::UploadApplication(const ApplicationUploadRequest &reque
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -77,10 +79,10 @@ void ApplicationService::CreateApplication(const ApplicationCreateRequest &reque
                                   QMessageBox::information(nullptr, "Information", "Application uploaded!");
                                   emit LoadAllApplications();
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -104,10 +106,10 @@ void ApplicationService::GetApplication(const QString &name) {
                                   applicationResponse.FromJson(jsonDoc.object());
                                   emit GetApplicationDetailsSignal(applicationResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -128,7 +130,7 @@ void ApplicationService::UpdateApplication(const Application &application) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -154,7 +156,7 @@ void ApplicationService::EnableApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -180,7 +182,7 @@ void ApplicationService::DisableApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -205,7 +207,7 @@ void ApplicationService::StartApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -230,7 +232,7 @@ void ApplicationService::StopApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -255,7 +257,7 @@ void ApplicationService::RestartApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -272,7 +274,7 @@ void ApplicationService::RestartAllApplications() {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -297,7 +299,7 @@ void ApplicationService::RebuildApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -320,7 +322,7 @@ void ApplicationService::UploadApplicationCode(const QString &applicationName, c
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -348,10 +350,10 @@ void ApplicationService::ListApplicationNames() {
                                   }
                                   emit ListApplicationNamedSignal(applicationList);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }
@@ -372,7 +374,7 @@ void ApplicationService::DeleteApplication(const QString &name) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                       });
 }

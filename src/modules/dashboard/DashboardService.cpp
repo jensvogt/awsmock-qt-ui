@@ -50,9 +50,10 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                             DashboardCounter counter;
                             counter.FromJson(jsonDoc.object());
                             counter.chartConfig = config;
+                            logTrace << "GetMultiSeriesCounter succeeded, status: " << status << "response: " << response;
                             emit ReloadMonitoringSignal(counter);
                         } else {
-                            qCritical() << "Response is not an object!";
+                            logWarning << "Response is not an object!";
                         }
                     }
                     emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
