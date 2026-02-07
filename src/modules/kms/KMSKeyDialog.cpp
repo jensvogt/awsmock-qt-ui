@@ -6,6 +6,7 @@
 
 #include <modules/kms/KMSKeyDialog.h>
 #include "ui_KMSKeyDialog.h"
+#include "dto/kms/Origin.h"
 
 KMSKeyDialog::KMSKeyDialog(const QString &keyId, QWidget *parent) : BaseDialog(parent), _ui(new Ui::KMSKeyDialog) {
 
@@ -43,12 +44,18 @@ void KMSKeyDialog::Initialize() {
     _ui->keySpecCombo->addItems(GetKeySpecNames());
     _ui->keyStateCombo->addItems(GetKeyStateNames());
     _ui->keyUsageCombo->addItems(GetKeyUsageNames());
+    _ui->originCombo->addItems(GetOriginNames());
 
-    // Enable origin
-    _ui->originEdit->setDisabled(false);
-    connect(_ui->originEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+    // Origin
+    connect(_ui->originCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
         _changed = true;
-        _keyCounter.origin = text;
+        _keyCounter.origin = OriginFromString(text);
+    });
+
+    // State
+    connect(_ui->keyStateCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        _changed = true;
+        _keyCounter.keyState = KeyStateFromString(text);
     });
 
     // Enable description
@@ -66,6 +73,7 @@ void KMSKeyDialog::HandleGetKeyCounterSignal(const KMSGetKeyCounterResponse &res
     _ui->idEdit->setText(_keyCounter.keyId);
     _ui->arnEdit->setText(_keyCounter.arn);
     _ui->arnEdit->setText(_keyCounter.arn);
+    _ui->descriptionEdit->setText(_keyCounter.description);
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(_keyCounter.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(_keyCounter.modified));
 
@@ -73,6 +81,7 @@ void KMSKeyDialog::HandleGetKeyCounterSignal(const KMSGetKeyCounterResponse &res
     _ui->keySpecCombo->setCurrentText(KeySpecToString(_keyCounter.keySpec));
     _ui->keyStateCombo->setCurrentText(KeyStateToString(_keyCounter.keyState));
     _ui->keyUsageCombo->setCurrentText(KeyUsageToString(_keyCounter.keyUsage));
+    _ui->originCombo->setCurrentText(OriginToString(_keyCounter.origin));
 }
 
 void KMSKeyDialog::HandleAccept() {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
+    <width>1183</width>
     <height>673</height>
    </rect>
   </property>
@@ -48,13 +48,6 @@
       <widget class="QLabel" name="originLabel">
        <property name="text">
         <string>Origin:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLineEdit" name="originEdit">
-       <property name="enabled">
-        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -116,6 +109,9 @@
      <item row="3" column="1">
       <widget class="QComboBox" name="keyUsageCombo"/>
      </item>
+     <item row="5" column="0">
+      <widget class="QComboBox" name="originCombo"/>
+     </item>
     </layout>
    </item>
    <item>
@@ -152,7 +148,6 @@
  <tabstops>
   <tabstop>idEdit</tabstop>
   <tabstop>arnEdit</tabstop>
-  <tabstop>originEdit</tabstop>
   <tabstop>keySpecCombo</tabstop>
   <tabstop>keyStateCombo</tabstop>
   <tabstop>keyUsageCombo</tabstop>

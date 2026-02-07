@@ -85,7 +85,7 @@ void KMSService::UpdateKeyCounter(const KMSUpdateKeyCounterRequest &request) {
                       },
                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
-                              emit ReloadKeySignal();
+                              emit ReloadKeysSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }
@@ -110,7 +110,7 @@ void KMSService::DeleteKey(const QString &keyId) {
                       },
                       [this, timer](const bool success, QByteArray, int, const QString &error) {
                           if (success) {
-                              emit ReloadKeySignal();
+                              emit ReloadKeysSignal();
                           } else {
                               QMessageBox::critical(nullptr, "Error", error);
                           }

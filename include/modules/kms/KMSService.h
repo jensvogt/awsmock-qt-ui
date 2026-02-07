@@ -72,7 +72,7 @@ signals:
     /**
      * @brief Send when a new key list is available
      */
-    void ReloadKeySignal();
+    void ReloadKeysSignal();
 
 private:
     /**

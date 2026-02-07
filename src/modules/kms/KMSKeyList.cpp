@@ -9,7 +9,7 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
     // Connect service
     _kmsService = new KMSService();
     connect(_kmsService, &KMSService::ListKeysSignal, this, &KMSKeyList::HandleListKeysSignal);
-    connect(_kmsService, &KMSService::ReloadKeySignal, this, &KMSKeyList::LoadContent);
+    connect(_kmsService, &KMSService::ReloadKeysSignal, this, &KMSKeyList::LoadContent);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);

@@ -80,7 +80,6 @@ void MainWidget::SetupLogPane() {
     connect(&_webSocket, &QWebSocket::connected, this, &MainWidget::OnConnected);
     connect(&_webSocket, &QWebSocket::textMessageReceived, this, &MainWidget::OnMessageReceived);
     connect(&_webSocket, &QWebSocket::disconnected, this, [this]() {
-        qDebug() << "Disconnected! Starting reconnect timer...";
         _reconnectTimer->start();
     });
     connect(&_webSocket, &QWebSocket::errorOccurred, [this](const QAbstractSocket::SocketError error) {

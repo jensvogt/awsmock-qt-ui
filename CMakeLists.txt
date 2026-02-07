@@ -56,7 +56,8 @@ set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h 
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
         src/modules/kms/KMSKeyDialog.cpp include/modules/kms/KMSKeyDialog.h src/modules/kms/KMSKeyDialog.ui
         include/dto/kms/KMSGetKeyCounterResponse.h
-        include/dto/kms/KMSUpdateKeyCounterRequest.h)
+        include/dto/kms/KMSUpdateKeyCounterRequest.h
+        include/dto/kms/Origin.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES}
