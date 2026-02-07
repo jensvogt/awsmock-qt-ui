@@ -35,7 +35,6 @@
 #define INITIAL_HEIGHT 1200
 
 int main(int argc, char *argv[]) {
-
     QApplication app(argc, argv);
 
     // Install the redirection
@@ -47,7 +46,7 @@ int main(int argc, char *argv[]) {
     // Translations
     QTranslator translator;
     for (const QStringList uiLanguages = QLocale::system().uiLanguages(); const QString &locale: uiLanguages) {
-        if (const QString baseName = "awsmock-qt-ui_" + QLocale(locale).name(); translator.load(":/i18n/" + baseName)) {
+        if (const QString baseName = "awsmock-qt-ui-" + QLocale(locale).name(); translator.load(":/i18n/" + baseName)) {
             QApplication::installTranslator(&translator);
             break;
         }

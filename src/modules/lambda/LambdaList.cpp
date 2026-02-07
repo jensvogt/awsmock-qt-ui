@@ -1,8 +1,6 @@
 #include <modules/lambda/LambdaList.h>
 
 LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent) {
-    setAttribute(Qt::WA_DeleteOnClose);
-
     // Set region
     _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
 

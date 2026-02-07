@@ -14,16 +14,13 @@
 
 // Awsmock includes
 #include <utils/EventBus.h>
-
-#include "DateTimeUtils.h"
-#include "DateTimeUtils.h"
+#include <utils/DateTimeUtils.h>
 
 enum LogLevel {
     ERROR,
     WARN,
     INFO,
     DEBUG,
-    TRACE,
     NONE
 };
 
@@ -32,7 +29,6 @@ static std::map<LogLevel, int> logLevelValue{
     {WARN, 4000},
     {INFO, 3000},
     {DEBUG, 2000},
-    {TRACE, 1000},
     {NONE, 0},
 };
 
@@ -40,8 +36,7 @@ static std::map<LogLevel, QString> logLevelNames{
     {ERROR, "error"},
     {WARN, "warn"},
     {INFO, "info"},
-    {DEBUG, "debug"},
-    {TRACE, "trace"},
+    {DEBUG, "debug"}
 };
 
 [[maybe_unused]] static QString LogLevelToString(const LogLevel &logLevel) {
@@ -81,7 +76,7 @@ static QStringList GetLogLevelNames() {
 class LogSignaler : public QObject {
     Q_OBJECT
 signals:
-    void newLog(int type, const QString &msg);
+    void newLog(const QString &msg);
 
 public:
     static LogSignaler &instance() {
@@ -138,13 +133,17 @@ inline void myCustomMessageHandler(QtMsgType type, const QMessageLogContext &con
     // Format the string with a timestamp
     const QString timestamp = DateTimeUtils::GetLogDateTimeFormat(QDateTime::currentDateTime());
     // Remove prefix from filename
+#ifdef _win32
     const char *lastSlash = strrchr(context.file, '/');
+#else
+    const char *lastSlash = strrchr(context.file, '\\');
+#endif
     const QString fileStr = lastSlash ? lastSlash + 1 : context.file;
     const QString finalMsg = QString("%1 [%2] [%3:%4] %5").arg(timestamp).arg(ToStrLogLevel(type)).arg(fileStr).arg(context.line).arg(msg);
 
-    // 2. Emit the signal via our Singleton
+    // Emit the signal via our Singleton
     if (ToValueLogLevel(type) >= LogSignaler::instance().GetLevel()) {
-        emit LogSignaler::instance().newLog(ToValueLogLevel(type), finalMsg);
+        emit LogSignaler::instance().newLog(finalMsg);
     }
 }
 
