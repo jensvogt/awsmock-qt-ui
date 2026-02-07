@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.5](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.4...v1.10.5) (2026-02-07)
+
+
+### Bug Fixes
+
+* add some KMS key update/edit stuff ([8321bec](https://github.com/jensvogt/awsmock-qt-ui/commit/8321bec5c6495752ddfcdd6346ef6e1fc087a464))
+* add some KMS key update/edit stuff ([6501ef7](https://github.com/jensvogt/awsmock-qt-ui/commit/6501ef7fdc793c95b4dca334b67846a0168ca3fb))
+
 ## [1.10.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.3...v1.10.4) (2026-02-06)
 
 
