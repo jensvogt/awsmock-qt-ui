@@ -57,4 +57,12 @@ static std::map<KeySpec, QString> keySpecNames{
     return KeySpec::SYMMETRIC_DEFAULT;
 }
 
+static QStringList GetKeySpecNames() {
+    QStringList keyStates;
+    for (auto &snd: keySpecNames | std::views::values) {
+        keyStates << snd;
+    }
+    return keyStates;
+}
+
 #endif// AWSMOCK_QT_UI_KMS_KEY_SPEC_H

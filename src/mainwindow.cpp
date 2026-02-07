@@ -9,9 +9,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(_moduleService, &ModuleService::ExportResponseSignal, this, &WriteInfrastructureExport);
     connect(_moduleService, &ModuleService::CleanResponseSignal, this, &CleanInfrastructureResponse);
 
-    setWindowTitle("AwsMock UI v" + QString(APP_VERSION));
-    resize(1600, 900);
-
     // Start pinging server
     StartServerPing();
 
@@ -42,7 +39,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() {
+    _pingThread->quit();
+    _pingThread->wait(3000);
+    delete _pingThread;
+};
 
 void MainWindow::StartServerPing() {
 

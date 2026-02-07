@@ -57,6 +57,11 @@ struct KeyCounter {
     QString description;
 
     /**
+     * Origin
+     */
+    QString origin;
+
+    /**
      * Creation date
      */
     QDateTime created;
@@ -71,6 +76,7 @@ struct KeyCounter {
         keyId = jsonObject["keyId"].toString();
         arn = jsonObject["keyArn"].toString();
         description = jsonObject["description"].toString();
+        origin = jsonObject["origin"].toString();
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
@@ -81,6 +87,7 @@ struct KeyCounter {
         jsonObject["keyId"] = keyId;
         jsonObject["keyArn"] = arn;
         jsonObject["description"] = description;
+        jsonObject["origin"] = origin;
         jsonObject["created"] = created.toString(Qt::ISODate);
         jsonObject["modified"] = modified.toString(Qt::ISODate);
         return jsonObject;

@@ -49,4 +49,12 @@ static std::map<KeyState, QString> KeyStateNames{
     return KeyState::UNAVAILABLE;
 }
 
+static QStringList GetKeyStateNames() {
+    QStringList keyStates;
+    for (auto &snd: KeyStateNames | std::views::values) {
+        keyStates << snd;
+    }
+    return keyStates;
+}
+
 #endif// AWSMOCK_QT_UI_KMS_KEY_STAT_H
