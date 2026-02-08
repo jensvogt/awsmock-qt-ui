@@ -370,47 +370,41 @@ jobs:
           modules: "qtcharts qtimageformats qtwebsockets"
           install-deps: true
 
-      - name: Install linuxdeploy
-        shell: bash
+      # Download linuxdeploy
+      - name: Download linuxdeploy
         run: |
-          wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-          chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-          sudo mv linuxdeployqt-continuous-x86_64.AppImage /usr/local/bin/linuxdeployqt
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+          chmod +x linuxdeploy*.AppImage
 
       - name: Configure (Linux)
         shell: bash
         run: |
           mkdir -p $BUILD_DIR
-          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/awsmock-qt-ui
 
       - name: Build (Linux)
         shell: bash
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
+          mkdir -p AppDir
+          cp $BUILD/awsmock-qt-ui AppDir/usr/local/awsmock-qt-ui/bin/
+          cp dist/etc/awsmock-qt-ui.json AppDir/usr/local/awsmock-qt-ui/etc
 
       # Prepare the .deb package directory
       - name: Prepare package structure
         run: |
-          export VERSION=$SEMVER
-          # Create a staging folder (AppDir)
-          mkdir -p deploy/usr/local/awsmock-qt-ui/bin
-          mkdir -p deploy/usr/local/awsmock-qt-ui/etc
-          cp $BUILD_DIR/awsmock-qt-ui deploy/usr/local/awsmock-qt-ui/bin
-          cp ./dist/etc/awsmock-qt-ui.json deploy/usr/local/awsmock-qt-ui/etc
-          
-          # Add your .desktop file and Icon (Required for AppImage)
-          cp resources/awsmock-qt-ui.desktop deploy/
-          cp resources/common/awsmock.png deploy/usr/local/awsmock-qt-ui/etc
-          
-          # linuxdeployqt (ignores internal system libs, bundles Qt libs)
-          linuxdeployqt deploy/awsmock-qt-ui.desktop -appimage -verbose=2
+          export QML_SOURCES_PATHS=$GITHUB_WORKSPACE
+          export EXTRA_PLATFORM_PLUGINS=wayland
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
 
       # Upload artifact
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: installer-package-linux
-          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.installer
+          name: ${{ env.APP_NAME }}-AppImage
+          path: ./*.AppImage
 
   publish:
     name: Publish Release & Attach Installers
@@ -448,10 +442,10 @@ jobs:
           name: rpm-package-linux
           path: artifacts/linux
 
-      - name: Download Linux RPM package
+      - name: Download Linux installer package
         uses: actions/download-artifact@v4
         with:
-          name: installer-package-linux
+          name: ${{ env.APP_NAME }}-AppImage
           path: artifacts/linux
 
       - name: Download Windows Updates
