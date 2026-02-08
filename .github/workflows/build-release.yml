@@ -389,7 +389,7 @@ jobs:
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
           mkdir -p AppDir
-          cp $BUILD/awsmock-qt-ui AppDir/usr/local/awsmock-qt-ui/bin/
+          cp $BUILD_DIR/awsmock-qt-ui AppDir/usr/local/awsmock-qt-ui/bin/
           cp dist/etc/awsmock-qt-ui.json AppDir/usr/local/awsmock-qt-ui/etc
 
       # Prepare the .deb package directory
