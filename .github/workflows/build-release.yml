@@ -403,7 +403,12 @@ jobs:
           cp resources/common/awsmock.png deploy/usr/local/awsmock-qt-ui/etc
           
           # linuxdeployqt (ignores internal system libs, bundles Qt libs)
-          linuxdeployqt deploy/usr/local/awsmock-qt-ui/bin/awsmock-qt-ui -appimage -unsupported-allow-new-glibc
+          linuxdeployqt \
+            --appdir deploy \
+            --executable deploy/usr/local/bin/awsmock-qt-ui \
+            --desktop-file deploy/awsmock-qt-ui.desktop \
+            --icon-file deploy/usr/local/awsmock-qt-ui/etc/awsmock.png \
+            --output appimage
 
       # Upload artifact
       - name: Upload installer
