@@ -380,16 +380,18 @@ jobs:
         shell: bash
         run: |
           mkdir -p $BUILD_DIR
-          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/awsmock-qt-ui
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build (Linux)
         shell: bash
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
-          mkdir -p AppDir/usr/local/awsmock-qt-ui/bin
-          mkdir -p AppDir/usr/local/awsmock-qt-ui/etc
-          cp $BUILD_DIR/awsmock-qt-ui AppDir/usr/local/awsmock-qt-ui/bin/
-          cp dist/etc/awsmock-qt-ui.json AppDir/usr/local/awsmock-qt-ui/etc
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/etc
+          cp $BUILD_DIR/awsmock-qt-ui AppDir/usr/bin
+          cp dist/etc/awsmock-qt-ui.json AppDir/etc/
+          cp dist/etc/awsmock-qt-ui.desktop AppDir/
+          cp dist/etc/awsmock.png AppDir/
 
       # Prepare the .deb package directory
       - name: Prepare package structure
