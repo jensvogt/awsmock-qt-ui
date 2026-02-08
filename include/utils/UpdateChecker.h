@@ -2,8 +2,8 @@
 // Created by vogje01 on 2/8/26.
 //
 
-#ifndef AWSMOCK_QT_UI_UPDATECHECKER_H
-#define AWSMOCK_QT_UI_UPDATECHECKER_H
+#ifndef AWSMOCK_QT_UI_UPDATE_CHECKER_H
+#define AWSMOCK_QT_UI_UPDATE_CHECKER_H
 
 // Qt includes
 #include <QNetworkAccessManager>
@@ -27,6 +27,7 @@ public:
 
         QNetworkReply *reply = manager.get(request);
         connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+            logInfo << reply->errorString();
             if (reply->error() == QNetworkReply::NoError) {
                 const QString latestVersion = QString(reply->readAll()).trimmed();
                 compareVersions(latestVersion);
@@ -54,4 +55,4 @@ private:
 signals:
     void UpdateAvailable(const QString &ver);
 };
-#endif //AWSMOCK_QT_UI_UPDATECHECKER_H
+#endif //AWSMOCK_QT_UI_UPDATE_CHECKER_H
