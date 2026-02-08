@@ -419,7 +419,7 @@ jobs:
           cp ./artifacts/rpm-package-linux/*.rpm public/ || true
           cp -r ./artifacts/repository/* public/ || true
           cp .github/pages/index.html public/index.html || true
-          cp .github/version.txt public/version.txt || true
+          cp version.txt public/version.txt || true
           find . -ls
 
       - name: Generate files.json
