@@ -386,16 +386,16 @@ jobs:
         shell: bash
         run: |
           cmake --build $BUILD_DIR --parallel $(nproc)
+
+      # Prepare the .deb package directory
+      - name: Prepare package structure
+        run: |
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/etc
           cp $BUILD_DIR/awsmock-qt-ui AppDir/usr/bin
           cp dist/etc/awsmock-qt-ui.json AppDir/etc/
           cp dist/etc/awsmock-qt-ui.desktop AppDir/
           cp dist/etc/awsmock.png AppDir/
-
-      # Prepare the .deb package directory
-      - name: Prepare package structure
-        run: |
           export QML_SOURCES_PATHS=$GITHUB_WORKSPACE
           ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
 
