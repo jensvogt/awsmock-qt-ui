@@ -70,7 +70,7 @@ jobs:
       - name: Install Qt and Qt Installer Framework (IFW)
         shell: powershell
         run: |
-          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts qtwebsockets
+          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts qtwebsockets Network
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
 
       - name: Configure CMake (Windows)
@@ -293,7 +293,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: qtcharts qtimageformats qtwebsockets
+          modules: qtcharts qtimageformats qtwebsockets Network
           install-deps: true
 
       - name: Configure & Build
