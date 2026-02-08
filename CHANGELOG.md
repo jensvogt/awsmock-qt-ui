@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.10.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.12...v1.10.13) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([84fb3e6](https://github.com/jensvogt/awsmock-qt-ui/commit/84fb3e6f7349f4002ae729b058fcbc0d4b149ba0))
+* new linux installer ([ded02b2](https://github.com/jensvogt/awsmock-qt-ui/commit/ded02b23a8a8f7ff893a0081dbf4904143c9be42))
+* new linux installer ([967e4f9](https://github.com/jensvogt/awsmock-qt-ui/commit/967e4f96269e7f481b98c6ec9a9012cb75a06622))
+* new linux installer ([341c48e](https://github.com/jensvogt/awsmock-qt-ui/commit/341c48eb0537eaffc0f0cd7bf31ed55be797b1b3))
+* new linux installer ([f560b02](https://github.com/jensvogt/awsmock-qt-ui/commit/f560b02396655d47d04a292e6fae77488c7a7ced))
+* new linux installer ([fb26086](https://github.com/jensvogt/awsmock-qt-ui/commit/fb2608670965743a33e387d8ced9d041f59ad203))
+* new linux installer ([d2efd35](https://github.com/jensvogt/awsmock-qt-ui/commit/d2efd3528e50a2f152fa98fd1f933dcd98a373fd))
+* new linux installer ([f4c011a](https://github.com/jensvogt/awsmock-qt-ui/commit/f4c011a20333958218091cea3078170127a9492c))
+* new linux installer ([33f7735](https://github.com/jensvogt/awsmock-qt-ui/commit/33f7735f8420e5eb541e0b01593d91f5c36eeb72))
+* new linux installer ([ed80bbf](https://github.com/jensvogt/awsmock-qt-ui/commit/ed80bbf65eedb78dc92a346a1e92cf78f098bb2c))
+* new linux installer ([1a5b69d](https://github.com/jensvogt/awsmock-qt-ui/commit/1a5b69db982dcd143f7d45baa338041414bc2baf))
+* new linux installer ([859b770](https://github.com/jensvogt/awsmock-qt-ui/commit/859b7704b7e200eaa51f9bd4665d65a69fbc475b))
+* new linux installer ([9873f60](https://github.com/jensvogt/awsmock-qt-ui/commit/9873f60050577a3bb364927b57fd1c457f4aa188))
+* new linux installer ([1861941](https://github.com/jensvogt/awsmock-qt-ui/commit/186194182da3095cbf19f2702b0926c0452c5f04))
+* new linux installer ([c7c5764](https://github.com/jensvogt/awsmock-qt-ui/commit/c7c57645b2c5e2c1812573ddd68ca722efa6f668))
+* new linux installer ([02f1723](https://github.com/jensvogt/awsmock-qt-ui/commit/02f1723066a1ed9819cec38fb5204ace20d38841))
+* new linux installer ([aac6c1e](https://github.com/jensvogt/awsmock-qt-ui/commit/aac6c1e1f634d20b322869f63e4dd5ac972639c9))
+* new linux installer ([095af8d](https://github.com/jensvogt/awsmock-qt-ui/commit/095af8de635ebaebdf2e18c9cc5e26a29105a8a9))
+* new linux installer ([7f5fd77](https://github.com/jensvogt/awsmock-qt-ui/commit/7f5fd7779f979caf175f099be0805bc37530c246))
+* new linux installer ([590f4bd](https://github.com/jensvogt/awsmock-qt-ui/commit/590f4bde842163a1655c52fc42121c18188c7e54))
+
 ## [1.10.12](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.11...v1.10.12) (2026-02-08)
 
 
