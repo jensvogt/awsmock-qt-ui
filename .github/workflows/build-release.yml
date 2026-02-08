@@ -335,6 +335,82 @@ jobs:
           name: rpm-package-linux
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
 
+  build-linux-installer:
+    name: Build & Package (Linux Debian package)
+    runs-on: ubuntu-20.04
+    needs: release-please
+    #if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    env:
+      BUILD_DIR: "${{ github.workspace }}/build-linux"
+      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Install dependencies
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
+            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libcurl4-openssl-dev
+          sudo gem install --no-document fpm
+
+      - name: Get version
+        id: get_version
+        run: |
+          CLEAN="${SEMVER#v}"
+          echo "version=$CLEAN" >> $GITHUB_OUTPUT
+
+      - name: Install Qt via install-qt-action
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          modules: "qtcharts qtimageformats qtwebsockets"
+          install-deps: true
+
+      - name: Install linuxdeploy
+        shell: bash
+        run: |
+          wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+          chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+          sudo mv linuxdeployqt-continuous-x86_64.AppImage /usr/local/bin/linuxdeployqt
+
+      - name: Configure (Linux)
+        shell: bash
+        run: |
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (Linux)
+        shell: bash
+        run: |
+          cmake --build $BUILD_DIR --parallel $(nproc)
+
+      # Prepare the .deb package directory
+      - name: Prepare package structure
+        run: |
+          # Create a staging folder (AppDir)
+          mkdir -p deploy/usr/local/awsmock-qt-ui/bin
+          mkdir -p deploy/usr/local/awsmock-qt-ui/etc
+          cp $BUILD_DIR/awsmock-qt-ui deploy/usr/local/awsmock-qt-ui/bin
+          cp ./dist/etc/awsmock-qt-ui.json deploy/usr/local/awsmock-qt-ui/etc
+          
+          # Add your .desktop file and Icon (Required for AppImage)
+          cp resources/awsmock-qt-ui deploy/
+          cp resources/awsmock.png deploy/
+          
+          # linuxdeployqt (ignores internal system libs, bundles Qt libs)
+          linuxdeployqt deploy/usr/local/awsmock-qt-ui -appimage -always-set-rpath
+
+      # Step 7: Upload .deb artifact
+      - name: Upload .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-package-linux
+          path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.installer
+
   publish:
     name: Publish Release & Attach Installers
     runs-on: ubuntu-latest
@@ -371,6 +447,12 @@ jobs:
           name: rpm-package-linux
           path: artifacts/linux
 
+      - name: Download Linux RPM package
+        uses: actions/download-artifact@v4
+        with:
+          name: installer-package-linux
+          path: artifacts/linux
+
       - name: Download Windows Updates
         uses: actions/download-artifact@v4
         with:
@@ -385,6 +467,7 @@ jobs:
             artifacts/macos/*.dmg
             artifacts/linux/*.deb
             artifacts/linux/*.rpm
+            artifacts/linux/*.installer
             artifacts/repository/*
           name: Release ${{ env.SEMVER }}
           tag_name: ${{ env.SEMVER }}
@@ -417,6 +500,7 @@ jobs:
           cp ./artifacts/installer-macos/*.dmg public/ || true
           cp ./artifacts/deb-package-linux/*.deb public/ || true
           cp ./artifacts/rpm-package-linux/*.rpm public/ || true
+          cp ./artifacts/installer-package-linux/*.installer public/ || true
           cp -r ./artifacts/repository/* public/ || true
           cp .github/pages/index.html public/index.html || true
           cp version.txt public/version.txt || true

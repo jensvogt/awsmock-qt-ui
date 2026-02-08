@@ -43,7 +43,8 @@ private:
             logInfo << "Update Available! Current:" << currentV.toString() << "Latest:" << latest;
             emit UpdateAvailable(latest);
         } else {
-            qInfo() << "You are up to date.";
+            logInfo << "You have already the latest version";
+            emit UpdateAvailable({});
         }
     }
 

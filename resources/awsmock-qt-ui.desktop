@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=AwsMock Qt UI
+Comment=UI for the awsmock simulation
+Exec=/usr/local/awsmock-qt-ui/bin/awsmock-qt-ui
+Icon=/usr/local/awsmock-qt-ui/etc/awsmock.png
+Terminal=false
+Categories=Utility;
+
