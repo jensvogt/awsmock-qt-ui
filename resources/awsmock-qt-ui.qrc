@@ -42,6 +42,7 @@
         <file>light/stop.svg</file>
         <file>light/stopped.svg</file>
         <file>light/touch.svg</file>
+        <file>light/update.svg</file>
         <file>light/upload.svg</file>
         <file>dark/about.svg</file>
         <file>dark/add.svg</file>
@@ -84,6 +85,7 @@
         <file>dark/stop.svg</file>
         <file>dark/stopped.svg</file>
         <file>dark/touch.svg</file>
+        <file>dark/update.svg</file>
         <file>dark/upload.svg</file>
     </qresource>
     <qresource prefix="/styles">

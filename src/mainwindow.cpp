@@ -37,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             }
         }
     });
+
+    // Updater
+    _updateChecker = new UpdateChecker(this);
 }
 
 MainWindow::~MainWindow() {
@@ -126,6 +129,13 @@ void MainWindow::SetupMenuBar() {
         aboutDialog.exec();
     });
     helpMenu->addAction(aboutAction);
+
+    // About
+    const auto updateAction = new QAction(IconUtils::GetIcon("update"), tr("&Update"), this);
+    connect(updateAction, &QAction::triggered, this, [this]() {
+        _updateChecker->checkForUpdates();
+    });
+    helpMenu->addAction(updateAction);
 }
 
 void MainWindow::ImportInfrastructure() const {

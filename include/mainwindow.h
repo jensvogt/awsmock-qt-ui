@@ -48,6 +48,7 @@
 #include <modules/dynamodb/DynamoDbItemList.h>
 
 #include "MainRouter.h"
+#include "utils/UpdateChecker.h"
 
 #define PAGE_DASHBOARD 0
 #define PAGE_SQS 1
@@ -69,10 +70,7 @@ public:
 
     void StartServerPing();
 
-private
-    slots:
-    
-
+private slots:
     void UpdateStatusBar(const QString &text) const;
 
 private:
@@ -132,11 +130,17 @@ private:
      * @brief Server label in status bar
      */
     QLabel *_timerLabel{};
+
+    /**
+     * @brief Ping thread
+     */
     QThread *_pingThread{};
 
     /**
      * @brief Pin server timer
      */
     QTimer *_pingTimer{};
+
+    UpdateChecker *_updateChecker{};
 };
 #endif // AWSMOCK_QT_UI_MAIN_WINDOW_H
