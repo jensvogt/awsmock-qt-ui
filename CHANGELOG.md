@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.12](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.11...v1.10.12) (2026-02-08)
+
+
+### Bug Fixes
+
+* position of dialogs ([9bb3c56](https://github.com/jensvogt/awsmock-qt-ui/commit/9bb3c5687bf21c28b04c32245b4ee65c8bf08e43))
+
 ## [1.10.11](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.10...v1.10.11) (2026-02-08)
 
 
