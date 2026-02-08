@@ -41,7 +41,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Updater
     _updateChecker = new UpdateChecker(this);
     connect(_updateChecker, &UpdateChecker::UpdateAvailable, this, [](const QString &version) {
-        QMessageBox::information(nullptr, "Info", "A new version is available, version: " + version);
+        if (version.isEmpty()) {
+            QMessageBox::information(nullptr, "Info", "You have already the latest version.");
+        } else {
+            QMessageBox::information(nullptr, "Info", "A new version is available, version: " + version);
+        }
     });
 }
 
