@@ -131,7 +131,7 @@ void MainWindow::SetupMenuBar() {
     helpMenu->addAction(aboutAction);
 
     // About
-    const auto updateAction = new QAction(IconUtils::GetIcon("update"), tr("&Update"), this);
+    const auto updateAction = new QAction(IconUtils::GetIcon("update"), tr("Check for &Update"), this);
     connect(updateAction, &QAction::triggered, this, [this]() {
         _updateChecker->checkForUpdates();
     });

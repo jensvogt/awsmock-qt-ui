@@ -27,6 +27,7 @@ public:
 
         QNetworkReply *reply = manager.get(request);
         connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+            QString latest = reply->errorString();
             logInfo << reply->errorString();
             if (reply->error() == QNetworkReply::NoError) {
                 const QString latestVersion = QString(reply->readAll()).trimmed();
