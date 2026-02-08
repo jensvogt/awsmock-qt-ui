@@ -336,8 +336,8 @@ jobs:
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
 
   build-linux-installer:
-    name: Build & Package (Linux Debian package)
-    runs-on: ubuntu-20.04
+    name: Build & Package (Linux installer)
+    runs-on: ubuntu-22.04
     needs: release-please
     #if: ${{ needs.release-please.outputs.release_created == 'true' }}
     env:
