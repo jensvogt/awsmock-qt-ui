@@ -44,6 +44,10 @@ endif ()
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
+set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
+        src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
+        include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
+        include/modules/dashboard/CrossHairChartView.h)
 set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessageAddDialog.ui
         include/modules/sqs/SQSMessageAddDialog.h src/modules/sqs/SQSMessageDetailsDialog.cpp
         src/modules/sqs/SQSMessageDetailsDialog.ui include/modules/sqs/SQSMessageDetailsDialog.h
@@ -51,108 +55,53 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         include/modules/sqs/SQSQueueDetailsDialog.h src/modules/sqs/SQSService.cpp include/modules/sqs/SQSService.h
         src/modules/sqs/SQSQueueList.cpp include/modules/sqs/SQSQueueList.h src/modules/sqs/SQSMessageList.cpp
         include/modules/sqs/SQSMessageList.h)
+set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
+        include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
+        src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp
+        src/modules/sns/SNSTopicDetailsDialog.ui include/modules/sns/SNSTopicDetailsDialog.h
+        src/modules/sns/SNSTopicList.cpp include/modules/sns/SNSTopicList.h)
+set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
+        include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
+        include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h
+        src/modules/s3/S3ObjectEditDialog.cpp src/modules/s3/S3ObjectEditDialog.ui include/modules/s3/S3ObjectEditDialog.h)
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
         src/modules/kms/KMSKeyDialog.cpp include/modules/kms/KMSKeyDialog.h src/modules/kms/KMSKeyDialog.ui
-        include/dto/kms/KMSGetKeyCounterResponse.h
-        include/dto/kms/KMSUpdateKeyCounterRequest.h
-        include/dto/kms/Origin.h)
+        include/dto/kms/KMSGetKeyCounterResponse.h include/dto/kms/KMSUpdateKeyCounterRequest.h include/dto/kms/Origin.h)
+set(APPLICATION_SOURCES src/modules/application/ApplicationList.cpp include/modules/application/ApplicationList.h
+        src/modules/application/ApplicationService.cpp include/modules/application/ApplicationService.h
+        src/modules/application/ApplicationAddDialog.cpp include/modules/application/ApplicationAddDialog.h
+        src/modules/application/ApplicationEditDialog.cpp src/modules/application/ApplicationEditDialog.ui
+        include/modules/application/ApplicationEditDialog.h src/modules/application/ApplicationReloadDialog.cpp
+        include/modules/application/ApplicationReloadDialog.h src/modules/application/ApplicationDependencyDialog.cpp
+        include/modules/application/ApplicationDependencyDialog.h src/modules/application/ApplicationUploadCodeDialog.cpp
+        src/modules/application/ApplicationUploadCodeDialog.ui include/modules/application/ApplicationUploadCodeDialog.h
+        src/modules/application/ApplicationUploadCodeDialog.cpp include/modules/application/ApplicationUploadCodeDialog.h
+        src/modules/application/ApplicationEnvironmentDialog.cpp src/modules/application/ApplicationEnvironmentDialog.ui
+        include/modules/application/ApplicationEnvironmentDialog.h src/modules/application/ApplicationTagDialog.cpp
+        src/modules/application/ApplicationTagDialog.ui include/modules/application/ApplicationTagDialog.h
+        src/modules/application/ApplicationDependencyDialog.cpp src/modules/application/ApplicationDependencyDialog.ui
+        include/modules/application/ApplicationDependencyDialog.h src/modules/application/ApplicationLogsDialog.cpp
+        src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h)
+set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
-set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES}
-        src/modules/dashboard/Dashboard.cpp
-        include/modules/dashboard/Dashboard.h
-        src/modules/dashboard/Dashboard.ui
-        src/modules/dashboard/DashboardService.cpp
-        include/modules/dashboard/DashboardService.h
-        include/modules/dashboard/ChartConfig.h
-        include/modules/dashboard/CrossHairChartView.h
-        src/modules/module/ModuleService.cpp
-        include/modules/module/ModuleService.h
-        src/modules/application/ApplicationList.cpp
-        include/modules/application/ApplicationList.h
-        src/modules/application/ApplicationService.cpp
-        include/modules/application/ApplicationService.h
-        src/modules/application/ApplicationAddDialog.cpp
-        include/modules/application/ApplicationAddDialog.h
-        src/modules/application/ApplicationEditDialog.cpp
-        src/modules/application/ApplicationEditDialog.ui
-        include/modules/application/ApplicationEditDialog.h
-        src/modules/application/ApplicationReloadDialog.cpp
-        include/modules/application/ApplicationReloadDialog.h
-        src/modules/application/ApplicationDependencyDialog.cpp
-        include/modules/application/ApplicationDependencyDialog.h
-        src/modules/application/ApplicationUploadCodeDialog.cpp
-        src/modules/application/ApplicationUploadCodeDialog.ui
-        include/modules/application/ApplicationUploadCodeDialog.h
-        src/modules/application/ApplicationUploadCodeDialog.cpp
-        include/modules/application/ApplicationUploadCodeDialog.h
-        src/modules/application/ApplicationEnvironmentDialog.cpp
-        src/modules/application/ApplicationEnvironmentDialog.ui
-        include/modules/application/ApplicationEnvironmentDialog.h
-        src/modules/application/ApplicationTagDialog.cpp
-        src/modules/application/ApplicationTagDialog.ui
-        include/modules/application/ApplicationTagDialog.h
-        src/modules/application/ApplicationDependencyDialog.cpp
-        src/modules/application/ApplicationDependencyDialog.ui
-        include/modules/application/ApplicationDependencyDialog.h
-        src/modules/application/ApplicationLogsDialog.cpp
-        src/modules/application/ApplicationLogsDialog.ui
-        include/modules/application/ApplicationLogsDialog.h
+set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h
+        src/utils/Configuration.cpp include/utils/Configuration.h src/utils/EditConfigDialog.cpp src/utils/EditConfigDialog.ui
+        include/utils/EditConfigDialog.h src/utils/RestManager.cpp include/utils/RestManager.h src/utils/TableUtils.cpp
+        include/utils/TableUtils.h src/utils/IconUtils.cpp include/utils/IconUtils.h include/utils/EventBus.h
+        src/utils/BaseDialog.cpp include/utils/BaseDialog.h src/utils/BasePage.cpp include/utils/BasePage.h
+        include/utils/NonEmptyValidator.h src/utils/IconUtils.cpp)
+set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
+        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${UTILS_SOURCES}
         src/modules/ftp/FTPUploadDialog.cpp
         src/modules/ftp/FTPUploadDialog.ui
         include/modules/ftp/FTPUploadDialog.h
         include/modules/ftp/FTPClient.h
         include/modules/ftp/CurlHandle.h
-        src/modules/sns/SNSMessageDetailsDialog.cpp
-        src/modules/sns/SNSMessageDetailsDialog.ui
-        include/modules/sns/SNSMessageDetailsDialog.h
-        src/modules/sns/SNSMessageList.cpp
-        include/modules/sns/SNSMessageList.h
-        src/modules/sns/SNSService.cpp
-        include/modules/sns/SNSService.h
-        src/modules/sns/SNSTopicDetailsDialog.cpp
-        src/modules/sns/SNSTopicDetailsDialog.ui
-        include/modules/sns/SNSTopicDetailsDialog.h
-        src/modules/sns/SNSTopicList.cpp
-        include/modules/sns/SNSTopicList.h
-        src/modules/s3/S3BucketList.cpp
-        include/modules/s3/S3BucketList.h
-        src/modules/s3/S3Service.cpp
-        include/modules/s3/S3Service.h
-        src/modules/s3/S3BucketEditDialog.cpp
-        src/modules/s3/S3BucketEditDialog.ui
-        include/modules/s3/S3BucketEditDialog.h
-        src/modules/s3/S3ObjectList.cpp
-        include/modules/s3/S3ObjectList.h
-        src/modules/s3/S3ObjectEditDialog.cpp
-        src/modules/s3/S3ObjectEditDialog.ui
-        include/modules/s3/S3ObjectEditDialog.h
         src/modules/docker/DockerLogClient.cpp
         include/modules/docker/DockerLogClient.h
-        src/utils/About.cpp
-        src/utils/About.ui
-        include/utils/About.h
-        include/utils/About.h
-        src/utils/Configuration.cpp
-        include/utils/Configuration.h
-        src/utils/EditConfigDialog.cpp
-        src/utils/EditConfigDialog.ui
-        include/utils/EditConfigDialog.h
-        src/utils/RestManager.cpp
-        include/utils/RestManager.h
-        src/utils/TableUtils.cpp
-        include/utils/TableUtils.h
-        src/utils/IconUtils.cpp
-        include/utils/IconUtils.h
-        include/utils/EventBus.h
-        src/utils/BaseDialog.cpp
-        include/utils/BaseDialog.h
-        src/utils/BasePage.cpp
-        include/utils/BasePage.h
-        include/utils/NonEmptyValidator.h
-        src/utils/IconUtils.cpp
         include/modules/lambda/LambdaList.h
         include/modules/lambda/LambdaService.h
         include/dto/lambda/LambdaCounter.h
