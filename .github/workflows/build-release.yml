@@ -391,6 +391,7 @@ jobs:
       # Prepare the .deb package directory
       - name: Prepare package structure
         run: |
+          export VERSION=$SEMVER
           # Create a staging folder (AppDir)
           mkdir -p deploy/usr/local/awsmock-qt-ui/bin
           mkdir -p deploy/usr/local/awsmock-qt-ui/etc
@@ -402,7 +403,7 @@ jobs:
           cp resources/common/awsmock.png deploy/usr/local/awsmock-qt-ui/etc
           
           # linuxdeployqt (ignores internal system libs, bundles Qt libs)
-          linuxdeployqt deploy/usr/local/awsmock-qt-ui -appimage -always-set-rpath
+          linuxdeployqt deploy/usr/local/awsmock-qt-ui -appimage -unsupported-allow-new-glibc
 
       # Step 7: Upload .deb artifact
       - name: Upload .deb
