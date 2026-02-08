@@ -112,7 +112,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
         const QString objectId = _tableWidget->item(row, 5)->text();
 
         // Open details dialog
-        S3ObjectEditDialog dialog(objectId);
+        S3ObjectEditDialog dialog(objectId, this);
         dialog.exec();
     });
 
@@ -171,7 +171,7 @@ void S3ObjectList::HandleReloadObjectSignal() {
     NotifyStatusBar();
 }
 
-void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
+void S3ObjectList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
@@ -179,27 +179,27 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     menu.setToolTipsVisible(true);
-    //QAction *purgeAction = menu.addAction(QIcon(":/icons/purge.png"), "Purge Queue");
-    //purgeAction->setToolTip("Purge the bucket");
-    /*QAction *redriveAction = menu.addAction(QIcon(":/icons/redrive.png"), "Redrive Queue");
-    redriveAction->setToolTip("Redrive all objects");*/
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Object");
     editAction->setToolTip("Edit the S3 object");
+
+    menu.addSeparator();
+
     QAction *touchAction = menu.addAction(IconUtils::GetIcon("touch"), "Touch Object");
     touchAction->setToolTip("Touch the object");
+
     menu.addSeparator();
+
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Object");
     deleteAction->setToolTip("Delete the object");
 
     const QString key = _tableWidget->item(row, 0)->text();
     const QString objectId = _tableWidget->item(row, 5)->text();
-    if (const auto selectedAction = menu.exec(_tableWidget->viewport()->mapToGlobal(pos));
-        selectedAction == deleteAction) {
+    if (const auto selectedAction = menu.exec(_tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
         _s3Service->DeleteObject(_bucketName, key);
     } else if (selectedAction == touchAction) {
-        _s3Service->DeleteObject(_bucketName, key);
+        _s3Service->TouchObject(_bucketName, key);
     } else if (selectedAction == editAction) {
-        S3ObjectEditDialog dialog(objectId);
+        S3ObjectEditDialog dialog(objectId, this);
         dialog.exec();
     }
 }

@@ -167,7 +167,7 @@ void MainWidget::SetupLocalLogs() {
     // Log level combo
     _ui->localLogLevelCombo->addItems(GetLogLevelNames());
     _ui->localLogLevelCombo->setCurrentText(LogLevelToString(_localLogLevel));
-    connect(_ui->localLogLevelCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+    connect(_ui->localLogLevelCombo, &QComboBox::currentTextChanged, this, [](const QString &text) {
         LogSignaler::instance().SetLevel(LogLevelToValue(LogLevelFromString(text)));
     });
 

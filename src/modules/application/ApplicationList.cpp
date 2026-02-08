@@ -104,7 +104,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
         // Extract ARN and URL
         const QString name = tableWidget->item(row, 0)->text();
 
-        ApplicationEditDialog dialog(name);
+        ApplicationEditDialog dialog(name, this);
         dialog.exec();
     });
 
@@ -218,10 +218,10 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
         selectedAction == editAction) {
-        ApplicationEditDialog dialog(name);
+        ApplicationEditDialog dialog(name, this);
         dialog.exec();
     } else if (selectedAction == logsAction) {
-        auto *dialog = new ApplicationLogsDialog(name, containerId);
+        auto *dialog = new ApplicationLogsDialog(name, containerId, this);
         dialog->setModal(false);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
@@ -243,7 +243,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         _applicationService->DeleteApplication(name);
     } else if (selectedAction == editAction) {
-        ApplicationEditDialog dialog(name);
+        ApplicationEditDialog dialog(name, this);
         dialog.exec();
     }
     LoadContent();
