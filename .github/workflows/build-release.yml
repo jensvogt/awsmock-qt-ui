@@ -398,8 +398,8 @@ jobs:
           cp ./dist/etc/awsmock-qt-ui.json deploy/usr/local/awsmock-qt-ui/etc
           
           # Add your .desktop file and Icon (Required for AppImage)
-          cp resources/awsmock-qt-ui deploy/
-          cp resources/awsmock.png deploy/
+          cp resources/awsmock-qt-ui.desktop deploy/
+          cp resources/common/awsmock.png deploy/usr/local/awsmock-qt-ui/etc
           
           # linuxdeployqt (ignores internal system libs, bundles Qt libs)
           linuxdeployqt deploy/usr/local/awsmock-qt-ui -appimage -always-set-rpath
