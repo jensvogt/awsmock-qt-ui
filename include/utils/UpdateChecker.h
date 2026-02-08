@@ -27,8 +27,6 @@ public:
 
         QNetworkReply *reply = manager.get(request);
         connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-            QString latest = reply->errorString();
-            logInfo << reply->errorString();
             if (reply->error() == QNetworkReply::NoError) {
                 const QString latestVersion = QString(reply->readAll()).trimmed();
                 compareVersions(latestVersion);
@@ -39,11 +37,10 @@ public:
 
 private:
     void compareVersions(const QString &latest) {
-        QVersionNumber currentV = QVersionNumber::fromString(APP_VERSION);
-        QVersionNumber latestV = QVersionNumber::fromString(latest);
+        const QVersionNumber currentV = QVersionNumber::fromString(APP_VERSION);
 
-        if (latest > currentVersion) {
-            qInfo() << "Update Available! Current:" << currentVersion << "Latest:" << latest;
+        if (const QVersionNumber latestV = QVersionNumber::fromString(latest); currentV < latestV) {
+            logInfo << "Update Available! Current:" << currentV.toString() << "Latest:" << latest;
             emit UpdateAvailable(latest);
         } else {
             qInfo() << "You are up to date.";

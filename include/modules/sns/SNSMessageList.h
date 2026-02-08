@@ -81,7 +81,7 @@ private slots:
      *
      * @param pos position in table
      */
-    void ShowContextMenu(const QPoint &pos) const;
+    void ShowContextMenu(const QPoint &pos);
 
 private:
     /**

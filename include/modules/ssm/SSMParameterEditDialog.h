@@ -75,6 +75,11 @@ public:
      */
     void SetupTagsTab();
 
+    /**
+     * @brief Open context menu
+     *
+     * @param pos mouse pointer position
+     */
     void ShowContextMenu(const QPoint &pos);
 
 private:

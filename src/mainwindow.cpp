@@ -40,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // Updater
     _updateChecker = new UpdateChecker(this);
+    connect(_updateChecker, &UpdateChecker::UpdateAvailable, this, [](const QString &version) {
+        QMessageBox::information(nullptr, "Info", "A new version is available, version: " + version);
+    });
 }
 
 MainWindow::~MainWindow() {
@@ -130,7 +133,7 @@ void MainWindow::SetupMenuBar() {
     });
     helpMenu->addAction(aboutAction);
 
-    // About
+    // Check for updates
     const auto updateAction = new QAction(IconUtils::GetIcon("update"), tr("Check for &Update"), this);
     connect(updateAction, &QAction::triggered, this, [this]() {
         _updateChecker->checkForUpdates();

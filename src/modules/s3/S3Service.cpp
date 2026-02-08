@@ -42,9 +42,7 @@ void S3Service::ListBuckets(const QString &prefix) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                       });
 }
 
@@ -68,9 +66,7 @@ void S3Service::PurgeBucket(const QString &bucketName) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("PurgeBucket", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("PurgeBucket", timer.elapsed());
                       });
 }
 
@@ -95,9 +91,7 @@ void S3Service::AddBucket(const QString &bucketName) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("AddBucket", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("AddBucket", timer.elapsed());
                       });
 }
 
@@ -139,9 +133,7 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("UpdateBucket", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UpdateBucket", timer.elapsed());
                       });
 }
 
@@ -167,9 +159,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("DeleteBucket", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteBucket", timer.elapsed());
                       });
 }
 
@@ -197,9 +187,7 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetBucketDetails", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetBucketDetails", timer.elapsed());
                       });
 }
 
@@ -242,9 +230,7 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("ListObjects", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListObjects", timer.elapsed());
                       });
 }
 
@@ -273,9 +259,7 @@ void S3Service::GetObjectDetails(const QString &objectId) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetObjectDetails", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetObjectDetails", timer.elapsed());
                       });
 }
 
@@ -310,9 +294,7 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("UploadObject", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
                       });
 }
 
@@ -348,12 +330,35 @@ void S3Service::UpdateObject(const QString &region, const QString &bucketName, c
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("UploadObject", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
                       });
 }
 
+void S3Service::TouchObject(const QString &bucketName, const QString &key) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["bucket"] = bucketName;
+    jRequest["key"] = key;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(_url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "TouchObject"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadObjectsSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteObject", timer.elapsed());
+                      });
+}
 
 void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
     QElapsedTimer timer;
@@ -378,8 +383,6 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("DeleteObject", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteObject", timer.elapsed());
                       });
 }

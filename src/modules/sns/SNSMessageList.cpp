@@ -112,9 +112,8 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
         const int row = index.row();
 
         const QString messageId = _tableWidget->item(row, 0)->text();
-        if (SNSMessageDetailsDialog dialog(messageId); dialog.exec() == QDialog::Accepted) {
-            qDebug() << "SQS Queue edit dialog exit";
-        }
+        SNSMessageDetailsDialog dialog(messageId, this);
+        dialog.exec();
     });
 
     // Add context menu
@@ -173,7 +172,7 @@ void SNSMessageList::HandleReloadMessageSignal() {
     NotifyStatusBar();
 }
 
-void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
+void SNSMessageList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
@@ -181,9 +180,18 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     menu.setToolTipsVisible(true);
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Message");
+    editAction->setToolTip("Edit the message");
+
+    menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
-    if (const auto selectedAction = menu.exec(_tableWidget->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+
+    if (const auto selectedAction = menu.exec(_tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        const QString messageId = _tableWidget->item(row, 0)->text();
+        SNSMessageDetailsDialog dialog(messageId, this);
+        dialog.exec();
+    } else if (selectedAction == deleteAction) {
         const QString messageId = _tableWidget->item(row, 0)->text();
         _snsService->DeleteMessage(_topicArn, messageId);
     }

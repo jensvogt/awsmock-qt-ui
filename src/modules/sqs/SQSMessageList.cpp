@@ -102,17 +102,14 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     tableWidget->addAction(GetRefreshAction(this));
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this,
-            [this](const QModelIndex &index) {
-                // Get the position
-                const int row = index.row();
+    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
 
-                const QString messageId = tableWidget->item(row, 0)->text();
-                if (SQSMessageDetailsDialog dialog(messageId);
-                    dialog.exec() == QDialog::Accepted) {
-                    qDebug() << "SQS Queue edit dialog exit";
-                }
-            });
+        const QString messageId = tableWidget->item(row, 0)->text();
+        SQSMessageDetailsDialog dialog(messageId, this);
+        dialog.exec();
+    });
 
     // Add context menu
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -172,7 +169,7 @@ void SQSMessageList::HandleReloadMessageSignal() const {
     _sqsService->ListMessages(_queueArn, prefixValue);
 }
 
-void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
+void SQSMessageList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
 
@@ -180,6 +177,9 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     menu.setToolTipsVisible(true);
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Message");
+    editAction->setToolTip("Edit message");
+
     QAction *resendAction = menu.addAction(IconUtils::GetIcon("resend"), "Resend Message");
     resendAction->setToolTip("Resend message");
     if (_isDlq) {
@@ -189,7 +189,11 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == resendAction) {
+    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        const QString messageId = tableWidget->item(row, 0)->text();
+        SQSMessageDetailsDialog dialog(messageId, this);
+        dialog.exec();
+    } else if (selectedAction == resendAction) {
         const QString queueArn = tableWidget->item(row, 7)->text();
         const QString messageId = tableWidget->item(row, 0)->text();
         _sqsService->ResendMessage(queueArn, messageId);

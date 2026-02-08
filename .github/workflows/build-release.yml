@@ -420,7 +420,7 @@ jobs:
           cp -r ./artifacts/repository/* public/ || true
           cp .github/pages/index.html public/index.html || true
           cp version.txt public/version.txt || true
-          find . -ls
+      #          find . -ls
 
       - name: Generate files.json
         run: |

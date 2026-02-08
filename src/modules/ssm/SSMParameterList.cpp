@@ -145,7 +145,7 @@ void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse 
     _tableView->selectRow(selectedRow);
 }
 
-void SSMParameterList::ShowContextMenu(const QPoint &pos) const {
+void SSMParameterList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex proxyIndex = _tableView->indexAt(pos);
     if (!proxyIndex.isValid()) return;
 
@@ -163,7 +163,7 @@ void SSMParameterList::ShowContextMenu(const QPoint &pos) const {
     if (const auto selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
         _ssmService->DeleteParameter(parameterName);
     } else if (selectedAction == editAction) {
-        SSMParameterEditDialog dialog(parameterName);
+        SSMParameterEditDialog dialog(parameterName, this);
         dialog.exec();
     }
 }

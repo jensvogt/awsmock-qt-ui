@@ -96,7 +96,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
         // Extract ARN
         const auto secretId = _dataModel->item(index.row(), 1)->text();
 
-        SecretsDetailsDialog dialog(secretId);
+        SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();
     });
 
@@ -159,45 +159,13 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Secret");
     editAction->setToolTip("Edit the secret.");
 
-    // QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the lambda logs");
-    // logsAction->setToolTip("Show the lambda logs");
-    // if (containerId.isEmpty()) {
-    //     logsAction->setDisabled(true);
-    // }
-    //
-    // menu.addSeparator();
-    //
-    // QAction *enableAction = menu.addAction(IconUtils::GetIcon("enabled"), "Enable Lambda");
-    // enableAction->setToolTip("Enable the lambda.");
-    //
-    // QAction *disableAction = menu.addAction(IconUtils::GetIcon("disabled"), "Disable Lambda");
-    // disableAction->setToolTip("Disable the lambda.");
-    //
-    // menu.addSeparator();
-    //
-    // QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Lambda");
-    // startAction->setToolTip("Start the lambda");
-    //
-    // QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Lambda");
-    // stopAction->setToolTip("Stop the lambda");
-    //
-    // QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
-    // restartAction->setToolTip("Restart the lambda");
-    //
-    // menu.addSeparator();
-    //
-    // QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
-    // rebuildAction->setToolTip("Rebuild the lambda by creating a new image and container.");
-    //
-    // QAction *uploadAction = menu.addAction(IconUtils::GetIcon("upload"), "Upload Lambda Code");
-    // uploadAction->setToolTip("Upload new lambda code");
-    //
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Secret");
     deleteAction->setToolTip("Delete the secret");
+
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        SecretsDetailsDialog dialog(secretId);
+        SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
         _secretsManagerService->DeleteSecret(secretId);

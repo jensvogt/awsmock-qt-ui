@@ -161,7 +161,7 @@ void KMSKeyList::HandleListKeysSignal(const KMSListKeysResponse &listKeysRespons
     _tableView->selectRow(selectedRow);
 }
 
-void KMSKeyList::ShowContextMenu(const QPoint &pos) const {
+void KMSKeyList::ShowContextMenu(const QPoint &pos) {
 
     // Cell index
     const QModelIndex proxyIndex = _tableView->indexAt(pos);
@@ -184,7 +184,7 @@ void KMSKeyList::ShowContextMenu(const QPoint &pos) const {
     deleteAction->setToolTip("Delete the key");
 
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        KMSKeyDialog dialog(keyId);
+        KMSKeyDialog dialog(keyId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
         _kmsService->DeleteKey(keyId);

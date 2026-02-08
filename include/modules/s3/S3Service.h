@@ -78,6 +78,8 @@ public:
 
     void UpdateObject(const QString &region, const QString &bucketName, const QString &key, const QByteArray &content, const QString &storageClass, const QMap<QString, QString> &metadata);
 
+    void TouchObject(const QString &bucketName, const QString &key);
+
     void DeleteObject(const QString &bucketName, const QString &key);
 
 signals:

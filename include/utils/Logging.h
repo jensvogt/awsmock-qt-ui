@@ -94,7 +94,7 @@ public:
     }
 
 private:
-    int _level = 5000;
+    int _level = 3000;
 
     LogSignaler() = default; // Private constructor
 };

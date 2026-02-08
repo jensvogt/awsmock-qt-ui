@@ -67,7 +67,7 @@ private slots:
     /**
      * @brief Context menu callback
      */
-    void ShowContextMenu(const QPoint &pos) const;
+    void ShowContextMenu(const QPoint &pos);
 
 private:
     /**
