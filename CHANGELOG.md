@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.14](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.13...v1.10.14) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([04af671](https://github.com/jensvogt/awsmock-qt-ui/commit/04af671ddc531976845f8fd248a439bf24021b69))
+
 ## [1.10.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.12...v1.10.13) (2026-02-08)
 
 
