@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.11](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.10...v1.10.11) (2026-02-08)
+
+
+### Bug Fixes
+
+* add versioning ([3eccf02](https://github.com/jensvogt/awsmock-qt-ui/commit/3eccf02528b845465a8efd847d45b36170161db0))
+
 ## [1.10.10](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.9...v1.10.10) (2026-02-08)
 
 
