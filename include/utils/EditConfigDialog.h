@@ -31,12 +31,17 @@ public:
      */
     explicit EditConfigDialog(QWidget *parent = nullptr);
 
+    static void SetNewHostName(QString &url);
+
     /**
      * @brief Destructor
      */
     ~EditConfigDialog() override;
 
-private slots:
+private
+    slots:
+    
+
     void HandleAccept();
 
     void HandleReject();

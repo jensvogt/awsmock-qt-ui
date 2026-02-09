@@ -3,21 +3,31 @@
 #include "ui_EditConfigDialog.h"
 
 EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::EditConfigDialog) {
-
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &EditConfigDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &EditConfigDialog::HandleReject);
 
-    // Fill in combo box
-    QStringList urls;
-    const auto selectedUrl = Configuration::instance().GetValue<QString>("server.base-url", {});
+    // Server setting
+    QStringList baseUrls;
     for (auto jsonArray = Configuration::instance().GetValue<QJsonArray>("server.base-urls", {}); const QJsonValue &url: jsonArray) {
-        urls.append(url.toString());
+        baseUrls.append(url.toString());
     }
-    _ui->baseUrlComboBox->addItems(urls);
-    _ui->baseUrlComboBox->setCurrentText(selectedUrl);
-    connect(_ui->baseUrlComboBox, &QComboBox::currentTextChanged, this, [this]() {
-        Configuration::instance().SetValue("server.base-url", _ui->baseUrlComboBox->currentText());
+    const auto selectedBaseUrl = Configuration::instance().GetValue<QString>("server.base-url", {});
+    _ui->baseUrlComboBox->addItems(baseUrls);
+    _ui->baseUrlComboBox->setCurrentText(selectedBaseUrl);
+    connect(_ui->baseUrlComboBox, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        Configuration::instance().SetValue("server.base-url", text);
+    });
+
+    QStringList websocketUrls;
+    for (auto jsonArray = Configuration::instance().GetValue<QJsonArray>("server.websocket-urls", {}); const QJsonValue &url: jsonArray) {
+        websocketUrls.append(url.toString());
+    }
+    const auto selectedWebsocketUrl = Configuration::instance().GetValue<QString>("server.websocket-url", {});
+    _ui->websocketUrlCombo->addItems(websocketUrls);
+    _ui->websocketUrlCombo->setCurrentText(selectedBaseUrl);
+    connect(_ui->websocketUrlCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        Configuration::instance().SetValue("server.websocket-url", text);
     });
 
     // FTP settings
@@ -68,7 +78,6 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     _ui->styleCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.style", ""));
     connect(_ui->styleCombo, &QComboBox::currentTextChanged, this, [this]() {
         Configuration::instance().SetValue("ui.style", _ui->styleCombo->currentText());
-
     });
     const QStringList styleTypes = {"Dark", "Light"};
     _ui->styleTypeCombo->addItems(styleTypes);

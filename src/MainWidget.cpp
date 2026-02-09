@@ -146,6 +146,18 @@ void MainWidget::SetupServerLogs() {
         }
         _reconnectTimer->start();
     });
+
+    // Connect to configuration changes
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, [this](const QString &key, const QString &value) {
+        if (key == "server.websocket-url") {
+            _websocketUrl = value;
+            if (_webSocket->state() == QAbstractSocket::ConnectedState) {
+                _webSocket->disconnected();
+                _webSocket->close();
+            }
+            _reconnectTimer->start();
+        }
+    });
 }
 
 void MainWidget::SetupLocalLogs() {
