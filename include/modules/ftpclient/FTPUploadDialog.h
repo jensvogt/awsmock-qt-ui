@@ -5,19 +5,20 @@
 #ifndef AWSMOCK_QT_UI_FTP_UPLOAD_DIALOG_H
 #define AWSMOCK_QT_UI_FTP_UPLOAD_DIALOG_H
 
+// Qt includes
 #include <QDialog>
 #include <QLineEdit>
 #include <QValidator>
 #include <QMessageBox>
-#include <QDropEvent>
-#include <QFileInfo>
-#include <QMimeData>
-#include <QFileDialog>
+#include <QStandardItemModel>
+#include <QComboBox>
 
+// Awsmock includes
 #include <utils/Configuration.h>
 #include <utils/NonEmptyValidator.h>
 #include <utils/IconUtils.h>
-#include <modules/ftp/FTPClient.h>
+#include <utils/DroppableTreeView.h>
+#include <modules/ftpclient/FTPClientThread.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -43,6 +44,20 @@ public:
      */
     ~FTPUploadDialog() override;
 
+    void ConnectionSucceeded();
+
+    void ConnectionFinished();
+
+    void LogInfoMessage(const QString &message) const;
+
+    void SetupSourceTreeView();
+
+    void ReceiveTargetListItem(const QString &perm, const QString &size, const QString &name) const;
+
+    void TargetTreeClear() const;
+
+    void TargetTreeItemClicked(const QModelIndex &index) const;
+
     /**
      * @brief Text input verification
      *
@@ -58,60 +73,24 @@ public:
      */
     static void SetLineEditColor(QLineEdit *lineEdit, QValidator::State state);
 
-protected:
-    /**
-     * @brief Drag event callback.
-     *
-     * @param event drag event
-     */
-    void dragEnterEvent(QDragEnterEvent *event) override;
-
-    /**
-     * @brief Drop event callback
-     *
-     * @param event drop event
-     */
-    void dropEvent(QDropEvent *event) override;
-
-private
-    Q_SLOTS:
+private Q_SLOTS:
     /**
      * @brief Verification of the connect input fields
      */
-    
-
     void VerifyConnectInputs();
 
-    /**
-     * @brief Verification of the file input fields
-     */
-    void VerifyFileInputs();
+    void TargetTreeFileDropped(const QString &filePath) const;
 
 private:
-    /**
-     * @brief Initialize the FTP client
-     */
-    void InitFtpClient();
-
     /**
      * @brief Dialog reject callback
      */
     void HandleReject();
 
     /**
-     * @brief Dialog accept callback
-     */
-    void HandleAccept();
-
-    /**
-     * @brief Source file browse button callback
-     */
-    void BrowseSourceFile();
-
-    /**
      * UI components
      */
-    Ui::FTPUploadDialog *ui;
+    Ui::FTPUploadDialog *_ui;
 
     /**
      * @brief Source file infos
@@ -119,9 +98,29 @@ private:
     QFileInfo sourceFileInfo;
 
     /**
-     * @brief FTP client using CURL FTP client
+     * @brief FTP client thread
      */
-    embeddedmz::CFTPClient *ftpClient{};
+    FTPClientThread *_ftpClientThread;
+
+    /**
+     *  @brief Log item data model
+     */
+    QStandardItemModel *_logDataModel{};
+
+    /**
+     * @brief File tree model
+     */
+    QStandardItemModel *_targetTreeModel;
+
+    /**
+     * @brief Connected flag
+     */
+    bool _connected = false;
+
+    /**
+     * @brief Target (FTP) tree view
+     */
+    DroppableTreeView *_targetTreeView;
 };
 
 

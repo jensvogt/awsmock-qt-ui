@@ -116,9 +116,9 @@ void MainWindow::SetupMenuBar() {
     editMenu->addAction(prefAction);
 
     // Tools menu
-    const auto uploadAction = new QAction(IconUtils::GetIcon("upload"), tr("&Upload file"), this);
-    connect(uploadAction, &QAction::triggered, this, &MainWindow::FtpUpload);
-    toolsMenu->addAction(uploadAction);
+    const auto ftpClientAction = new QAction(IconUtils::GetIcon("upload"), tr("&FTP client"), this);
+    connect(ftpClientAction, &QAction::triggered, this, &MainWindow::FtpUpload);
+    toolsMenu->addAction(ftpClientAction);
 
     const auto dockerStatsAction = new QAction(IconUtils::GetIcon("docker-stats"), tr("&Docker Statistics"), this);
     connect(dockerStatsAction, &QAction::triggered, this, &MainWindow::DockerStats);

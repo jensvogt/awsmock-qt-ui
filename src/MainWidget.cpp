@@ -25,6 +25,11 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidge
 
     // Setup status bar
     SetupStatusbar();
+    // TODO:: remove
+    logInfo << QSslSocket::sslLibraryBuildVersionString();
+    logInfo << QSslSocket::supportsSsl();
+    logInfo << QSslSocket::sslLibraryVersionString();
+
 }
 
 MainWidget::~MainWidget() {

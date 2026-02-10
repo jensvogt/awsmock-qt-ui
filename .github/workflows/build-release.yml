@@ -95,7 +95,6 @@ jobs:
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
           Copy-Item $exe $dataDir
           Copy-Item dist\etc\awsmock-qt-ui.json $dataDir
-          Copy-Item extern\bin\libcurl.dll $dataDir
 
       - name: Build Qt Installer Framework installer (binarycreator)
         shell: pwsh
@@ -204,7 +203,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
-            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libcurl4-openssl-dev
+            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev
           sudo gem install --no-document fpm
 
       - name: Get version
@@ -286,7 +285,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev libcurl4-openssl-dev
+          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev
           sudo gem install --no-document fpm
 
       - name: Install Qt
@@ -353,7 +352,7 @@ jobs:
   #      - name: Install system dependencies
   #        run: |
   #          sudo apt update
-  #          sudo apt install -y ninja-build libgl1-mesa-dev libfuse2 libcurl4-openssl-dev
+  #          sudo apt install -y ninja-build libgl1-mesa-dev libfuse2
   #
   #      - name: Get version
   #        id: get_version
