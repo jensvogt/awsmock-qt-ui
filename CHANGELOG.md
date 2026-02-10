@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.10.19](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.18...v1.10.19) (2026-02-10)
+
+
+### Bug Fixes
+
+* add websocket URL to config ([c4b6eb3](https://github.com/jensvogt/awsmock-qt-ui/commit/c4b6eb3562ffc6d96f9705add21f8272da6f83e6))
+* add websocket URL to config ([d49d0a1](https://github.com/jensvogt/awsmock-qt-ui/commit/d49d0a199c04bf34754ab60eff17cc7a531052f9))
+* new linux installer ([2bc6ac5](https://github.com/jensvogt/awsmock-qt-ui/commit/2bc6ac5d7e1f5097f435e663795fdde5a92659d6))
+* remove curl ([d3cb024](https://github.com/jensvogt/awsmock-qt-ui/commit/d3cb0240364ea8f1f05af376d7123ead963b07a7))
+
 ## [1.10.18](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.17...v1.10.18) (2026-02-08)
 
 
