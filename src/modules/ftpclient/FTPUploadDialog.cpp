@@ -9,7 +9,7 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
 
     // FTP client thread
     _ftpClientThread = new FTPClientThread();
-    connect(_ftpClientThread, &FTPClientThread::emitListItem, this, &FTPUploadDialog::ReceiveTargetListItem);
+    connect(_ftpClientThread, &FTPClientThread::emitFileListItem, this, &FTPUploadDialog::ReceiveTargetListItem);
     connect(_ftpClientThread, &FTPClientThread::emitSuccess, this, &FTPUploadDialog::ConnectionSucceeded);
     connect(_ftpClientThread, &FTPClientThread::finished, _ftpClientThread, &FTPClientThread::stop);
     connect(_ftpClientThread, &FTPClientThread::emitClearList, this, &FTPUploadDialog::TargetTreeClear);
@@ -29,7 +29,7 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
 
     // Target tree view
     _targetTreeModel = new QStandardItemModel(this);
-    _targetTreeModel->setHorizontalHeaderLabels({"Permission", "Size", "Name"});
+    _targetTreeModel->setHorizontalHeaderLabels({"Name", "Size", "Type", "Last Modified", "Permission", "Owner", "Group"});
     _targetTreeView = new DroppableTreeView(this);
     _targetTreeView->setModel(_targetTreeModel);
     _targetTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -38,9 +38,19 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     _targetTreeView->setAcceptDrops(true);
     _targetTreeView->setDropIndicatorShown(true);
     _targetTreeView->setDragEnabled(true); // if you also want dragging
-    _targetTreeView->setDragDropMode(QAbstractItemView::DropOnly);
+    _targetTreeView->setDragDropMode(QAbstractItemView::DragDrop);
+
+    // Set column width
+    _targetTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _targetTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _targetTreeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _targetTreeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _targetTreeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    _targetTreeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    _targetTreeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     connect(_targetTreeView, &QTreeView::doubleClicked, this, &FTPUploadDialog::TargetTreeItemClicked);
     connect(_targetTreeView, &DroppableTreeView::FileDropped, this, &FTPUploadDialog::TargetTreeFileDropped);
+    connect(_targetTreeView, &DroppableTreeView::FileDeleted, this, &FTPUploadDialog::TargetTreeFileDeleted);
     _ui->horizontallySplitter->replaceWidget(1, _targetTreeView);
 
     // Source tree view
@@ -125,11 +135,15 @@ void FTPUploadDialog::SetupSourceTreeView() {
     _ui->horizontallySplitter->replaceWidget(0, fileDialog);*/
 }
 
-void FTPUploadDialog::ReceiveTargetListItem(const QString &perm, const QString &size, const QString &name) const {
+void FTPUploadDialog::ReceiveTargetListItem(const FileInfo &fileInfo) const {
     QList<QStandardItem *> row;
-    row << new QStandardItem(perm)
-            << new QStandardItem(size)
-            << new QStandardItem(name);
+    row << new QStandardItem(fileInfo.name)
+            << new QStandardItem(fileInfo.size > 0 ? QString::number(fileInfo.size) : nullptr)
+            << new QStandardItem(fileInfo.type)
+            << new QStandardItem(fileInfo.timestamp)
+            << new QStandardItem(fileInfo.permissions)
+            << new QStandardItem(fileInfo.username)
+            << new QStandardItem(fileInfo.groupname);
     _targetTreeModel->appendRow(row);
 }
 
@@ -139,9 +153,9 @@ void FTPUploadDialog::TargetTreeClear() const {
 
 void FTPUploadDialog::TargetTreeItemClicked(const QModelIndex &index) const {
     const QStandardItem *item = _targetTreeModel->itemFromIndex(index);
-    if (const QStandardItem *typeItem = _targetTreeModel->item(item->row(), 0); typeItem->text() != "d")
+    if (const QStandardItem *typeItem = _targetTreeModel->item(item->row(), 2); typeItem->text() != "directory")
         return;
-    const QStandardItem *fileItem = _targetTreeModel->item(item->row(), 2);
+    const QStandardItem *fileItem = _targetTreeModel->item(item->row(), 0);
     if (!_ftpClientThread->isRunning()) {
         _ftpClientThread->arglist[0] = fileItem->text().toStdString();
         _ftpClientThread->task = TCd;
@@ -240,6 +254,12 @@ void FTPUploadDialog::VerifyConnectInputs() {
 
 void FTPUploadDialog::TargetTreeFileDropped(const QString &filePath) const {
     _ftpClientThread->task = TUp;
+    _ftpClientThread->arglist[0] = filePath.toStdString();
+    _ftpClientThread->start();
+}
+
+void FTPUploadDialog::TargetTreeFileDeleted(const QString &filePath) const {
+    _ftpClientThread->task = TDele;
     _ftpClientThread->arglist[0] = filePath.toStdString();
     _ftpClientThread->start();
 }

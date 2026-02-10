@@ -37,6 +37,8 @@ public slots:
 signals:
     void emitListItem(QString, QString, QString);
 
+    void emitFileListItem(const FileInfo &item);
+
     void emitInfo(QString);
 
     void emitSuccess();

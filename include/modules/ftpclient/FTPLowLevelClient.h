@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+struct FileInfo;
 using namespace std;
 
 // Qt
@@ -44,9 +45,24 @@ inline char *qstr2pch(const QString &src) {
 }
 
 inline QString pch2qstr(char *src) {
-    return QString(QLatin1String(src));
+    return {QLatin1String(src)};
 }
 
+struct FileInfo {
+    QString type{};
+    QString name{};
+    QString groupname{};
+    QString username{};
+    QString permissions{};
+    QString timestamp{};
+    long size{};
+};
+
+/**
+ * @brief Simple FTP client
+ *
+ * @see https://github.com/zycliao
+ */
 class Client {
     //int executeFTPCmd(int stateCode, char* cmd, char* arg=nullptr);
     int getStateCode() const;
@@ -105,6 +121,7 @@ public:
     InfoThread *infoThread;
     std::string pwd;
     std::vector<std::vector<std::string> > filelist;
+    std::vector<FileInfo> fileInfoList;
 };
 
 #endif // AWSMOCK_QT_UI_LOW_LEVEL_CLIENT_H

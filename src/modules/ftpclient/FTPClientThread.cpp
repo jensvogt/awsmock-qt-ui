@@ -60,33 +60,23 @@ void FTPClientThread::stop() {
 
 void FTPClientThread::flushList() {
     emit emitClearList();
-    const int num = curClient->filelist.size();
+    const size_t num = curClient->fileInfoList.size();
+
     QString type, size, name;
     std::vector<std::string> eachrow;
+
+    // First directories
     for (int i = 0; i < num; i++) {
-        eachrow = curClient->filelist[i];
-        if (eachrow[8] == "..") {
-            emit emitListItem("d", "", "..");
-            continue;
+        if (FileInfo fileInfo = curClient->fileInfoList[i]; fileInfo.type == "directory") {
+            emit emitFileListItem(fileInfo);
         }
-        type = QString::fromStdString(eachrow[0].substr(0, 1));
-        if (type == "-")
-            continue;
-        size = QString::fromStdString(eachrow[4]);
-        name = QString::fromStdString(eachrow[8]);
-        emit emitListItem(type, size, name);
     }
+
+    // Then files
     for (int i = 0; i < num; i++) {
-        eachrow = curClient->filelist[i];
-        if (eachrow[8] == "..") {
-            continue;
+        if (FileInfo fileInfo = curClient->fileInfoList[i]; fileInfo.type != "directory") {
+            emit emitFileListItem(fileInfo);
         }
-        type = QString::fromStdString(eachrow[0].substr(0, 1));
-        if (type == "d")
-            continue;
-        size = QString::fromStdString(eachrow[4]);
-        name = QString::fromStdString(eachrow[8]);
-        emit emitListItem(type, size, name);
     }
 }
 
