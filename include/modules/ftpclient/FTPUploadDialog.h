@@ -52,7 +52,7 @@ public:
 
     void SetupSourceTreeView();
 
-    void ReceiveTargetListItem(const QString &perm, const QString &size, const QString &name) const;
+    void ReceiveTargetListItem(const FileInfo &fileInfo) const;
 
     void TargetTreeClear() const;
 
@@ -80,6 +80,8 @@ private Q_SLOTS:
     void VerifyConnectInputs();
 
     void TargetTreeFileDropped(const QString &filePath) const;
+
+    void TargetTreeFileDeleted(const QString &filePath) const;
 
 private:
     /**

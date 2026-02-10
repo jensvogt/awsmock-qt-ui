@@ -2,10 +2,10 @@
 // Qt includes
 #include <QHostInfo>
 #include <QRegularExpression>
-#include <modules/ftpclient/FTPLowLevelClient.h>
 
 // Awsmock includes
 #include <utils/Logging.h>
+#include <modules/ftpclient/FTPLowLevelClient.h>
 
 Client::Client() {
     infoThread = new InfoThread;
@@ -242,9 +242,16 @@ int Client::listPwd() {
     removeSpace(fulllist);
 
     filelist.clear();
+    fileInfoList.clear();
     vector<string> eachrow;
-    if (!currentDir.empty())
+
+    FileInfo fileInfo;
+    if (!currentDir.empty()) {
         filelist.push_back({"", "", "", "", "", "", "", "", ".."});
+        fileInfo.name = "..";
+        fileInfo.type = "directory";
+        fileInfoList.push_back(fileInfo);
+    }
     string item;
     int p = fulllist.find("\r\n");
     int lastp = 0;
@@ -256,13 +263,42 @@ int Client::listPwd() {
         int lastq = 0;
         for (int i = 0; i < 8; i++) {
             item = rawrow.substr(lastq, q - lastq);
+            if (i == 0) {
+                fileInfo.permissions = QString::fromStdString(item);
+                if (fileInfo.permissions.startsWith("-")) {
+                    fileInfo.type = "file";
+                } else if (fileInfo.permissions.startsWith("d")) {
+                    fileInfo.type = "directory";
+                } else if (fileInfo.permissions.startsWith("l")) {
+                    fileInfo.type = "link";
+                } else if (fileInfo.permissions.startsWith("s")) {
+                    fileInfo.type = "socket";
+                } else if (fileInfo.permissions.startsWith("c")) {
+                    fileInfo.type = "character device";
+                } else if (fileInfo.permissions.startsWith("b")) {
+                    fileInfo.type = "block device";
+                } else if (fileInfo.permissions.startsWith("p")) {
+                    fileInfo.type = "named pipe";
+                }
+            } else if (i == 2) {
+                fileInfo.username = QString::fromStdString(item);
+            } else if (i == 3) {
+                fileInfo.groupname = QString::fromStdString(item);
+            } else if (i == 4) {
+                fileInfo.size = stol(item);
+            } else if (i == 5 || i == 6 || i == 7) {
+                fileInfo.timestamp += QString::fromStdString(item) + " ";
+            }
             eachrow.push_back(item);
             lastq = q + 1;
             q = rawrow.find(' ', lastq);
         }
         item = rawrow.substr(lastq);
         eachrow.push_back(item);
+        fileInfo.name = QString::fromStdString(item);
         filelist.push_back(eachrow);
+        fileInfo.timestamp = fileInfo.timestamp.trimmed();
+        fileInfoList.emplace_back(fileInfo);
 
         lastp = p + 2;
         p = fulllist.find("\r\n", lastp);
