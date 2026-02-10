@@ -5,8 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-struct FileInfo;
-using namespace std;
 
 // Qt
 #include <QString>
@@ -75,7 +73,7 @@ class Client {
 
     int intoPasv();
 
-    int recvControl(int stateCode, std::string errorInfo = "0");
+    int recvControl(int stateCode, std::string errorInfo = {});
 
     void executeCmd(std::string cmd) const;
 

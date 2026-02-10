@@ -47,9 +47,7 @@ int Client::connectServer() {
     // Initialization is very important.
     if (WSAStartup(MAKEWORD(2, 2), &dat) != 0) //Windows Sockets Asynchronous启动
     {
-        infoThread->sendInfo("Init Failed!");
-        // TODO: send error log
-        //system("pause");
+        infoThread->sendInfo("Init failed!");
         return -1;
     }
 #endif
@@ -57,9 +55,7 @@ int Client::connectServer() {
     // Create a Socket
     controlSocket = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
     if (controlSocket == INVALID_SOCKET) {
-        infoThread->sendInfo("Creating Control Socket Failed.");
-        // TODO: send error log
-        //system("pause");
+        infoThread->sendInfo("Creating control socket failed.");
         return -1;
     }
     // Construct server access parameter structure
@@ -75,8 +71,7 @@ int Client::connectServer() {
     // Connect
     ret = connect(controlSocket, reinterpret_cast<sockaddr *>(&serverAddr), sizeof(serverAddr));
     if (ret == SOCKET_ERROR) {
-        infoThread->sendInfo("Control Socket Connecting Failed");
-        system("pause");
+        infoThread->sendInfo("Control socket connection failed");
         return -1;
     }
 
@@ -113,7 +108,7 @@ int Client::disconnect() {
     return 0;
 }
 
-int Client::changeDir(const string &tardir) {
+int Client::changeDir(const std::string &tardir) {
     memset(buf, 0, BUFLEN);
     executeCmd("CWD " + tardir);
     recvControl(250);
@@ -123,10 +118,10 @@ int Client::changeDir(const string &tardir) {
     return 0;
 }
 
-int Client::downFile(string remoteName, string localDir) {
-    string localFile = localDir + "/" + remoteName;
-    ofstream ofile;
-    ofile.open(localFile, ios_base::binary);
+int Client::downFile(std::string remoteName, std::string localDir) {
+    std::string localFile = localDir + "/" + remoteName;
+    std::ofstream ofile;
+    ofile.open(localFile, std::ios_base::binary);
     intoPasv();
     getFileSize(remoteName);
     executeCmd("RETR " + remoteName);
@@ -144,7 +139,7 @@ int Client::downFile(string remoteName, string localDir) {
 }
 
 //private function---------------------------------------------------------
-void Client::executeCmd(string cmd) const {
+void Client::executeCmd(std::string cmd) const {
     if (cmd.substr(0, 4) == "PASS") {
         infoThread->sendInfo("PASS ********");
     } else {
@@ -155,14 +150,14 @@ void Client::executeCmd(string cmd) const {
     send(controlSocket, cmd.c_str(), n, 0);
 }
 
-int Client::recvControl(const int stateCode, string errorInfo) {
+int Client::recvControl(const int stateCode, std::string errorInfo) {
     if (errorInfo.size() == 1)
         errorInfo = "state code error!";
     if (nextInfo.empty()) {
         Sleep(50);
         memset(buf, 0, BUFLEN);
         recvInfo.clear();
-        const ssize_t ssize = recv(controlSocket, buf, BUFLEN, 0);
+        const size_t ssize = recv(controlSocket, buf, BUFLEN, 0);
         if (ssize == BUFLEN) {
             infoThread->sendInfo("ERROR! Too long information too receive!");
             return -1;
@@ -172,7 +167,7 @@ int Client::recvControl(const int stateCode, string errorInfo) {
         recvInfo = buf;
 
         // JUNK
-        if (const ssize_t temp = static_cast<int>(recvInfo.find("\r\n226")); temp >= 0) {
+        if (const int temp = recvInfo.find("\r\n226"); temp >= 0) {
             nextInfo = recvInfo.substr(temp + 2);
         }
         // \JUNK
@@ -182,7 +177,6 @@ int Client::recvControl(const int stateCode, string errorInfo) {
 
         infoThread->sendInfo(errorInfo);
         return -1;
-
     }
     recvInfo = nextInfo;
     nextInfo.clear();
@@ -234,7 +228,7 @@ int Client::listPwd() {
     executeCmd("LIST -al");
     recvControl(150);
     memset(databuf, 0, DATABUFLEN);
-    string fulllist;
+    std::string fulllist;
     int ret = recv(dataSocket, databuf, DATABUFLEN - 1, 0);
     while (ret > 0) {
         databuf[ret] = '\0';
@@ -245,7 +239,7 @@ int Client::listPwd() {
 
     filelist.clear();
     fileInfoList.clear();
-    vector<string> eachrow;
+    std::vector<std::string> eachrow;
 
     FileInfo fileInfo;
     if (!currentDir.empty()) {
@@ -254,12 +248,12 @@ int Client::listPwd() {
         fileInfo.type = "directory";
         fileInfoList.push_back(fileInfo);
     }
-    string item;
+    std::string item;
     int p = fulllist.find("\r\n");
     int lastp = 0;
     while (p >= 0) {
         eachrow.clear();
-        string rawrow = fulllist.substr(lastp, p - lastp);
+        std::string rawrow = fulllist.substr(lastp, p - lastp);
 
         int q = rawrow.find(' ');
         int lastq = 0;
@@ -331,7 +325,7 @@ int Client::intoPasv() {
     return 0;
 }
 
-int Client::getFileSize(const string &fname) {
+int Client::getFileSize(const std::string &fname) {
     executeCmd("SIZE " + fname);
     recvControl(213);
     const char *p = buf;
@@ -347,10 +341,9 @@ int Client::getFileSize(const string &fname) {
     }
     memset(buf, 0, BUFLEN);
     return num;
-
 }
 
-int Client::upFile(const string &localName) {
+int Client::upFile(const std::string &localName) {
     // TODO:change to C++ style
     FILE *ifile = fopen(localName.c_str(), "rb");
     if (!ifile) {
@@ -360,7 +353,7 @@ int Client::upFile(const string &localName) {
 
     //get file name
     const int p = static_cast<int>(localName.find_last_of("/"));
-    const string localFileName = localName.substr(p + 1);
+    const std::string localFileName = localName.substr(p + 1);
 
     intoPasv();
     executeCmd("STOR " + localFileName);
@@ -378,7 +371,7 @@ int Client::upFile(const string &localName) {
     return 0;
 }
 
-void Client::removeSpace(string &src) {
+void Client::removeSpace(std::string &src) {
     int q;
     int p = static_cast<int>(src.find(' '));
     while (p >= 0) {
@@ -389,21 +382,21 @@ void Client::removeSpace(string &src) {
     }
 }
 
-int Client::deleteFile(const string &fname) {
+int Client::deleteFile(const std::string &fname) {
     executeCmd("DELE " + fname);
     recvControl(250);
     listPwd();
     return 0;
 }
 
-int Client::deleteDir(const string &dname) {
+int Client::deleteDir(const std::string &dname) {
     executeCmd("RMD " + dname);
     recvControl(250);
     listPwd();
     return 0;
 }
 
-int Client::rename(const string &src, const string &dst) {
+int Client::rename(const std::string &src, const std::string &dst) {
     executeCmd("RNFR " + src);
     recvControl(350);
     executeCmd("RNTO " + dst);
@@ -412,14 +405,14 @@ int Client::rename(const string &src, const string &dst) {
     return 0;
 }
 
-int Client::mkDir(const string &name) {
+int Client::mkDir(const std::string &name) {
     executeCmd("MKD " + name);
     recvControl(250);
     listPwd();
     return 0;
 }
 
-void Client::changeCurrentDir(const string &tardir) {
+void Client::changeCurrentDir(const std::string &tardir) {
     if (tardir == "..") {
         currentDir = currentDir.substr(0, currentDir.find_last_of("/"));
     } else if (tardir == "/") {
