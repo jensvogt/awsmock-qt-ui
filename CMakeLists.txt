@@ -43,8 +43,8 @@ set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashbo
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
         include/modules/dashboard/CrossHairChartView.h)
-set(FTP_SOURCES src/modules/ftpclient/FTPUploadDialog.cpp src/modules/ftpclient/FTPUploadDialog.ui
-        include/modules/ftpclient/FTPUploadDialog.h include/modules/ftpclient/FTPClientThread.h
+set(FTP_SOURCES src/modules/ftpclient/FTPClientDialog.cpp src/modules/ftpclient/FTPClientDialog.ui
+        include/modules/ftpclient/FTPClientDialog.h include/modules/ftpclient/FTPClientThread.h
         include/modules/ftpclient/FTPLowLevelClient.h src/modules/ftpclient/FTPLowLevelClient.cpp
         src/modules/ftpclient/FTPClientThread.cpp include/modules/ftpclient/FTPInfoThread.h)
 set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessageAddDialog.ui

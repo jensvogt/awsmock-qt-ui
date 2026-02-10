@@ -6,14 +6,14 @@
 #define AWSMOCK_QT_UI_LOGGING_H
 
 // C++ include
-#include<map>
+#include <map>
+#include <iostream>
 
 // Qt includes
 #include <QList>
 #include <QString>
 
 // Awsmock includes
-#include <iostream>
 #include <utils/EventBus.h>
 #include <utils/DateTimeUtils.h>
 
@@ -131,7 +131,6 @@ inline int ToValueLogLevel(const QtMsgType &logLevel) {
 }
 
 inline void myCustomMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
-
     // Format the string with a timestamp
     const QString timestamp = DateTimeUtils::GetLogDateTimeFormat(QDateTime::currentDateTime());
 

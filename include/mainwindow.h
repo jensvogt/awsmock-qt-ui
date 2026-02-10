@@ -32,7 +32,7 @@
 #include <modules/module/ShowInfrastructure.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
-#include <modules/ftpclient/FTPUploadDialog.h>
+#include <modules/ftpclient/FTPClientDialog.h>
 #include <modules/s3/S3BucketList.h>
 #include <modules/s3/S3ObjectList.h>
 #include <modules/sns/SNSTopicList.h>

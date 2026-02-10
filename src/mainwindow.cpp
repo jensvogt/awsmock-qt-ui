@@ -2,7 +2,6 @@
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-
     // Connect infrastructure signals
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -56,7 +55,6 @@ MainWindow::~MainWindow() {
 };
 
 void MainWindow::StartServerPing() {
-
     const int interval = Configuration::instance().GetValue<int>("ui.auto-update-period", 10);
 
     _pingThread = new QThread(this);
@@ -215,7 +213,7 @@ void MainWindow::ShowInfrastructureDialog() {
 }
 
 void MainWindow::FtpUpload() {
-    const auto dialog = new FTPUploadDialog(this);
+    const auto dialog = new FTPClientDialog(this);
     dialog->setModal(false);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
