@@ -246,12 +246,12 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})
 
-target_include_directories(awsmock-qt-ui PRIVATE ./include ${CURL_INCLUDE_DIRS})
+target_include_directories(awsmock-qt-ui PRIVATE ./include)
 if (WIN32)
     target_link_directories(awsmock-qt-ui PRIVATE ${CMAKE_SOURCE_DIR}/extern/lib)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets libcurl_imp)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets)
 else ()
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets curl)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES

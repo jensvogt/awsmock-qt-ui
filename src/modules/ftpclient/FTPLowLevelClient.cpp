@@ -48,7 +48,8 @@ int Client::connectServer() {
     if (WSAStartup(MAKEWORD(2, 2), &dat) != 0) //Windows Sockets Asynchronous启动
     {
         infoThread->sendInfo("Init Failed!");
-        system("pause");
+        // TODO: send error log
+        //system("pause");
         return -1;
     }
 #endif
@@ -57,7 +58,8 @@ int Client::connectServer() {
     controlSocket = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
     if (controlSocket == INVALID_SOCKET) {
         infoThread->sendInfo("Creating Control Socket Failed.");
-        system("pause");
+        // TODO: send error log
+        //system("pause");
         return -1;
     }
     // Construct server access parameter structure
