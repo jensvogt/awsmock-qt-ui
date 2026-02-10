@@ -2,30 +2,28 @@
 // Created by vogje01 on 11/8/25.
 //
 
-#include <modules/ftpclient/FTPUploadDialog.h>
-#include "ui_FTPUploadDialog.h"
+#include <modules/ftpclient/FTPClientDialog.h>
+#include "ui_FTPClientDialog.h"
 
-FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::FTPUploadDialog) {
-
+FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::FTPClientDialog) {
     // FTP client thread
     _ftpClientThread = new FTPClientThread();
-    connect(_ftpClientThread, &FTPClientThread::emitFileListItem, this, &FTPUploadDialog::ReceiveTargetListItem);
-    connect(_ftpClientThread, &FTPClientThread::emitSuccess, this, &FTPUploadDialog::ConnectionSucceeded);
+    connect(_ftpClientThread, &FTPClientThread::emitFileListItem, this, &FTPClientDialog::ReceiveTargetListItem);
+    connect(_ftpClientThread, &FTPClientThread::emitSuccess, this, &FTPClientDialog::ConnectionSucceeded);
     connect(_ftpClientThread, &FTPClientThread::finished, _ftpClientThread, &FTPClientThread::stop);
-    connect(_ftpClientThread, &FTPClientThread::emitClearList, this, &FTPUploadDialog::TargetTreeClear);
-    connect(_ftpClientThread->curClient->infoThread, &InfoThread::emitInfo, this, &FTPUploadDialog::LogInfoMessage);
+    connect(_ftpClientThread, &FTPClientThread::emitClearList, this, &FTPClientDialog::TargetTreeClear);
+    connect(_ftpClientThread->curClient->infoThread, &InfoThread::emitInfo, this, &FTPClientDialog::LogInfoMessage);
 
     // Setup UI
     _ui->setupUi(this);
 
-    // Log data model
-    _logDataModel = new QStandardItemModel(_ui->logList);
-    _ui->logList->setModel(_logDataModel);
+    // Logging panel
+    SetupLogPanel();
 
     // Connect button box
     _ui->buttonBox->button(QDialogButtonBox::Close)->setText("Close");
     _ui->buttonBox->button(QDialogButtonBox::Close)->setIcon(IconUtils::GetIcon("exit"));
-    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPUploadDialog::HandleReject);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPClientDialog::HandleReject);
 
     // Target tree view
     _targetTreeModel = new QStandardItemModel(this);
@@ -48,10 +46,14 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     _targetTreeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _targetTreeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     _targetTreeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    connect(_targetTreeView, &QTreeView::doubleClicked, this, &FTPUploadDialog::TargetTreeItemClicked);
-    connect(_targetTreeView, &DroppableTreeView::FileDropped, this, &FTPUploadDialog::TargetTreeFileDropped);
-    connect(_targetTreeView, &DroppableTreeView::FileDeleted, this, &FTPUploadDialog::TargetTreeFileDeleted);
+    connect(_targetTreeView, &QTreeView::doubleClicked, this, &FTPClientDialog::TargetTreeItemClicked);
+    connect(_targetTreeView, &DroppableTreeView::FileDropped, this, &FTPClientDialog::TargetTreeFileDropped);
+    connect(_targetTreeView, &DroppableTreeView::FileDeleted, this, &FTPClientDialog::TargetTreeFileDelete);
     _ui->horizontallySplitter->replaceWidget(1, _targetTreeView);
+
+    // Add context menu
+    _targetTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_targetTreeView, &QTableView::customContextMenuRequested, this, &FTPClientDialog::ShowTargetContextMenu);
 
     // Source tree view
     SetupSourceTreeView();
@@ -60,27 +62,27 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     const NotEmptyValidator *nameValidator = new NotEmptyValidator(this);
     _ui->serverEdit->setValidator(nameValidator);
     _ui->serverEdit->setPlaceholderText("Server hostname");
-    connect(_ui->serverEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
+    connect(_ui->serverEdit, &QLineEdit::textChanged, this, &FTPClientDialog::UpdateLineEditStyle);
 
     // Port validator
     const auto portValidator = new QIntValidator(1, 65536, this);
     _ui->portEdit->setValidator(portValidator);
     _ui->portEdit->setPlaceholderText("FTP port (1 - 65536)");
-    connect(_ui->portEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
+    connect(_ui->portEdit, &QLineEdit::textChanged, this, &FTPClientDialog::UpdateLineEditStyle);
 
     // User validator
     const NotEmptyValidator *userValidator = new NotEmptyValidator(this);
     _ui->userEdit->setValidator(userValidator);
-    connect(_ui->userEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
+    connect(_ui->userEdit, &QLineEdit::textChanged, this, &FTPClientDialog::UpdateLineEditStyle);
 
     // Password validator
     const NotEmptyValidator *passwordValidator = new NotEmptyValidator(this);
     _ui->passwordEdit->setValidator(passwordValidator);
-    connect(_ui->passwordEdit, &QLineEdit::textChanged, this, &FTPUploadDialog::UpdateLineEditStyle);
+    connect(_ui->passwordEdit, &QLineEdit::textChanged, this, &FTPClientDialog::UpdateLineEditStyle);
 
     // Connect connect button
     _ui->connectButton->setIcon(IconUtils::GetIcon("connect"));
-    connect(_ui->connectButton, &QPushButton::clicked, this, &FTPUploadDialog::VerifyConnectInputs);
+    connect(_ui->connectButton, &QPushButton::clicked, this, &FTPClientDialog::HandleConnectButton);
 
     // Setup verification
     UpdateLineEditStyle(_ui->serverEdit->text());
@@ -97,31 +99,44 @@ FTPUploadDialog::FTPUploadDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     }
 }
 
-FTPUploadDialog::~FTPUploadDialog() {
+FTPClientDialog::~FTPClientDialog() {
     delete _ftpClientThread;
     delete _ui;
 }
 
-void FTPUploadDialog::ConnectionSucceeded() {
+void FTPClientDialog::SetupLogPanel() {
+    // Log data model
+    _logDataModel = new QStandardItemModel(_ui->logList);
+    _ui->logList->setModel(_logDataModel);
+
+    _ui->logScrollButton->setText(nullptr);
+    _ui->logScrollButton->setIcon(IconUtils::GetIcon("scroll"));
+    connect(_ui->logScrollButton, &QPushButton::toggled, this, [this](bool value) {
+        _logScrolling = value;
+    });
+}
+
+void FTPClientDialog::ConnectionSucceeded() {
     if (!_connected) {
         _connected = true;
         _ui->connectButton->setText("Disconnect");
     } else {
         _connected = false;
+        _targetTreeModel->removeRows(0, _targetTreeModel->rowCount());
         _ui->connectButton->setText("Connect");
     }
 }
 
-void FTPUploadDialog::LogInfoMessage(const QString &message) const {
+void FTPClientDialog::LogInfoMessage(const QString &message) const {
     _logDataModel->appendRow(new QStandardItem(message));
 
     // Auto-scroll to bottom
-    // if (_localScrolling) {
-    _ui->logList->scrollToBottom();
-    //}
+    if (_logScrolling) {
+        _ui->logList->scrollToBottom();
+    }
 }
 
-void FTPUploadDialog::SetupSourceTreeView() {
+void FTPClientDialog::SetupSourceTreeView() {
     /*QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setFileMode(QFileDialog::ExistingFile);
     fileDialog->setOption(QFileDialog::DontUseNativeDialog, true);
@@ -135,7 +150,7 @@ void FTPUploadDialog::SetupSourceTreeView() {
     _ui->horizontallySplitter->replaceWidget(0, fileDialog);*/
 }
 
-void FTPUploadDialog::ReceiveTargetListItem(const FileInfo &fileInfo) const {
+void FTPClientDialog::ReceiveTargetListItem(const FileInfo &fileInfo) const {
     QList<QStandardItem *> row;
     row << new QStandardItem(fileInfo.name)
             << new QStandardItem(fileInfo.size > 0 ? QString::number(fileInfo.size) : nullptr)
@@ -147,11 +162,11 @@ void FTPUploadDialog::ReceiveTargetListItem(const FileInfo &fileInfo) const {
     _targetTreeModel->appendRow(row);
 }
 
-void FTPUploadDialog::TargetTreeClear() const {
+void FTPClientDialog::TargetTreeClear() const {
     _targetTreeModel->removeRows(0, _targetTreeModel->rowCount());
 }
 
-void FTPUploadDialog::TargetTreeItemClicked(const QModelIndex &index) const {
+void FTPClientDialog::TargetTreeItemClicked(const QModelIndex &index) const {
     const QStandardItem *item = _targetTreeModel->itemFromIndex(index);
     if (const QStandardItem *typeItem = _targetTreeModel->item(item->row(), 2); typeItem->text() != "directory")
         return;
@@ -163,7 +178,7 @@ void FTPUploadDialog::TargetTreeItemClicked(const QModelIndex &index) const {
     }
 }
 
-void FTPUploadDialog::UpdateLineEditStyle(const QString &text) const {
+void FTPClientDialog::UpdateLineEditStyle(const QString &text) const {
     Q_UNUSED(text);
     const auto senderEdit = qobject_cast<QLineEdit *>(sender());
     if (!senderEdit)
@@ -178,7 +193,7 @@ void FTPUploadDialog::UpdateLineEditStyle(const QString &text) const {
     SetLineEditColor(senderEdit, state);
 }
 
-void FTPUploadDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::State state) {
+void FTPClientDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::State state) {
     // Define colors
     const QString defaultStyle =
             "QLineEdit { border: 1px solid #ccc; background-color: #424242; padding: 2px; border-radius: 4px; }";
@@ -199,8 +214,7 @@ void FTPUploadDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::St
     }
 }
 
-void FTPUploadDialog::VerifyConnectInputs() {
-
+void FTPClientDialog::HandleConnectButton() {
     if (!_ftpClientThread->isRunning()) {
         if (!_connected) {
             const QString ip_addr = _ui->serverEdit->text();
@@ -213,6 +227,7 @@ void FTPUploadDialog::VerifyConnectInputs() {
             _ftpClientThread->task = TDisconnect;
             _ftpClientThread->start();
             _connected = false;
+            _targetTreeModel->removeRows(0, _targetTreeModel->rowCount());
             _ui->connectButton->setText("Connect");
         }
     }
@@ -248,22 +263,123 @@ void FTPUploadDialog::VerifyConnectInputs() {
         passwordState != QValidator::Acceptable) {
         SetLineEditColor(_ui->passwordEdit, passwordState);
         QMessageBox::warning(this, "Validation Failure", "Password cannot be empty.");
-        return;
     }
 }
 
-void FTPUploadDialog::TargetTreeFileDropped(const QString &filePath) const {
+void FTPClientDialog::ShowTargetContextMenu(const QPoint &pos) {
+    if (!_connected) {
+        return;
+    }
+
+    QMenu menu;
+
+    const QModelIndex index = _targetTreeView->indexAt(pos);
+
+    // If not valid, allow only create directory
+    if (!index.isValid()) {
+        QAction *addDirAction = menu.addAction(IconUtils::GetIcon("add-directory"), "Create directory");
+        addDirAction->setToolTip("Create directory");
+        if (const auto selectedAction = menu.exec(_targetTreeView->viewport()->mapToGlobal(pos)); selectedAction == addDirAction) {
+            TargetTreeAddDirectory();
+        }
+        return;
+    }
+
+    const int row = index.row();
+
+    const QStandardItem *item = _targetTreeModel->itemFromIndex(index);
+    const QString name = _targetTreeModel->item(item->row(), 0)->text();
+    const QString type = _targetTreeModel->item(item->row(), 2)->text();
+
+    if (type == "file") {
+        QAction *renameAction = menu.addAction(IconUtils::GetIcon("rename"), "Rename File");
+        renameAction->setToolTip("Rename the file");
+
+        menu.addSeparator();
+
+        QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete File");
+        deleteAction->setToolTip("Delete the file");
+
+        const QString filePath = _targetTreeModel->item(row, 0)->text();
+        if (const auto selectedAction = menu.exec(_targetTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
+            TargetTreeFileRename(filePath);
+        } else if (selectedAction == deleteAction) {
+            TargetTreeFileDelete(filePath);
+        }
+    } else if (type == "directory") {
+        QAction *renameAction = menu.addAction(IconUtils::GetIcon("rename"), "Rename Directory");
+        renameAction->setToolTip("Rename the directory");
+
+        menu.addSeparator();
+
+        QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Directory");
+        deleteAction->setToolTip("Delete the directory");
+
+        const QString filePath = _targetTreeModel->item(row, 0)->text();
+        if (const auto selectedAction = menu.exec(_targetTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
+            TargetTreeDirectoryRename(filePath);
+        } else if (selectedAction == deleteAction) {
+            TargetTreeDirectoryDelete(filePath);
+        }
+    }
+}
+
+void FTPClientDialog::TargetTreeFileDropped(const QString &filePath) const {
     _ftpClientThread->task = TUp;
     _ftpClientThread->arglist[0] = filePath.toStdString();
     _ftpClientThread->start();
 }
 
-void FTPUploadDialog::TargetTreeFileDeleted(const QString &filePath) const {
+void FTPClientDialog::TargetTreeFileDelete(const QString &filePath) const {
     _ftpClientThread->task = TDele;
     _ftpClientThread->arglist[0] = filePath.toStdString();
     _ftpClientThread->start();
 }
 
-void FTPUploadDialog::HandleReject() {
+void FTPClientDialog::TargetTreeFileRename(const QString &filePath) {
+    bool ok;
+    const QString newFilePath = QInputDialog::getText(this, "New File Name", "Enter new name:", QLineEdit::Normal, "", &ok);
+
+    if (!ok || newFilePath.isEmpty()) {
+        return;
+    }
+    _ftpClientThread->task = TRename;
+    _ftpClientThread->arglist[0] = filePath.toStdString();
+    _ftpClientThread->arglist[1] = newFilePath.toStdString();
+    _ftpClientThread->start();
+}
+
+void FTPClientDialog::TargetTreeAddDirectory() {
+    bool ok;
+    const QString newDirectory = QInputDialog::getText(this, "Create Directory", "Enter directory name:", QLineEdit::Normal, "", &ok);
+
+    if (!ok || newDirectory.isEmpty()) {
+        return;
+    }
+    _ftpClientThread->task = TMkd;
+    _ftpClientThread->arglist[0] = newDirectory.toStdString();
+    _ftpClientThread->start();
+}
+
+void FTPClientDialog::TargetTreeDirectoryDelete(const QString &filePath) const {
+    _ftpClientThread->task = TRmd;
+    _ftpClientThread->arglist[0] = filePath.toStdString();
+    _ftpClientThread->start();
+}
+
+void FTPClientDialog::TargetTreeDirectoryRename(const QString &filePath) {
+    bool ok;
+    const QString newFilePath = QInputDialog::getText(this, "New Directory Name", "Enter new name:", QLineEdit::Normal, "", &ok);
+
+    if (!ok || newFilePath.isEmpty()) {
+        return;
+    }
+    _ftpClientThread->task = TRename;
+    _ftpClientThread->arglist[0] = filePath.toStdString();
+    _ftpClientThread->arglist[1] = newFilePath.toStdString();
+    _ftpClientThread->start();
+}
+
+void FTPClientDialog::HandleReject() {
     accept();
 }

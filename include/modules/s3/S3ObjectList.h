@@ -76,7 +76,8 @@ signals:
      */
     void BackNavigationSignal();
 
-private slots: /**
+private slots:
+    /**
      * @brief Row context menu
      *
      * @param pos position in table

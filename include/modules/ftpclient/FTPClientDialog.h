@@ -2,8 +2,8 @@
 // Created by vogje01 on 11/8/25.
 //
 
-#ifndef AWSMOCK_QT_UI_FTP_UPLOAD_DIALOG_H
-#define AWSMOCK_QT_UI_FTP_UPLOAD_DIALOG_H
+#ifndef AWSMOCK_QT_UI_FTP_CLIENT_DIALOG_H
+#define AWSMOCK_QT_UI_FTP_CLIENT_DIALOG_H
 
 // Qt includes
 #include <QDialog>
@@ -12,6 +12,9 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <QComboBox>
+#include <QMenu>
+#include <QTableView>
+#include <QInputDialog>
 
 // Awsmock includes
 #include <utils/Configuration.h>
@@ -23,12 +26,12 @@
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
-    class FTPUploadDialog;
+    class FTPClientDialog;
 }
 
 QT_END_NAMESPACE
 
-class FTPUploadDialog final : public QDialog {
+class FTPClientDialog final : public QDialog {
     Q_OBJECT
 
 public:
@@ -37,16 +40,16 @@ public:
      *
      * @param parent parent widget
      */
-    explicit FTPUploadDialog(QWidget *parent = nullptr);
+    explicit FTPClientDialog(QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
-    ~FTPUploadDialog() override;
+    ~FTPClientDialog() override;
+
+    void SetupLogPanel();
 
     void ConnectionSucceeded();
-
-    void ConnectionFinished();
 
     void LogInfoMessage(const QString &message) const;
 
@@ -73,15 +76,40 @@ public:
      */
     static void SetLineEditColor(QLineEdit *lineEdit, QValidator::State state);
 
-private Q_SLOTS:
+private slots:
+    /**
+     * @brief Row context menu
+     *
+     * @param pos position in table
+     */
+    void ShowTargetContextMenu(const QPoint &pos);
+
     /**
      * @brief Verification of the connect input fields
      */
-    void VerifyConnectInputs();
+    void HandleConnectButton();
 
+    /**
+     * @brief A target file has been dropped into the target tree view widget
+     *
+     * @param filePath absolute file path
+     */
     void TargetTreeFileDropped(const QString &filePath) const;
 
-    void TargetTreeFileDeleted(const QString &filePath) const;
+    /**
+     * @brief A target file has been deleted
+     *
+     * @param filePath absolute file path
+     */
+    void TargetTreeFileDelete(const QString &filePath) const;
+
+    void TargetTreeDirectoryDelete(const QString &filePath) const;
+
+    void TargetTreeFileRename(const QString &filePath);
+
+    void TargetTreeAddDirectory();
+
+    void TargetTreeDirectoryRename(const QString &filePath);
 
 private:
     /**
@@ -92,7 +120,7 @@ private:
     /**
      * UI components
      */
-    Ui::FTPUploadDialog *_ui;
+    Ui::FTPClientDialog *_ui;
 
     /**
      * @brief Source file infos
@@ -108,6 +136,11 @@ private:
      *  @brief Log item data model
      */
     QStandardItemModel *_logDataModel{};
+
+    /**
+     * @brief Log scrolling flag
+     */
+    bool _logScrolling = true;
 
     /**
      * @brief File tree model
@@ -126,4 +159,4 @@ private:
 };
 
 
-#endif // AWSMOCK_QT_UI_FTP_UPLOAD_DIALOG_H
+#endif // AWSMOCK_QT_UI_FTP_CLIENT_DIALOG_H

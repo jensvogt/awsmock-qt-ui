@@ -118,7 +118,6 @@ public:
 
     InfoThread *infoThread;
     std::string pwd;
-    std::vector<std::vector<std::string> > filelist;
     std::vector<FileInfo> fileInfoList;
 };
 

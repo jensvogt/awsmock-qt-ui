@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FTPUploadDialog</class>
- <widget class="QDialog" name="FTPUploadDialog">
+ <class>FTPClientDialog</class>
+ <widget class="QDialog" name="FTPClientDialog">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -172,7 +172,43 @@
        </property>
       </widget>
      </widget>
-     <widget class="QListView" name="logList"/>
+     <widget class="QWidget" name="logMainWidget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="logScrollButton">
+           <property name="text">
+            <string>scroll</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QListView" name="logList"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>

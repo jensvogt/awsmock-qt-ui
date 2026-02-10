@@ -53,7 +53,7 @@ void FTPClientThread::run() {
 }
 
 void FTPClientThread::stop() {
-    isInterruptionRequested();
+    requestInterruption();
     quit();
     wait();
 }
@@ -61,9 +61,6 @@ void FTPClientThread::stop() {
 void FTPClientThread::flushList() {
     emit emitClearList();
     const size_t num = curClient->fileInfoList.size();
-
-    QString type, size, name;
-    std::vector<std::string> eachrow;
 
     // First directories
     for (int i = 0; i < num; i++) {

@@ -97,7 +97,7 @@ int Client::disconnect() {
     executeCmd("QUIT");
     recvControl(221);
     _ip_addr, _username, _password, INFO = "";
-    filelist.clear();
+    fileInfoList.clear();
     memset(buf, 0, BUFLEN);
     memset(databuf, 0, DATABUFLEN);
     closesocket(dataSocket);
@@ -228,6 +228,7 @@ int Client::listPwd() {
     executeCmd("LIST -al");
     recvControl(150);
     memset(databuf, 0, DATABUFLEN);
+
     std::string fulllist;
     int ret = recv(dataSocket, databuf, DATABUFLEN - 1, 0);
     while (ret > 0) {
@@ -237,13 +238,11 @@ int Client::listPwd() {
     }
     removeSpace(fulllist);
 
-    filelist.clear();
     fileInfoList.clear();
     std::vector<std::string> eachrow;
 
     FileInfo fileInfo;
     if (!currentDir.empty()) {
-        filelist.push_back({"", "", "", "", "", "", "", "", ".."});
         fileInfo.name = "..";
         fileInfo.type = "directory";
         fileInfoList.push_back(fileInfo);
@@ -257,6 +256,7 @@ int Client::listPwd() {
 
         int q = rawrow.find(' ');
         int lastq = 0;
+        fileInfo.timestamp = {};
         for (int i = 0; i < 8; i++) {
             item = rawrow.substr(lastq, q - lastq);
             if (i == 0) {
@@ -292,7 +292,6 @@ int Client::listPwd() {
         item = rawrow.substr(lastq);
         eachrow.push_back(item);
         fileInfo.name = QString::fromStdString(item);
-        filelist.push_back(eachrow);
         fileInfo.timestamp = fileInfo.timestamp.trimmed();
         fileInfoList.emplace_back(fileInfo);
 
