@@ -17,8 +17,6 @@ public:
 
     ~FTPClientThread() override;
 
-    void bind(Client *c);
-
     subThreadTask task;
     std::vector<std::string> arglist;
     Client *curClient;
