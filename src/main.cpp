@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     MainWindow w;
     w.resize(INITIAL_WIDTH, INITIAL_HEIGHT);
     w.setWindowTitle("AwsMock UI v" + QString(APP_VERSION));
-    constexpr int screenIndex = 1;
+    constexpr int screenIndex = 0;
 
     if (const QList<QScreen *> screens = QGuiApplication::screens(); screenIndex < screens.count()) {
         const QScreen *targetScreen = screens.at(screenIndex);

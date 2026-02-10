@@ -23,6 +23,8 @@
 #include <utils/DroppableTreeView.h>
 #include <modules/ftpclient/FTPClientThread.h>
 
+#include "components/FTPFileTree.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -56,10 +58,6 @@ public:
     void SetupSourceTreeView();
 
     void ReceiveTargetListItem(const FileInfo &fileInfo) const;
-
-    void TargetTreeClear() const;
-
-    void TargetTreeItemClicked(const QModelIndex &index) const;
 
     /**
      * @brief Text input verification
@@ -123,14 +121,29 @@ private:
     Ui::FTPClientDialog *_ui;
 
     /**
-     * @brief Source file infos
-     */
-    QFileInfo sourceFileInfo;
-
-    /**
      * @brief FTP client thread
      */
     FTPClientThread *_ftpClientThread;
+
+    /**
+     * @brief Local folder tree
+     */
+    FTPFileTree *_localFolderTree;
+
+    /**
+     * @brief FTP folder tree
+     */
+    FTPFileTree *_ftpFolderTree;
+
+    /**
+     * @brief Local file tree
+     */
+    FTPFileTree *_localFileTree;
+
+    /**
+     * @brief FTP folder tree
+     */
+    FTPFileTree *_ftpFileTree;
 
     /**
      *  @brief Log item data model

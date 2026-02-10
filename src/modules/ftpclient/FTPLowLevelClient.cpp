@@ -244,7 +244,7 @@ int Client::listPwd() {
     FileInfo fileInfo;
     if (!currentDir.empty()) {
         fileInfo.name = "..";
-        fileInfo.type = "directory";
+        fileInfo.type = "folder";
         fileInfoList.push_back(fileInfo);
     }
     std::string item;
@@ -264,7 +264,7 @@ int Client::listPwd() {
                 if (fileInfo.permissions.startsWith("-")) {
                     fileInfo.type = "file";
                 } else if (fileInfo.permissions.startsWith("d")) {
-                    fileInfo.type = "directory";
+                    fileInfo.type = "folder";
                 } else if (fileInfo.permissions.startsWith("l")) {
                     fileInfo.type = "link";
                 } else if (fileInfo.permissions.startsWith("s")) {
