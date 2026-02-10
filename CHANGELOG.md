@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.20](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.19...v1.10.20) (2026-02-10)
+
+
+### Bug Fixes
+
+* fix drop event, add FTP delete ([c65a914](https://github.com/jensvogt/awsmock-qt-ui/commit/c65a9143a2ff202443bd21ca09fda93715a2e635))
+* fix drop event, add FTP delete ([4731f5e](https://github.com/jensvogt/awsmock-qt-ui/commit/4731f5ebfc9872ba78a269cf51c7c967081a6ad7))
+
 ## [1.10.19](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.18...v1.10.19) (2026-02-10)
 
 
