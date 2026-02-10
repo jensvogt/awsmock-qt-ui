@@ -27,17 +27,12 @@ if (WIN32)
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
-    set(CURL_INCLUDE_DIRS "extern/include")
-    set(CURL_LIB "$<$<CONFIG:RELEASE>:${CMAKE_SOURCE_DIR}/extern/libcurl_imp.lib>"
-            "$<$<CONFIG:DEBUG>:${CMAKE_SOURCE_DIR}/extern/libcurl-d_imp.lib>")
     set(WINDOWS_ICON ${CMAKE_SOURCE_DIR}/appicon.rc)
     set(APP_ICON_RESOURCE_WINDOWS "${WINDOWS_ICON}")
 else ()
     set(CMAKE_PREFIX_PATH "~/work/Qt/6.10.1/gcc_64")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CURL_INCLUDE_DIRS "")
-    set(CURL_LIB_DIRS "")
 endif ()
 
 
@@ -48,6 +43,10 @@ set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashbo
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
         include/modules/dashboard/CrossHairChartView.h)
+set(FTP_SOURCES src/modules/ftpclient/FTPUploadDialog.cpp src/modules/ftpclient/FTPUploadDialog.ui
+        include/modules/ftpclient/FTPUploadDialog.h include/modules/ftpclient/FTPClientThread.h
+        include/modules/ftpclient/FTPLowLevelClient.h src/modules/ftpclient/FTPLowLevelClient.cpp
+        src/modules/ftpclient/FTPClientThread.cpp include/modules/ftpclient/FTPInfoThread.h)
 set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessageAddDialog.ui
         include/modules/sqs/SQSMessageAddDialog.h src/modules/sqs/SQSMessageDetailsDialog.cpp
         src/modules/sqs/SQSMessageDetailsDialog.ui include/modules/sqs/SQSMessageDetailsDialog.h
@@ -94,12 +93,7 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         src/utils/BaseDialog.cpp include/utils/BaseDialog.h src/utils/BasePage.cpp include/utils/BasePage.h
         include/utils/NonEmptyValidator.h src/utils/IconUtils.cpp)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
-        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${UTILS_SOURCES}
-        src/modules/ftp/FTPUploadDialog.cpp
-        src/modules/ftp/FTPUploadDialog.ui
-        include/modules/ftp/FTPUploadDialog.h
-        include/modules/ftp/FTPClient.h
-        include/modules/ftp/CurlHandle.h
+        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
         src/modules/docker/DockerLogClient.cpp
         include/modules/docker/DockerLogClient.h
         include/modules/lambda/LambdaList.h
@@ -113,9 +107,6 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/lambda/LambdaGetResponse.h
         include/Version.h
         include/dto/lambda/LambdaListEnvironmentResponse.h
-        src/modules/ftp/FTPClient.cpp
-        src/modules/ftp/CurlHandle.cpp
-        src/modules/ftp/CurlHandle.cpp
         cmake/version.h.in
         src/modules/lambda/LambdaEnvironmentDetailDialog.cpp
         include/modules/lambda/LambdaEnvironmentDetailDialog.h
@@ -248,6 +239,8 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/kms/KMSCreateKeyRequest.h
         include/utils/Logging.h
         include/utils/UpdateChecker.h
+        include/utils/DroppableTreeView.h
+        include/utils/NetworkUtils.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
