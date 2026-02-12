@@ -139,7 +139,7 @@ SNSMessageList::~SNSMessageList() {
 }
 
 void SNSMessageList::LoadContent() {
-    _topicArn = GetArgument<QString>("_topicArn");
+    _topicArn = GetArgument<QString>("topicArn");
     _snsService->ListMessages(_topicArn, _prefixValue);
 }
 

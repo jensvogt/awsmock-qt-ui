@@ -19,13 +19,12 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPClientDialog::HandleReject);
 
     // Local folder tree
-    _localFolderTree = new FTPFileTree(nullptr);
+    _localFolderTree = new LocalFileTree(QDir::homePath(), this);
     _localFolderTree->HideColumns({1, 2, 3, 4, 5, 6, 7, 8});
     _ui->horizontalSplitter1->addWidget(_localFolderTree);
 
     // FTP folder tree
     _ftpFolderTree = new FTPFileTree(nullptr);
-    _ftpFolderTree->HideColumns({1, 2, 3, 4, 5, 6, 7, 8});
     _ui->horizontalSplitter1->addWidget(_ftpFolderTree);
 
     connect(_ftpFolderTree, &FTPFileTree::FolderSelectedSignal, this, &FTPClientDialog::TargetFolderSelectionChanged);
@@ -34,12 +33,6 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     connect(_ftpFolderTree, &FTPFileTree::TargetTreeDirectoryRename, this, &FTPClientDialog::TargetTreeDirectoryRename);
     connect(_ftpFolderTree, &FTPFileTree::TargetTreeDirectoryDelete, this, &FTPClientDialog::TargetTreeDirectoryDelete);
     connect(_ftpFolderTree->_fileTreeView, &DroppableTreeView::FileDropped, this, &FTPClientDialog::TargetTreeFileDropped);
-
-    /*
-            // Add context menu
-            _targetTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
-            connect(_targetTreeView, &QTableView::customContextMenuRequested, this, &FTPClientDialog::ShowFileContextMenu);
-        */
 
     // FTP client thread
     _ftpClientThread = new FTPClientThread();
@@ -130,6 +123,7 @@ void FTPClientDialog::LogInfoMessage(const QString &message) const {
 }
 
 void FTPClientDialog::SetupSourceTreeView() {
+
     /*QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setFileMode(QFileDialog::ExistingFile);
     fileDialog->setOption(QFileDialog::DontUseNativeDialog, true);

@@ -50,6 +50,7 @@ protected:
             return;
 
         for (const QUrl &url: event->mimeData()->urls()) {
+            QString tmp = url.toString();
             if (QString filePath = url.toLocalFile(); !filePath.isEmpty()) {
                 emit FileDropped(filePath);
             }
@@ -62,8 +63,8 @@ protected:
         if (!index.isValid())
             return;
 
-        QAbstractItemModel *model = this->model();
-        const QString filePath = model->itemData(index)[0].toString(); // however you store it
+        const QAbstractItemModel *model = this->model();
+        const QString filePath = model->data(index, Qt::UserRole).toString(); // however you store it
 
         auto *mimeData = new QMimeData;
         mimeData->setUrls({QUrl::fromLocalFile(filePath)});
