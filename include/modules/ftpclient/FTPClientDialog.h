@@ -57,7 +57,9 @@ public:
 
     void SetupSourceTreeView();
 
-    void ReceiveTargetListItem(const FileInfo &fileInfo) const;
+    void ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const;
+
+    void TargetTreeClear() const;
 
     /**
      * @brief Text input verification
@@ -81,6 +83,8 @@ private slots:
      * @param pos position in table
      */
     void ShowTargetContextMenu(const QPoint &pos);
+
+    void TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const;
 
     /**
      * @brief Verification of the connect input fields
@@ -136,16 +140,6 @@ private:
     FTPFileTree *_ftpFolderTree;
 
     /**
-     * @brief Local file tree
-     */
-    FTPFileTree *_localFileTree;
-
-    /**
-     * @brief FTP folder tree
-     */
-    FTPFileTree *_ftpFileTree;
-
-    /**
      *  @brief Log item data model
      */
     QStandardItemModel *_logDataModel{};
@@ -156,19 +150,9 @@ private:
     bool _logScrolling = true;
 
     /**
-     * @brief File tree model
-     */
-    QStandardItemModel *_targetTreeModel;
-
-    /**
      * @brief Connected flag
      */
     bool _connected = false;
-
-    /**
-     * @brief Target (FTP) tree view
-     */
-    DroppableTreeView *_targetTreeView;
 };
 
 

@@ -1,9 +1,6 @@
 #include <modules/ftpclient/FTPClientThread.h>
 
-FTPClientThread::FTPClientThread() : task(), client(nullptr) {
-    for (int i = 0; i < 5; i++)
-        arglist.push_back("");
-    curClient = new Client();
+FTPClientThread::FTPClientThread() : task(), curClient(new Client()) {
 }
 
 FTPClientThread::~FTPClientThread() {
@@ -64,15 +61,15 @@ void FTPClientThread::flushList() {
 
     // First directories
     for (int i = 0; i < num; i++) {
-        if (FileInfo fileInfo = curClient->fileInfoList[i]; fileInfo.type == "directory") {
-            emit emitFileListItem(fileInfo);
+        if (FileInfo fileInfo = curClient->fileInfoList[i]; fileInfo.contentType == "folder") {
+            emit emitFileListItem(fileInfo, parent);
         }
     }
 
     // Then files
     for (int i = 0; i < num; i++) {
-        if (FileInfo fileInfo = curClient->fileInfoList[i]; fileInfo.type != "directory") {
-            emit emitFileListItem(fileInfo);
+        if (FileInfo fileInfo = curClient->fileInfoList[i]; fileInfo.contentType != "folder") {
+            emit emitFileListItem(fileInfo, parent);
         }
     }
 }

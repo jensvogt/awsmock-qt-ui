@@ -13,6 +13,16 @@
 
 // Awsmock includes
 #include <utils/DroppableTreeView.h>
+#include <utils/IconUtils.h>
+
+#include <components/FTPFileFilterModel.h>
+#include <components/FTPFolderFilterModel.h>
+#include <modules/ftpclient/FTPLowLevelClient.h>
+#include <components/FTPFileFilterModel.h>
+#include <modules/ftpclient/FTPLowLevelClient.h>
+
+#define FTP_FILE_TYPE_FOLDER "folder"
+#define FTP_FILE_TYPE_FILE "file"
 
 QT_BEGIN_NAMESPACE
 
@@ -29,14 +39,17 @@ public:
     /**
      * @brief Constructor
      *
+     * @param root
      * @param parent parent widget
      */
-    explicit FTPFileTree(QWidget *parent = nullptr);
+    explicit FTPFileTree(QStandardItem *root, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
     ~FTPFileTree() override;
+
+    void AddItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
     /**
      * @brief Returns the root item
@@ -47,26 +60,7 @@ public:
         return _rootItem;
     };
 
-    /**
-     * @brief Adds a folder item to the window.
-     *
-     * @param name folder name
-     */
-    void AddFolder(const QString &name) const;
-
-    /**
-     * @brief Add a file item to the tree
-     *
-     * @param name file name
-     * @param fileSize  file size
-     * @param modifiedDate modified timestamp
-     * @param permissions file permissions
-     * @param user owner
-     * @param group group
-     */
-    void AddFile(const QString &name, long fileSize, const QString &modifiedDate, const QString &permissions, const QString &user, const QString &group) const;
-
-    static QIcon GetIcon(const QString &mimeType);
+    static QIcon GetIcon(const QString &mimeType, const QString &fileType);
 
     void Clear() const;
 
@@ -75,7 +69,7 @@ public:
     void HideAllColumns() const;
 
 signals:
-    void FolderSelectedSignal(const QString &filePath);
+    void FolderSelectedSignal(const QString &filePath, QStandardItem *parent);
 
 private:
     /**
@@ -94,17 +88,33 @@ private:
     QStandardItem *_rootItem;
 
     /**
-     * @brief Target (FTP) tree view
-     */
-    QStandardItem *_currentParent;
-
-    /**
      * @brief Mime type
      */
     QMimeDatabase _mimeDb;
 
+    /**
+     * @brief Droppable file tree view
+     */
+    DroppableTreeView *_folderTreeView;
+
+    /**
+     * @brief Droppable file tree view
+     */
     DroppableTreeView *_fileTreeView;
 
+    /**
+     * @brief Filter file type proxy model
+     */
+    FTPFolderFilterModel *_folderProxyModel;
+
+    /**
+     * @brief Filter file type proxy model
+     */
+    FTPFileFilterModel *_fileProxyModel;
+
+    /**
+     * @brief Base layout
+     */
     QLayout *_layout;
 };
 

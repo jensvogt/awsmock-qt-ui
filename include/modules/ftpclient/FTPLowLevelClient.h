@@ -47,12 +47,12 @@ inline QString pch2qstr(char *src) {
 }
 
 struct FileInfo {
-    QString type{};
     QString name{};
     QString groupname{};
     QString username{};
     QString permissions{};
     QString timestamp{};
+    QString contentType{};
     long size{};
 };
 
