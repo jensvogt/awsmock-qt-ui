@@ -4,6 +4,8 @@
 
 #include <components/FTPFileTree.h>
 
+#include "mainwindow.h"
+
 FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
 
     _layout = new QVBoxLayout;
@@ -69,6 +71,23 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     // Enable sorting
     _fileTreeView->setSortingEnabled(true);
     _fileTreeView->sortByColumn(0, Qt::AscendingOrder);
+
+    // Delete button connection
+    const auto *deleteShortcut = new QShortcut(QKeySequence::Delete, _fileTreeView);
+    connect(deleteShortcut, &QShortcut::activated, this, [this]() {
+        // Get the current selection from the view
+        const QModelIndex proxyIndex = _fileTreeView->currentIndex();
+        if (!proxyIndex.isValid()) return;
+
+        // Map back to the source model
+        const QModelIndex sourceIndex = _fileProxyModel->mapToSource(proxyIndex);
+
+        // Get the item or path for the FTP command
+        const QString fullPath = sourceIndex.data(Qt::UserRole).toString();
+
+        _model->removeRow(sourceIndex.row(), sourceIndex.parent());
+        emit TargetTreeFileDeleteSignal(fullPath);
+    });
 
     // Setup columns
     SetFileHeaders(_fileTreeView);

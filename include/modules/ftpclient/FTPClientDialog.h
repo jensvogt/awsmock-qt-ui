@@ -55,8 +55,6 @@ public:
 
     void LogInfoMessage(const QString &message) const;
 
-    void SetupSourceTreeView();
-
     void ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
     /**
