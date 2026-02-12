@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.24](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.23...v1.10.24) (2026-02-12)
+
+
+### Bug Fixes
+
+* fix FTP issues ([cd1412a](https://github.com/jensvogt/awsmock-qt-ui/commit/cd1412a2f69561bf6d0af8b4e0f0be2440e3b195))
+* fix FTP issues ([5db5921](https://github.com/jensvogt/awsmock-qt-ui/commit/5db592194bacf14e294b9b93245dc7c693632dfd))
+
 ## [1.10.23](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.22...v1.10.23) (2026-02-11)
 
 
