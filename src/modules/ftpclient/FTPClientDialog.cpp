@@ -4,7 +4,6 @@
 
 #include <modules/ftpclient/FTPClientDialog.h>
 #include "ui_FTPClientDialog.h"
-#include "components/FTPFileTree.h"
 
 FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::FTPClientDialog) {
 
@@ -30,11 +29,16 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     _ui->horizontalSplitter1->addWidget(_ftpFolderTree);
 
     connect(_ftpFolderTree, &FTPFileTree::FolderSelectedSignal, this, &FTPClientDialog::TargetFolderSelectionChanged);
+    connect(_ftpFolderTree, &FTPFileTree::TargetTreeFileRenameSignal, this, &FTPClientDialog::TargetTreeFileRename);
+    connect(_ftpFolderTree, &FTPFileTree::TargetTreeFileDeleteSignal, this, &FTPClientDialog::TargetTreeFileDelete);
+    connect(_ftpFolderTree, &FTPFileTree::TargetTreeDirectoryRename, this, &FTPClientDialog::TargetTreeDirectoryRename);
+    connect(_ftpFolderTree, &FTPFileTree::TargetTreeDirectoryDelete, this, &FTPClientDialog::TargetTreeDirectoryDelete);
+    connect(_ftpFolderTree->_fileTreeView, &DroppableTreeView::FileDropped, this, &FTPClientDialog::TargetTreeFileDropped);
 
     /*
             // Add context menu
             _targetTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
-            connect(_targetTreeView, &QTableView::customContextMenuRequested, this, &FTPClientDialog::ShowTargetContextMenu);
+            connect(_targetTreeView, &QTableView::customContextMenuRequested, this, &FTPClientDialog::ShowFileContextMenu);
         */
 
     // FTP client thread
@@ -232,67 +236,7 @@ void FTPClientDialog::HandleConnectButton() {
     }
 }
 
-void FTPClientDialog::ShowTargetContextMenu(const QPoint &pos) {
-    if (!_connected) {
-        return;
-    }
-
-    /*    QMenu menu;
-
-        const QModelIndex index = _targetTreeView->indexAt(pos);
-
-        // If not valid, allow only create directory
-        if (!index.isValid()) {
-            QAction *addDirAction = menu.addAction(IconUtils::GetIcon("add-directory"), "Create directory");
-            addDirAction->setToolTip("Create directory");
-            if (const auto selectedAction = menu.exec(_targetTreeView->viewport()->mapToGlobal(pos)); selectedAction == addDirAction) {
-                TargetTreeAddDirectory();
-            }
-            return;
-        }
-
-        const int row = index.row();
-
-        const QStandardItem *item = _targetTreeModel->itemFromIndex(index);
-        const QString name = _targetTreeModel->item(item->row(), 0)->text();
-        const QString contentType = _targetTreeModel->item(item->row(), 2)->text();
-
-        if (contentType == "file") {
-            QAction *renameAction = menu.addAction(IconUtils::GetIcon("rename"), "Rename File");
-            renameAction->setToolTip("Rename the file");
-
-            menu.addSeparator();
-
-            QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete File");
-            deleteAction->setToolTip("Delete the file");
-
-            const QString filePath = _targetTreeModel->item(row, 0)->text();
-            if (const auto selectedAction = menu.exec(_targetTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
-                TargetTreeFileRename(filePath);
-            } else if (selectedAction == deleteAction) {
-                TargetTreeFileDelete(filePath);
-            }
-        } else if (contentType == "folder") {
-            QAction *renameAction = menu.addAction(IconUtils::GetIcon("rename"), "Rename Directory");
-            renameAction->setToolTip("Rename the directory");
-
-            menu.addSeparator();
-
-            QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Directory");
-            deleteAction->setToolTip("Delete the directory");
-
-            const QString filePath = _targetTreeModel->item(row, 0)->text();
-            if (const auto selectedAction = menu.exec(_targetTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
-                TargetTreeDirectoryRename(filePath);
-            } else if (selectedAction == deleteAction) {
-                TargetTreeDirectoryDelete(filePath);
-            }
-        }*/
-}
-
 void FTPClientDialog::TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const {
-    //_ftpFileTree->Clear();
-    parent->removeRows(0, parent->rowCount());
     if (!_ftpClientThread->isRunning()) {
         _ftpClientThread->arglist[0] = absPath.toStdString();
         _ftpClientThread->parent = parent;

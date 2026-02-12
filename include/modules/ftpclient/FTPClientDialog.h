@@ -22,8 +22,7 @@
 #include <utils/IconUtils.h>
 #include <utils/DroppableTreeView.h>
 #include <modules/ftpclient/FTPClientThread.h>
-
-#include "components/FTPFileTree.h"
+#include <components/FTPFileTree.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -59,8 +58,6 @@ public:
 
     void ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
-    void TargetTreeClear() const;
-
     /**
      * @brief Text input verification
      *
@@ -77,13 +74,6 @@ public:
     static void SetLineEditColor(QLineEdit *lineEdit, QValidator::State state);
 
 private slots:
-    /**
-     * @brief Row context menu
-     *
-     * @param pos position in table
-     */
-    void ShowTargetContextMenu(const QPoint &pos);
-
     void TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const;
 
     /**

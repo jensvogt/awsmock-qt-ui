@@ -2,9 +2,9 @@
 // Created by vogje01 on 2/10/26.
 //
 
-#include <components/FTPFileTree.h>
+#include <components/LocalFileTree.h>
 
-FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
+LocalFileTree::LocalFileTree(QWidget *parent) : QWidget(parent) {
 
     _layout = new QVBoxLayout;
     setLayout(_layout);
@@ -48,7 +48,7 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     // Enable sorting
     _folderTreeView->setSortingEnabled(true);
     _folderTreeView->sortByColumn(0, Qt::AscendingOrder);
-    connect(_folderTreeView, &FTPFileTree::customContextMenuRequested, this, &FTPFileTree::ShowFolderContextMenu);
+    connect(_folderTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFolderContextMenu);
 
     // Setup model
     _fileProxyModel = new FileFilterModel();
@@ -82,7 +82,7 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     // Enable sorting
     _fileTreeView->setSortingEnabled(true);
     _fileTreeView->sortByColumn(0, Qt::AscendingOrder);
-    connect(_fileTreeView, &FTPFileTree::customContextMenuRequested, this, &FTPFileTree::ShowFileContextMenu);
+    connect(_fileTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFileContextMenu);
 
     // Synchronization
     //  connect(_model, &QStandardItemModel::rowsInserted, _fileProxyModel, &QSortFilterProxyModel::invalidate);
@@ -106,10 +106,9 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     _layout->addWidget(_fileTreeView);
 }
 
-FTPFileTree::~FTPFileTree() {
-}
+LocalFileTree::~LocalFileTree() = default;
 
-void FTPFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const {
+void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const {
 
     if (HasChild(parent->index(), 0, fileInfo.name, _model)) {
         return;
@@ -137,32 +136,32 @@ void FTPFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const
     }
 }
 
-QIcon FTPFileTree::GetIcon(const QString &mimeType, const QString &fileType) {
+QIcon LocalFileTree::GetIcon(const QString &mimeType, const QString &fileType) {
     if (fileType == FTP_FILE_TYPE_FOLDER) {
         return IconUtils::GetIcon(fileType.toLower());
     }
     return QIcon::fromTheme("text-x-generic");
 }
 
-void FTPFileTree::Clear() const {
+void LocalFileTree::Clear() const {
     _model->removeRows(0, _model->rowCount());
 }
 
-void FTPFileTree::HideColumns(const QVector<int> &columns) const {
+void LocalFileTree::HideColumns(const QVector<int> &columns) const {
     _folderTreeView->setHeaderHidden(true);
     for (const auto &column: columns) {
         _folderTreeView->setColumnHidden(column, true);
     }
 }
 
-void FTPFileTree::HideAllColumns() const {
+void LocalFileTree::HideAllColumns() const {
     _folderTreeView->setHeaderHidden(true);
     for (int i = 0; i < _model->columnCount(); i++) {
         _folderTreeView->setColumnHidden(i, true);
     }
 }
 
-bool FTPFileTree::HasChild(const QModelIndex &parent, const int column, const QString &value, const QAbstractItemModel *model) {
+bool LocalFileTree::HasChild(const QModelIndex &parent, const int column, const QString &value, const QAbstractItemModel *model) {
     for (int row = 0; row < model->rowCount(parent); ++row) {
         QModelIndex index = model->index(row, column, parent);
         if (index.data().toString() == value)
@@ -171,7 +170,7 @@ bool FTPFileTree::HasChild(const QModelIndex &parent, const int column, const QS
     return false;
 }
 
-void FTPFileTree::ShowFileContextMenu(const QPoint &pos) {
+void LocalFileTree::ShowFileContextMenu(const QPoint &pos) {
 
     const auto proxy = qobject_cast<QSortFilterProxyModel *>(_fileTreeView->model());
 
@@ -217,7 +216,7 @@ void FTPFileTree::ShowFileContextMenu(const QPoint &pos) {
     }
 }
 
-void FTPFileTree::ShowFolderContextMenu(const QPoint &pos) {
+void LocalFileTree::ShowFolderContextMenu(const QPoint &pos) {
 
     const auto proxy = qobject_cast<QSortFilterProxyModel *>(_folderTreeView->model());
 
