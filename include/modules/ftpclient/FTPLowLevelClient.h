@@ -28,7 +28,6 @@ typedef int SOCKET;
 // Awsmock in
 #include <modules/ftpclient/FTPInfoThread.h>
 
-constexpr int PORT = 2121;
 constexpr int BUFLEN = 1000;
 constexpr int DATABUFLEN = 1000;
 const auto DELIMITER = "\r\n";
@@ -103,7 +102,7 @@ public:
 
     int changeDir(const std::string &tardir);
 
-    int login(const QString &ip_addr, const QString &username, const QString &password);
+    int login(const QString &ip_addr, int port, const QString &username, const QString &password);
 
     int downFile(std::string remoteName, std::string localDir);
 
@@ -117,9 +116,10 @@ public:
 
     int mkDir(const std::string &name);
 
-    InfoThread *infoThread;
+    FTPInfoThread *infoThread;
     std::string pwd;
     std::vector<FileInfo> fileInfoList;
+    int _port;
 };
 
 #endif // AWSMOCK_QT_UI_LOW_LEVEL_CLIENT_H

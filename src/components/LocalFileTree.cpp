@@ -2,6 +2,7 @@
 // Created by vogje01 on 2/10/26.
 //
 
+#include <QPushButton>
 #include <components/LocalFileTree.h>
 
 LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidget(parent) {
@@ -44,6 +45,7 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
     _folderTreeView->setDragEnabled(true);
     _folderTreeView->setDragDropMode(QAbstractItemView::DragDrop);
     _folderTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    HideColumns({1, 2, 3, 4, 5, 6, 7, 8});
 
     // Enable sorting
     _folderTreeView->setSortingEnabled(true);
@@ -116,7 +118,18 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
         emit FolderSelectedSignal(absPath, parentItem);
     });
 
+    _menuBarLayout = new QHBoxLayout(this);
+    const auto spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    _menuBarLayout->addWidget(spacer);
+
+    auto *fileRefreshPushButton = new QPushButton(IconUtils::GetIcon("refresh"), nullptr);
+    connect(fileRefreshPushButton, &QPushButton::clicked, this, &LocalFileTree::RefreshFileView);
+
+    _menuBarLayout->addWidget(fileRefreshPushButton);
+
     _layout->addWidget(_folderTreeView);
+    _layout->addLayout(_menuBarLayout);
     _layout->addWidget(_fileTreeView);
 
     ScanFolder(rootFolder, _rootItem);
@@ -170,6 +183,18 @@ void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) con
 
     // Setup columns
     SetFileHeaders(_fileTreeView);
+}
+
+void LocalFileTree::RefreshFileView() const {
+    if (const QModelIndex proxyIndex = _folderTreeView->currentIndex(); proxyIndex.isValid()) {
+        // Convert to Source Index (essential since you have a filter)
+        const QModelIndex sourceIndex = _folderProxyModel->mapToSource(proxyIndex);
+        QStandardItem *item = _model->itemFromIndex(sourceIndex);
+
+        // 3. Get the data
+        const QString path = sourceIndex.data(Qt::UserRole).toString();
+        ScanFolder(path, item);
+    }
 }
 
 QIcon LocalFileTree::GetIcon(const QString &mimeType, const QString &fileType) {
@@ -286,9 +311,9 @@ void LocalFileTree::ShowFolderContextMenu(const QPoint &pos) {
     deleteAction->setToolTip("Delete the directory");
 
     if (const auto selectedAction = menu.exec(_folderTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
-        emit TargetTreeDirectoryRename(absPath);
+        TargetTreeDirectoryRename(absPath);
     } else if (selectedAction == deleteAction) {
-        emit TargetTreeDirectoryDelete(absPath);
+        TargetTreeDirectoryDelete(absPath);
     }
 }
 
