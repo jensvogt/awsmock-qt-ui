@@ -51,11 +51,7 @@ public:
 
     void SetupLogPanel();
 
-    void ConnectionSucceeded();
-
     void LogInfoMessage(const QString &message) const;
-
-    void ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
     /**
      * @brief Text input verification
@@ -73,34 +69,10 @@ public:
     static void SetLineEditColor(QLineEdit *lineEdit, QValidator::State state);
 
 private slots:
-    void TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const;
-
     /**
      * @brief Verification of the connect input fields
      */
     void HandleConnectButton();
-
-    /**
-     * @brief A target file has been dropped into the target tree view widget
-     *
-     * @param filePath absolute file path
-     */
-    void TargetTreeFileDropped(const QString &filePath) const;
-
-    /**
-     * @brief A target file has been deleted
-     *
-     * @param filePath absolute file path
-     */
-    void TargetTreeFileDelete(const QString &filePath) const;
-
-    void TargetTreeDirectoryDelete(const QString &filePath) const;
-
-    void TargetTreeFileRename(const QString &filePath);
-
-    void TargetTreeAddDirectory();
-
-    void TargetTreeDirectoryRename(const QString &filePath);
 
 private:
     /**
@@ -112,11 +84,6 @@ private:
      * UI components
      */
     Ui::FTPClientDialog *_ui;
-
-    /**
-     * @brief FTP client thread
-     */
-    FTPClientThread *_ftpClientThread;
 
     /**
      * @brief Local folder tree

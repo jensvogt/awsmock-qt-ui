@@ -45,6 +45,8 @@ public:
 
     void AddItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
+    void RefreshFileView() const;
+
     /**
      * @brief Returns the root item
      *
@@ -123,7 +125,12 @@ private:
     /**
      * @brief Base layout
      */
-    QLayout *_layout;
+    QVBoxLayout *_layout;
+
+    /**
+     * @brief File menu bar layout
+     */
+    QHBoxLayout *_menuBarLayout;
 };
 
 #endif // AWSMOCK_QT_UI_COMPONENTS_LOCAL_FILE_TREE_H#1#

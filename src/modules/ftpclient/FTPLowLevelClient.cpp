@@ -8,7 +8,7 @@
 #include <modules/ftpclient/FTPLowLevelClient.h>
 
 Client::Client() {
-    infoThread = new InfoThread;
+    infoThread = new FTPInfoThread;
 }
 
 Client::~Client() {
@@ -22,9 +22,10 @@ Client::~Client() {
     delete[] databuf;
 }
 
-int Client::login(const QString &ip_addr, const QString &username, const QString &password) {
+int Client::login(const QString &ip_addr, const int port, const QString &username, const QString &password) {
     _username = username.toStdString();
     _password = password.toStdString();
+    _port = port;
     if (const QRegularExpression regex(R"(^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$)"); regex.match(ip_addr).hasMatch()) {
         _ip_addr = ip_addr.toStdString();
     } else {
@@ -65,7 +66,7 @@ int Client::connectServer() {
 #else
     serverAddr.sin_addr.s_addr = inet_addr(_ip_addr.c_str()); //address
 #endif
-    serverAddr.sin_port = htons(PORT); // port
+    serverAddr.sin_port = htons(_port); // port
     memset(serverAddr.sin_zero, 0, sizeof(serverAddr.sin_zero));
 
     // Connect

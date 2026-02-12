@@ -8,17 +8,38 @@
 #include <QThread>
 #include <QString>
 
-class InfoThread : public QThread {
+class FTPInfoThread : public QThread {
     Q_OBJECT
 
 public:
-    explicit InfoThread() = default;
+    /**
+     * @brief Constructor
+     */
+    explicit FTPInfoThread() = default;
 
+    /**
+     * @brief Singleton instance
+     *
+     * @return singleton instance
+     */
+    static FTPInfoThread &instance() {
+        static FTPInfoThread t;
+        return t;
+    }
+
+    /**
+     * @brief Sends an info message
+     *
+     * @param info info message
+     */
     void sendInfo(const std::string &info) {
         emit emitInfo(QString::fromStdString(info).trimmed());
     }
 
 signals:
+    /**
+     * @brief Logging signal
+     */
     void emitInfo(QString);
 };
 

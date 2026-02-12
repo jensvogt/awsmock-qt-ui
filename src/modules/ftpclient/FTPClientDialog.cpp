@@ -20,27 +20,11 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
 
     // Local folder tree
     _localFolderTree = new LocalFileTree(QDir::homePath(), this);
-    _localFolderTree->HideColumns({1, 2, 3, 4, 5, 6, 7, 8});
     _ui->horizontalSplitter1->addWidget(_localFolderTree);
 
     // FTP folder tree
     _ftpFolderTree = new FTPFileTree(nullptr);
     _ui->horizontalSplitter1->addWidget(_ftpFolderTree);
-
-    connect(_ftpFolderTree, &FTPFileTree::FolderSelectedSignal, this, &FTPClientDialog::TargetFolderSelectionChanged);
-    connect(_ftpFolderTree, &FTPFileTree::TargetTreeFileRenameSignal, this, &FTPClientDialog::TargetTreeFileRename);
-    connect(_ftpFolderTree, &FTPFileTree::TargetTreeFileDeleteSignal, this, &FTPClientDialog::TargetTreeFileDelete);
-    connect(_ftpFolderTree, &FTPFileTree::TargetTreeDirectoryRename, this, &FTPClientDialog::TargetTreeDirectoryRename);
-    connect(_ftpFolderTree, &FTPFileTree::TargetTreeDirectoryDelete, this, &FTPClientDialog::TargetTreeDirectoryDelete);
-    connect(_ftpFolderTree->_fileTreeView, &DroppableTreeView::FileDropped, this, &FTPClientDialog::TargetTreeFileDropped);
-
-    // FTP client thread
-    _ftpClientThread = new FTPClientThread();
-    connect(_ftpClientThread, &FTPClientThread::emitFileListItem, this, &FTPClientDialog::ReceiveTargetListItem);
-    connect(_ftpClientThread, &FTPClientThread::emitSuccess, this, &FTPClientDialog::ConnectionSucceeded);
-    connect(_ftpClientThread, &FTPClientThread::finished, _ftpClientThread, &FTPClientThread::stop);
-    //connect(_ftpClientThread, &FTPClientThread::emitClearList, this, &FTPClientDialog::TargetTreeClear);
-    connect(_ftpClientThread->curClient->infoThread, &InfoThread::emitInfo, this, &FTPClientDialog::LogInfoMessage);
 
     // Name validator
     const NotEmptyValidator *nameValidator = new NotEmptyValidator(this);
@@ -84,11 +68,14 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
 }
 
 FTPClientDialog::~FTPClientDialog() {
-    delete _ftpClientThread;
     delete _ui;
 }
 
 void FTPClientDialog::SetupLogPanel() {
+
+    // Connect the ingo thread to the log panel
+    connect(&FTPInfoThread::instance(), &FTPInfoThread::emitInfo, this, &FTPClientDialog::LogInfoMessage);
+
     // Log data model
     _logDataModel = new QStandardItemModel(_ui->logList);
     _ui->logList->setModel(_logDataModel);
@@ -100,15 +87,6 @@ void FTPClientDialog::SetupLogPanel() {
     });
 }
 
-void FTPClientDialog::ConnectionSucceeded() {
-    if (!_connected) {
-        _connected = true;
-        _ui->connectButton->setText("Disconnect");
-    } else {
-        _connected = false;
-        _ui->connectButton->setText("Connect");
-    }
-}
 
 void FTPClientDialog::LogInfoMessage(const QString &message) const {
     _logDataModel->appendRow(new QStandardItem(message));
@@ -117,10 +95,6 @@ void FTPClientDialog::LogInfoMessage(const QString &message) const {
     if (_logScrolling) {
         _ui->logList->scrollToBottom();
     }
-}
-
-void FTPClientDialog::ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const {
-    _ftpFolderTree->AddItem(fileInfo, parent);
 }
 
 void FTPClientDialog::UpdateLineEditStyle(const QString &text) const {
@@ -195,85 +169,7 @@ void FTPClientDialog::HandleConnectButton() {
     }
 
     // All valid, so connect
-    if (!_ftpClientThread->isRunning()) {
-        if (!_connected) {
-            _ftpClientThread->curClient->login(server, user, password);
-            _ftpClientThread->task = TConnect;
-            _ftpClientThread->parent = _ftpFolderTree->GetRootItem();
-            _ftpClientThread->start();
-        } else {
-            _ftpClientThread->task = TDisconnect;
-            _ftpClientThread->start();
-            _connected = false;
-            _ftpFolderTree->Clear();
-            _ui->connectButton->setText("Connect");
-        }
-    }
-}
-
-void FTPClientDialog::TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const {
-    if (!_ftpClientThread->isRunning()) {
-        _ftpClientThread->arglist[0] = absPath.toStdString();
-        _ftpClientThread->parent = parent;
-        _ftpClientThread->task = TCd;
-        _ftpClientThread->start();
-    }
-}
-
-void FTPClientDialog::TargetTreeFileDropped(const QString &filePath) const {
-    _ftpClientThread->task = TUp;
-    _ftpClientThread->arglist[0] = filePath.toStdString();
-    _ftpClientThread->start();
-}
-
-void FTPClientDialog::TargetTreeFileDelete(const QString &filePath) const {
-    _ftpClientThread->task = TDele;
-    _ftpClientThread->arglist[0] = filePath.toStdString();
-    _ftpClientThread->start();
-}
-
-void FTPClientDialog::TargetTreeFileRename(const QString &filePath) {
-    bool ok;
-    const QString newFilePath = QInputDialog::getText(this, "New File Name", "Enter new name:", QLineEdit::Normal, "", &ok);
-
-    if (!ok || newFilePath.isEmpty()) {
-        return;
-    }
-    _ftpClientThread->task = TRename;
-    _ftpClientThread->arglist[0] = filePath.toStdString();
-    _ftpClientThread->arglist[1] = newFilePath.toStdString();
-    _ftpClientThread->start();
-}
-
-void FTPClientDialog::TargetTreeAddDirectory() {
-    bool ok;
-    const QString newDirectory = QInputDialog::getText(this, "Create Directory", "Enter directory name:", QLineEdit::Normal, "", &ok);
-
-    if (!ok || newDirectory.isEmpty()) {
-        return;
-    }
-    _ftpClientThread->task = TMkd;
-    _ftpClientThread->arglist[0] = newDirectory.toStdString();
-    _ftpClientThread->start();
-}
-
-void FTPClientDialog::TargetTreeDirectoryDelete(const QString &filePath) const {
-    _ftpClientThread->task = TRmd;
-    _ftpClientThread->arglist[0] = filePath.toStdString();
-    _ftpClientThread->start();
-}
-
-void FTPClientDialog::TargetTreeDirectoryRename(const QString &filePath) {
-    bool ok;
-    const QString newFilePath = QInputDialog::getText(this, "New Directory Name", "Enter new name:", QLineEdit::Normal, "", &ok);
-
-    if (!ok || newFilePath.isEmpty()) {
-        return;
-    }
-    _ftpClientThread->task = TRename;
-    _ftpClientThread->arglist[0] = filePath.toStdString();
-    _ftpClientThread->arglist[1] = newFilePath.toStdString();
-    _ftpClientThread->start();
+    _ftpFolderTree->Connect(server, port, user, password);
 }
 
 void FTPClientDialog::HandleReject() {
