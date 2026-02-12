@@ -51,19 +51,7 @@ public:
         return _rootItem;
     };
 
-    static QIcon GetIcon(const QString &mimeType, const QString &fileType);
-
     void Clear() const;
-
-    void HideColumns(const QVector<int> &columns) const;
-
-    void HideAllColumns() const;
-
-    static bool HasChild(const QModelIndex &parent, int column, const QString &value, const QAbstractItemModel *model);
-
-    void ShowFileContextMenu(const QPoint &pos);
-
-    void ShowFolderContextMenu(const QPoint &pos);
 
     /**
      * TODO: Check inheritance
@@ -83,6 +71,20 @@ signals:
     void TargetTreeDirectoryDelete(const QString &filePath);
 
 private:
+    void HideColumns(const QVector<int> &columns) const;
+
+    void HideAllColumns() const;
+
+    void ShowFileContextMenu(const QPoint &pos);
+
+    void ShowFolderContextMenu(const QPoint &pos);
+
+    static void SetFileHeaders(const QTreeView *treeView);
+
+    static QIcon GetIcon(const QString &mimeType, const QString &fileType);
+
+    static bool HasChild(const QModelIndex &parent, int column, const QString &value, const QAbstractItemModel *model);
+
     /**
      * @brief Item model
      */

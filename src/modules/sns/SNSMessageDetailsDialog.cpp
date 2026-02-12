@@ -4,7 +4,10 @@
 #include "utils/DateTimeUtils.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
+ // Setup UI
     _ui->setupUi(this);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SNSMessageDetailsDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SNSMessageDetailsDialog::HandleReject);
 
     _snsService = new SNSService();
 
@@ -76,4 +79,12 @@ void SNSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked) const {
         _ui->bodyPlainTextEdit->clear();
         _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
     }
+}
+
+void SNSMessageDetailsDialog::HandleAccept() {
+    accept();
+}
+
+void SNSMessageDetailsDialog::HandleReject() {
+    accept();
 }

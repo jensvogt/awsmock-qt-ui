@@ -23,6 +23,10 @@ public:
 private slots:
     void on_prettyPushButton_toggled(bool checked) const;
 
+    void HandleAccept();
+
+    void HandleReject();
+
 private:
     void UpdateMessageDetails(const SNSGetMessageDetailsResponse &response) const;
 

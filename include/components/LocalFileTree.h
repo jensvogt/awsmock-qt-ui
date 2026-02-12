@@ -31,14 +31,17 @@ public:
     /**
      * @brief Constructor
      *
+     * @param rootFolder start folder
      * @param parent parent widget
      */
-    explicit LocalFileTree(QWidget *parent = nullptr);
+    explicit LocalFileTree(const QString &rootFolder, QWidget *parent);
 
     /**
      * @brief Destructor
      */
     ~LocalFileTree() override;
+
+    void ScanFolder(const QString &rootFolder, QStandardItem *parent) const;
 
     void AddItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
@@ -64,6 +67,10 @@ public:
     void ShowFileContextMenu(const QPoint &pos);
 
     void ShowFolderContextMenu(const QPoint &pos);
+
+    static QString ToUnitPermString(const QFileInfo &info);
+
+    static void SetFileHeaders(const QTreeView *treeView);
 
     /**
      * TODO: Check inheritance

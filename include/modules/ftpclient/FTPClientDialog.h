@@ -23,6 +23,7 @@
 #include <utils/DroppableTreeView.h>
 #include <modules/ftpclient/FTPClientThread.h>
 #include <components/FTPFileTree.h>
+#include <components/LocalFileTree.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -122,7 +123,7 @@ private:
     /**
      * @brief Local folder tree
      */
-    FTPFileTree *_localFolderTree;
+    LocalFileTree *_localFolderTree;
 
     /**
      * @brief FTP folder tree

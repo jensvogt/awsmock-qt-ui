@@ -34,15 +34,13 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     _folderTreeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _folderTreeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     _folderTreeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    HideColumns({1, 2, 3, 4, 5, 6, 7, 8});
 
     // Setup options
     _folderTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     _folderTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _folderTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
-    _folderTreeView->setAcceptDrops(true);
-    _folderTreeView->setDropIndicatorShown(true);
-    _folderTreeView->setDragEnabled(true);
-    _folderTreeView->setDragDropMode(QAbstractItemView::DragDrop);
+    _folderTreeView->setAcceptDrops(false);
     _folderTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Enable sorting
@@ -58,17 +56,6 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     _fileTreeView = new DroppableTreeView(this);
     _fileTreeView->setModel(_fileProxyModel);
     _fileTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    // Setup columns
-    _fileTreeView->header()->setStretchLastSection(false);
-    _fileTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    _fileTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    _fileTreeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    _fileTreeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    _fileTreeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    _fileTreeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    _fileTreeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-
     // Setup options
     _fileTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
     _fileTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -82,10 +69,14 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     // Enable sorting
     _fileTreeView->setSortingEnabled(true);
     _fileTreeView->sortByColumn(0, Qt::AscendingOrder);
+
+    // Setup columns
+    SetFileHeaders(_fileTreeView);
+
+    // Add context menu
     connect(_fileTreeView, &FTPFileTree::customContextMenuRequested, this, &FTPFileTree::ShowFileContextMenu);
 
     // Synchronization
-    //  connect(_model, &QStandardItemModel::rowsInserted, _fileProxyModel, &QSortFilterProxyModel::invalidate);
     connect(_folderTreeView, &QTreeView::clicked, this, [this](const QModelIndex &index) {
         // Get the source index from the folder view click
         const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
@@ -95,10 +86,11 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
 
         // Point the file view to look INSIDE that folder
         _fileTreeView->setRootIndex(fileProxyIndex);
+
+        // Get parent item and absolute path
         QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
         const QString absPath = parentItem->data(Qt::UserRole).toString();
 
-        parentItem->removeRows(0, parentItem->rowCount());
         emit FolderSelectedSignal(absPath, parentItem);
     });
 
@@ -106,8 +98,7 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     _layout->addWidget(_fileTreeView);
 }
 
-FTPFileTree::~FTPFileTree() {
-}
+FTPFileTree::~FTPFileTree() = default;
 
 void FTPFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const {
 
@@ -135,6 +126,9 @@ void FTPFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const
     if (fileType == FTP_FILE_TYPE_FOLDER && fileInfo.name != "..") {
         _folderTreeView->expand(parent->index());
     }
+
+    // Setup columns
+    SetFileHeaders(_fileTreeView);
 }
 
 QIcon FTPFileTree::GetIcon(const QString &mimeType, const QString &fileType) {
@@ -255,4 +249,15 @@ void FTPFileTree::ShowFolderContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         emit TargetTreeDirectoryDelete(absPath);
     }
+}
+
+void FTPFileTree::SetFileHeaders(const QTreeView *treeView) {
+    treeView->header()->setStretchLastSection(false);
+    treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    treeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 }

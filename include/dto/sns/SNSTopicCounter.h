@@ -1,6 +1,7 @@
 #ifndef AWSMOCK_QT_UI_SNS_TOPIC_COUNTER_H
 #define AWSMOCK_QT_UI_SNS_TOPIC_COUNTER_H
 
+// Qt includs
 #include <QDateTime>
 #include <QJsonObject>
 
@@ -26,7 +27,7 @@ struct SNSTopicCounter {
     QDateTime modified;
 
     void FromJson(const QJsonObject &jsonObject) {
-        topicArn = jsonObject["_topicArn"].toString();
+        topicArn = jsonObject["topicArn"].toString();
         topicName = jsonObject["topicName"].toString();
         retentionPeriod = jsonObject["retentionPeriod"].toInt();
         maxMessageSize = jsonObject["maxMessageSize"].toInt();

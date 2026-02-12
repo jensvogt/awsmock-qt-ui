@@ -4,7 +4,7 @@
 
 #include <components/LocalFileTree.h>
 
-LocalFileTree::LocalFileTree(QWidget *parent) : QWidget(parent) {
+LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidget(parent) {
 
     _layout = new QVBoxLayout;
     setLayout(_layout);
@@ -49,6 +49,21 @@ LocalFileTree::LocalFileTree(QWidget *parent) : QWidget(parent) {
     _folderTreeView->setSortingEnabled(true);
     _folderTreeView->sortByColumn(0, Qt::AscendingOrder);
     connect(_folderTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFolderContextMenu);
+    connect(_folderTreeView, &QTreeView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the source index from the folder view click
+        const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
+
+        // Map that source index into the file proxy's coordinate system
+        const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
+
+        // Point the file view to look INSIDE that folder
+        _fileTreeView->setRootIndex(fileProxyIndex);
+        QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+        const QString absPath = parentItem->data(Qt::UserRole).toString();
+
+        parentItem->removeRows(0, parentItem->rowCount());
+        ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
+    });
 
     // Setup model
     _fileProxyModel = new FileFilterModel();
@@ -85,7 +100,6 @@ LocalFileTree::LocalFileTree(QWidget *parent) : QWidget(parent) {
     connect(_fileTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFileContextMenu);
 
     // Synchronization
-    //  connect(_model, &QStandardItemModel::rowsInserted, _fileProxyModel, &QSortFilterProxyModel::invalidate);
     connect(_folderTreeView, &QTreeView::clicked, this, [this](const QModelIndex &index) {
         // Get the source index from the folder view click
         const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
@@ -104,9 +118,28 @@ LocalFileTree::LocalFileTree(QWidget *parent) : QWidget(parent) {
 
     _layout->addWidget(_folderTreeView);
     _layout->addWidget(_fileTreeView);
+
+    ScanFolder(rootFolder, _rootItem);
 }
 
 LocalFileTree::~LocalFileTree() = default;
+
+void LocalFileTree::ScanFolder(const QString &rootFolder, QStandardItem *parent) const {
+    const auto root = QDir(rootFolder);
+
+    for (QFileInfoList files = root.entryInfoList(); const auto &file: files) {
+        if (file.fileName() != ".." && file.fileName() != ".") {
+            FileInfo fileInfo;
+            fileInfo.permissions = ToUnitPermString(file);
+            fileInfo.size = file.size();
+            fileInfo.username = file.owner();
+            fileInfo.groupname = file.group();
+            fileInfo.name = file.fileName();
+            fileInfo.path = file.absoluteFilePath();
+            AddItem(fileInfo, parent);
+        }
+    }
+}
 
 void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const {
 
@@ -114,7 +147,7 @@ void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) con
         return;
     }
     const QString parentPath = parent->data(Qt::UserRole).toString();
-    const QString absPath = parentPath.endsWith("/") ? parentPath + fileInfo.name : parentPath + "/" + fileInfo.name;
+    const QString absPath = fileInfo.path;
     const QString fileType = fileInfo.permissions.startsWith("d") ? FTP_FILE_TYPE_FOLDER : FTP_FILE_TYPE_FILE;
 
     const QMimeType mime = _mimeDb.mimeTypeForFile(fileInfo.name);
@@ -134,6 +167,9 @@ void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) con
     if (fileType == FTP_FILE_TYPE_FOLDER && fileInfo.name != "..") {
         _folderTreeView->expand(parent->index());
     }
+
+    // Setup columns
+    SetFileHeaders(_fileTreeView);
 }
 
 QIcon LocalFileTree::GetIcon(const QString &mimeType, const QString &fileType) {
@@ -254,4 +290,36 @@ void LocalFileTree::ShowFolderContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         emit TargetTreeDirectoryDelete(absPath);
     }
+}
+
+QString LocalFileTree::ToUnitPermString(const QFileInfo &info) {
+    QString permString;
+    permString += (info.isDir() ? "d" : "-");
+
+    const QFile::Permissions p = info.permissions();
+
+    permString += (p & QFileDevice::ReadOwner) ? "r" : "-";
+    permString += (p & QFileDevice::WriteOwner) ? "w" : "-";
+    permString += (p & QFileDevice::ExeOwner) ? "x" : "-";
+
+    permString += (p & QFileDevice::ReadGroup) ? "r" : "-";
+    permString += (p & QFileDevice::WriteGroup) ? "w" : "-";
+    permString += (p & QFileDevice::ExeGroup) ? "x" : "-";
+
+    permString += (p & QFileDevice::ReadOther) ? "r" : "-";
+    permString += (p & QFileDevice::WriteOther) ? "w" : "-";
+    permString += (p & QFileDevice::ExeOther) ? "x" : "-";
+
+    return permString;
+}
+
+void LocalFileTree::SetFileHeaders(const QTreeView *treeView) {
+    treeView->header()->setStretchLastSection(false);
+    treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    treeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 }
