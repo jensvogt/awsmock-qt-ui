@@ -39,9 +39,9 @@ endif ()
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
-set(COMPONENTS_SOURCES include/components/FTPFolderFilterModel.h src/components/FTPFileTree.cpp
-        src/components/FTPFileTree.ui include/components/FTPFileTree.h
-        include/components/FTPFileFilterModel.h include/components/FTPFolderFilterModel.h)
+set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTPFileTree.cpp
+        include/components/FTPFileTree.h include/components/FileFilterModel.h src/components/LocalFileTree.cpp
+        include/components/LocalFileTree.h)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h

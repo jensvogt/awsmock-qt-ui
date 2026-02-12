@@ -2,8 +2,8 @@
 // Created by vogje01 on 2/10/26.
 //
 
-#ifndef AWSMOCK_QT_UI_COMPONENTS_FTP_FILE_TREE_H
-#define AWSMOCK_QT_UI_COMPONENTS_FTP_FILE_TREE_H
+#ifndef AWSMOCK_QT_UI_COMPONENTS_LOCAL_FILE_TREE_H
+#define AWSMOCK_QT_UI_COMPONENTS_LOCAL_FILE_TREE_H
 
 // Qt includes
 #include <QMenu>
@@ -24,7 +24,7 @@
 #include <components/FileFilterModel.h>
 #include <modules/ftpclient/FTPLowLevelClient.h>
 
-class FTPFileTree : public QWidget {
+class LocalFileTree : public QWidget {
     Q_OBJECT
 
 public:
@@ -33,12 +33,12 @@ public:
      *
      * @param parent parent widget
      */
-    explicit FTPFileTree(QWidget *parent = nullptr);
+    explicit LocalFileTree(QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
-    ~FTPFileTree() override;
+    ~LocalFileTree() override;
 
     void AddItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
@@ -119,4 +119,4 @@ private:
     QLayout *_layout;
 };
 
-#endif // AWSMOCK_QT_UI_COMPONENTS_FTP_FILE_TREE_H#1#
+#endif // AWSMOCK_QT_UI_COMPONENTS_LOCAL_FILE_TREE_H#1#
