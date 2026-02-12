@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.25](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.24...v1.10.25) (2026-02-12)
+
+
+### Bug Fixes
+
+* SNS message list ([9fc6d88](https://github.com/jensvogt/awsmock-qt-ui/commit/9fc6d885edf55db53378681009e29d27c7e6c34a))
+
 ## [1.10.24](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.23...v1.10.24) (2026-02-12)
 
 
