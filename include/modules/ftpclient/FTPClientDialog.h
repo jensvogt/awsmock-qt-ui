@@ -23,6 +23,8 @@
 #include <utils/DroppableTreeView.h>
 #include <modules/ftpclient/FTPClientThread.h>
 
+#include "components/FTPFileTree.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -55,11 +57,9 @@ public:
 
     void SetupSourceTreeView();
 
-    void ReceiveTargetListItem(const FileInfo &fileInfo) const;
+    void ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
     void TargetTreeClear() const;
-
-    void TargetTreeItemClicked(const QModelIndex &index) const;
 
     /**
      * @brief Text input verification
@@ -83,6 +83,8 @@ private slots:
      * @param pos position in table
      */
     void ShowTargetContextMenu(const QPoint &pos);
+
+    void TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const;
 
     /**
      * @brief Verification of the connect input fields
@@ -123,14 +125,19 @@ private:
     Ui::FTPClientDialog *_ui;
 
     /**
-     * @brief Source file infos
-     */
-    QFileInfo sourceFileInfo;
-
-    /**
      * @brief FTP client thread
      */
     FTPClientThread *_ftpClientThread;
+
+    /**
+     * @brief Local folder tree
+     */
+    FTPFileTree *_localFolderTree;
+
+    /**
+     * @brief FTP folder tree
+     */
+    FTPFileTree *_ftpFolderTree;
 
     /**
      *  @brief Log item data model
@@ -143,19 +150,9 @@ private:
     bool _logScrolling = true;
 
     /**
-     * @brief File tree model
-     */
-    QStandardItemModel *_targetTreeModel;
-
-    /**
      * @brief Connected flag
      */
     bool _connected = false;
-
-    /**
-     * @brief Target (FTP) tree view
-     */
-    DroppableTreeView *_targetTreeView;
 };
 
 

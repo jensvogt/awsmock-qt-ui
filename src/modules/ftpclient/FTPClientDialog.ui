@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2058</width>
+    <width>1760</width>
     <height>968</height>
    </rect>
   </property>
@@ -151,26 +151,34 @@
     </widget>
    </item>
    <item>
-    <widget class="QSplitter" name="vertialSplitter">
+    <widget class="QSplitter" name="verticalSplitter">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="opaqueResize">
       <bool>false</bool>
      </property>
-     <widget class="QSplitter" name="horizontallySplitter">
+     <widget class="QSplitter" name="horizontalSplitter1">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="opaqueResize">
        <bool>false</bool>
       </property>
-      <widget class="QTreeView" name="sourceTreeView"/>
-      <widget class="QTreeView" name="targetTreeView">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-      </widget>
+     </widget>
+     <widget class="QSplitter" name="horizontalSplitter2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QWidget" name="logMainWidget" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_2">

@@ -7,6 +7,8 @@
 // Awsmock includes
 #include <modules/ftpclient/FTPLowLevelClient.h>
 
+class QStandardItem;
+
 enum subThreadTask { TConnect, TDisconnect, TCd, TDown, TUp, TDele, TRmd, TRename, TMkd };
 
 class FTPClientThread : public QThread {
@@ -18,14 +20,15 @@ public:
     ~FTPClientThread() override;
 
     subThreadTask task;
-    std::vector<std::string> arglist;
+    std::vector<std::string> arglist = std::vector<std::string>(5);
     Client *curClient;
+    QStandardItem *parent{};
 
 protected:
     void run() override;
 
 private:
-    Client *client;
+    Client *client{};
 
     void flushList();
 
@@ -35,7 +38,7 @@ public slots:
 signals:
     void emitListItem(QString, QString, QString);
 
-    void emitFileListItem(const FileInfo &item);
+    void emitFileListItem(const FileInfo &item, QStandardItem *parent);
 
     void emitInfo(QString);
 

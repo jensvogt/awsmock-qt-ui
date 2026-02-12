@@ -244,7 +244,7 @@ int Client::listPwd() {
     FileInfo fileInfo;
     if (!currentDir.empty()) {
         fileInfo.name = "..";
-        fileInfo.type = "directory";
+        fileInfo.contentType = "folder";
         fileInfoList.push_back(fileInfo);
     }
     std::string item;
@@ -262,19 +262,19 @@ int Client::listPwd() {
             if (i == 0) {
                 fileInfo.permissions = QString::fromStdString(item);
                 if (fileInfo.permissions.startsWith("-")) {
-                    fileInfo.type = "file";
+                    fileInfo.contentType = "file";
                 } else if (fileInfo.permissions.startsWith("d")) {
-                    fileInfo.type = "directory";
+                    fileInfo.contentType = "folder";
                 } else if (fileInfo.permissions.startsWith("l")) {
-                    fileInfo.type = "link";
+                    fileInfo.contentType = "link";
                 } else if (fileInfo.permissions.startsWith("s")) {
-                    fileInfo.type = "socket";
+                    fileInfo.contentType = "socket";
                 } else if (fileInfo.permissions.startsWith("c")) {
-                    fileInfo.type = "character device";
+                    fileInfo.contentType = "character device";
                 } else if (fileInfo.permissions.startsWith("b")) {
-                    fileInfo.type = "block device";
+                    fileInfo.contentType = "block device";
                 } else if (fileInfo.permissions.startsWith("p")) {
-                    fileInfo.type = "named pipe";
+                    fileInfo.contentType = "named pipe";
                 }
             } else if (i == 2) {
                 fileInfo.username = QString::fromStdString(item);

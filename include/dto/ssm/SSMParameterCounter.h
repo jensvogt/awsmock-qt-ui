@@ -62,7 +62,7 @@ struct SSMParameterCounter {
     QString description;
 
     /**
-     * Parameter type
+     * Parameter contentType
      */
     ParameterType type = ParameterType::string;
 

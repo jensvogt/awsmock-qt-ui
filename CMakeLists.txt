@@ -39,6 +39,9 @@ endif ()
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
+set(COMPONENTS_SOURCES include/components/FTPFolderFilterModel.h src/components/FTPFileTree.cpp
+        src/components/FTPFileTree.ui include/components/FTPFileTree.h
+        include/components/FTPFileFilterModel.h include/components/FTPFolderFilterModel.h)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -93,7 +96,7 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         src/utils/BaseDialog.cpp include/utils/BaseDialog.h src/utils/BasePage.cpp include/utils/BasePage.h
         include/utils/NonEmptyValidator.h src/utils/IconUtils.cpp)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
-        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
+        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES} ${COMPONENTS_SOURCES}
         src/modules/docker/DockerLogClient.cpp
         include/modules/docker/DockerLogClient.h
         include/modules/lambda/LambdaList.h
