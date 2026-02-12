@@ -42,9 +42,6 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     //connect(_ftpClientThread, &FTPClientThread::emitClearList, this, &FTPClientDialog::TargetTreeClear);
     connect(_ftpClientThread->curClient->infoThread, &InfoThread::emitInfo, this, &FTPClientDialog::LogInfoMessage);
 
-    // Source tree view
-    SetupSourceTreeView();
-
     // Name validator
     const NotEmptyValidator *nameValidator = new NotEmptyValidator(this);
     _ui->serverEdit->setValidator(nameValidator);
@@ -122,21 +119,6 @@ void FTPClientDialog::LogInfoMessage(const QString &message) const {
     }
 }
 
-void FTPClientDialog::SetupSourceTreeView() {
-
-    /*QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->setFileMode(QFileDialog::ExistingFile);
-    fileDialog->setOption(QFileDialog::DontUseNativeDialog, true);
-
-    // Hide filename line edit and file contentType combobox
-    for (QLineEdit *le: fileDialog->findChildren<QLineEdit *>()) le->hide();
-    for (QLabel *le: fileDialog->findChildren<QLabel *>()) le->hide();
-    for (QComboBox *cb: fileDialog->findChildren<QComboBox *>()) cb->hide();
-    for (QDialogButtonBox *bb: fileDialog->findChildren<QDialogButtonBox *>()) bb->hide();
-    for (QPushButton *bb: fileDialog->findChildren<QPushButton *>()) bb->hide();
-    _ui->horizontallySplitter->replaceWidget(0, fileDialog);*/
-}
-
 void FTPClientDialog::ReceiveTargetListItem(const FileInfo &fileInfo, QStandardItem *parent) const {
     _ftpFolderTree->AddItem(fileInfo, parent);
 }
@@ -178,23 +160,6 @@ void FTPClientDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::St
 }
 
 void FTPClientDialog::HandleConnectButton() {
-    if (!_ftpClientThread->isRunning()) {
-        if (!_connected) {
-            const QString ip_addr = _ui->serverEdit->text();
-            const QString username = _ui->userEdit->text();
-            const QString password = _ui->passwordEdit->text();
-            _ftpClientThread->curClient->login(ip_addr, username, password);
-            _ftpClientThread->task = TConnect;
-            _ftpClientThread->parent = _ftpFolderTree->GetRootItem();
-            _ftpClientThread->start();
-        } else {
-            _ftpClientThread->task = TDisconnect;
-            _ftpClientThread->start();
-            _connected = false;
-            _ftpFolderTree->Clear();
-            _ui->connectButton->setText("Connect");
-        }
-    }
 
     // Check name
     int pos = 0;
@@ -227,6 +192,22 @@ void FTPClientDialog::HandleConnectButton() {
         passwordState != QValidator::Acceptable) {
         SetLineEditColor(_ui->passwordEdit, passwordState);
         QMessageBox::warning(this, "Validation Failure", "Password cannot be empty.");
+    }
+
+    // All valid, so connect
+    if (!_ftpClientThread->isRunning()) {
+        if (!_connected) {
+            _ftpClientThread->curClient->login(server, user, password);
+            _ftpClientThread->task = TConnect;
+            _ftpClientThread->parent = _ftpFolderTree->GetRootItem();
+            _ftpClientThread->start();
+        } else {
+            _ftpClientThread->task = TDisconnect;
+            _ftpClientThread->start();
+            _connected = false;
+            _ftpFolderTree->Clear();
+            _ui->connectButton->setText("Connect");
+        }
     }
 }
 
