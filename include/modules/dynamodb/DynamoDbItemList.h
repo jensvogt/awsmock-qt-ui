@@ -19,13 +19,16 @@
 #include <QFormLayout>
 #include <QTreeWidget>
 #include <QTimer>
+#include <QFileDialog>
 
 // AwsMock includes
+#include <utils/Logging.h>
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
+#include <utils/StringUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
-//#include <dto/dynamodb/DynamoDbListItemResponse.h>
+#include <modules/module/ModuleService.h>
 #include <modules/dynamodb/DynamoDbService.h>
 
 class DynamoDbItemList final : public BasePage {
@@ -49,6 +52,8 @@ public:
      * @brief Load page content
      */
     void LoadContent() override;
+
+    void ExportItems() const;
 
     void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
@@ -100,9 +105,14 @@ private:
     QString _prefixValue = "";
 
     /**
-     * @brief REST service handler
+     * @brief DynamoDB REST service handler
      */
     DynamoDbService *_dynamoDbService;
+
+    /**
+     * @brief Module REST service handler
+     */
+    ModuleService *_moduleService;
 
     /**
      *  @brief Item data model

@@ -36,6 +36,8 @@ public:
      */
     void ExportInfrastructure(const QString &exportFilename);
 
+    void ExportInfrastructure(const QString &exportFilename, const QString &module);
+
     /**
      * @brief Import infrastructure
      *

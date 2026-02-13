@@ -9,7 +9,7 @@
 
 class QStandardItem;
 
-enum subThreadTask { TConnect, TDisconnect, TCd, TDown, TUp, TDele, TRmd, TRename, TMkd, TList };
+enum subThreadTask { TConnect, TDisconnect, TCd, TDown, TUp, TDele, TRmd, TRename, TMkd, TList, TPwd };
 
 class FTPClientThread : public QThread {
     Q_OBJECT
@@ -45,6 +45,8 @@ signals:
     void emitSuccess();
 
     void emitClearList();
+
+    void emitPwd(QString);
 };
 
 

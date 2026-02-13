@@ -83,12 +83,10 @@ int Client::connectServer() {
     // Username
     executeCmd("USER " + _username);
     recvControl(331);
-    //executeFTPCmd(331, "USER", qstr2pch(username));                //331
 
     // Password
     executeCmd("PASS " + _password);
     recvControl(230);
-    //executeFTPCmd(230, "PASS", qstr2pch(password));            //230
 
     listPwd();
     return 0;
@@ -116,6 +114,17 @@ int Client::changeDir(const std::string &tardir) {
     intoPasv();
     changeCurrentDir(tardir);
     listPwd();
+    return 0;
+}
+
+int Client::pwd() {
+    memset(buf, 0, BUFLEN);
+    executeCmd("PWD");
+    recvControl(257);
+    currentDir = recvInfo.substr(recvInfo.find_last_of(" ") + 1);
+    std::erase(currentDir, '\"');
+    std::erase(currentDir, '\n');
+    std::erase(currentDir, '\r');
     return 0;
 }
 

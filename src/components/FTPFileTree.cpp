@@ -146,13 +146,19 @@ void FTPFileTree::Connect(const QString &server, const QString &port, const QStr
         _ftpClientThread->parent = _rootItem;
         _ftpClientThread->start();
         _connected = true;
+        emit ConnectionSucceeded();
     }
 }
 
 void FTPFileTree::Disconnect() {
-    if (_ftpClientThread->isRunning() && _connected) {
+    if (_connected) {
+
+        // Disconnect from, server
         _ftpClientThread->task = TDisconnect;
         _ftpClientThread->start();
+
+        // Cleanup
+        _model->removeRows(0, _model->rowCount());
         _connected = false;
     }
 }
@@ -263,20 +269,29 @@ void FTPFileTree::TargetTreeDirectoryRename(const QString &filePath) {
 }
 
 void FTPFileTree::RefreshFileView() const {
+    QStandardItem *item;
     if (const QModelIndex proxyIndex = _folderTreeView->currentIndex(); proxyIndex.isValid()) {
         // Convert to Source Index (essential since you have a filter)
         const QModelIndex sourceIndex = _folderProxyModel->mapToSource(proxyIndex);
-        QStandardItem *item = _model->itemFromIndex(sourceIndex);
-
-        // 3. Get the data
-        const QString path = sourceIndex.data(Qt::UserRole).toString();
-        if (!_ftpClientThread->isRunning()) {
-            _ftpClientThread->arglist[0] = path.toStdString();
-            _ftpClientThread->parent = item;
-            _ftpClientThread->task = TCd;
-            _ftpClientThread->start();
-        }
+        item = _model->itemFromIndex(sourceIndex);
+    } else {
+        item = _model->invisibleRootItem();
     }
+    if (!_ftpClientThread->isRunning()) {
+        _ftpClientThread->parent = item;
+        _ftpClientThread->task = TPwd;
+        _ftpClientThread->start();
+        connect(_ftpClientThread, &FTPClientThread::emitPwd, this, [this, item](const QString &cwd) {
+            // Get the data
+            if (!_ftpClientThread->isRunning()) {
+                _ftpClientThread->arglist[0] = cwd.toStdString();
+                _ftpClientThread->parent = item;
+                _ftpClientThread->task = TList;
+                _ftpClientThread->start();
+            }
+        });
+    }
+
 }
 
 QIcon FTPFileTree::GetIcon(const QString &mimeType, const QString &fileType) {

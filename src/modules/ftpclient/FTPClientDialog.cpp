@@ -54,6 +54,10 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     // Connect connect button
     _ui->connectButton->setIcon(IconUtils::GetIcon("connect"));
     connect(_ui->connectButton, &QPushButton::clicked, this, &FTPClientDialog::HandleConnectButton);
+    connect(_ftpFolderTree, &FTPFileTree::ConnectionSucceeded, this, [this]() {
+        _connected = true;
+        _ui->connectButton->setText("Disconnect");
+    });
 
     // Setup verification
     UpdateLineEditStyle(_ui->serverEdit->text());
@@ -143,41 +147,49 @@ void FTPClientDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::St
 
 void FTPClientDialog::HandleConnectButton() {
 
-    // Check name
-    int pos = 0;
-    QString server = _ui->serverEdit->text();
-    if (const QValidator::State serverState = _ui->serverEdit->validator()->validate(server, pos);
-        serverState != QValidator::Acceptable) {
-        SetLineEditColor(_ui->serverEdit, serverState);
-        QMessageBox::warning(this, "Validation Failure", "Server is invalid or incomplete.");
-        return;
-    }
+    if (_connected) {
 
-    QString port = _ui->portEdit->text();
-    if (const QValidator::State portState = _ui->portEdit->validator()->validate(port, pos);
-        portState != QValidator::Acceptable) {
-        SetLineEditColor(_ui->portEdit, portState);
-        QMessageBox::warning(this, "Validation Failure", "Port is invalid or incomplete.");
-        return;
-    }
+        _ftpFolderTree->Disconnect();
+        _ui->connectButton->setText("Connect");
+        _connected = false;
 
-    QString user = _ui->userEdit->text();
-    if (const QValidator::State userState = _ui->userEdit->validator()->validate(user, pos);
-        userState != QValidator::Acceptable) {
-        SetLineEditColor(_ui->userEdit, userState);
-        QMessageBox::warning(this, "Validation Failure", "User is invalid.");
-        return;
-    }
+    } else {
+        // Check name
+        int pos = 0;
+        QString server = _ui->serverEdit->text();
+        if (const QValidator::State serverState = _ui->serverEdit->validator()->validate(server, pos);
+            serverState != QValidator::Acceptable) {
+            SetLineEditColor(_ui->serverEdit, serverState);
+            QMessageBox::warning(this, "Validation Failure", "Server is invalid or incomplete.");
+            return;
+        }
 
-    QString password = _ui->passwordEdit->text();
-    if (const QValidator::State passwordState = _ui->passwordEdit->validator()->validate(password, pos);
-        passwordState != QValidator::Acceptable) {
-        SetLineEditColor(_ui->passwordEdit, passwordState);
-        QMessageBox::warning(this, "Validation Failure", "Password cannot be empty.");
-    }
+        QString port = _ui->portEdit->text();
+        if (const QValidator::State portState = _ui->portEdit->validator()->validate(port, pos);
+            portState != QValidator::Acceptable) {
+            SetLineEditColor(_ui->portEdit, portState);
+            QMessageBox::warning(this, "Validation Failure", "Port is invalid or incomplete.");
+            return;
+        }
 
-    // All valid, so connect
-    _ftpFolderTree->Connect(server, port, user, password);
+        QString user = _ui->userEdit->text();
+        if (const QValidator::State userState = _ui->userEdit->validator()->validate(user, pos);
+            userState != QValidator::Acceptable) {
+            SetLineEditColor(_ui->userEdit, userState);
+            QMessageBox::warning(this, "Validation Failure", "User is invalid.");
+            return;
+        }
+
+        QString password = _ui->passwordEdit->text();
+        if (const QValidator::State passwordState = _ui->passwordEdit->validator()->validate(password, pos);
+            passwordState != QValidator::Acceptable) {
+            SetLineEditColor(_ui->passwordEdit, passwordState);
+            QMessageBox::warning(this, "Validation Failure", "Password cannot be empty.");
+        }
+
+        // All valid, so connect
+        _ftpFolderTree->Connect(server, port, user, password);
+    }
 }
 
 void FTPClientDialog::HandleReject() {

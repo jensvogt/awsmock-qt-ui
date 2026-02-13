@@ -147,7 +147,7 @@
              <item>
               <widget class="QPushButton" name="serverScrollButton">
                <property name="text">
-                <string>Scolling</string>
+                <string>Scrolling</string>
                </property>
                <property name="checkable">
                 <bool>true</bool>

@@ -48,6 +48,10 @@ void FTPClientThread::run() {
             curClient->listPwd();
             flushList();
             break;
+        case TPwd:
+            if (!curClient->pwd())
+                emit emitPwd(QString::fromStdString(curClient->currentDir).trimmed());
+            break;
         default:
             break;
     }

@@ -3,6 +3,7 @@
 DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service
+    _moduleService = new ModuleService();
     _dynamoDbService = new DynamoDbService();
     connect(_dynamoDbService, &DynamoDbService::ListItemsSignal, this, &DynamoDbItemList::HandleListItemSignal);
 
@@ -49,11 +50,19 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
         LoadContent();
     });
 
+    // Toolbar export action
+    const auto exportButton = new QPushButton(IconUtils::GetIcon("export"), "", this);
+    exportButton->setToolTip("Export all items to a file");
+    connect(exportButton, &QPushButton::clicked, this, [this]() {
+        ExportItems();
+    });
+
     toolBar->addWidget(backButton);
     toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(exportButton);
     toolBar->addWidget(refreshButton);
 
     // Prefix editor
@@ -117,6 +126,24 @@ DynamoDbItemList::~DynamoDbItemList() {
 void DynamoDbItemList::LoadContent() {
     _tableName = GetArgument<QString>("tableName");
     _dynamoDbService->ListItems(_tableName);
+}
+
+void DynamoDbItemList::ExportItems() const {
+    // Create a QFileDialog set to select existing files
+    const auto filter = "JSON Files (*.json);All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-_ui");
+
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON File", defaultDir, filter); !filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            logWarning << "Failed to open file:" << file.errorString();
+            return;
+        }
+        for (int i = 0; i < _dataModel->rowCount(); i++) {
+            file.write(_dataModel->index(i, 0).data(Qt::DisplayRole).toString().toUtf8());
+        }
+        file.close();
+    }
 }
 
 void DynamoDbItemList::HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse) {

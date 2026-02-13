@@ -87,7 +87,6 @@ class Client {
     SOCKET dataSocket{};
     std::string recvInfo;
     std::string nextInfo;
-    std::string currentDir{};
 
 public:
     Client();
@@ -116,9 +115,11 @@ public:
 
     int listPwd();
 
+    int pwd();
+
     FTPInfoThread *infoThread;
-    std::string pwd;
     std::vector<FileInfo> fileInfoList;
+    std::string currentDir{};
     int _port;
 };
 

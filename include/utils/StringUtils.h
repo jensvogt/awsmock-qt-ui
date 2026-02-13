@@ -12,6 +12,8 @@
 // Qt includes
 #include <QString>
 
+#include "Logging.h"
+
 class StringUtils {
 
 public:
@@ -26,6 +28,17 @@ public:
             // Note: This approach discards any non-printable character.
         }
         return QString(result);
+    }
+
+    static QString ConvertToIndentedJson(const QString &input) {
+
+        QJsonParseError parseError;
+        const QJsonDocument doc = QJsonDocument::fromJson(input.toUtf8(), &parseError);
+        if (parseError.error != QJsonParseError::NoError) {
+            logError << "Cannot parse JSON document: " << parseError.errorString();
+            return input;
+        }
+        return doc.toJson(QJsonDocument::Indented);
     }
 
 private:

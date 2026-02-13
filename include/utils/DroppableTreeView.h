@@ -9,7 +9,10 @@
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QMimeData>
+#include <QSortFilterProxyModel>
 #include <QTreeView>
+
+#include "Logging.h"
 
 class DroppableTreeView final : public QTreeView {
     Q_OBJECT
@@ -50,7 +53,6 @@ protected:
             return;
 
         for (const QUrl &url: event->mimeData()->urls()) {
-            QString tmp = url.toString();
             if (QString filePath = url.toLocalFile(); !filePath.isEmpty()) {
                 emit FileDropped(filePath);
             }
@@ -59,20 +61,32 @@ protected:
     }
 
     void startDrag(Qt::DropActions supportedActions) override {
-        const QModelIndex index = currentIndex();
-        if (!index.isValid())
+        QModelIndex proxyIndex = currentIndex();
+        if (!proxyIndex.isValid())
             return;
 
+        proxyIndex = proxyIndex.siblingAtColumn(0);
         const QAbstractItemModel *model = this->model();
-        const QString filePath = model->data(index, Qt::UserRole).toString(); // however you store it
 
-        auto *mimeData = new QMimeData;
-        mimeData->setUrls({QUrl::fromLocalFile(filePath)});
+        QModelIndex sourceIndex = proxyIndex;
 
-        auto *drag = new QDrag(this);
-        drag->setMimeData(mimeData);
+        // If model is a proxy, map it
+        if (const auto proxy = qobject_cast<const QSortFilterProxyModel *>(model)) {
+            sourceIndex = proxy->mapToSource(proxyIndex);
+            model = proxy->sourceModel();
+        }
 
-        drag->exec(Qt::CopyAction);
+        if (const QString filePath = model->data(sourceIndex, Qt::UserRole).toString(); !filePath.isEmpty()) {
+            auto *mimeData = new QMimeData;
+            mimeData->setUrls({QUrl::fromLocalFile(filePath)});
+
+            auto *drag = new QDrag(this);
+            drag->setMimeData(mimeData);
+
+            drag->exec(Qt::CopyAction);
+        } else {
+            logWarning << "Empty file path: row: " + QString::number(sourceIndex.row());
+        }
     }
 };
 

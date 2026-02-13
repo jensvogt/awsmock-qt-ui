@@ -99,6 +99,11 @@ private:
     bool _localScrolling = true;
 
     /**
+     * @brief External log dialog
+     */
+    ServerLogWidget *_externalLogDialog;
+
+    /**
      * @brief Websocket URL
      */
     QString _websocketUrl;
