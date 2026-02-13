@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.27](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.26...v1.10.27) (2026-02-13)
+
+
+### Bug Fixes
+
+* extra byte in FTP transfer ([1f454d1](https://github.com/jensvogt/awsmock-qt-ui/commit/1f454d1251eb80bf3aced5ec168b5d15658817fc))
+* windows port ([b173216](https://github.com/jensvogt/awsmock-qt-ui/commit/b1732163898b3a983c8da856abd3b95847abe321))
+* windows port ([c4a52ce](https://github.com/jensvogt/awsmock-qt-ui/commit/c4a52ce74dc5b6972b4f1a0325911d759595dfa1))
+
 ## [1.10.26](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.25...v1.10.26) (2026-02-13)
 
 
