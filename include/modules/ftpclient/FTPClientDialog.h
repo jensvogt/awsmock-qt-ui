@@ -20,6 +20,7 @@
 #include <utils/Configuration.h>
 #include <utils/NonEmptyValidator.h>
 #include <utils/IconUtils.h>
+#include <utils/DateTimeUtils.h>
 #include <utils/DroppableTreeView.h>
 #include <modules/ftpclient/FTPClientThread.h>
 #include <components/FTPFileTree.h>
@@ -109,6 +110,11 @@ private:
      * @brief Connected flag
      */
     bool _connected = false;
+
+    /**
+     * @brief Local base dir
+     */
+    QString _localBaseDir;
 };
 
 

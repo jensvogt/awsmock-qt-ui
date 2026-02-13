@@ -25,11 +25,6 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidge
 
     // Setup status bar
     SetupStatusbar();
-    // TODO:: remove
-    logInfo << QSslSocket::sslLibraryBuildVersionString();
-    logInfo << QSslSocket::supportsSsl();
-    logInfo << QSslSocket::sslLibraryVersionString();
-
 }
 
 MainWidget::~MainWidget() {
@@ -145,6 +140,24 @@ void MainWidget::SetupServerLogs() {
             _webSocket->close();
         }
         _reconnectTimer->start();
+    });
+
+    // Extern window
+    _ui->externWindowButton->setText(nullptr);
+    _ui->externWindowButton->setIcon(IconUtils::GetIcon("extern-window"));
+    connect(_ui->externWindowButton, &QPushButton::clicked, [this]() {
+
+        _webSocket->disconnected();
+        _webSocket->close();
+
+        const auto dialog = new ServerLogWidget();
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
+
+        connect(dialog, &ServerLogWidget::WebsocketClosed, this, [this]() {
+            _webSocket->open(QUrl(_websocketUrl));
+        });
     });
 
     // Connect to configuration changes

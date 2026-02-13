@@ -108,7 +108,7 @@
        <item>
         <widget class="QTabWidget" name="logTabWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="serverLogsTab">
           <attribute name="title">
@@ -129,6 +129,13 @@
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="externWindowButton">
+               <property name="text">
+                <string>Extern</string>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="serverReconnectButton">

@@ -17,6 +17,7 @@
 #include <MainRouter.h>
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <utils/ServerLogWidget.h>
 
 class QStandardItemModel;
 QT_BEGIN_NAMESPACE
