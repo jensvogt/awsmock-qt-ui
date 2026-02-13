@@ -72,7 +72,7 @@ void ShowInfrastructure::HandleGetInfrastructure(const QString &infrastructureJs
     if (_ui->prettyPrintButton->isChecked()) {
         PrettyPrintClicked(true);
     }
-    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetTimeFormat(QDateTime::currentDateTime()));
+    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
 void ShowInfrastructure::HandleAccept() {
