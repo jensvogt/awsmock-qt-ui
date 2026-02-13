@@ -69,8 +69,6 @@ class Client {
 
     int getFileSize(const std::string &fname);
 
-    int listPwd();
-
     int intoPasv();
 
     int recvControl(int stateCode, std::string errorInfo = {});
@@ -115,6 +113,8 @@ public:
     int rename(const std::string &src, const std::string &dst);
 
     int mkDir(const std::string &name);
+
+    int listPwd();
 
     FTPInfoThread *infoThread;
     std::string pwd;

@@ -358,12 +358,13 @@ int Client::upFile(const std::string &localName) {
     intoPasv();
     executeCmd("STOR " + localFileName);
     recvControl(150, "Permission denied.");
+    size_t total = 0;
     while (!feof(ifile)) {
         const size_t count = fread(databuf, 1, DATABUFLEN, ifile);
         send(dataSocket, databuf, count, 0);
+        total += count;
     }
-    memset(databuf, 0, DATABUFLEN);
-    send(dataSocket, databuf, 1, 0);
+    FTPInfoThread::instance().sendInfo("File send: " + localName + " " + std::to_string(total) + " bytes");
     fclose(ifile);
     closesocket(dataSocket);
     recvControl(226);

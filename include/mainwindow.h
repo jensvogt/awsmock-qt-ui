@@ -141,6 +141,14 @@ private:
      */
     QTimer *_pingTimer{};
 
+    /**
+     * @brief Update checker
+     */
     UpdateChecker *_updateChecker{};
+
+    /**
+     * @brief FTP client dialog
+     */
+    FTPClientDialog *_ftpClientDialog{};
 };
 #endif // AWSMOCK_QT_UI_MAIN_WINDOW_H

@@ -213,10 +213,23 @@ void MainWindow::ShowInfrastructureDialog() {
 }
 
 void MainWindow::FtpUpload() {
-    const auto dialog = new FTPClientDialog(this);
-    dialog->setModal(false);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
+
+    // If the dialog doesn't exist, create it
+    if (!_ftpClientDialog) {
+        _ftpClientDialog = new FTPClientDialog(nullptr);
+
+        // Reset the pointer to nullptr when the user clicks 'X'
+        connect(_ftpClientDialog, &QObject::destroyed, this, [this]() {
+            _ftpClientDialog = nullptr;
+        });
+        _ftpClientDialog->setWindowFlags(Qt::Window);
+        _ftpClientDialog->show();
+    } else {
+        // If it already exists, bring it to the front
+        _ftpClientDialog->show();
+        _ftpClientDialog->raise();
+        _ftpClientDialog->activateWindow();
+    }
 }
 
 void MainWindow::DockerStats() {
