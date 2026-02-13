@@ -33,7 +33,7 @@ public:
         return "Unknown locale";
     }
 
-    static QString GetTimeFormat(const QDateTime &dateTime) {
+    static QString GetLogTimeFormat(const QDateTime &dateTime) {
         if (!Configuration::instance().GetValue<QString>("ui.time-format").isEmpty()) {
             return dateTime.toString(Configuration::instance().GetValue<QString>("ui.time-format"));
         }
