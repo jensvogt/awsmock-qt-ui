@@ -348,3 +348,7 @@ void LocalFileTree::SetFileHeaders(const QTreeView *treeView) {
     treeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     treeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 }
+
+void LocalFileTree::SetBaseDir(const QString &baseDir) const {
+    ScanFolder(baseDir, _rootItem);
+}

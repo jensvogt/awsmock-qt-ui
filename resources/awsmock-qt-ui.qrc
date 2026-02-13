@@ -20,6 +20,7 @@
         <file>light/enabled.svg</file>
         <file>light/exit.svg</file>
         <file>light/export.svg</file>
+        <file>light/extern-window.svg</file>
         <file>light/folder.svg</file>
         <file>light/help.svg</file>
         <file>light/import.svg</file>
@@ -66,6 +67,7 @@
         <file>dark/enabled.svg</file>
         <file>dark/exit.svg</file>
         <file>dark/export.svg</file>
+        <file>dark/extern-window.svg</file>
         <file>dark/folder.svg</file>
         <file>dark/help.svg</file>
         <file>dark/import.svg</file>

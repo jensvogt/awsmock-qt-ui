@@ -7,6 +7,9 @@
 
 FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::FTPClientDialog) {
 
+    // Get local base dir
+    _localBaseDir = Configuration::instance().GetValue<QString>("ftp-client.local-base-dir");
+
     // Setup UI
     _ui->setupUi(this);
 
@@ -65,6 +68,10 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     if (!Configuration::instance().GetValue<QString>("ui.default-ftp-password", "").isEmpty()) {
         _ui->passwordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", ""));
     }
+
+    if (!_localBaseDir.isEmpty()) {
+        _localFolderTree->SetBaseDir(_localBaseDir);
+    }
 }
 
 FTPClientDialog::~FTPClientDialog() {
@@ -95,6 +102,7 @@ void FTPClientDialog::LogInfoMessage(const QString &message) const {
     if (_logScrolling) {
         _ui->logList->scrollToBottom();
     }
+    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetTimeFormat(QDateTime::currentDateTime()));
 }
 
 void FTPClientDialog::UpdateLineEditStyle(const QString &text) const {

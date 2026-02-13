@@ -205,9 +205,11 @@ void FTPFileTree::TargetFolderSelectionChanged(const QString &absPath, QStandard
 }
 
 void FTPFileTree::TargetTreeFileDropped(const QString &filePath) const {
-    _ftpClientThread->task = TUp;
-    _ftpClientThread->arglist[0] = filePath.toStdString();
-    _ftpClientThread->start();
+    if (_connected) {
+        _ftpClientThread->task = TUp;
+        _ftpClientThread->arglist[0] = filePath.toStdString();
+        _ftpClientThread->start();
+    }
 }
 
 void FTPFileTree::TargetTreeFileDelete(const QString &filePath) const {

@@ -74,6 +74,8 @@ public:
 
     static void SetFileHeaders(const QTreeView *treeView);
 
+    void SetBaseDir(const QString &baseDir) const;
+
     /**
      * TODO: Check inheritance
      * @brief Droppable file tree view

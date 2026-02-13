@@ -48,7 +48,7 @@ int Client::connectServer() {
     // Initialization is very important.
     if (WSAStartup(MAKEWORD(2, 2), &dat) != 0) //Windows Sockets Asynchronous启动
     {
-        infoThread->sendInfo("Init failed!");
+        FTPInfoThread::instance().sendInfo("Init failed!");
         return -1;
     }
 #endif
@@ -56,7 +56,7 @@ int Client::connectServer() {
     // Create a Socket
     controlSocket = socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
     if (controlSocket == INVALID_SOCKET) {
-        infoThread->sendInfo("Creating control socket failed.");
+        FTPInfoThread::instance().sendInfo("Creating control socket failed.");
         return -1;
     }
     // Construct server access parameter structure
@@ -72,7 +72,7 @@ int Client::connectServer() {
     // Connect
     ret = connect(controlSocket, reinterpret_cast<sockaddr *>(&serverAddr), sizeof(serverAddr));
     if (ret == SOCKET_ERROR) {
-        infoThread->sendInfo("Control socket connection failed");
+        FTPInfoThread::instance().sendInfo("Control socket connection failed");
         return -1;
     }
 
@@ -142,9 +142,9 @@ int Client::downFile(std::string remoteName, std::string localDir) {
 //private function---------------------------------------------------------
 void Client::executeCmd(std::string cmd) const {
     if (cmd.substr(0, 4) == "PASS") {
-        infoThread->sendInfo("PASS ********");
+        FTPInfoThread::instance().sendInfo("PASS ********");
     } else {
-        infoThread->sendInfo(cmd);
+        FTPInfoThread::instance().sendInfo(cmd);
     }
     cmd += "\r\n";
     const int n = static_cast<int>(cmd.size());
@@ -160,7 +160,7 @@ int Client::recvControl(const int stateCode, std::string errorInfo) {
         recvInfo.clear();
         const size_t ssize = recv(controlSocket, buf, BUFLEN, 0);
         if (ssize == BUFLEN) {
-            infoThread->sendInfo("ERROR! Too long information too receive!");
+            FTPInfoThread::instance().sendInfo("ERROR! Too long information too receive!");
             return -1;
         }
         buf[ssize] = '\0';
@@ -172,11 +172,11 @@ int Client::recvControl(const int stateCode, std::string errorInfo) {
             nextInfo = recvInfo.substr(temp + 2);
         }
         // \JUNK
-        infoThread->sendInfo(recvInfo);
+        FTPInfoThread::instance().sendInfo(recvInfo);
         if (t == stateCode)
             return 0;
 
-        infoThread->sendInfo(errorInfo);
+        FTPInfoThread::instance().sendInfo(errorInfo);
         return -1;
     }
     recvInfo = nextInfo;
@@ -347,7 +347,7 @@ int Client::upFile(const std::string &localName) {
     // TODO:change to C++ style
     FILE *ifile = fopen(localName.c_str(), "rb");
     if (!ifile) {
-        infoThread->sendInfo("fail to open the file!");
+        FTPInfoThread::instance().sendInfo("fail to open the file!");
         return -1;
     }
 

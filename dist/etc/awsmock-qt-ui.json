@@ -45,5 +45,8 @@
     "style": "Fusion",
     "style-type": "Dark",
     "version": "1.0"
+  },
+  "ftp-client": {
+    "local-base-dir": "/home/vogje01/libri/Libri.ONE/PIM/test"
   }
 }
