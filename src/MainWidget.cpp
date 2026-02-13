@@ -95,13 +95,12 @@ void MainWidget::SetupServerLogs() {
     connect(_webSocket, &QWebSocket::connected, this, &MainWidget::OnConnected);
     connect(_webSocket, &QWebSocket::textMessageReceived, this, &MainWidget::OnMessageReceived);
     connect(_webSocket, &QWebSocket::disconnected, this, [this]() {
-        _reconnectTimer->start();
+        const auto item = new QStandardItem("Disconnected from server websocket, URL: " + _websocketUrl);
+        _serverLogDataModel->appendRow(item);
     });
     connect(_webSocket, &QWebSocket::errorOccurred, [this](const QAbstractSocket::SocketError error) {
-        // Even if it fails to connect, ensure the timer keeps running
-        if (!_reconnectTimer->isActive()) {
-            _reconnectTimer->start();
-        }
+        // Open the connection
+        _webSocket->open(QUrl(_websocketUrl));
     });
     connect(_reconnectTimer, &QTimer::timeout, this, [this]() {
         _webSocket->open(QUrl(_websocketUrl));
@@ -139,7 +138,8 @@ void MainWidget::SetupServerLogs() {
             _webSocket->disconnected();
             _webSocket->close();
         }
-        _reconnectTimer->start();
+        _webSocket->open(QUrl(_websocketUrl));
+        //_reconnectTimer->start();
     });
 
     // Extern window
@@ -149,15 +149,23 @@ void MainWidget::SetupServerLogs() {
 
         _webSocket->disconnected();
         _webSocket->close();
+        if (!_externalLogDialog) {
 
-        const auto dialog = new ServerLogWidget();
-        dialog->setModal(false);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->show();
+            _externalLogDialog = new ServerLogWidget();
+            _externalLogDialog->setWindowFlags(Qt::Window);
+            _externalLogDialog->setAttribute(Qt::WA_DeleteOnClose);
+            _externalLogDialog->setModal(false);
+            _externalLogDialog->show();
 
-        connect(dialog, &ServerLogWidget::WebsocketClosed, this, [this]() {
-            _webSocket->open(QUrl(_websocketUrl));
-        });
+            connect(_externalLogDialog, &ServerLogWidget::WebsocketClosed, this, [this]() {
+                _webSocket->open(QUrl(_websocketUrl));
+            });
+        } else {
+            // If it already exists, bring it to the front
+            _externalLogDialog->show();
+            _externalLogDialog->raise();
+            _externalLogDialog->activateWindow();
+        }
     });
 
     // Connect to configuration changes

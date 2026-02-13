@@ -49,6 +49,38 @@ void ModuleService::ExportInfrastructure(const QString &exportFilename) {
                       });
 }
 
+void ModuleService::ExportInfrastructure(const QString &exportFilename, const QString &module) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonArray array;
+    array.append(module);
+
+    QJsonObject jRequest;
+    jRequest["includeObjects"] = false;
+    jRequest["prettyPrint"] = true;
+    jRequest["cleanFirst"] = false;
+    jRequest["modules"] = array;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(url,
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "module"},
+                          {"x-awsmock-action", "export"},
+                          {"content-type", "application/json"}
+                      },
+                      [this,exportFilename, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an infrastructure object
+                              emit ExportResponseSignal(exportFilename, response.toStdString().data());
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ExportInfrastructure", timer.elapsed());
+                      });
+}
+
 void ModuleService::ImportInfrastructure(const QString &content) {
     QElapsedTimer timer;
     timer.start();

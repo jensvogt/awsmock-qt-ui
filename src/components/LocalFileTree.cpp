@@ -174,6 +174,8 @@ void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) con
     auto *item = new QStandardItem(GetIcon(fileInfo.contentType, fileType), fileInfo.name);
     item->setData(absPath, Qt::UserRole);
     item->setData(fileType, Qt::UserRole + 1);
+    logInfo << "ABSPath: " << absPath;
+
     parent->appendRow({item, size, contentType, modified, perm, userName, groupName});
 
     // Expand

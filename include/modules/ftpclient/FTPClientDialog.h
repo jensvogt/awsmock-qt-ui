@@ -115,6 +115,7 @@ private:
      * @brief Local base dir
      */
     QString _localBaseDir;
+
 };
 
 

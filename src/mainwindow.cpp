@@ -146,7 +146,7 @@ void MainWindow::SetupMenuBar() {
 void MainWindow::ImportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("_ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-_ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-_ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
@@ -159,7 +159,7 @@ void MainWindow::ImportInfrastructure() const {
         file.close();
 
         _moduleService->ImportInfrastructure(jsonData);
-        Configuration::instance().SetValue<QString>("_ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -170,12 +170,12 @@ void MainWindow::ImportInfrastructureResponse() {
 void MainWindow::ExportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("_ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-_ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-_ui");
 
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
                                                               filter); !filePath.isEmpty()) {
         _moduleService->ExportInfrastructure(filePath);
-        Configuration::instance().SetValue<QString>("_ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -186,15 +186,8 @@ void MainWindow::WriteInfrastructureExport(const QString &filename, const QStrin
         return;
     }
 
-    QJsonParseError parseError;
-    const QJsonDocument doc = QJsonDocument::fromJson(exportResponse.toUtf8(), &parseError);
-    if (parseError.error != QJsonParseError::NoError) {
-        QMessageBox::warning(nullptr, "Warning", "Could not convert to pretty print, file: " + file.fileName());
-        return;
-    }
-
     // Write formatted (pretty-printed) JSON
-    file.write(doc.toJson(QJsonDocument::Indented));
+    file.write(StringUtils::ConvertToIndentedJson(exportResponse).toUtf8());
     file.close();
     QMessageBox::information(nullptr, "Information", "Infrastructure saved to file: " + file.fileName());
 }
@@ -217,13 +210,13 @@ void MainWindow::FtpUpload() {
     // If the dialog doesn't exist, create it
     if (!_ftpClientDialog) {
         _ftpClientDialog = new FTPClientDialog(nullptr);
+        _ftpClientDialog->setWindowFlags(Qt::Window);
+        _ftpClientDialog->show();
 
         // Reset the pointer to nullptr when the user clicks 'X'
         connect(_ftpClientDialog, &QObject::destroyed, this, [this]() {
             _ftpClientDialog = nullptr;
         });
-        _ftpClientDialog->setWindowFlags(Qt::Window);
-        _ftpClientDialog->show();
     } else {
         // If it already exists, bring it to the front
         _ftpClientDialog->show();
