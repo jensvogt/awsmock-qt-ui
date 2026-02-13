@@ -44,6 +44,10 @@ void FTPClientThread::run() {
             curClient->mkDir(arglist[0]);
             flushList();
             break;
+        case TList:
+            curClient->listPwd();
+            flushList();
+            break;
         default:
             break;
     }
