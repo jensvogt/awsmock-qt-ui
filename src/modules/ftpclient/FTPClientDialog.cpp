@@ -6,7 +6,6 @@
 #include "ui_FTPClientDialog.h"
 
 FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::FTPClientDialog) {
-
     // Get local base dir
     _localBaseDir = Configuration::instance().GetValue<QString>("ftp-client.local-base-dir");
 
@@ -22,7 +21,7 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPClientDialog::HandleReject);
 
     // Local folder tree
-    _localFolderTree = new LocalFileTree(QDir::homePath(), this);
+    _localFolderTree = new LocalFileTree(_localBaseDir, this);
     _ui->horizontalSplitter1->addWidget(_localFolderTree);
 
     // FTP folder tree
@@ -79,7 +78,6 @@ FTPClientDialog::~FTPClientDialog() {
 }
 
 void FTPClientDialog::SetupLogPanel() {
-
     // Connect the ingo thread to the log panel
     connect(&FTPInfoThread::instance(), &FTPInfoThread::emitInfo, this, &FTPClientDialog::LogInfoMessage);
 
@@ -102,7 +100,7 @@ void FTPClientDialog::LogInfoMessage(const QString &message) const {
     if (_logScrolling) {
         _ui->logList->scrollToBottom();
     }
-    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetTimeFormat(QDateTime::currentDateTime()));
+    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
 void FTPClientDialog::UpdateLineEditStyle(const QString &text) const {
@@ -142,7 +140,6 @@ void FTPClientDialog::SetLineEditColor(QLineEdit *lineEdit, const QValidator::St
 }
 
 void FTPClientDialog::HandleConnectButton() {
-
     // Check name
     int pos = 0;
     QString server = _ui->serverEdit->text();
