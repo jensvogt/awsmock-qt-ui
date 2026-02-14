@@ -8,6 +8,10 @@
 #include "ui_MainWidget.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidget) {
+
+    // Get the log limit
+    _logLimit = Configuration::instance().GetValue<long>("ui.log-limit", _logLimit);
+
     // Get the websocket URL for logging
     _websocketUrl = Configuration::instance().GetValue<QString>("server.websocket-url");
 
@@ -139,7 +143,17 @@ void MainWidget::SetupServerLogs() {
             _webSocket->close();
         }
         _webSocket->open(QUrl(_websocketUrl));
-        //_reconnectTimer->start();
+    });
+
+    // Reconnect button
+    _ui->logStopButton->setText(nullptr);
+    _ui->logStopButton->setIcon(IconUtils::GetIcon("stop"));
+    _ui->logStopButton->setToolTip("Stop server websocket");
+    connect(_ui->logStopButton, &QPushButton::clicked, this, [this]() {
+        if (_webSocket->state() == QAbstractSocket::ConnectedState) {
+            _webSocket->disconnected();
+            _webSocket->close();
+        }
     });
 
     // Extern window
@@ -239,7 +253,12 @@ void MainWidget::OnMessageReceived(const QString &message) const {
     } else if (message.contains("[debug]")) {
         item->setForeground(Qt::green);
     }
+
     _serverLogDataModel->appendRow(item);
+
+    if (_serverLogDataModel->rowCount() > _logLimit) {
+        _serverLogDataModel->removeRows(0, 1);
+    }
 
     // Auto-scroll to bottom
     if (_serverScrolling) {

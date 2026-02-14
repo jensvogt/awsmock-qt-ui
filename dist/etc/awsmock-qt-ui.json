@@ -44,7 +44,8 @@
     "qt-version": "6.10.1",
     "style": "Fusion",
     "style-type": "Dark",
-    "version": "1.0"
+    "version": "1.0",
+    "log-limit": 500
   },
   "ftp-client": {
     "local-base-dir": "/home/vogje01/libri/Libri.ONE/PIM/test"

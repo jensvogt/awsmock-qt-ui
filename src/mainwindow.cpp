@@ -2,6 +2,7 @@
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+
     // Connect infrastructure signals
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -13,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // Setup menu bar
     SetupMenuBar();
+
+    // Setup tool bar
+    SetupToolBar();
 
     // Main widget
     QWidget *mainWidget = new MainWidget(this);
@@ -141,6 +145,18 @@ void MainWindow::SetupMenuBar() {
         _updateChecker->checkForUpdates();
     });
     helpMenu->addAction(updateAction);
+}
+
+void MainWindow::SetupToolBar() {
+
+    const auto toolBar = new QToolBar(this);
+    toolBar->setMovable(true);
+
+    const auto ftpClientAction = new QAction(IconUtils::GetIcon("upload"), tr("&FTP client"), this);
+    connect(ftpClientAction, &QAction::triggered, this, &MainWindow::FtpUpload);
+    toolBar->addAction(ftpClientAction);
+
+    addToolBar(toolBar);
 }
 
 void MainWindow::ImportInfrastructure() const {

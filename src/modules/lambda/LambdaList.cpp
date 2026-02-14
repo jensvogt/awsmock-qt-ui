@@ -232,16 +232,40 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     } else if (selectedAction == startAction) {
+        if (containerId.isEmpty()) {
+            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
+            return;
+        }
         _containerService->StartContainer(containerId);
     } else if (selectedAction == enableAction) {
+        if (containerId.isEmpty()) {
+            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
+            return;
+        }
         _lambdaService->UpdateLambda(arn, true);
     } else if (selectedAction == disableAction) {
+        if (containerId.isEmpty()) {
+            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
+            return;
+        }
         _lambdaService->UpdateLambda(arn, false);
     } else if (selectedAction == stopAction) {
+        if (containerId.isEmpty()) {
+            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
+            return;
+        }
         _containerService->StopContainer(containerId);
     } else if (selectedAction == restartAction) {
+        if (containerId.isEmpty()) {
+            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
+            return;
+        }
         _containerService->RestartContainer(containerId);
     } else if (selectedAction == killAction) {
+        if (containerId.isEmpty()) {
+            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
+            return;
+        }
         _containerService->KillContainer(containerId);
     } else if (selectedAction == rebuildAction) {
         //_lambdaService->RebuildLambda(name);

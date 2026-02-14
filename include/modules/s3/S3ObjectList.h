@@ -13,10 +13,11 @@
 #include <utils/BasePage.h>
 #include <dto/s3/S3ListObjectResponse.h>
 #include <modules/s3/S3Service.h>
-//#include <modules/s3/S3ObjectDetailsDialog.h>
 #include <utils/IconUtils.h>
+#include <utils/PrefixFilterModel.h>
 #include <modules/s3/S3ObjectAddDialog.h>
 #include <modules/s3/S3ObjectEditDialog.h>
+
 
 /**
  * @brief Helper widget for the content area.
@@ -63,6 +64,10 @@ public:
      */
     void HandleReloadObjectSignal();
 
+    void HandleBulkDelete(QModelIndexList proxyIndices) const;
+
+    void HandleBulkTouch(QModelIndexList proxyIndices) const;
+
 signals:
     /**
      * @brief Sent a show S3 object to the main window
@@ -86,6 +91,11 @@ private slots:
 
 private:
     /**
+     * @brief Widget label
+     */
+    QLabel *_titleLabel;
+
+    /**
      * @brief Parent bucket name
      */
     QString _bucketName;
@@ -93,7 +103,17 @@ private:
     /**
      * @brief Object table
      */
-    QTableWidget *_tableWidget;
+    QTableView *_tableView;
+
+    /**
+     * @brief Table model
+     */
+    QStandardItemModel *_tableModel;
+
+    /**
+     * @brief Data proxy model
+     */
+    PrefixFilterProxyModel *_proxyModel;
 
     /**
      * @brief REST service handler
