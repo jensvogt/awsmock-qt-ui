@@ -106,7 +106,7 @@ void FTPClientDialog::LogInfoMessage(const QString &message) const {
     if (_logScrolling) {
         _ui->logList->scrollToBottom();
     }
-    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetTimeFormat(QDateTime::currentDateTime()));
+    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
 void FTPClientDialog::UpdateLineEditStyle(const QString &text) const {

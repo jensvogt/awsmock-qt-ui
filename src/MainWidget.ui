@@ -161,6 +161,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="logStopButton">
+               <property name="text">
+                <string>Stop</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>

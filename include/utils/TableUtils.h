@@ -29,6 +29,8 @@ public:
 
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, const QString &value);
 
+    static void SetHiddenColumn(QStandardItemModel *tableModel, int row, int col, const QString &value);
+
     static void SetHiddenColumn(QTableWidget *tableWidget, int row, int col, bool value);
 
     static void SetColumn(QStandardItemModel *dataModel, int row, int col, const QString &value, Qt::Alignment alignment = Qt::AlignLeft | Qt::AlignVCenter);

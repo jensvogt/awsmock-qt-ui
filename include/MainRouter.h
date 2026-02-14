@@ -116,6 +116,7 @@ public:
             // Set arguments
             BasePage *basePage = _routes[pageName];
             basePage->SetArguments(arguments);
+            basePage->LoadContent();
 
             // Set content
             _contentPane->addWidget(basePage);

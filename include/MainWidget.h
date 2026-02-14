@@ -117,6 +117,11 @@ private:
      * @brief Local scrolling flag
      */
     LogLevel _localLogLevel = INFO;
+
+    /**
+     * @brief Log lines limit
+     */
+    long _logLimit = 500;
 };
 
 

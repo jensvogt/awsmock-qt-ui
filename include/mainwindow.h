@@ -79,6 +79,8 @@ private:
      */
     void SetupMenuBar();
 
+    void SetupToolBar();
+
     void ImportInfrastructure() const;
 
     static void ImportInfrastructureResponse();
