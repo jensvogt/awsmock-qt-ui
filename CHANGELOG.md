@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.2...v1.11.3) (2026-02-15)
+
+
+### Bug Fixes
+
+* local FTP folder ([a368ad0](https://github.com/jensvogt/awsmock-qt-ui/commit/a368ad02ba0199162ba3e854aacfb00c9eafba7c))
+
 ## [1.11.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.1...v1.11.2) (2026-02-15)
 
 
