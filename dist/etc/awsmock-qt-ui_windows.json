@@ -28,10 +28,10 @@
     "default-ftp-port": 2121,
     "default-ftp-protocol": "FTP",
     "default-directory": {
-      "ApplicationUploadCodeDialog": "C:\\work\\libri\\Libri.ONE\\PIM/compliance-archive-service\\target",
-      "ExportInfrastructure": "\\usr\\local\\awsmock\\init",
-      "ImportInfrastructure": "\\usr\\local\\awsmock\\init",
-      "FTPUploadDialog": "\\home\\vogje01\\work\\libri\\Libri.ONE\\PIM\\tests"
+      "ApplicationUploadCodeDialog": "C:\\work\\libri\\Libri.ONE\\PIM\\compliance-archive-service\\target",
+      "ExportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
+      "ImportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
+      "FTPUploadDialog": "C:\\home\\vogje01\\work\\libri\\Libri.ONE\\PIM\\tests"
     },
     "default-locale": "DE",
     "locales": [
