@@ -39,9 +39,17 @@ public:
      * @brief List SQS Queues
      *
      * @param prefix Queue name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortColumn
+     * @param sortDirection
+     * @param pageSize
+     * @param pageIndex
+     * @param sortColumn
+     * @param sortDirection
      * @param
      */
-    void ListQueues(const QString &prefix, Qt::SortOrder);
+    void ListQueues(const QString &prefix, long pageSize, long pageIndex, const QString &sortColumn, int sortDirection);
 
     /**
      * @brief Purge Queue

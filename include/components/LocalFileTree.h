@@ -23,6 +23,7 @@
 #include <modules/ftpclient/FTPLowLevelClient.h>
 #include <components/FileFilterModel.h>
 #include <modules/ftpclient/FTPLowLevelClient.h>
+#include <modules/ftpclient/FTPClientThread.h>
 
 class LocalFileTree : public QWidget {
     Q_OBJECT
@@ -41,7 +42,19 @@ public:
      */
     ~LocalFileTree() override;
 
+    void SetupFtpConnection();
+
+    void ConnectionSucceeded();
+
     void ScanFolder(const QString &rootFolder, QStandardItem *parent) const;
+
+    void ShowFolderContentFolder(const QModelIndex &index) const;
+
+    void ShowFolderContentFile(const QModelIndex &index) const;
+
+    void SynchronizeViews(const QModelIndex &index);
+
+    void FileDropped(const QString &filePath) const;
 
     void AddItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
@@ -95,6 +108,11 @@ signals:
 
 private:
     /**
+     * @brief FTP client thread
+     */
+    FTPClientThread *_ftpClientThread{};
+
+    /**
      * @brief Item model
      */
     QStandardItemModel *_model;
@@ -133,6 +151,11 @@ private:
      * @brief File menu bar layout
      */
     QHBoxLayout *_menuBarLayout;
+
+    /**
+     * @brief connection flag
+     */
+    bool _connected = false;
 };
 
 #endif // AWSMOCK_QT_UI_COMPONENTS_LOCAL_FILE_TREE_H#1#

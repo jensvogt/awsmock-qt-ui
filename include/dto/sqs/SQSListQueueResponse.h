@@ -16,9 +16,8 @@ struct SQSQueueListResponse {
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
-        QJsonArray jArray = jsonDoc["queueCounters"].toArray();
-
-        for(const auto &element : jArray) {
+        total = jsonDoc.object()["total"].toInt();
+        for (QJsonArray jArray = jsonDoc["queueCounters"].toArray(); const auto &element: jArray) {
             SQSQueueCounter queueCounter;
             queueCounter.FromJson(element.toObject());
             queueCounters.append(queueCounter);

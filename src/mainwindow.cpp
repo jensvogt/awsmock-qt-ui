@@ -152,9 +152,13 @@ void MainWindow::SetupToolBar() {
     const auto toolBar = new QToolBar(this);
     toolBar->setMovable(true);
 
-    const auto ftpClientAction = new QAction(IconUtils::GetIcon("upload"), tr("&FTP client"), this);
+    const auto ftpClientAction = new QAction(IconUtils::GetIcon("ftp"), tr("Open &FTP client"), this);
     connect(ftpClientAction, &QAction::triggered, this, &MainWindow::FtpUpload);
     toolBar->addAction(ftpClientAction);
+
+    const auto dockerStatsAction = new QAction(IconUtils::GetIcon("docker"), tr("Opens the &Docker Statistics"), this);
+    connect(dockerStatsAction, &QAction::triggered, this, &MainWindow::DockerStats);
+    toolBar->addAction(dockerStatsAction);
 
     addToolBar(toolBar);
 }
@@ -242,10 +246,22 @@ void MainWindow::FtpUpload() {
 }
 
 void MainWindow::DockerStats() {
-    const auto dialog = new DockerStatsDialog(this);
-    dialog->setModal(false);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
+    // If the dialog doesn't exist, create it
+    if (!_dockerStatsDialog) {
+        _dockerStatsDialog = new DockerStatsDialog(nullptr);
+        _dockerStatsDialog->setWindowFlags(Qt::Window);
+        _dockerStatsDialog->show();
+
+        // Reset the pointer to nullptr when the user clicks 'X'
+        connect(_dockerStatsDialog, &QObject::destroyed, this, [this]() {
+            _dockerStatsDialog = nullptr;
+        });
+    } else {
+        // If it already exists, bring it to the front
+        _dockerStatsDialog->show();
+        _dockerStatsDialog->raise();
+        _dockerStatsDialog->activateWindow();
+    }
 }
 
 void MainWindow::EditPreferences() {

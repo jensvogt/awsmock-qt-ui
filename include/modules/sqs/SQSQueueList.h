@@ -28,6 +28,8 @@
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 
+#include "components/PageableTable.h"
+
 /**
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
@@ -59,7 +61,7 @@ public:
      *
      * @param queueListResponse queue counter list
      */
-    void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse);
+    void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const;
 
 signals:
     void ShowMessages(const QString &QueueArn, const QString &QueueUrl, bool isDql);
@@ -71,12 +73,7 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Prefix suche
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler

@@ -6,13 +6,11 @@
 #define AWSMOCK_QT_UI_PAGEABLE_TABLE_H
 
 // Qt includes
-#include <QList>
-#include <QWidget>
-#include <QTableView>
 #include <QHeaderView>
 #include <QStandardItemModel>
 
 // Awsmock includes
+#include <qtablewidget.h>
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/Configuration.h>
@@ -74,6 +72,8 @@ public:
      */
     void SetResizeModes(const QList<QHeaderView::ResizeMode> &resizeModes) const;
 
+    void SetHiddenColumns(const QList<int> &hiddenColumns) const;
+
     /**
      * @brief Sets the total size
      *
@@ -99,17 +99,29 @@ public:
      *
      * @return sort column name
      */
-    [[nodiscard]] QString GetSortColumn() const {
+    [[nodiscard]] int GetSortColumn() const {
         return _sortColumn;
     }
 
     /**
      * @brief Returns the sort column
      *
-     * @param sortColumn column name
+     * @return sort column name
      */
-    void SetSortColumn(const QString &sortColumn) {
+    [[nodiscard]] QString GetSortAttribute() const {
+        return _sortAttribute;
+    }
+
+    /**
+     * @brief Returns the sort column
+     *
+     * @param sortColumn column name
+     * @param sortAttribute database attribute
+     */
+    void SetSortColumn(const int &sortColumn, const QString &sortAttribute) {
         _sortColumn = sortColumn;
+        _sortAttribute = sortAttribute;
+        UpdateSorting();
     }
 
     /**
@@ -158,6 +170,10 @@ public:
      */
     void SetColumn(int row, int column, const long &value) const;
 
+    void SetHiddenColumn(int row, int col, const QString &value) const;
+
+    void SetHiddenColumn(int row, int col, bool value) const;
+
     template<class T>
     T GetValue(const QModelIndex &index, const int column) {
         QString sValue = _dataModel->item(index.row(), column)->text();
@@ -169,17 +185,19 @@ public:
             return static_cast<T>(sValue.toDouble());
         } else if constexpr (std::is_same_v<T, QString>) {
             return static_cast<T>(sValue);
+        } else if constexpr (std::is_same_v<T, bool>) {
+            return static_cast<T>(_dataModel->item(index.row(), column)->checkState());
         } else {
             return {};
         }
     }
 
     /**
-        * @brief Returns the table index
-        *
-        * @param pos mouse position
-        * @return table row/column index
-        */
+     * @brief Returns the table index
+     *
+     * @param pos mouse position
+     * @return table row/column index
+     */
     QModelIndex GetIndexFromPosition(const QPoint &pos) const;
 
     /**
@@ -191,6 +209,15 @@ public:
     QPoint GetGlobalPosition(const QPoint &tablePosition) const;
 
     /**
+     * @brief Returns the prefix value
+     *
+     * @return prefix value
+     */
+    QString GetPrefix() const {
+        return _proxyModel->getPrefix();
+    }
+
+    /**
      * @brief Clears the whole table
      */
     void Clear() const {
@@ -198,21 +225,37 @@ public:
         CalculatePageStatus();
     }
 
-signals:
     /**
-     * @brief Send when the page size / page index changed
-     *
-     * @param pageIndex page index
-     * @param pageSize page size
+     * @brief Refresh the sort order
      */
-    void PageChanged(long pageIndex, long pageSize);
+    void UpdateSorting() const;
 
+signals:
     /**
      * @brief Send when the context menu is selected
      *
      * @param pos page index
      */
-    void ContextMenuSelected(const QPoint &pos);
+    void ContextMenuRequested(const QPoint &pos);
+
+    /**
+     * @brief Double click proxy signal
+     *
+     * @param index normalized table index
+     */
+    void DoubleClicked(const QModelIndex &index);
+
+    /**
+     * @brief Single click proxy signal
+     *
+     * @param index normalized table index
+     */
+    void SingleClick(const QModelIndex &index);
+
+    /**
+     * @brief Signals the parent to reload the table
+     */
+    void ReloadTable();
 
 private:
     /**
@@ -273,14 +316,19 @@ private:
     PrefixFilterProxyModel *_proxyModel;
 
     /**
-     * @brief Sort column
+     * @brief Sort column index
      */
-    QString _sortColumn;
+    int _sortColumn;
+
+    /**
+     * @brief Database sort attribute
+     */
+    QString _sortAttribute;
 
     /**
      * @brief Sort column
      */
-    int _sortDirection = 1;
+    int _sortDirection = -1;
 };
 
 #endif // AWSMOCK_QT_UI_PAGEABLE_TABLE_H

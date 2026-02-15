@@ -47,11 +47,11 @@ CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) 
     _table = new PageableTable(this);
     _table->SetHeaderNames({"Name", "ID", "Users", "Created", "Modified"});
     _table->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
-    _table->SetSortColumn("Name");
+    _table->SetSortColumn(0, "name");
     _table->SetSortDirection(1);
 
     // Add context menu
-    connect(_table, &PageableTable::ContextMenuSelected, this, &CognitoUserpoolList::ShowContextMenu);
+    connect(_table, &PageableTable::ContextMenuRequested, this, &CognitoUserpoolList::ShowContextMenu);
 
     // Add all to the layout
     _layout->setContentsMargins(0, 0, 0, 0);
@@ -62,7 +62,7 @@ CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) 
 CognitoUserpoolList::~CognitoUserpoolList() = default;
 
 void CognitoUserpoolList::LoadContent() {
-    _cognitoService->ListUserpools("", _table->GetPageSize(), _table->GetPageIndex(), _table->GetSortColumn(), _table->GetSortDirection());
+    _cognitoService->ListUserpools("", _table->GetPageSize(), _table->GetPageIndex(), _table->GetSortAttribute(), _table->GetSortDirection());
 }
 
 void CognitoUserpoolList::HandleUserpoolList(const CognitoUserpoolListResponse &response) const {

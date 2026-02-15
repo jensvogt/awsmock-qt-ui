@@ -42,7 +42,8 @@ set(TS_FILES awsmock-qt-ui_en_150.ts)
 set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTPFileTree.cpp
         include/components/FTPFileTree.h include/components/FileFilterModel.h src/components/LocalFileTree.cpp
         include/components/LocalFileTree.h src/components/PageableTable.cpp include/components/PageableTable.h
-        src/components/PageableTable.ui)
+        src/components/PageableTable.ui src/components/PageableList.cpp include/components/PageableList.h
+        src/components/PageableList.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h

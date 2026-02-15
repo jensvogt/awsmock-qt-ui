@@ -16,6 +16,7 @@
         <file>light/delete.svg</file>
         <file>light/disabled.svg</file>
         <file>light/disconnected.svg</file>
+        <file>light/docker.svg</file>
         <file>light/docker-stats.svg</file>
         <file>light/edit.svg</file>
         <file>light/enabled.svg</file>
@@ -23,6 +24,7 @@
         <file>light/exit.svg</file>
         <file>light/export.svg</file>
         <file>light/extern-window.svg</file>
+        <file>light/ftp.svg</file>
         <file>light/folder.svg</file>
         <file>light/help.svg</file>
         <file>light/import.svg</file>
@@ -67,6 +69,7 @@
         <file>dark/delete.svg</file>
         <file>dark/disabled.svg</file>
         <file>dark/disconnected.svg</file>
+        <file>dark/docker.svg</file>
         <file>dark/docker-stats.svg</file>
         <file>dark/edit.svg</file>
         <file>dark/enabled.svg</file>
@@ -75,6 +78,7 @@
         <file>dark/export.svg</file>
         <file>dark/extern-window.svg</file>
         <file>dark/folder.svg</file>
+        <file>dark/ftp.svg</file>
         <file>dark/help.svg</file>
         <file>dark/import.svg</file>
         <file>dark/kill.svg</file>
