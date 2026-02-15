@@ -94,7 +94,7 @@ jobs:
           New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
           Copy-Item $exe $dataDir
-          Copy-Item dist\etc\awsmock-qt-ui.json $dataDir
+          Copy-Item dist\etc\awsmock-qt-ui_windows.json $dataDir\awsmock-qt-ui.json
 
       - name: Build Qt Installer Framework installer (binarycreator)
         shell: pwsh
@@ -249,7 +249,7 @@ jobs:
           cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/awsmock-qt-ui/lib
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
-          cp -r dist/etc/${APP_NAME}.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
+          cp -r dist/etc/${APP_NAME}_linux.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui-json
           
           # Create Qt conf
           cat << EOF > $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin/qt.conf
@@ -314,11 +314,11 @@ jobs:
           # FIX: correct binary path
           cp $BUILD_DIR/$APP_NAME $PACKAGE_DIR/usr/local/$APP_NAME/bin/
           
-          cp dist/etc/$APP_NAME.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/
+          cp dist/etc/$APP_NAME_linux.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/$APP_NAME.json
           cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/$APP_NAME/lib/
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
-          
+
           cat << EOF > $PACKAGE_DIR/usr/local/$APP_NAME/bin/qt.conf
           [Paths]
           Prefix = ..
@@ -392,7 +392,7 @@ jobs:
   #          mkdir -p AppDir/usr/bin
   #          mkdir -p AppDir/etc
   #          cp $BUILD_DIR/awsmock-qt-ui AppDir/usr/bin
-  #          cp dist/etc/awsmock-qt-ui.json AppDir/etc/
+  #          cp dist/etc/awsmock-qt-ui_linux.json AppDir/etc/
   #          cp dist/etc/awsmock-qt-ui.desktop AppDir/
   #          cp dist/etc/awsmock.png AppDir/
   #          export QML_SOURCES_PATHS=$GITHUB_WORKSPACE

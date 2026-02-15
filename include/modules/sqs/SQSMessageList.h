@@ -1,26 +1,12 @@
 #ifndef AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
 #define AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
 
-#include <QLabel>
 #include <QMenu>
-#include <QVBoxLayout>
-#include <QTableWidget>
-#include <QListWidget>
+#include <QLabel>
 #include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QLineEdit>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
+#include <QVBoxLayout>
 #include <QToolBar>
 #include <QPushButton>
-#include <QInputDialog>
-#include <QFormLayout>
-#include <QTreeWidget>
-#include <QTimer>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
 
 // Awsmock includes
 #include <utils/BasePage.h>
@@ -60,9 +46,9 @@ signals:
     /**
      * @brief Sent a show SQS message to the main window
      *
-     * @param QueueArn Queue ARN of the Queue for the messages
+     * @param queueArn Queue ARN of the Queue for the messages
      */
-    void ShowMessages(const QString &QueueArn);
+    void ShowMessages(const QString &queueArn);
 
     /**
      * @brief Sends a reload message list to the message list
