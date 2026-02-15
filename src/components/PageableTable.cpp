@@ -10,7 +10,7 @@
 
 PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::PageableTable) {
 
-    // Set defazkt page size
+    // Set defaaut page size
     _pageSize = Configuration::instance().GetValue<int>("ui.page-size");
 
     // Setup component
