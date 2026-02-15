@@ -35,6 +35,20 @@ struct CognitoUserpool {
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
+
+    QJsonObject ToJsonObject() const {
+        QJsonObject jsonObject;
+        jsonObject["region"] = region;
+        jsonObject["id"] = id;
+        jsonObject["name"] = name;
+        jsonObject["userpoolId"] = userpoolId;
+        jsonObject["arn"] = arn;
+        jsonObject["domain"] = domain;
+        jsonObject["userCount"] = static_cast<qlonglong>(userCount);
+        jsonObject["created"] = created.toString(Qt::ISODate);
+        jsonObject["modified"] = modified.toString(Qt::ISODate);
+        return jsonObject;
+    }
 };
 
 

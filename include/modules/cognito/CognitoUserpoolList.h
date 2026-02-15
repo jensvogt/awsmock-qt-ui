@@ -17,6 +17,7 @@
 #include <utils/IconUtils.h>
 #include <components/PageableTable.h>
 #include <modules/cognito/CognitoService.h>
+#include <modules/cognito/CognitoAddUserpoolDialog.h>
 
 /**
  * @brief Application list widget. The widget will be placed in the content pane.
