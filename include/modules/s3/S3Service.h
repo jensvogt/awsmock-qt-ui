@@ -23,7 +23,7 @@ public:
     /**
      * @brief S3 service
      */
-    S3Service();
+    S3Service() = default;
 
     /**
      * @brief List SNS Topics
@@ -127,11 +127,6 @@ private:
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl _url;
 };
 
 

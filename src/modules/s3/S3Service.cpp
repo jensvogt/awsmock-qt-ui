@@ -1,9 +1,5 @@
 #include <modules/s3/S3Service.h>
 
-S3Service::S3Service() {
-    _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
-}
-
 void S3Service::ListBuckets(const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
@@ -22,7 +18,7 @@ void S3Service::ListBuckets(const QString &prefix) {
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -53,7 +49,7 @@ void S3Service::PurgeBucket(const QString &bucketName) {
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -78,7 +74,7 @@ void S3Service::AddBucket(const QString &bucketName) {
     jRequest["Name"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -120,7 +116,7 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
     jRequest["Bucket"] = jBucket;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -146,7 +142,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
     jRequest["Bucket"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -171,7 +167,7 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -210,7 +206,7 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -242,7 +238,7 @@ void S3Service::GetObjectDetails(const QString &objectId) {
     jRequest["oid"] = objectId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -281,7 +277,7 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
     jRequest["metadata"] = jMetadata;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -317,7 +313,7 @@ void S3Service::UpdateObject(const QString &region, const QString &bucketName, c
     jRequest["metadata"] = jMetadata;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -343,7 +339,7 @@ void S3Service::TouchObject(const QString &bucketName, const QString &key) {
     jRequest["key"] = key;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -370,7 +366,7 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
     jRequest["VersionId"] = "";
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
