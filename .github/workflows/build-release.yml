@@ -314,7 +314,7 @@ jobs:
           # FIX: correct binary path
           cp $BUILD_DIR/$APP_NAME $PACKAGE_DIR/usr/local/$APP_NAME/bin/
           
-          cp dist/etc/$APP_NAME_linux.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/$APP_NAME.json
+          cp -r dist/etc/${APP_NAME}_linux.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui-json
           cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/$APP_NAME/lib/
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
