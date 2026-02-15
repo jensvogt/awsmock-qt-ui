@@ -49,6 +49,6 @@
     "page-size": 1000
   },
   "ftp-client": {
-    "local-base-dir": "/home/vogje01/libri/Libri.ONE/PIM/test"
+    "local-base-dir": "/home/vogje01/work/libri/Libri.ONE/PIM/tests"
   }
 }

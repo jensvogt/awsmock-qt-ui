@@ -22,11 +22,11 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &FTPClientDialog::HandleReject);
 
     // Local folder tree
-    _localFolderTree = new LocalFileTree(QDir::homePath(), this);
+    _localFolderTree = new LocalFileTree(_localBaseDir, this);
     _ui->horizontalSplitter1->addWidget(_localFolderTree);
 
     // FTP folder tree
-    _ftpFolderTree = new FTPFileTree(nullptr);
+    _ftpFolderTree = new FTPFileTree(this);
     _ui->horizontalSplitter1->addWidget(_ftpFolderTree);
 
     // Name validator
