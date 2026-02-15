@@ -5,10 +5,15 @@
 #include <QPushButton>
 #include <components/LocalFileTree.h>
 
+#include "components/FTPFileTree.h"
+
 LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidget(parent) {
 
     _layout = new QVBoxLayout;
     setLayout(_layout);
+
+    // Setup FTP connection
+    SetupFtpConnection();
 
     // 1. Create the model and the view
     _model = new QStandardItemModel(this);
@@ -51,21 +56,8 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
     _folderTreeView->setSortingEnabled(true);
     _folderTreeView->sortByColumn(0, Qt::AscendingOrder);
     connect(_folderTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFolderContextMenu);
-    connect(_folderTreeView, &QTreeView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the source index from the folder view click
-        const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
-
-        // Map that source index into the file proxy's coordinate system
-        const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
-
-        // Point the file view to look INSIDE that folder
-        _fileTreeView->setRootIndex(fileProxyIndex);
-        QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
-        const QString absPath = parentItem->data(Qt::UserRole).toString();
-
-        parentItem->removeRows(0, parentItem->rowCount());
-        ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
-    });
+    connect(_folderTreeView, &QTreeView::doubleClicked, this, &LocalFileTree::ShowFolderContentFolder);
+    //connect(_folderTreeView, &QTreeView::clicked, this, &LocalFileTree::ShowFolderContentFolder);
 
     // Setup model
     _fileProxyModel = new FileFilterModel();
@@ -100,23 +92,14 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
     _fileTreeView->setSortingEnabled(true);
     _fileTreeView->sortByColumn(0, Qt::AscendingOrder);
     connect(_fileTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFileContextMenu);
+    connect(_fileTreeView, &QTreeView::doubleClicked, this, &LocalFileTree::ShowFolderContentFile);
+    connect(_fileTreeView, &QTreeView::clicked, this, &LocalFileTree::ShowFolderContentFile);
 
     // Synchronization
-    connect(_folderTreeView, &QTreeView::clicked, this, [this](const QModelIndex &index) {
-        // Get the source index from the folder view click
-        const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
+    connect(_folderTreeView, &QTreeView::clicked, this, &LocalFileTree::SynchronizeViews);
 
-        // Map that source index into the file proxy's coordinate system
-        const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
-
-        // Point the file view to look INSIDE that folder
-        _fileTreeView->setRootIndex(fileProxyIndex);
-        QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
-        const QString absPath = parentItem->data(Qt::UserRole).toString();
-
-        parentItem->removeRows(0, parentItem->rowCount());
-        emit FolderSelectedSignal(absPath, parentItem);
-    });
+    // Connect droppable event
+    connect(_fileTreeView, &DroppableTreeView::FileDropped, this, &LocalFileTree::FileDropped);
 
     _menuBarLayout = new QHBoxLayout(this);
     const auto spacer = new QWidget();
@@ -137,6 +120,16 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
 
 LocalFileTree::~LocalFileTree() = default;
 
+void LocalFileTree::SetupFtpConnection() {
+    _ftpClientThread = new FTPClientThread();
+    connect(_ftpClientThread, &FTPClientThread::emitSuccess, this, &LocalFileTree::ConnectionSucceeded);
+    connect(_ftpClientThread, &FTPClientThread::finished, _ftpClientThread, &FTPClientThread::stop);
+}
+
+void LocalFileTree::ConnectionSucceeded() {
+    _connected = true;
+}
+
 void LocalFileTree::ScanFolder(const QString &rootFolder, QStandardItem *parent) const {
     const auto root = QDir(rootFolder);
 
@@ -151,6 +144,67 @@ void LocalFileTree::ScanFolder(const QString &rootFolder, QStandardItem *parent)
             fileInfo.path = file.absoluteFilePath();
             AddItem(fileInfo, parent);
         }
+    }
+}
+
+void LocalFileTree::ShowFolderContentFolder(const QModelIndex &index) const {
+
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _folderProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    _fileTreeView->setRootIndex(fileProxyIndex);
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+
+    parentItem->removeRows(0, parentItem->rowCount());
+    ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
+}
+
+void LocalFileTree::ShowFolderContentFile(const QModelIndex &index) const {
+
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _fileProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+    if (const QString fileType = parentItem->data(Qt::UserRole + 1).toString(); fileType == FTP_FILE_TYPE_FILE) {
+        return;
+    }
+
+    _fileTreeView->setRootIndex(fileProxyIndex);
+    parentItem->removeRows(0, parentItem->rowCount());
+    ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
+}
+
+void LocalFileTree::SynchronizeViews(const QModelIndex &index) {
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    _fileTreeView->setRootIndex(fileProxyIndex);
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+
+    parentItem->removeRows(0, parentItem->rowCount());
+    emit FolderSelectedSignal(absPath, parentItem);
+}
+
+void LocalFileTree::FileDropped(const QString &filePath) const {
+    if (_connected) {
+        _ftpClientThread->task = TUp;
+        _ftpClientThread->arglist[0] = filePath.toStdString();
+        _ftpClientThread->start();
     }
 }
 

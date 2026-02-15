@@ -20,6 +20,7 @@ PageableList::PageableList(QWidget *parent) : QWidget(parent), _ui(new Ui::Pagea
         _ui->prefixClearButton->setDisabled(false);
         _proxyModel->setFilterColumn(0);
         _proxyModel->setFilterPrefix(_ui->prefixEdit->text());
+        _prefix = _ui->prefixEdit->text();
     });
 
     // Prefix clear button
@@ -41,7 +42,12 @@ PageableList::PageableList(QWidget *parent) : QWidget(parent), _ui(new Ui::Pagea
     _ui->listView->setStyleSheet(R"(QListView::item {border-bottom: 1px solid #5c5c5c;})");
 
     _dataModel = new QStandardItemModel(_ui->listView);
-    _ui->listView->setModel(_dataModel);
+
+    // Proxy model for prefix filtering
+    _proxyModel = new PrefixFilterProxyModel(this);
+    _proxyModel->setSourceModel(_dataModel);
+
+    _ui->listView->setModel(_proxyModel);
 
     // Start button
     _ui->startButton->setText(nullptr);
@@ -94,9 +100,13 @@ PageableList::PageableList(QWidget *parent) : QWidget(parent), _ui(new Ui::Pagea
 
     // Add context menu
     _ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_ui->listView, &QListView::customContextMenuRequested, this, [this]() {
-        emit ContextMenuRequested();
+    connect(_ui->listView, &QListView::customContextMenuRequested, this, [this](const QPoint &pos) {
+        emit ContextMenuRequested(pos);
     });
+
+    // Defaults
+    _ui->pageStatusLabel->setText(QString("%1 - %2/%3").arg(0).arg(_pageSize).arg(_totalSize));
+    SetLastUpdate();
 }
 
 PageableList::~PageableList() {
@@ -123,4 +133,17 @@ void PageableList::SetStatus(const QString &message) const {
 void PageableList::SetLastUpdate() const {
     const QString message = "Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime());
     _ui->statusLabel->setText(message);
+}
+
+QModelIndex PageableList::GetIndexFromPosition(const QPoint &pos) const {
+
+    const QModelIndex proxyIndex = _ui->listView->indexAt(pos);
+    if (!proxyIndex.isValid())
+        return {};
+
+    return _proxyModel->mapToSource(proxyIndex);
+}
+
+QPoint PageableList::GetGlobalPosition(const QPoint &tablePosition) const {
+    return _ui->listView->viewport()->mapToGlobal(tablePosition);
 }

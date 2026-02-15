@@ -59,8 +59,14 @@ public:
      * @brief List DynamoDB table items
      *
      * @param tableName table name
+     * @param prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param prefix
+     * @param pageSize
+     * @param pageIndex
      */
-    void ListItems(const QString &tableName);
+    void ListItems(const QString &tableName, const QString &prefix, long pageSize, long pageIndex);
 
     /**
      * @brief Purge a table

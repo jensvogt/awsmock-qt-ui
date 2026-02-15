@@ -63,6 +63,9 @@ FTPFileTree::FTPFileTree(QWidget *parent) : QWidget(parent) {
     _fileTreeView->setSortingEnabled(true);
     _fileTreeView->sortByColumn(0, Qt::AscendingOrder);
 
+    // File tree view double click
+    connect(_fileTreeView, &QTreeView::doubleClicked, this, &FTPFileTree::ShowFolderContentFile);
+
     // Delete button connection
     const auto *deleteShortcut = new QShortcut(QKeySequence::Delete, _fileTreeView);
     connect(deleteShortcut, &QShortcut::activated, this, [this]() {
@@ -136,7 +139,26 @@ void FTPFileTree::SetupModel() {
     // Setup model
     _folderProxyModel = new FolderFilterModel();
     _folderProxyModel->setSourceModel(_model);
+}
 
+void FTPFileTree::ShowFolderContentFile(const QModelIndex &index) const {
+
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _fileProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+    if (const QString fileType = parentItem->data(Qt::UserRole + 1).toString(); fileType == FTP_FILE_TYPE_FILE) {
+        return;
+    }
+
+    _fileTreeView->setRootIndex(fileProxyIndex);
+    parentItem->removeRows(0, parentItem->rowCount());
+    TargetFolderSelectionChanged(parentItem->data(Qt::UserRole).toString(), parentItem);
 }
 
 void FTPFileTree::Connect(const QString &server, const QString &port, const QString &user, const QString &password) {

@@ -49,6 +49,8 @@ signals:
 private:
     void SetupModel();
 
+    void ShowFolderContentFile(const QModelIndex &index) const;
+
     void AddItem(const FileInfo &fileInfo, QStandardItem *parent) const;
 
     void TargetFolderSelectionChanged(const QString &absPath, QStandardItem *parent) const;

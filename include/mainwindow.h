@@ -152,5 +152,10 @@ private:
      * @brief FTP client dialog
      */
     FTPClientDialog *_ftpClientDialog{};
+
+    /**
+     * @brief Docker statistics dialog
+     */
+    DockerStatsDialog *_dockerStatsDialog{};
 };
 #endif // AWSMOCK_QT_UI_MAIN_WINDOW_H

@@ -39,11 +39,100 @@ public:
      */
     ~PageableList() override;
 
-    void CalculatePageStatus() const;
+    /**
+     * @brief Return the page index
+     *
+     * @return current page index
+     */
+    [[nodiscard]] long GetPageIndex() const {
+        return _pageIndex;
+    }
 
-    void SetStatus(const QString &message) const;
+    /**
+     * @brief Return the page index
+     *
+     * @return current page size
+     */
+    [[nodiscard]] long GetPageSize() const {
+        return _pageSize;
+    }
 
-    void SetLastUpdate() const;
+    /**
+     * @brief Sets the total size
+     *
+     * @param totalSize total item count
+     */
+    void SetTotalSize(const long totalSize) {
+        _totalSize = totalSize;
+        _maxPage = (_totalSize + _pageSize - 1) / _pageSize;
+        CalculatePageStatus();
+    }
+
+    /**
+     * @brief Sets the total size
+     *
+     * @return total item count
+     */
+    [[nodiscard]] long GetTotalSize() const {
+        return _totalSize;
+    }
+
+    /**
+     * @brief Sets the total size
+     *
+     * @return total item count
+     */
+    [[nodiscard]] QString GetPrefix() const {
+        return _prefix;
+    }
+
+    /**
+      * @brief Returns the table index
+      *
+      * @param pos mouse position
+      * @return table row/column index
+      */
+    QModelIndex GetIndexFromPosition(const QPoint &pos) const;
+
+    /**
+     * @brief Returns the global position
+     *
+     * @param tablePosition table position
+     * @return global position
+     */
+    QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+
+    /**
+     * @brief Clear all rows
+     */
+    void Clear() const {
+        _dataModel->removeRows(0, _dataModel->rowCount());
+    }
+
+    /**
+     * @brief Append a row
+     *
+     * @param item standard item
+     */
+    void Append(QStandardItem *item) const {
+        _dataModel->appendRow(item);
+    }
+
+    template<class T>
+    T GetValue(const QModelIndex &index, const int column) {
+        QString sValue = _dataModel->item(index.row(), column)->text();
+        if constexpr (std::is_same_v<T, int>) {
+            return static_cast<T>(sValue.toInt());
+        } else if constexpr (std::is_same_v<T, long>) {
+            return static_cast<T>(sValue.toInt());
+        } else if constexpr (std::is_same_v<T, double>) {
+            return static_cast<T>(sValue.toDouble());
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return static_cast<T>(sValue);
+        } else {
+            return {};
+        }
+    }
 
 signals:
     /**
@@ -57,9 +146,15 @@ signals:
     /**
      * @brief Send when a context menu is requested
      */
-    void ContextMenuRequested();
+    void ContextMenuRequested(const QPoint &pos);
 
 private:
+    void CalculatePageStatus() const;
+
+    void SetStatus(const QString &message) const;
+
+    void SetLastUpdate() const;
+
     /**
      * UI Components
      */
@@ -84,6 +179,11 @@ private:
      * @brief Total size
      */
     long _totalSize{};
+
+    /**
+     * @brief Prefix
+     */
+    QString _prefix{};
 
     /**
      * @brief Data model

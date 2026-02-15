@@ -4,25 +4,25 @@ SQSService::SQSService() {
     url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1"));
 }
 
-void SQSService::ListQueues(const QString &prefix, Qt::SortOrder sortOrder) {
+void SQSService::ListQueues(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortColumn, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = sortOrder == Qt::DescendingOrder ? 1 : -1;
-    jSorting["column"] = "attributes.approximateNumberOfMessages";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortColumn;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qlonglong>(pageSize);
+    jRequest["pageIndex"] = static_cast<qlonglong>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
+
     _restManager.post(url,
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "sqs"},
                           {"x-awsmock-action", "list-queue-counters"},

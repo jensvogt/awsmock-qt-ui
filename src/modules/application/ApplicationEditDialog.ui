@@ -45,7 +45,10 @@
      <item row="14" column="0">
       <widget class="QLineEdit" name="containerIdEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -66,7 +69,10 @@
      <item row="10" column="0">
       <widget class="QLineEdit" name="imageIdEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -147,14 +153,20 @@
      <item row="2" column="0">
       <widget class="QLineEdit" name="regionEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item row="12" column="0">
       <widget class="QLineEdit" name="containerNameEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -171,7 +183,7 @@
      <item row="5" column="0">
       <widget class="QLineEdit" name="nameEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -242,7 +254,10 @@
      <item row="2" column="2">
       <widget class="QLineEdit" name="publicPortEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -256,7 +271,10 @@
      <item row="5" column="2">
       <widget class="QLineEdit" name="privatePortEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -343,7 +361,10 @@
      <item row="7" column="0">
       <widget class="QLineEdit" name="imageNameEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

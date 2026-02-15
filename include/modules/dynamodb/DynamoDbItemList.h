@@ -28,6 +28,7 @@
 #include <utils/StringUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <components/PageableList.h>
 #include <modules/module/ModuleService.h>
 #include <modules/dynamodb/DynamoDbService.h>
 
@@ -70,8 +71,6 @@ signals:
      *
      * @param itemName name of the item
      */
-
-
     void ShowItemsSignal(const QString &itemName);
 
     /**
@@ -84,8 +83,6 @@ slots:
     /**
      * @brief Context menu callback
      */
-
-
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
@@ -97,12 +94,7 @@ private:
     /**
      * @brief Item list view
      */
-    QListView *_itemView;
-
-    /**
-     * @brief Topic prefix search
-     */
-    QString _prefixValue = "";
+    PageableList *_itemView;
 
     /**
      * @brief DynamoDB REST service handler
@@ -115,16 +107,6 @@ private:
     ModuleService *_moduleService;
 
     /**
-     *  @brief Item data model
-     */
-    QStandardItemModel *_dataModel;
-
-    /**
-     * @brief Data proxy model
-     */
-    PrefixFilterProxyModel *_proxyModel{};
-
-    /**
      * @brief Sort column index
      *
      * @par Default sort column is 'messages', index=1
@@ -135,11 +117,6 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *_prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H

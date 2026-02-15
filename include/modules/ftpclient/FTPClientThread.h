@@ -15,6 +15,7 @@ class FTPClientThread : public QThread {
     Q_OBJECT
 
 public:
+    // TODO: Make singleton, so it can be used from local/FTP tree views
     explicit FTPClientThread();
 
     ~FTPClientThread() override;
