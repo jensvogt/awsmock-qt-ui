@@ -18,7 +18,7 @@ ApplicationEnvironmentDialog::ApplicationEnvironmentDialog(const QString &key, c
     connect(_ui->valueEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         _value = text;
     });
-    _ui->keyEdit->setDisabled(true);
+    _ui->keyEdit->setReadOnly(true);
 }
 
 ApplicationEnvironmentDialog::ApplicationEnvironmentDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationEnvironmentDialog) {

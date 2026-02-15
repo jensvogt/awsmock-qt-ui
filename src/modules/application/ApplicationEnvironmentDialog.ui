@@ -27,7 +27,11 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="keyEdit"/>
+      <widget class="QLineEdit" name="keyEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="valueLabel">
@@ -37,7 +41,11 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="valueEdit"/>
+      <widget class="QLineEdit" name="valueEdit">
+       <property name="readOnly">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

@@ -19,6 +19,8 @@ DynamoDbEditTableDialog::DynamoDbEditTableDialog(const QString &tableName, QWidg
     _ui->tabWidget->setCurrentIndex(0);
 
     DynamoDbEditTableDialog::LoadContent();
+
+    _ui->nameEdit->setReadOnly(true);
 }
 
 DynamoDbEditTableDialog::~DynamoDbEditTableDialog() {

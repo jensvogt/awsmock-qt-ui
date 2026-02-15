@@ -27,6 +27,7 @@
 #include <modules/ssm/SSMParameterList.h>
 #include <modules/dynamodb/DynamoDbTableList.h>
 #include <modules/dynamodb/DynamoDbItemList.h>
+#include <modules/cognito/CognitoUserpoolList.h>
 
 class MainRouter : public QWidget {
     Q_OBJECT
@@ -80,6 +81,9 @@ public:
             },
             {
                 "KMS", new KMSKeyList("KMS", parent)
+            },
+            {
+                "Cognito", new CognitoUserpoolList("Cognito User Pool List", parent)
             }
         };
         connect(&EventBus::instance(), &EventBus::RouteChanged, this, [this](const QString &pageName, const QMap<QString, QString> &arguments) {

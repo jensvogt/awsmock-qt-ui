@@ -101,7 +101,7 @@ private:
     /**
      * @brief External log dialog
      */
-    ServerLogWidget *_externalLogDialog;
+    ServerLogWidget *_externalLogDialog{};
 
     /**
      * @brief Websocket URL

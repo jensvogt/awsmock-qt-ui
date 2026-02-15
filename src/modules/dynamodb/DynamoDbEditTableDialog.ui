@@ -19,7 +19,10 @@
      <item row="4" column="0">
       <widget class="QLineEdit" name="nameEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

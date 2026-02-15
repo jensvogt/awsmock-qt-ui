@@ -5,6 +5,7 @@
         <file>light/add.svg</file>
         <file>light/add-directory.svg</file>
         <file>light/back.svg</file>
+        <file>light/begin.svg</file>
         <file>light/browse.svg</file>
         <file>light/clean.svg</file>
         <file>light/clear.svg</file>
@@ -18,6 +19,7 @@
         <file>light/docker-stats.svg</file>
         <file>light/edit.svg</file>
         <file>light/enabled.svg</file>
+        <file>light/end.svg</file>
         <file>light/exit.svg</file>
         <file>light/export.svg</file>
         <file>light/extern-window.svg</file>
@@ -26,9 +28,11 @@
         <file>light/import.svg</file>
         <file>light/kill.svg</file>
         <file>light/logs.svg</file>
+        <file>light/next.svg</file>
         <file>light/ok.svg</file>
         <file>light/pretty.svg</file>
         <file>light/preferences.svg</file>
+        <file>light/previous.svg</file>
         <file>light/purge.svg</file>
         <file>light/reconnect.svg</file>
         <file>light/rebuild.svg</file>
@@ -52,6 +56,7 @@
         <file>dark/add.svg</file>
         <file>dark/add-directory.svg</file>
         <file>dark/back.svg</file>
+        <file>dark/begin.svg</file>
         <file>dark/browse.svg</file>
         <file>dark/clean.svg</file>
         <file>dark/clear.svg</file>
@@ -65,6 +70,7 @@
         <file>dark/docker-stats.svg</file>
         <file>dark/edit.svg</file>
         <file>dark/enabled.svg</file>
+        <file>dark/end.svg</file>
         <file>dark/exit.svg</file>
         <file>dark/export.svg</file>
         <file>dark/extern-window.svg</file>
@@ -73,9 +79,11 @@
         <file>dark/import.svg</file>
         <file>dark/kill.svg</file>
         <file>dark/logs.svg</file>
+        <file>dark/next.svg</file>
         <file>dark/ok.svg</file>
         <file>dark/preferences.svg</file>
         <file>dark/pretty.svg</file>
+        <file>dark/previous.svg</file>
         <file>dark/purge.svg</file>
         <file>dark/rebuild.svg</file>
         <file>dark/reconnect.svg</file>
