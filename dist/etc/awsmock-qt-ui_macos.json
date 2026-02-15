@@ -1,0 +1,54 @@
+{
+  "aws": {
+    "region": "eu-central-1",
+    "user": "jvo",
+    "client-id": "00000000",
+    "account-id": "000000000000"
+  },
+  "server": {
+    "base-url": "http://localhost:4566",
+    "base-urls": [
+      "http://localhost:4566",
+      "http://vogje01-desktop:4566",
+      "http://192.168.178.46:4566"
+    ],
+    "websocket-url": "ws://localhost:4569",
+    "websocket-urls": [
+      "ws://localhost:4569",
+      "ws://vogje01-desktop:4569",
+      "ws://192.168.178.46:4569"
+    ]
+  },
+  "ui": {
+    "application-log-limit": 1000,
+    "auto-update-period": 10,
+    "default-ftp-user": "DEMODLI",
+    "default-ftp-password": "Tg/}2e0m.>_s",
+    "default-ftp-server": "localhost",
+    "default-ftp-port": 2121,
+    "default-ftp-protocol": "FTP",
+    "default-directory": {
+      "ApplicationUploadCodeDialog": "/home/vogje01/work/libri/Libri.ONE/PIM/compliance-archive-service/target",
+      "ExportInfrastructure": "/usr/local/awsmock/init",
+      "ImportInfrastructure": "/usr/local/awsmock/init",
+      "FTPUploadDialog": "/home/vogje01/work/libri/Libri.ONE/PIM/tests"
+    },
+    "default-locale": "DE",
+    "locales": [
+      "US",
+      "UK",
+      "DE"
+    ],
+    "datetime-format": "yyyy-MM-dd HH:mm:ss",
+    "time-format": "HH:mm:ss",
+    "qt-version": "6.10.1",
+    "style": "Fusion",
+    "style-type": "Dark",
+    "version": "1.0",
+    "log-limit": 500,
+    "page-size": 1000
+  },
+  "ftp-client": {
+    "local-base-dir": "/home/vogje01/work/libri/Libri.ONE/PIM/tests"
+  }
+}
