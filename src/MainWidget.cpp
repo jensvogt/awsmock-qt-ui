@@ -8,7 +8,6 @@
 #include "ui_MainWidget.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidget) {
-
     // Get the log limit
     _logLimit = Configuration::instance().GetValue<long>("ui.log-limit", _logLimit);
 
@@ -168,11 +167,9 @@ void MainWidget::SetupServerLogs() {
     _ui->externWindowButton->setIcon(IconUtils::GetIcon("extern-window"));
     _ui->externWindowButton->setToolTip("Detach the log window");
     connect(_ui->externWindowButton, &QPushButton::clicked, [this]() {
-
         _webSocket->disconnected();
         _webSocket->close();
         if (!_externalLogDialog) {
-
             _externalLogDialog = new ServerLogWidget();
             _externalLogDialog->setWindowFlags(Qt::Window);
             _externalLogDialog->setAttribute(Qt::WA_DeleteOnClose);
