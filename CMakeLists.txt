@@ -88,7 +88,7 @@ set(APPLICATION_SOURCES src/modules/application/ApplicationList.cpp include/modu
         include/modules/application/ApplicationDependencyDialog.h src/modules/application/ApplicationLogsDialog.cpp
         src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h)
 set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
-        src/modules/cognito/CognitoUserpoolList.cpp
+        src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
         include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
@@ -250,7 +250,6 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/utils/UpdateChecker.h
         include/utils/DroppableTreeView.h
         include/utils/NetworkUtils.h
-        include/dto/cognito/CognitoUserpoolListResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

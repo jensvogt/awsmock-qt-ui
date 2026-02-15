@@ -6,12 +6,15 @@
 #define AWSMOCK_QT_UI_PAGEABLE_TABLE_H
 
 // Qt includes
+#include <QList>
 #include <QWidget>
+#include <QTableView>
+#include <QHeaderView>
 #include <QStandardItemModel>
 
 // Awsmock includes
-#include <qheaderview.h>
-#include <QList>
+#include <utils/IconUtils.h>
+#include <utils/DateTimeUtils.h>
 #include <utils/Configuration.h>
 #include <utils/PrefixFilterModel.h>
 
@@ -79,6 +82,7 @@ public:
     void SetTotalSize(const long totalSize) {
         _totalSize = totalSize;
         _maxPage = (_totalSize + _pageSize - 1) / _pageSize;
+        CalculatePageStatus();
     }
 
     /**
@@ -126,6 +130,60 @@ public:
         _sortDirection = sortDirection;
     }
 
+    /**
+     * @brief Sets a string column
+     *
+     * @param row table row
+     * @param column table column
+     * @param value column value
+     * @param alignment column aligment
+     */
+    void SetColumn(int row, int column, const QString &value, const Qt::Alignment &alignment = Qt::AlignLeft | Qt::AlignVCenter) const;
+
+    /**
+     * @brief Sets a datetime column
+     *
+     * @param row table row
+     * @param column table column
+     * @param value column value
+     */
+    void SetColumn(int row, int column, const QDateTime &value) const;
+
+    /**
+     * @brief Sets a long integer column
+     *
+     * @param row table row
+     * @param column table column
+     * @param value column value
+     */
+    void SetColumn(int row, int column, const long &value) const;
+
+    template<class T>
+    T GetValue(const QModelIndex &index, const int column) {
+        QString sValue = _dataModel->item(index.row(), column)->text();
+        if constexpr (std::is_same_v<T, int>) {
+            return static_cast<T>(sValue.toInt());
+        } else if constexpr (std::is_same_v<T, long>) {
+            return static_cast<T>(sValue.toInt());
+        } else if constexpr (std::is_same_v<T, double>) {
+            return static_cast<T>(sValue.toDouble());
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return static_cast<T>(sValue);
+        } else {
+            return {};
+        }
+    }
+
+    /**
+        * @brief Returns the table index
+        *
+        * @param pos mouse position
+        * @return table row/column index
+        */
+    QModelIndex GetIndexFromPosition(const QPoint &pos) const;
+
+    QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+
 signals:
     /**
      * @brief Send when the page size / page index changed
@@ -133,9 +191,28 @@ signals:
      * @param pageIndex page index
      * @param pageSize page size
      */
-    void pageChanged(long pageIndex, long pageSize);
+    void PageChanged(long pageIndex, long pageSize);
+
+    /**
+     * @brief Send when the context menu is selected
+     *
+     * @param pos page index
+     */
+    void ContextMenuSelected(const QPoint &pos);
 
 private:
+    /**
+     * @brief Sets a status message
+     *
+     * @param message status message
+     */
+    void SetStatus(const QString &message) const;
+
+    /**
+     * @brief Sets the last update time
+     */
+    void SetLastUpdate() const;
+
     /**
      * @brief Calculate the pageing status
      */
@@ -191,6 +268,5 @@ private:
      */
     int _sortDirection = 1;
 };
-
 
 #endif // AWSMOCK_QT_UI_PAGEABLE_TABLE_H

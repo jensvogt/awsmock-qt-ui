@@ -7,10 +7,14 @@
 
 // Qt includes
 #include <QObject>
+#include <QLabel>
 #include <QVBoxLayout>
+#include <QMenu>
+#include <QPushButton>
 
 // Awsmock includes
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
 #include <components/PageableTable.h>
 #include <modules/cognito/CognitoService.h>
 
@@ -39,7 +43,9 @@ public:
      */
     void LoadContent() override;
 
-    void HandleUserpoolList(const CognitoUserpoolListResponse &response);
+    void HandleUserpoolList(const CognitoUserpoolListResponse &response) const;
+
+    void ShowContextMenu(const QPoint &pos) const;
 
 private:
     /**

@@ -7,11 +7,10 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     _applicationService = new ApplicationService();
 
     // Event bus connection
-    _statusConnection =
-            connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, const qint64 elapsed) {
-                const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
-                _ui->statusLabel->setText(msg);
-            });
+    connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, const qint64 elapsed) {
+        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
+        _ui->statusLabel->setText(msg);
+    });
 
     // Connect service
     _containerService = new DockerService();
@@ -92,7 +91,6 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
 }
 
 DockerStatsDialog::~DockerStatsDialog() {
-    disconnect(_statusConnection);
     delete _ui;
 }
 

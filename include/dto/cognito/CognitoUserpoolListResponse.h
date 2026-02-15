@@ -21,7 +21,7 @@ struct CognitoUserpoolListResponse {
 
     void FromJson(const QJsonDocument &jsonDoc) {
         total = jsonDoc.object()["total"].toInt();
-        for (QJsonArray jArray = jsonDoc["bucketCounters"].toArray(); const auto &element: jArray) {
+        for (QJsonArray jArray = jsonDoc["userPoolCounters"].toArray(); const auto &element: jArray) {
             CognitoUserpool userpool;
             userpool.FromJson(element.toObject());
             userpools.append(userpool);

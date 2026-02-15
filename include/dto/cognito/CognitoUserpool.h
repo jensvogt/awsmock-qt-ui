@@ -8,7 +8,17 @@
 struct CognitoUserpool {
     QString region;
 
+    QString id;
+
     QString name;
+
+    QString userpoolId;
+
+    QString arn;
+
+    QString domain;
+
+    long userCount;
 
     QDateTime created;
 
@@ -16,7 +26,12 @@ struct CognitoUserpool {
 
     void FromJson(const QJsonObject &jsonObject) {
         region = jsonObject["region"].toString();
+        id = jsonObject["id"].toString();
         name = jsonObject["name"].toString();
+        userpoolId = jsonObject["userpoolId"].toString();
+        arn = jsonObject["arn"].toString();
+        domain = jsonObject["domain"].toString();
+        userCount = jsonObject["userCount"].toInt();
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }

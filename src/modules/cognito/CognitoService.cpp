@@ -22,7 +22,7 @@ void CognitoService::ListUserpools(const QString &prefix, const long pageSize, c
     _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
-                          {"x-awsmock-target", "cognito"},
+                          {"x-awsmock-target", "cognito-idp"},
                           {"x-awsmock-action", "list-user-pool-counters"},
                           {"content-type", "application/json"}
                       },
