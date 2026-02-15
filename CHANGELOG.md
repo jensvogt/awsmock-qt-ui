@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.1...v1.11.2) (2026-02-15)
+
+
+### Bug Fixes
+
+* add paged lists ([d57e454](https://github.com/jensvogt/awsmock-qt-ui/commit/d57e454485b1d43a30b10b40559766c95798ea66))
+* SQS queue list ([50aea67](https://github.com/jensvogt/awsmock-qt-ui/commit/50aea675f9e91e48f32a8598e9a7a7bb35bc08f6))
+
 ## [1.11.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.0...v1.11.1) (2026-02-15)
 
 
