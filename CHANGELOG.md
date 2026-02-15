@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.4...v1.11.5) (2026-02-15)
+
+
+### Bug Fixes
+
+* fix S3 remote connection ([aee3492](https://github.com/jensvogt/awsmock-qt-ui/commit/aee349296a4267e87c46c567e912138eb1703385))
+
 ## [1.11.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.3...v1.11.4) (2026-02-15)
 
 
