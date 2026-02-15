@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.11.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.29...v1.11.0) (2026-02-15)
+
+
+### Features
+
+* cognito included ([ffd6672](https://github.com/jensvogt/awsmock-qt-ui/commit/ffd66725c8db50848d8341a9958546ea5f68fbff))
+* cognito included ([d8ffdbe](https://github.com/jensvogt/awsmock-qt-ui/commit/d8ffdbed64e23c98088abf566203f0632664a6bb))
+
+
+### Bug Fixes
+
+* cognito included ([b83b3d1](https://github.com/jensvogt/awsmock-qt-ui/commit/b83b3d18cade449af14fceb0ad69ff67db957e7d))
+
 ## [1.10.29](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.28...v1.10.29) (2026-02-14)
 
 
