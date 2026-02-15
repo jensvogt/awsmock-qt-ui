@@ -163,7 +163,6 @@ void SQSService::ListQueueAttributes(const QString &queueArn, const QString &pre
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SQSQueueAttributeListResponse sqsResponse;
                                   sqsResponse.FromJson(jsonDoc);

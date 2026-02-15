@@ -220,7 +220,7 @@ public:
     /**
      * @brief Clears the whole table
      */
-    void Clear() const {
+    void Clear() {
         _dataModel->removeRows(0, _dataModel->rowCount());
         CalculatePageStatus();
     }
@@ -273,7 +273,7 @@ private:
     /**
      * @brief Calculate the pageing status
      */
-    void CalculatePageStatus() const;
+    void CalculatePageStatus();
 
     /**
      * @brief Page index

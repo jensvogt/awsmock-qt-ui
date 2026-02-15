@@ -13,7 +13,7 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
     setLayout(_layout);
 
     // Setup FTP connection
-    SetupFtpConnection();
+    //SetupFtpConnection();
 
     // 1. Create the model and the view
     _model = new QStandardItemModel(this);

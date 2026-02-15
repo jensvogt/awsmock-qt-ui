@@ -32,6 +32,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     _ui->prefixClearButton->setToolTip("Clear the prefix field");
     connect(_ui->prefixClearButton, &QPushButton::clicked, this, [this]() {
         _proxyModel->clearFilter();
+        _ui->prefixEdit->setText(nullptr);
         _ui->prefixClearButton->setDisabled(true);
     });
 
@@ -59,7 +60,6 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     connect(_ui->startButton, &QPushButton::clicked, this, [this]() {
         _pageIndex = 0;
         CalculatePageStatus();
-        emit ReloadTable();
     });
 
     _ui->previousButton->setText(nullptr);
@@ -77,7 +77,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     _ui->nextButton->setIcon(IconUtils::GetIcon("next"));
     connect(_ui->nextButton, &QPushButton::clicked, this, [this]() {
         _pageIndex++;
-        if (_pageIndex > _maxPage) {
+        if (_pageIndex >= _maxPage) {
             _pageIndex = _maxPage;
         }
         CalculatePageStatus();
@@ -125,10 +125,11 @@ PageableTable::~PageableTable() {
     delete _ui;
 }
 
-void PageableTable::CalculatePageStatus() const {
+void PageableTable::CalculatePageStatus() {
     long start = _pageIndex * _pageSize;
     if (start >= _totalSize) {
-        start -= _pageSize;
+        _pageIndex = --_pageIndex > 0 ? _pageIndex : 0;
+        start = _pageIndex * _pageSize;
     }
     long end = _pageIndex * _pageSize + _pageSize;
     if (end > _totalSize) {
