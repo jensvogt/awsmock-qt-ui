@@ -4,12 +4,16 @@
 //
 
 #include <modules/cognito/CognitoUserpoolList.h>
+#include <ui_CognitoAddUserpoolDialog.h>
 
 CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Service
     _cognitoService = new CognitoService();
     connect(_cognitoService, &CognitoService::ListUserPoolsSignal, this, &CognitoUserpoolList::HandleUserpoolList);
+    connect(_cognitoService, &CognitoService::RefreshContentSignal, this, &CognitoUserpoolList::LoadContent);
+
+    // General layout
     _layout = new QVBoxLayout(this);
     setLayout(_layout);
 
@@ -26,14 +30,13 @@ CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) 
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
     addButton->setToolTip("Add a new table");
     connect(addButton, &QPushButton::clicked, [this]() {
-        //
-        // // Initialize dialog
-        // DynamoDbAddTableDialog dialog;
-        // dialog.exec();
-        //
-        // // Get request
-        // const DynamoDbCreateTableRequest request = dialog.GetCreateTableRequest();
-        // _cognitoService->CreateTable(request);
+        CognitoAddUserpoolDialog dialog;
+        dialog.exec();
+
+        // Get request
+        CognitoAddUserpoolRequest request;
+        request.userpool = dialog.GetUserpoolName();
+        _cognitoService->CreateUserpool(request);
     });
 
     // Add toolbar
@@ -42,9 +45,9 @@ CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) 
 
     // Setup table
     _table = new PageableTable(this);
-    _table->SetHeaderNames({"ID", "Users", "Created", "Modified"});
-    _table->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
-    _table->SetSortColumn("ID");
+    _table->SetHeaderNames({"Name", "ID", "Users", "Created", "Modified"});
+    _table->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _table->SetSortColumn("Name");
     _table->SetSortDirection(1);
 
     // Add context menu
@@ -63,8 +66,10 @@ void CognitoUserpoolList::LoadContent() {
 }
 
 void CognitoUserpoolList::HandleUserpoolList(const CognitoUserpoolListResponse &response) const {
+    _table->Clear();
     _table->SetTotalSize(response.total);
     for (auto r = 0, c = 0; r < response.userpools.count(); r++, c = 0) {
+        _table->SetColumn(r, c++, response.userpools.at(r).name);
         _table->SetColumn(r, c++, response.userpools.at(r).id);
         _table->SetColumn(r, c++, response.userpools.at(r).userCount);
         _table->SetColumn(r, c++, response.userpools.at(r).created);
@@ -78,7 +83,7 @@ void CognitoUserpoolList::ShowContextMenu(const QPoint &pos) const {
     const QModelIndex index = _table->GetIndexFromPosition(pos);
 
     // Get container
-    const QString id = _table->GetValue<QString>(index, 0);
+    const QString userPoolId = _table->GetValue<QString>(index, 1);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -91,11 +96,11 @@ void CognitoUserpoolList::ShowContextMenu(const QPoint &pos) const {
     deleteAction->setToolTip("Delete the user pool");
 
     if (const QAction *selectedAction = menu.exec(_table->GetGlobalPosition(pos)); selectedAction == editAction) {
-        //_dynamoDbService->PurgeTable(tableName);
+        CognitoAddUserpoolDialog dialog;
+        dialog.exec();
     } else if (selectedAction == deleteAction) {
-        //_dynamoDbService->DeleteTable(tableName);
-    } else if (selectedAction == editAction) {
-        //DynamoDbEditTableDialog dialog(tableName);
-        //dialog.exec();
+        CognitoDeleteUserpoolRequest request;
+        request.userPoolId = userPoolId;
+        _cognitoService->DeleteUserpool(request);
     }
 }

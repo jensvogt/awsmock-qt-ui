@@ -41,3 +41,45 @@ void CognitoService::ListUserpools(const QString &prefix, const long pageSize, c
                           emit EventBus::instance().TimerSignal("ListUserpools", timer.elapsed());
                       });
 }
+
+void CognitoService::CreateUserpool(const CognitoAddUserpoolRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "cognito-idp"},
+                          {"x-awsmock-action", "create-user-pool"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit RefreshContentSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("CreateUserpool", timer.elapsed());
+                      });
+}
+
+void CognitoService::DeleteUserpool(const CognitoDeleteUserpoolRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "cognito-idp"},
+                          {"x-awsmock-action", "delete-user-pool"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit RefreshContentSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("CreateUserpool", timer.elapsed());
+                      });
+}

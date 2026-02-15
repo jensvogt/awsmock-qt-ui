@@ -182,7 +182,21 @@ public:
         */
     QModelIndex GetIndexFromPosition(const QPoint &pos) const;
 
+    /**
+     * @brief Returns the global position
+     *
+     * @param tablePosition table position
+     * @return global position
+     */
     QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+
+    /**
+     * @brief Clears the whole table
+     */
+    void Clear() const {
+        _dataModel->removeRows(0, _dataModel->rowCount());
+        CalculatePageStatus();
+    }
 
 signals:
     /**

@@ -89,7 +89,12 @@ set(APPLICATION_SOURCES src/modules/application/ApplicationList.cpp include/modu
         src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h)
 set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
         src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
-        include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp)
+        include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp
+        src/modules/cognito/CognitoAddUserpoolDialog.cpp include/modules/cognito/CognitoAddUserpoolDialog.h
+        src/modules/cognito/CognitoAddUserpoolDialog.ui
+        include/dto/cognito/CognitoAddUserpoolRequest.h
+        include/dto/cognito/CognitoAddUserpoolResponse.h
+        include/dto/cognito/CognitoDeleteUserpoolRequest.h)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
@@ -249,8 +254,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/utils/Logging.h
         include/utils/UpdateChecker.h
         include/utils/DroppableTreeView.h
-        include/utils/NetworkUtils.h
-)
+        include/utils/NetworkUtils.h)
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})
