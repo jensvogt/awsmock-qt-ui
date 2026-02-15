@@ -1,0 +1,184 @@
+//
+// Created by vogje01 on 2/15/26.
+//
+
+// You may need to build the project (run Qt uic code generator) to get "ui_PageableTable.h" resolved
+
+#include <components/PageableTable.h>
+#include "ui_PageableTable.h"
+#include "modules/cognito/CognitoUserpoolList.h"
+
+PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::PageableTable) {
+
+    // Set defazkt page size
+    _pageSize = Configuration::instance().GetValue<int>("ui.page-size");
+
+    // Setup component
+    _ui->setupUi(this);
+
+    // Prefix edit
+    _ui->prefixEdit->setPlaceholderText("Prefix");
+    _ui->prefixEdit->setEnabled(true);
+    connect(_ui->prefixEdit, &QLineEdit::textChanged, this, [this]() {
+        _ui->prefixClearButton->setDisabled(false);
+        _proxyModel->setFilterColumn(0);
+        _proxyModel->setFilterPrefix(_ui->prefixEdit->text());
+    });
+
+    // Prefix clear button
+    _ui->prefixClearButton->setDisabled(true);
+    _ui->prefixClearButton->setText(nullptr);
+    _ui->prefixClearButton->setIcon(IconUtils::GetIcon("clear"));
+    _ui->prefixClearButton->setToolTip("Clear the prefix field");
+    connect(_ui->prefixClearButton, &QPushButton::clicked, this, [this]() {
+        _proxyModel->clearFilter();
+        _ui->prefixClearButton->setDisabled(true);
+    });
+
+    // Table
+    _dataModel = new QStandardItemModel(this);
+    _dataModel->setHorizontalHeaderLabels(_headerNames);
+    _dataModel->setColumnCount(static_cast<int>(_headerNames.count()));
+
+    // Proxy model for prefix filtering
+    _proxyModel = new PrefixFilterProxyModel(this);
+    _proxyModel->setSourceModel(_dataModel);
+
+    // Table definition
+    _ui->tableView->setModel(_proxyModel);
+    _ui->tableView->setShowGrid(true);
+    _ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->tableView->setSortingEnabled(true);
+    _ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // Start button
+    _ui->startButton->setText(nullptr);
+    _ui->startButton->setIcon(IconUtils::GetIcon("begin"));
+    connect(_ui->startButton, &QPushButton::clicked, this, [this]() {
+        _pageIndex = 0;
+        CalculatePageStatus();
+        emit PageChanged(_pageIndex, _pageSize);
+    });
+
+    _ui->previousButton->setText(nullptr);
+    _ui->previousButton->setIcon(IconUtils::GetIcon("previous"));
+    connect(_ui->previousButton, &QPushButton::clicked, this, [this]() {
+        _pageIndex--;
+        if (_pageIndex < 0) {
+            _pageIndex = 0;
+        }
+        CalculatePageStatus();
+        emit PageChanged(_pageIndex, _pageSize);
+    });
+
+    _ui->nextButton->setText(nullptr);
+    _ui->nextButton->setIcon(IconUtils::GetIcon("next"));
+    connect(_ui->nextButton, &QPushButton::clicked, this, [this]() {
+        _pageIndex++;
+        if (_pageIndex > _maxPage) {
+            _pageIndex = _maxPage;
+        }
+        CalculatePageStatus();
+        emit PageChanged(_pageIndex, _pageSize);
+    });
+
+    _ui->endButton->setText(nullptr);
+    _ui->endButton->setIcon(IconUtils::GetIcon("end"));
+    connect(_ui->endButton, &QPushButton::clicked, this, [this]() {
+        _pageIndex = _maxPage;
+        CalculatePageStatus();
+        emit PageChanged(_pageIndex, _pageSize);
+    });
+
+    _ui->pageSizeEdit->setText(QString::number(_pageSize));
+    connect(_ui->pageSizeEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        _pageSize = text.toLong();
+        _maxPage = (_totalSize + _pageSize - 1) / _pageSize;
+        CalculatePageStatus();
+        emit PageChanged(_pageIndex, _pageSize);
+    });
+
+    // Add context menu
+    _ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->tableView, &QTableView::customContextMenuRequested, this, [this](const QPoint pos) {
+        emit ContextMenuSelected(pos);
+    });
+
+    // Defaults
+    _ui->pageStatusLabel->setText(QString("%1 - %2/%3").arg(0).arg(_pageSize).arg(_totalSize));
+    SetLastUpdate();
+}
+
+PageableTable::~PageableTable() {
+    delete _ui;
+}
+
+void PageableTable::CalculatePageStatus() const {
+    long start = _pageIndex * _pageSize;
+    if (start >= _totalSize) {
+        start -= _pageSize;
+    }
+    long end = _pageIndex * _pageSize + _pageSize;
+    if (end > _totalSize) {
+        end = _totalSize;
+    }
+    _ui->pageStatusLabel->setText(QString("%1 - %2 / %3").arg(start).arg(end).arg(_totalSize));
+    SetLastUpdate();
+}
+
+void PageableTable::SetHeaderNames(const QStringList &headerNames) {
+    _headerNames = headerNames;
+    _dataModel->setHorizontalHeaderLabels(_headerNames);
+    _dataModel->setColumnCount(static_cast<int>(_headerNames.count()));
+}
+
+void PageableTable::SetResizeModes(const QList<QHeaderView::ResizeMode> &resizeModes) const {
+    for (int i = 0; i < static_cast<int>(resizeModes.count()); i++) {
+        _ui->tableView->horizontalHeader()->setSectionResizeMode(i, resizeModes.at(i));
+    }
+}
+
+void PageableTable::SetColumn(const int row, const int column, const QString &value, const Qt::Alignment &alignment) const {
+    const auto item = new QStandardItem(value);
+    item->setTextAlignment(alignment);
+    const QModelIndex index = _dataModel->index(row, column);
+    _dataModel->setData(index, QVariant(alignment));
+    _dataModel->setData(index, value, Qt::EditRole);
+    _dataModel->setData(index, value, Qt::DisplayRole);
+    _dataModel->setItem(row, column, item);
+}
+
+void PageableTable::SetColumn(const int row, const int column, const QDateTime &value) const {
+    _dataModel->setItem(row, column, new QStandardItem(DateTimeUtils::GetDateTimeFormat(value)));
+}
+
+void PageableTable::SetColumn(const int row, const int col, const long &value) const {
+    const QModelIndex index = _dataModel->index(row, col);
+    _dataModel->setData(index, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
+    _dataModel->setData(index, static_cast<qlonglong>(value), Qt::UserRole);
+    _dataModel->setData(index, static_cast<qlonglong>(value), Qt::DisplayRole);
+}
+
+void PageableTable::SetStatus(const QString &message) const {
+    _ui->statusLabel->setText(message);
+}
+
+void PageableTable::SetLastUpdate() const {
+    const QString message = "Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime());
+    _ui->statusLabel->setText(message);
+}
+
+QModelIndex PageableTable::GetIndexFromPosition(const QPoint &pos) const {
+
+    const QModelIndex proxyIndex = _ui->tableView->indexAt(pos);
+    if (!proxyIndex.isValid())
+        return {};
+
+    return _proxyModel->mapToSource(proxyIndex);
+}
+
+QPoint PageableTable::GetGlobalPosition(const QPoint &tablePosition) const {
+    return _ui->tableView->viewport()->mapToGlobal(tablePosition);
+}
+

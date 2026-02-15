@@ -51,6 +51,7 @@ void MainWidget::SetupNavPane() {
     _navDataModel->appendRow(new QStandardItem("SQS"));
     _navDataModel->appendRow(new QStandardItem("SNS"));
     _navDataModel->appendRow(new QStandardItem("S3"));
+    _navDataModel->appendRow(new QStandardItem("Cognito"));
     _navDataModel->appendRow(new QStandardItem("Application"));
     _navDataModel->appendRow(new QStandardItem("Lambda"));
     _navDataModel->appendRow(new QStandardItem("Secrets Manager"));
@@ -145,20 +146,27 @@ void MainWidget::SetupServerLogs() {
         _webSocket->open(QUrl(_websocketUrl));
     });
 
-    // Reconnect button
+    // Start/Stop button
     _ui->logStopButton->setText(nullptr);
     _ui->logStopButton->setIcon(IconUtils::GetIcon("stop"));
-    _ui->logStopButton->setToolTip("Stop server websocket");
+    _ui->logStopButton->setToolTip("Stop the server websocket connection");
     connect(_ui->logStopButton, &QPushButton::clicked, this, [this]() {
         if (_webSocket->state() == QAbstractSocket::ConnectedState) {
             _webSocket->disconnected();
             _webSocket->close();
+            _ui->logStopButton->setToolTip("Start the server websocket connection");
+            _ui->logStopButton->setIcon(IconUtils::GetIcon("start"));
+        } else if (_webSocket->state() == QAbstractSocket::UnconnectedState) {
+            _webSocket->open(QUrl(_websocketUrl));
+            _ui->logStopButton->setToolTip("Stop the server websocket connection");
+            _ui->logStopButton->setIcon(IconUtils::GetIcon("stop"));
         }
     });
 
     // Extern window
     _ui->externWindowButton->setText(nullptr);
     _ui->externWindowButton->setIcon(IconUtils::GetIcon("extern-window"));
+    _ui->externWindowButton->setToolTip("Detach the log window");
     connect(_ui->externWindowButton, &QPushButton::clicked, [this]() {
 
         _webSocket->disconnected();

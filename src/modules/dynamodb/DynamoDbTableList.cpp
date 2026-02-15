@@ -150,6 +150,7 @@ void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &l
         SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).modified);
         SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).tableArn);
     }
+
     // Reset selection
     _tableView->setSortingEnabled(true);
     _tableView->sortByColumn(_sortColumn, _sortOrder);

@@ -41,7 +41,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg Web
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTPFileTree.cpp
         include/components/FTPFileTree.h include/components/FileFilterModel.h src/components/LocalFileTree.cpp
-        include/components/LocalFileTree.h)
+        include/components/LocalFileTree.h src/components/PageableTable.cpp include/components/PageableTable.h
+        src/components/PageableTable.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -86,6 +87,9 @@ set(APPLICATION_SOURCES src/modules/application/ApplicationList.cpp include/modu
         src/modules/application/ApplicationDependencyDialog.cpp src/modules/application/ApplicationDependencyDialog.ui
         include/modules/application/ApplicationDependencyDialog.h src/modules/application/ApplicationLogsDialog.cpp
         src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h)
+set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
+        src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
+        include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
@@ -97,7 +101,8 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         include/utils/NonEmptyValidator.h src/utils/IconUtils.cpp src/utils/ServerLogWidget.cpp
         include/utils/ServerLogWidget.h src/utils/ServerLogWidget.ui)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
-        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES} ${COMPONENTS_SOURCES}
+        ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
+        ${COMPONENTS_SOURCES}
         src/modules/docker/DockerLogClient.cpp
         include/modules/docker/DockerLogClient.h
         include/modules/lambda/LambdaList.h
