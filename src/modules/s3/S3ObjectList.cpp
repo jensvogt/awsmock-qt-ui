@@ -6,7 +6,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     // Connect service
     _s3Service = new S3Service();
     connect(_s3Service, &S3Service::ListObjectsSignal, this, &S3ObjectList::HandleListObjectSignal);
-    connect(_s3Service, &S3Service::ReloadObjectsSignal, this, &S3ObjectList::HandleReloadObjectSignal);
+    connect(_s3Service, &S3Service::ReloadObjectsSignal, this, &S3ObjectList::LoadContent);
 
     // Get the bucket
     connect(_s3Service, &S3Service::GetBucketDetailsSignal, this, &S3ObjectList::HandleBucketDetailsSignal);
@@ -58,64 +58,23 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    prefixEdit->setToolTip("Prefix fot the object key");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        _prefixValue = prefixEdit->text();
-        _prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    _prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    _prefixClear->setDisabled(true);
-    _prefixClear->setToolTip("Clear the object key prefix");
-    connect(_prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        _prefixValue = "";
-        _prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(_prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
                                     tr("Key"), tr("ContentType"), tr("Size"), tr("Created"), tr("Modified"), tr("Oid")
                                 };
 
-    // Table data model
-    _tableModel = new QStandardItemModel(this);
-    _tableModel->setHorizontalHeaderLabels(headers);
-    _tableModel->setColumnCount(static_cast<int>(headers.count()));
-
-    // Proxy model for prefix filtering
-    _proxyModel = new PrefixFilterProxyModel(this);
-    _proxyModel->setSourceModel(_tableModel);
-
     // Table view
-    _tableView = new QTableView(this);
-    _tableView->setModel(_proxyModel);
-
-    _tableView->setShowGrid(true);
-    _tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    _tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _tableView->setSortingEnabled(true);
-    _tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _tableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    _tableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    _tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    _tableView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    _tableView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    _tableView->setColumnHidden(5, true);
-    _tableView->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable(this);
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetHiddenColumns({5});
+    _tableView->SetSorting(3, "created", -1);
 
     // Connect double-click
-    connect(_tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
         // Get the position
-        const QModelIndex sourceIndex = _proxyModel->mapToSource(index);
-        const QString objectId = _tableModel->item(sourceIndex.row(), 5)->text();
+        const auto objectId = _tableView->GetValue<QString>(index, 5);
 
         // Open details dialog
         S3ObjectEditDialog dialog(objectId, this);
@@ -123,20 +82,14 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Add context menu
-    _tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &S3ObjectList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &S3ObjectList::ShowContextMenu);
 
-    // Save sort column
-    const QHeaderView *header = _tableView->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    // Connect paging changes
+    connect(_tableView, &PageableTable::ReloadTable, this, &S3ObjectList::LoadContent);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
     layout->addWidget(_tableView, 2);
 }
 
@@ -151,64 +104,53 @@ void S3ObjectList::HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &b
 void S3ObjectList::LoadContent() {
     _bucketName = GetArgument<QString>("bucketName");
     _titleLabel->setText("S3 Object List: " + _bucketName);
-    _s3Service->ListObjects(_bucketName, _prefixValue);
+    _s3Service->ListObjects(_bucketName, _tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse) const {
-    const int selectedRow = _tableView->selectionModel()->currentIndex().row();
-    _tableView->setSortingEnabled(false);
-    _tableModel->removeRows(0, _tableModel->rowCount());
+    _tableView->Clear();
+    _tableView->SetTotalSize(listObjectResponse.total);
     for (auto r = 0, c = 0; r < listObjectResponse.objectCounters.count(); r++, c = 0) {
-        SetColumn(_tableModel, r, c++, listObjectResponse.objectCounters.at(r).key);
-        SetColumn(_tableModel, r, c++, listObjectResponse.objectCounters.at(r).contentType);
-        SetColumn(_tableModel, r, c++, listObjectResponse.objectCounters.at(r).size);
-        SetColumn(_tableModel, r, c++, listObjectResponse.objectCounters.at(r).created);
-        SetColumn(_tableModel, r, c++, listObjectResponse.objectCounters.at(r).modified);
-        SetHiddenColumn(_tableModel, r, c++, listObjectResponse.objectCounters.at(r).oid);
+        _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).key);
+        _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).contentType);
+        _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).size);
+        _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).modified);
+        _tableView->SetHiddenColumn(r, c++, listObjectResponse.objectCounters.at(r).oid);
     }
-    _tableView->setSortingEnabled(true);
-    _tableView->selectRow(selectedRow);
-}
-
-void S3ObjectList::HandleReloadObjectSignal() {
-    _s3Service->ListObjects(_bucketName, _prefixValue);
-    NotifyStatusBar();
+    _tableView->UpdateSorting();
 }
 
 void S3ObjectList::HandleBulkDelete(QModelIndexList proxyIndices) const {
+
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
     for (const QModelIndex &proxyIdx: proxyIndices) {
-        persistentRows.append(_proxyModel->mapToSource(proxyIdx));
+        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
     }
 
     // Now it is safe to delete in a loop
     for (const QPersistentModelIndex &srcIdx: persistentRows) {
         if (srcIdx.isValid()) {
-            const QString key = _tableModel->item(srcIdx.row(), 0)->text();
+            const QString key = _tableView->GetValue<QString>(srcIdx, 0);
             _s3Service->DeleteObject(_bucketName, key);
-            _tableModel->removeRow(srcIdx.row(), srcIdx.parent());
+            _tableView->RemoveRow(srcIdx);
         }
     }
 }
 
 void S3ObjectList::HandleBulkTouch(QModelIndexList proxyIndices) const {
     for (const QModelIndex &proxyIdx: proxyIndices) {
-        QModelIndex srcIdx = _proxyModel->mapToSource(proxyIdx);
-        const QString key = _tableModel->item(srcIdx.row(), 0)->text();
+        QModelIndex srcIdx = _tableView->GetSourceIndex(proxyIdx);
+        const QString key = _tableView->GetValue<QString>(srcIdx, 0);
         _s3Service->TouchObject(_bucketName, key);
     }
 }
 
 void S3ObjectList::ShowContextMenu(const QPoint &pos) {
 
-    const QModelIndexList selectedProxyIndices = _tableView->selectionModel()->selectedRows();
-
     // Cell index
-    const QModelIndex proxyIndex = _tableView->indexAt(pos);
-    if (!proxyIndex.isValid()) return;
-
-    const QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -226,11 +168,13 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) {
     deleteAction->setToolTip("Delete the object");
 
     //_s3Service->DeleteObject(_bucketName, key);
-    const QString key = _tableModel->item(sourceIndex.row(), 0)->text();
-    const QString objectId = _tableModel->item(sourceIndex.row(), 5)->text();
-    if (const auto selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+    const QString key = _tableView->GetValue<QString>(index, 0);
+    const QString objectId = _tableView->GetValue<QString>(index, 5);
+    if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
+        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
         HandleBulkDelete(selectedProxyIndices);
     } else if (selectedAction == touchAction) {
+        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
         HandleBulkTouch(selectedProxyIndices);
     } else if (selectedAction == editAction) {
         S3ObjectEditDialog dialog(objectId, this);

@@ -217,3 +217,14 @@ QPoint PageableTable::GetGlobalPosition(const QPoint &tablePosition) const {
     return _ui->tableView->viewport()->mapToGlobal(tablePosition);
 }
 
+void PageableTable::RemoveRow(const QModelIndex &index) const {
+    _dataModel->removeRow(index.row());
+}
+
+QModelIndex PageableTable::GetSourceIndex(const QModelIndex &index) const {
+    return _proxyModel->mapToSource(index);
+}
+
+QModelIndexList PageableTable::GetSelectedRows() const {
+    return _ui->tableView->selectionModel()->selectedRows();
+}

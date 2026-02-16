@@ -78,7 +78,7 @@ public:
      */
     void GetBucketDetails(const QString &bucketName);
 
-    void ListObjects(const QString &bucketName, const QString &prefix);
+    void ListObjects(const QString &bucketName, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     void GetObjectDetails(const QString &objectId);
 

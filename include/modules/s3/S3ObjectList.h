@@ -11,17 +11,16 @@
 #include <QTableWidgetItem>
 
 #include <utils/BasePage.h>
-#include <dto/s3/S3ListObjectResponse.h>
-#include <modules/s3/S3Service.h>
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
+#include <dto/s3/S3ListObjectResponse.h>
+#include <modules/s3/S3Service.h>
 #include <modules/s3/S3ObjectAddDialog.h>
 #include <modules/s3/S3ObjectEditDialog.h>
 
-
 /**
- * @brief Helper widget for the content area.
- * Displays a simple object based on the section selected.
+ * @brief S3 object table.
  */
 class S3ObjectList final : public BasePage {
     Q_OBJECT
@@ -103,44 +102,12 @@ private:
     /**
      * @brief Object table
      */
-    QTableView *_tableView;
-
-    /**
-     * @brief Table model
-     */
-    QStandardItemModel *_tableModel;
-
-    /**
-     * @brief Data proxy model
-     */
-    PrefixFilterProxyModel *_proxyModel;
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     S3Service *_s3Service;
-
-    /**
-     * @brief Prefix search
-     */
-    QString _prefixValue = "";
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *_prefixClear;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'objects', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 
     /**
      * @brief Bucket details
