@@ -12,13 +12,14 @@ ApplicationEnvironmentDialog::ApplicationEnvironmentDialog(const QString &key, c
 
     _ui->keyEdit->setText(key);
     _ui->valueEdit->setText(value);
+    _ui->keyEdit->setReadOnly(true);
     connect(_ui->keyEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         _key = text;
     });
     connect(_ui->valueEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         _value = text;
     });
-    _ui->keyEdit->setReadOnly(true);
+    setWindowTitle(QString("Edit Environment"));
 }
 
 ApplicationEnvironmentDialog::ApplicationEnvironmentDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationEnvironmentDialog) {
@@ -32,6 +33,7 @@ ApplicationEnvironmentDialog::ApplicationEnvironmentDialog(QWidget *parent) : QD
     connect(_ui->valueEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         _value = text;
     });
+    setWindowTitle(QString("Add Environment"));
 }
 
 ApplicationEnvironmentDialog::~ApplicationEnvironmentDialog() {
