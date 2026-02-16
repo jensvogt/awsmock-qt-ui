@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.5...v1.11.6) (2026-02-16)
+
+
+### Bug Fixes
+
+* fix SQS / SNS tables views ([715f7ba](https://github.com/jensvogt/awsmock-qt-ui/commit/715f7ba8602f535b8a4ed8d4597bc3fbf7b2deef))
+* fix SQS / SNS tables views ([503d40c](https://github.com/jensvogt/awsmock-qt-ui/commit/503d40ccc99091fea8b95df1a2e60b80440794b1))
+* windows port ([e1a08d6](https://github.com/jensvogt/awsmock-qt-ui/commit/e1a08d6fbe1ebc4cf279078222f31ee48f1ff3c9))
+* windows port ([67c69ec](https://github.com/jensvogt/awsmock-qt-ui/commit/67c69ecd53c76c0584b197e8703a682f9b274e22))
+
 ## [1.11.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.4...v1.11.5) (2026-02-15)
 
 
