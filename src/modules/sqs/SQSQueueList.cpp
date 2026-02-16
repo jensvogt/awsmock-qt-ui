@@ -57,7 +57,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     _tableView = new PageableTable();
     _tableView->SetHeaderNames(headers);
-    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::Interactive, QHeaderView::Interactive, QHeaderView::Interactive, QHeaderView::Interactive, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({7, 8, 9});
     _tableView->SetSortColumn(1, "attributes.approximateNumberOfMessages");
     _tableView->SetSortDirection(-1);

@@ -160,6 +160,21 @@ void MainWindow::SetupToolBar() {
     connect(dockerStatsAction, &QAction::triggered, this, &MainWindow::DockerStats);
     toolBar->addAction(dockerStatsAction);
 
+    // Create the spacer widget
+    auto *spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    // Add the spacer, then your right-aligned button
+    toolBar->addWidget(spacer);
+
+    // Settings button
+    auto *settingsButton = new QPushButton(IconUtils::GetIcon("settings"), nullptr);
+    settingsButton->setToolTip("Opens the preferences");
+    toolBar->addWidget(settingsButton);
+    toolBar->addSeparator();
+    connect(settingsButton, &QPushButton::clicked, this, &MainWindow::EditPreferences);
+
+    // Add the toolbar to the main window
     addToolBar(toolBar);
 }
 

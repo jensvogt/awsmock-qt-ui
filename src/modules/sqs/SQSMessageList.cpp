@@ -6,7 +6,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
-    connect(_sqsService, &SQSService::ReloadMessagesSignal, this, &SQSMessageList::HandleReloadMessageSignal);
+    connect(_sqsService, &SQSService::ReloadMessagesSignal, this, &SQSMessageList::LoadContent);
 
     const auto toolBar = new QHBoxLayout();
     const auto spacer = new QWidget();
@@ -55,78 +55,36 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    prefixEdit->setToolTip("Prefix for the message ID");
-    connect(prefixEdit, &QLineEdit::returnPressed, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    prefixClear->setToolTip("Clear the message ID prefix");
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
                                     tr("ID"), tr("ContentType"), tr("Size"), tr("Retries"), tr("Created"),
                                     tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("ReceiptHandle")
                                 };
 
-    tableWidget = new QTableWidget();
-    tableWidget->setColumnCount(static_cast<int>(headers.count()));
-    tableWidget->setShowGrid(true);
-    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableWidget->setHorizontalHeaderLabels(headers);
-    tableWidget->setSortingEnabled(true);
-    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(6, true);
-    tableWidget->setColumnHidden(7, true);
-    tableWidget->setColumnHidden(8, true);
-    tableWidget->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable();
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::Interactive, QHeaderView::Interactive, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetHiddenColumns({6, 7, 8});
+    _tableView->SetSortColumn(4, "created");
+    _tableView->SetSortDirection(-1);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
-
-        const QString messageId = tableWidget->item(row, 0)->text();
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
+        const auto messageId = _tableView->GetValue<QString>(index, 0);
         SQSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();
     });
 
     // Add context menu
-    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
+    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
 
-    // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    // Connect paging changes
+    connect(_tableView, &PageableTable::ReloadTable, this, &SQSMessageList::LoadContent);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
-    layout->addLayout(toolBar, 1);
-    layout->addLayout(prefixLayout, 1);
-    layout->addWidget(tableWidget, 2);
+    layout->addLayout(toolBar, 0);
+    layout->addWidget(_tableView, 6);
 }
 
 SQSMessageList::~SQSMessageList() {
@@ -137,43 +95,28 @@ void SQSMessageList::LoadContent() {
     _queueArn = GetArgument<QString>("queueArn");
     _queueUrl = GetArgument<QString>("queueUrl");
     _isDlq = GetArgument<bool>("isDlq");
-    _sqsService->ListMessages(_queueArn, prefixValue);
+    _sqsService->ListMessages(_queueArn, _tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
-void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) {
-    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
-    tableWidget->clearContents();
-    tableWidget->setRowCount(0);
-    tableWidget->setSortingEnabled(false); // stop sorting
-    tableWidget->sortItems(-1);
-
+void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const {
+    _tableView->Clear();
+    _tableView->SetTotalSize(listMessageResponse.total);
     for (auto r = 0, c = 0; r < listMessageResponse.messageCounters.count(); r++, c = 0) {
-        tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).messageId);
-        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).contentType);
-        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).size);
-        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).retries);
-        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).created);
-        SetColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).queueUrl);
-        SetHiddenColumn(tableWidget, r, c++, listMessageResponse.messageCounters.at(r).queueArn);
-        SetHiddenColumn(tableWidget, r, c, listMessageResponse.messageCounters.at(r).receiptHandle);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).messageId);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).contentType);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).size);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).retries);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).modified);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).queueUrl);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).queueArn);
+        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).receiptHandle);
     }
-    tableWidget->setRowCount(static_cast<int>(listMessageResponse.messageCounters.count()));
-    tableWidget->setSortingEnabled(true);
-    tableWidget->selectRow(selectedRow);
-    NotifyStatusBar();
-}
-
-void SQSMessageList::HandleReloadMessageSignal() const {
-    _sqsService->ListMessages(_queueArn, prefixValue);
+    _tableView->UpdateSorting();
 }
 
 void SQSMessageList::ShowContextMenu(const QPoint &pos) {
-    const QModelIndex index = tableWidget->indexAt(pos);
-    if (!index.isValid()) return;
-
-    const int row = index.row();
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -189,17 +132,17 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        const QString messageId = tableWidget->item(row, 0)->text();
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
+        const QString messageId = _tableView->GetValue<QString>(index, 0);
         SQSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();
     } else if (selectedAction == resendAction) {
-        const QString queueArn = tableWidget->item(row, 7)->text();
-        const QString messageId = tableWidget->item(row, 0)->text();
+        const QString queueArn = _tableView->GetValue<QString>(index, 7);
+        const QString messageId = _tableView->GetValue<QString>(index, 0);
         _sqsService->ResendMessage(queueArn, messageId);
     } else if (selectedAction == deleteAction) {
-        const QString queueUrl = tableWidget->item(row, 6)->text();
-        const QString receiptHandle = tableWidget->item(row, 8)->text();
+        const QString queueUrl = _tableView->GetValue<QString>(index, 6);
+        const QString receiptHandle = _tableView->GetValue<QString>(index, 8);
         _sqsService->DeleteMessage(queueUrl, receiptHandle);
     }
 }

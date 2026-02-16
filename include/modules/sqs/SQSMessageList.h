@@ -16,6 +16,8 @@
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include <modules/sqs/SQSMessageAddDialog.h>
 
+#include "components/PageableTable.h"
+
 /**
  * @brief Helper widget for the content area.
  * Displays a simple message based on the section selected.
@@ -68,18 +70,13 @@ private slots:
      *
      * @param listMessageResponse message counter list
      */
-    void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse);
-
-    /**
-     * @brief Handle message reload
-     */
-    void HandleReloadMessageSignal() const;
+    void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const;
 
 private:
     /**
-     * @brief QT table
+     * @brief Pageable Qt table
      */
-    QTableWidget *tableWidget;
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler

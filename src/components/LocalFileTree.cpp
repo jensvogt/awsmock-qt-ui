@@ -57,7 +57,7 @@ LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidg
     _folderTreeView->sortByColumn(0, Qt::AscendingOrder);
     connect(_folderTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFolderContextMenu);
     connect(_folderTreeView, &QTreeView::doubleClicked, this, &LocalFileTree::ShowFolderContentFolder);
-    //connect(_folderTreeView, &QTreeView::clicked, this, &LocalFileTree::ShowFolderContentFolder);
+    //    connect(_folderTreeView, &QTreeView::clicked, this, &LocalFileTree::ShowFolderContentFolder);
 
     // Setup model
     _fileProxyModel = new FileFilterModel();
@@ -156,12 +156,12 @@ void LocalFileTree::ShowFolderContentFolder(const QModelIndex &index) const {
     const QModelIndex fileProxyIndex = _folderProxyModel->mapFromSource(sourceIndex);
 
     // Point the file view to look INSIDE that folder
-    _fileTreeView->setRootIndex(fileProxyIndex);
     QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
     const QString absPath = parentItem->data(Qt::UserRole).toString();
 
     parentItem->removeRows(0, parentItem->rowCount());
     ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
+    _fileTreeView->setRootIndex(fileProxyIndex);
 }
 
 void LocalFileTree::ShowFolderContentFile(const QModelIndex &index) const {
