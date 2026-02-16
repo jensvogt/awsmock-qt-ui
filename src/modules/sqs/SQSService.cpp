@@ -367,13 +367,13 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                       });
 }
 
-void SQSService::ListMessages(const QString &queueArn, const QString &prefix) {
+void SQSService::ListMessages(const QString &queueArn, const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "created";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
@@ -381,8 +381,8 @@ void SQSService::ListMessages(const QString &queueArn, const QString &prefix) {
     QJsonObject jRequest;
     jRequest["queueArn"] = queueArn;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qlonglong>(pageSize);
+    jRequest["pageIndex"] = static_cast<qlonglong>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 

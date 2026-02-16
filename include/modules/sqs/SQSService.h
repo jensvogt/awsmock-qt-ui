@@ -123,8 +123,16 @@ public:
      *
      * @param queueArn ARN of the Queue
      * @param prefix message id prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListMessages(const QString &queueArn, const QString &prefix);
+    void ListMessages(const QString &queueArn, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Purge all messages

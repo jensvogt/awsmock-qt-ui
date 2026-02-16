@@ -50,8 +50,16 @@ public:
      * @brief List SNS Topics
      *
      * @param prefix topic name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListTopics(const QString &prefix);
+    void ListTopics(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Purge all messages
@@ -91,8 +99,16 @@ public:
      *
      * @param topicArn topic ARN
      * @param prefix topic name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListMessages(const QString &topicArn, const QString &prefix);
+    void ListMessages(const QString &topicArn, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Purge all messages of a topic

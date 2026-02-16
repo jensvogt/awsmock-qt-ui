@@ -28,10 +28,12 @@
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSMessageDetailsDialog.h>
 #include <modules/sns/SNSMessageAddDialog.h>
+#include <components/PageableTable.h>
 
 /**
- * @brief Helper widget for the content area.
- * Displays a simple message based on the section selected.
+ * @brief SNS message list
+ *
+ * @author jens.vogt\@opitz-consulting.com
  */
 class SNSMessageList : public BasePage {
     Q_OBJECT
@@ -60,12 +62,12 @@ public:
      *
      * @param listMessageResult message counter list
      */
-    void HandleListMessageSignal(const SNSListMessagesResult &listMessageResult);
+    void HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) const;
 
     /**
      * @brief Handle message reload
      */
-    void HandleReloadMessageSignal();
+    void HandleReloadMessageSignal() const;
 
 signals:
     /**
@@ -92,34 +94,12 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget *_tableWidget;
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     SNSService *_snsService;
-
-    /**
-     * @brief Prefix search
-     */
-    QString _prefixValue = "";
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'messages', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *_prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_SNS_MESSAGE_LIST_H

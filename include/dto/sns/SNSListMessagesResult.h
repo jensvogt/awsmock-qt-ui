@@ -18,6 +18,8 @@ struct SNSListMessagesResult {
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
+        total = jsonDoc.object()["total"].toInt();
+
         for (QJsonArray jArray = jsonDoc["messages"].toArray(); const auto &element: jArray) {
             SNSMessageCounter messageCounter;
             messageCounter.FromJson(element.toObject());

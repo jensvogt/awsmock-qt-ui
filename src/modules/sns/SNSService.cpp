@@ -27,26 +27,25 @@ void SNSService::AddTopic(const QString &topicName) {
                       });
 }
 
-void SNSService::ListTopics(const QString &prefix) {
+void SNSService::ListTopics(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qlonglong>(pageSize);
+    jRequest["pageIndex"] = static_cast<qlonglong>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "sns"},
                           {"x-awsmock-action", "list-topic-counters"},
@@ -202,13 +201,13 @@ void SNSService::ListTopicSubscriptions(const QString &topicArn) {
                       });
 }
 
-void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
+void SNSService::ListMessages(const QString &topicArn, const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "created";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
@@ -216,13 +215,12 @@ void SNSService::ListMessages(const QString &topicArn, const QString &prefix) {
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["topicArn"] = topicArn;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "sns"},
                           {"x-awsmock-action", "list-message-counters"},
