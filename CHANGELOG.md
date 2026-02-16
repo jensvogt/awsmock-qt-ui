@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.6...v1.11.7) (2026-02-16)
+
+
+### Bug Fixes
+
+* fix S3 tables views ([0d56618](https://github.com/jensvogt/awsmock-qt-ui/commit/0d5661800def6406e6aace4ba25d51860aa20d9a))
+* fix SQS / SNS tables views ([aa945e6](https://github.com/jensvogt/awsmock-qt-ui/commit/aa945e6d11325af6256934fc7522fa02e0de5aea))
+
 ## [1.11.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.5...v1.11.6) (2026-02-16)
 
 
