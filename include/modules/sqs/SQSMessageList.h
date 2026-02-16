@@ -3,7 +3,6 @@
 
 #include <QMenu>
 #include <QLabel>
-#include <QHeaderView>
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QPushButton>
@@ -12,11 +11,10 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/EventBus.h>
+#include <components/PageableTable.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include <modules/sqs/SQSMessageAddDialog.h>
-
-#include "components/PageableTable.h"
 
 /**
  * @brief Helper widget for the content area.
@@ -84,11 +82,6 @@ private:
     SQSService *_sqsService;
 
     /**
-     * @brief prefix search
-     */
-    QString prefixValue = "";
-
-    /**
      * @brief SQS queue ARN
      */
     QString _queueArn;
@@ -102,23 +95,6 @@ private:
      * @brief DQL flag
      */
     bool _isDlq = false;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'Available', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H

@@ -29,8 +29,16 @@ public:
      * @brief List SNS Topics
      *
      * @param prefix topic name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListBuckets(const QString &prefix);
+    void ListBuckets(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Purge all objects
@@ -70,7 +78,7 @@ public:
      */
     void GetBucketDetails(const QString &bucketName);
 
-    void ListObjects(const QString &bucketName, const QString &prefix);
+    void ListObjects(const QString &bucketName, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     void GetObjectDetails(const QString &objectId);
 

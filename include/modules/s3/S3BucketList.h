@@ -21,16 +21,18 @@
 
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-#include <modules/s3/S3Service.h>
 #include <dto/s3/S3ListBucketResult.h>
+#include <components/PageableTable.h>
+#include <modules/s3/S3Service.h>
 #include <modules/s3/S3BucketEditDialog.h>
+
 
 class S3BucketList final : public BasePage {
     Q_OBJECT
 
 public:
     /**
-     * @brief S3 bucket list
+     * @brief S3 Bucket List
      *
      * @param title widget title
      * @param parent parent widget
@@ -55,6 +57,11 @@ public:
     void HandleListBucketSignal(const S3ListBucketResult &listBucketResult) const;
 
 signals:
+    /**
+     * @brief Signaled when the bucket details are available
+     *
+     * @param bucketName name of the bucket
+     */
     void ShowS3Objects(const QString &bucketName);
 
 private slots:
@@ -72,34 +79,12 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Topic prefix search
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     S3Service *_s3Service;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'messages', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_S3_BUCKET_LIST_H

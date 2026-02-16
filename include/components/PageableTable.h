@@ -125,6 +125,20 @@ public:
     }
 
     /**
+     * @brief Returns the sort column
+     *
+     * @param sortColumn column name
+     * @param sortAttribute database attribute
+     * @param direction sort direction 1=ascending, -1=descending
+     */
+    void SetSorting(const int &sortColumn, const QString &sortAttribute, const int direction) {
+        _sortColumn = sortColumn;
+        _sortAttribute = sortAttribute;
+        _sortDirection = direction;
+        UpdateSorting();
+    }
+
+    /**
      * @brief Returns the sort direction as integer
      *
      * @return sort direction, 1 = ascending, -1 = descending
@@ -198,7 +212,7 @@ public:
      * @param pos mouse position
      * @return table row/column index
      */
-    QModelIndex GetIndexFromPosition(const QPoint &pos) const;
+    [[nodiscard]] QModelIndex GetIndexFromPosition(const QPoint &pos) const;
 
     /**
      * @brief Returns the global position
@@ -206,14 +220,26 @@ public:
      * @param tablePosition table position
      * @return global position
      */
-    QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+    [[nodiscard]] QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+
+    void RemoveRow(const QModelIndex &index) const;
+
+    QModelIndexList GetSelectedRows() const;
+
+    /**
+     * @brief Converts a proxy index to a source index
+     *
+     * @param index proxy index
+     * @return source index
+     */
+    [[nodiscard]] QModelIndex GetSourceIndex(const QModelIndex &index) const;
 
     /**
      * @brief Returns the prefix value
      *
      * @return prefix value
      */
-    QString GetPrefix() const {
+    [[nodiscard]] QString GetPrefix() const {
         return _proxyModel->getPrefix();
     }
 

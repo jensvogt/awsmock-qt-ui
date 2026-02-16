@@ -1,25 +1,24 @@
 #include <modules/s3/S3Service.h>
 
-void S3Service::ListBuckets(const QString &prefix) {
+void S3Service::ListBuckets(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "s3"},
                           {"x-awsmock-action", "ListBucketCounters"},
@@ -187,13 +186,13 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       });
 }
 
-void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
+void S3Service::ListObjects(const QString &bucketName, const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
@@ -201,13 +200,12 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["bucket"] = bucketName;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "s3"},
                           {"x-awsmock-action", "ListObjectCounters"},
@@ -215,7 +213,6 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   S3ListObjectsResponse s3Response;
                                   s3Response.FromJson(jsonDoc);
