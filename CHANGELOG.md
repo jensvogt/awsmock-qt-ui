@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.8](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.7...v1.11.8) (2026-02-16)
+
+
+### Bug Fixes
+
+* application environment add dialog ([41cd693](https://github.com/jensvogt/awsmock-qt-ui/commit/41cd69367ad6a3ab35868530dc823a1ec1af28b3))
+* application environment add dialog ([35eecbc](https://github.com/jensvogt/awsmock-qt-ui/commit/35eecbc230773bad9803a06ac0fd9f45674e03be))
+
 ## [1.11.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.6...v1.11.7) (2026-02-16)
 
 
