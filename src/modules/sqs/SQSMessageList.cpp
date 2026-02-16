@@ -65,8 +65,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     _tableView->SetHeaderNames(headers);
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::Interactive, QHeaderView::Interactive, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({6, 7, 8});
-    _tableView->SetSortColumn(4, "created");
-    _tableView->SetSortDirection(-1);
+    _tableView->SetSorting(4, "created", -1);
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {

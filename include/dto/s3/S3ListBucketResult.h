@@ -1,19 +1,24 @@
 #ifndef AWSMOCK_QT_UI_S3_LIST_BUCKET_RESPONSE_H
 #define AWSMOCK_QT_UI_S3_LIST_BUCKET_RESPONSE_H
 
+// Qt includes
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
 
+// Awsmock includes
 #include <dto/s3/S3BucketCounter.h>
 
 struct S3ListBucketResult {
-    long total;
+    long total{};
 
     QList<S3BucketCounter> bucketCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
+
+        total = jsonDoc.object()["total"].toInt();
+
         for (QJsonArray jArray = jsonDoc["bucketCounters"].toArray(); const auto &element: jArray) {
             S3BucketCounter bucketCounter;
             bucketCounter.FromJson(element.toObject());

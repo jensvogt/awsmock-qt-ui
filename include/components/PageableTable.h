@@ -125,6 +125,20 @@ public:
     }
 
     /**
+     * @brief Returns the sort column
+     *
+     * @param sortColumn column name
+     * @param sortAttribute database attribute
+     * @param direction sort direction 1=ascending, -1=descending
+     */
+    void SetSorting(const int &sortColumn, const QString &sortAttribute, const int direction) {
+        _sortColumn = sortColumn;
+        _sortAttribute = sortAttribute;
+        _sortDirection = direction;
+        UpdateSorting();
+    }
+
+    /**
      * @brief Returns the sort direction as integer
      *
      * @return sort direction, 1 = ascending, -1 = descending
