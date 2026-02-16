@@ -66,6 +66,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::Interactive, QHeaderView::Interactive, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({6, 7, 8});
     _tableView->SetSorting(4, "created", -1);
+    _tableView->SetMultiRowSelection(true);
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -75,7 +76,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     });
 
     // Add context menu
-    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
 
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SQSMessageList::LoadContent);
@@ -114,6 +115,64 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
     _tableView->UpdateSorting();
 }
 
+void SQSMessageList::HandleBulkDelete(QModelIndexList proxyIndices) const {
+
+    // Convert to Persistent Source Indexes
+    QList<QPersistentModelIndex> persistentRows;
+    for (const QModelIndex &proxyIdx: proxyIndices) {
+        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
+    }
+
+    // Now it is safe to delete in a loop
+    for (const QPersistentModelIndex &srcIdx: persistentRows) {
+        if (srcIdx.isValid()) {
+            const QString queueUrl = _tableView->GetValue<QString>(srcIdx, 6);
+            const QString receiptHandle = _tableView->GetValue<QString>(srcIdx, 8);
+            _sqsService->DeleteMessage(queueUrl, receiptHandle);
+            _tableView->RemoveRow(srcIdx);
+        }
+    }
+    logInfo << "Deleted messages, count: " << proxyIndices.count();
+}
+
+void SQSMessageList::HandleBulkResend(QModelIndexList proxyIndices) const {
+
+    // Convert to Persistent Source Indexes
+    QList<QPersistentModelIndex> persistentRows;
+    for (const QModelIndex &proxyIdx: proxyIndices) {
+        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
+    }
+
+    // Now it is safe to delete in a loop
+    for (const QPersistentModelIndex &srcIdx: persistentRows) {
+        if (srcIdx.isValid()) {
+            const QString queueArn = _tableView->GetValue<QString>(srcIdx, 7);
+            const QString messageId = _tableView->GetValue<QString>(srcIdx, 0);
+            _sqsService->ResendMessage(queueArn, messageId);
+        }
+    }
+    logInfo << "Resend messages, count: " << proxyIndices.count();
+}
+
+void SQSMessageList::HandleBulkRedrive(QModelIndexList proxyIndices) const {
+
+    // Convert to Persistent Source Indexes
+    QList<QPersistentModelIndex> persistentRows;
+    for (const QModelIndex &proxyIdx: proxyIndices) {
+        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
+    }
+
+    // Now it is safe to delete in a loop
+    for (const QPersistentModelIndex &srcIdx: persistentRows) {
+        if (srcIdx.isValid()) {
+            const QString queueArn = _tableView->GetValue<QString>(srcIdx, 7);
+            const QString messageId = _tableView->GetValue<QString>(srcIdx, 0);
+            _sqsService->RedriveMessage(queueArn, messageId);
+        }
+    }
+    logInfo << "Resend messages, count: " << proxyIndices.count();
+}
+
 void SQSMessageList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
@@ -122,10 +181,19 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Message");
     editAction->setToolTip("Edit message");
 
-    QAction *resendAction = menu.addAction(IconUtils::GetIcon("resend"), "Resend Message");
+    QAction *resendAction = menu.addAction(IconUtils::GetIcon("resend"), "Resend Messages");
     resendAction->setToolTip("Resend message");
     if (_isDlq) {
         resendAction->setEnabled(false);
+    } else {
+        resendAction->setEnabled(true);
+    }
+    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("redrive"), "Redrive Messages");
+    resendAction->setToolTip("Redrive messages");
+    if (_isDlq) {
+        redriveAction->setEnabled(true);
+    } else {
+        redriveAction->setEnabled(false);
     }
     menu.addSeparator();
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
@@ -136,12 +204,13 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) {
         SQSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();
     } else if (selectedAction == resendAction) {
-        const QString queueArn = _tableView->GetValue<QString>(index, 7);
-        const QString messageId = _tableView->GetValue<QString>(index, 0);
-        _sqsService->ResendMessage(queueArn, messageId);
+        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
+        HandleBulkResend(selectedProxyIndices);
+    } else if (selectedAction == redriveAction) {
+        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
+        HandleBulkRedrive(selectedProxyIndices);
     } else if (selectedAction == deleteAction) {
-        const QString queueUrl = _tableView->GetValue<QString>(index, 6);
-        const QString receiptHandle = _tableView->GetValue<QString>(index, 8);
-        _sqsService->DeleteMessage(queueUrl, receiptHandle);
+        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
+        HandleBulkDelete(selectedProxyIndices);
     }
 }

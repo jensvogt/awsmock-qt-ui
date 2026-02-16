@@ -70,6 +70,12 @@ private slots:
      */
     void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const;
 
+    void HandleBulkDelete(QModelIndexList proxyIndices) const;
+
+    void HandleBulkResend(QModelIndexList proxyIndices) const;
+
+    void HandleBulkRedrive(QModelIndexList proxyIndices) const;
+
 private:
     /**
      * @brief Pageable Qt table
