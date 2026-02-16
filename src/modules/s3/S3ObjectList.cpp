@@ -69,6 +69,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(3, "created", -1);
+    _tableView->SetMultiRowSelection(true);
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -137,6 +138,7 @@ void S3ObjectList::HandleBulkDelete(QModelIndexList proxyIndices) const {
             _tableView->RemoveRow(srcIdx);
         }
     }
+    logInfo << "Deleted objects, count: " << proxyIndices.count();
 }
 
 void S3ObjectList::HandleBulkTouch(QModelIndexList proxyIndices) const {
@@ -145,6 +147,7 @@ void S3ObjectList::HandleBulkTouch(QModelIndexList proxyIndices) const {
         const QString key = _tableView->GetValue<QString>(srcIdx, 0);
         _s3Service->TouchObject(_bucketName, key);
     }
+    logInfo << "Touched objects, count: " << proxyIndices.count();
 }
 
 void S3ObjectList::ShowContextMenu(const QPoint &pos) {

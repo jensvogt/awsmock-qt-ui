@@ -218,7 +218,7 @@ QPoint PageableTable::GetGlobalPosition(const QPoint &tablePosition) const {
 }
 
 void PageableTable::RemoveRow(const QModelIndex &index) const {
-    _dataModel->removeRow(index.row());
+    _dataModel->removeRow(index.row(), index.parent());
 }
 
 QModelIndex PageableTable::GetSourceIndex(const QModelIndex &index) const {
@@ -227,4 +227,12 @@ QModelIndex PageableTable::GetSourceIndex(const QModelIndex &index) const {
 
 QModelIndexList PageableTable::GetSelectedRows() const {
     return _ui->tableView->selectionModel()->selectedRows();
+}
+
+void PageableTable::SetMultiRowSelection(const bool enabled) const {
+    if (!enabled) {
+        _ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    } else {
+        _ui->tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    }
 }

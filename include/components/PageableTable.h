@@ -244,6 +244,11 @@ public:
     }
 
     /**
+     * @brief Set multi row selection
+     */
+    void SetMultiRowSelection(bool enabled) const;
+
+    /**
      * @brief Clears the whole table
      */
     void Clear() {

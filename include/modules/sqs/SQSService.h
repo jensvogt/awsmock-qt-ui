@@ -163,6 +163,8 @@ public:
      */
     void ResendMessage(const QString &queueArn, const QString &messageId);
 
+    void RedriveMessage(const QString &queueArn, const QString &messageId);
+
     /**
      * @brief Delete a message
      *

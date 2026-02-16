@@ -489,6 +489,32 @@ void SQSService::ResendMessage(const QString &queueArn, const QString &messageId
                       });
 }
 
+void SQSService::RedriveMessage(const QString &queueArn, const QString &messageId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["QueueArn"] = queueArn;
+    jRequest["MessageId"] = messageId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "redrive-message"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadMessagesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ResendMessage", timer.elapsed());
+                      });
+}
+
 void SQSService::DeleteMessage(const QString &queueUrl, const QString &receiptHandle) {
     QElapsedTimer timer;
     timer.start();
