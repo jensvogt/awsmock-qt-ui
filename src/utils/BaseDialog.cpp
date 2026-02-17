@@ -4,7 +4,6 @@ BaseDialog::BaseDialog(QWidget *parent) : QDialog(parent), _autoUpdateTimer(null
 }
 
 void BaseDialog::StartAutoUpdate() {
-
     // Initial load
     LoadContent();
 
@@ -22,5 +21,7 @@ void BaseDialog::StopAutoUpdate() const {
     // Stop the auto updater
     if (_autoUpdateTimer) {
         _autoUpdateTimer->stop();
+        _autoUpdateTimer->deleteLater();
+        delete _autoUpdateTimer;
     }
 }

@@ -1,6 +1,6 @@
 #include <utils/BasePage.h>
 
-BasePage::BasePage(QWidget *parent) : QWidget(parent), _autoUpdateTimer(nullptr) {
+BasePage::BasePage(QWidget *parent) : QWidget(parent) {
     // Function key F5 refresh action
     _refreshAction = new QAction(this);
     _refreshAction->setShortcut(QKeySequence(Qt::Key_F5));
@@ -27,6 +27,8 @@ void BasePage::StopAutoUpdate() const {
     // Stop the auto updater
     if (_autoUpdateTimer) {
         _autoUpdateTimer->stop();
+        _autoUpdateTimer->deleteLater();
+        delete _autoUpdateTimer;
     }
 }
 

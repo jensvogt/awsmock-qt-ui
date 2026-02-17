@@ -2,7 +2,6 @@
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-
     // Connect infrastructure signals
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -148,7 +147,6 @@ void MainWindow::SetupMenuBar() {
 }
 
 void MainWindow::SetupToolBar() {
-
     const auto toolBar = new QToolBar(this);
     toolBar->setMovable(true);
 
@@ -241,7 +239,6 @@ void MainWindow::ShowInfrastructureDialog() {
 }
 
 void MainWindow::FtpUpload() {
-
     // If the dialog doesn't exist, create it
     if (!_ftpClientDialog) {
         _ftpClientDialog = new FTPClientDialog(nullptr);
@@ -265,6 +262,7 @@ void MainWindow::DockerStats() {
     if (!_dockerStatsDialog) {
         _dockerStatsDialog = new DockerStatsDialog(nullptr);
         _dockerStatsDialog->setWindowFlags(Qt::Window);
+        _dockerStatsDialog->setAttribute(Qt::WA_DeleteOnClose);
         _dockerStatsDialog->show();
 
         // Reset the pointer to nullptr when the user clicks 'X'

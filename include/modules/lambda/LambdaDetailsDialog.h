@@ -55,8 +55,7 @@ public:
 
     void HandleReject();
 
-    void LoadContent() override {
-    };
+    void LoadContent();
 
 private:
     /**

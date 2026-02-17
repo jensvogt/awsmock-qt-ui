@@ -6,11 +6,10 @@
 #include "ui_LambdaDetailsDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
-
     _lambdaService = new LambdaService();
 
-    _lambdaService->GetLambda(lambdaArn);
     connect(_lambdaService, &LambdaService::GetLambdaDetailsSignal, this, &LambdaDetailsDialog::UpdateLambda);
+    connect(_lambdaService, &LambdaService::LoadLambdaEnvironment, this, &LambdaDetailsDialog::LoadContent);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaDetailsDialog::HandleAccept);
@@ -41,10 +40,17 @@ LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *pare
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    // Load content
+    LoadContent();
 }
 
 LambdaDetailsDialog::~LambdaDetailsDialog() {
     delete _ui;
+}
+
+void LambdaDetailsDialog::LoadContent() {
+    _lambdaService->GetLambda(_lambdaArn);
 }
 
 void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const {
@@ -112,12 +118,11 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
 }
 
 void LambdaDetailsDialog::SetupEnvironmentTab() const {
-
     // Add button
     _ui->environmentAddButton->setText(nullptr);
     _ui->environmentAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->environmentAddButton, &QPushButton::clicked, [this]() {
-        if (LambdaEnvironmentDetailDialog dialog("", "", true); dialog.exec() == Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog{}; dialog.exec() == Accepted) {
             const int newRowIndex = _ui->environmentTable->rowCount();
             _ui->environmentTable->insertRow(newRowIndex);
             SetColumn(_ui->environmentTable, newRowIndex, 0, dialog.GetKey());
@@ -162,16 +167,14 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
         const QString key = _ui->environmentTable->item(row, 0)->text();
         const QString value = _ui->environmentTable->item(row, 1)->text();
 
-        if (LambdaEnvironmentDetailDialog dialog(key, value, false); dialog.exec() == Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog(key, value); dialog.exec() == Accepted) {
             SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
-            //_lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+            _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
         }
     });
-
 }
 
 void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
-
     const int selectedRow = _ui->environmentTable->selectionModel()->currentIndex().row();
     _ui->environmentTable->setRowCount(0);
     _ui->environmentTable->setSortingEnabled(false);
@@ -190,7 +193,6 @@ void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentRes
 }
 
 void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
-
     // Cell index
     const QModelIndex index = _ui->environmentTable->indexAt(pos);
     if (!index.isValid()) return;
@@ -210,10 +212,10 @@ void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
     const QString value = _ui->environmentTable->item(row, 1)->text();
     if (const QAction *selectedAction = menu.exec(_ui->environmentTable->viewport()->mapToGlobal(pos));
         selectedAction == editAction) {
-        if (LambdaEnvironmentDetailDialog dialog(key, value, false); dialog.exec() == Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog(key, value); dialog.exec() == Accepted) {
             SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
-            //   _application.environment[key] = dialog.GetValue();
-            //            _changed = true;
+            SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
+            _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
         }
     } else if (selectedAction == deleteAction) {
         _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);

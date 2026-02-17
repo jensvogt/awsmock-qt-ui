@@ -105,6 +105,10 @@ public:
 
     void UpdateLambda(const QString &lambdaArn, bool enabled);
 
+    void UpdateLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
+
+    void RebuildLambda(const QString &name, const QString &version);
+
     /**
      * @brief Stop an lambdas
      *

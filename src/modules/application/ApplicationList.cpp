@@ -162,8 +162,6 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {
-    StopAutoUpdate();
-
     // Cell index
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) return;
@@ -246,6 +244,4 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
         ApplicationEditDialog dialog(name, this);
         dialog.exec();
     }
-    LoadContent();
-    StartAutoUpdate();
 }
