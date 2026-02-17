@@ -86,11 +86,11 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     tableWidget->setSortingEnabled(true);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Interactive);
+    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
     tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
@@ -162,9 +162,6 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
 }
 
 void LambdaList::ShowContextMenu(const QPoint &pos) {
-    // Stop auto updater
-    StopAutoUpdate();
-
     // Cell index
     const QModelIndex index = tableWidget->indexAt(pos);
     if (!index.isValid()) {
@@ -175,6 +172,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
 
     const QString arn = tableWidget->item(row, 10)->text();
     const QString name = tableWidget->item(row, 0)->text();
+    const QString version = tableWidget->item(row, 1)->text();
     const QString containerId = tableWidget->item(row, 9)->text();
 
     QMenu menu;
@@ -268,13 +266,11 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         }
         _containerService->KillContainer(containerId);
     } else if (selectedAction == rebuildAction) {
-        //_lambdaService->RebuildLambda(name);
+        _lambdaService->RebuildLambda(name, version);
     } else if (selectedAction == uploadAction) {
         LambdaUploadCodeDialog dialog(name, arn);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
         _lambdaService->DeleteLambda(name);
     }
-    LoadContent();
-    StartAutoUpdate();
 }

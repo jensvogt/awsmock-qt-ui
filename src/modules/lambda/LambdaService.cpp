@@ -345,9 +345,7 @@ void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("UploadLambdaCode", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UploadLambdaCode", timer.elapsed());
                       });
 }
 
@@ -373,9 +371,62 @@ void LambdaService::UpdateLambda(const QString &lambdaArn, const bool enabled) {
                           } else {
                               logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("UpdateLambda", timer.elapsed());
+                      });
+}
+
+void LambdaService::UpdateLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["FunctionArn"] = lambdaArn;
+    jRequest["Key"] = key;
+    jRequest["Value"] = value;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "update-function-environment"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadLambdaEnvironment();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("UpdateLambdaEnvironment", timer.elapsed());
+                      });
+}
+
+void LambdaService::RebuildLambda(const QString &name, const QString &version) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["FunctionName"] = name;
+    jRequest["Qualifier"] = "";
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "rebuild-function"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit LoadLambdaEnvironment();
+                          } else {
+                              logError << error;
+                          }
                           emit EventBus::instance()
                                   .
-                                  TimerSignal("UpdateLambda", timer.elapsed());
+                                  DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
                       });
 }
 

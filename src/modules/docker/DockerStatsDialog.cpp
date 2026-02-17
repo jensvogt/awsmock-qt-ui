@@ -91,6 +91,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
 }
 
 DockerStatsDialog::~DockerStatsDialog() {
+    StopAutoUpdate();
     delete _ui;
 }
 
@@ -213,7 +214,6 @@ void DockerStatsDialog::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         _containerService->DeleteContainer(containerId);
     }
-    LoadContent();
     StartAutoUpdate();
 }
 
