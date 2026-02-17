@@ -139,10 +139,9 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     // Conditional logic
     redriveAction->setEnabled(isDql);
 
-    const QString queueUrl = _tableView->GetValue<QString>(index, 7);
-    const QString queueArn = _tableView->GetValue<QString>(index, 8);
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos));
-        selectedAction == purgeAction) {
+    const auto queueUrl = _tableView->GetValue<QString>(index, 7);
+    const auto queueArn = _tableView->GetValue<QString>(index, 8);
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == redriveAction) {
         sqsService->RedriveQueue(queueArn);

@@ -341,7 +341,7 @@ void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
                       },
                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
-                              emit LoadAllLambdas();
+                              emit ReloadLambdas();
                           } else {
                               logError << error;
                           }
@@ -367,7 +367,7 @@ void LambdaService::UpdateLambda(const QString &lambdaArn, const bool enabled) {
                       },
                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
-                              emit LoadAllLambdas();
+                              emit ReloadLambdas();
                           } else {
                               logError << error;
                           }
@@ -407,20 +407,20 @@ void LambdaService::RebuildLambda(const QString &name, const QString &version) {
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["FunctionName"] = name;
-    jRequest["Qualifier"] = "";
+    jRequest["name"] = name;
+    jRequest["version"] = version;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "lambda"},
-                          {"x-awsmock-action", "rebuild-function"},
+                          {"x-awsmock-action", "rebuild-lambda"},
                           {"content-type", "application/json"}
                       },
                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
-                              emit LoadLambdaEnvironment();
+                              emit ReloadLambdas();
                           } else {
                               logError << error;
                           }

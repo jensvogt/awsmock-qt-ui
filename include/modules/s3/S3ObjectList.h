@@ -63,9 +63,9 @@ public:
      */
     void HandleReloadObjectSignal();
 
-    void HandleBulkDelete(QModelIndexList proxyIndices) const;
+    void HandleBulkDelete(const QModelIndexList &proxyIndices) const;
 
-    void HandleBulkTouch(QModelIndexList proxyIndices) const;
+    void HandleBulkTouch(const QModelIndexList &proxyIndices) const;
 
 signals:
     /**

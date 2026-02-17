@@ -21,7 +21,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     });
 
     // Toolbar label
-    const auto titleLabel = new QLabel(title);
+    _titleLabel = new QLabel(title);
 
     // Toolbar add message action
     const auto addButton = new QPushButton(IconUtils::GetIcon("dark", "add"), "");
@@ -49,7 +49,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     });
 
     toolBar->addWidget(backButton);
-    toolBar->addWidget(titleLabel);
+    toolBar->addWidget(_titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
@@ -95,6 +95,7 @@ void SQSMessageList::LoadContent() {
     _queueArn = GetArgument<QString>("queueArn");
     _queueUrl = GetArgument<QString>("queueUrl");
     _isDlq = GetArgument<bool>("isDlq");
+    _titleLabel->setText(QString("SQS Message List: %1").arg(AwsUtils::ArnToName(_queueArn)));
     _sqsService->ListMessages(_queueArn, _tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
@@ -110,12 +111,12 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
         _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).modified);
         _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).queueUrl);
         _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).queueArn);
-        _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).receiptHandle);
+        _tableView->SetColumn(r, c, listMessageResponse.messageCounters.at(r).receiptHandle);
     }
     _tableView->UpdateSorting();
 }
 
-void SQSMessageList::HandleBulkDelete(QModelIndexList proxyIndices) const {
+void SQSMessageList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {
 
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
@@ -126,8 +127,8 @@ void SQSMessageList::HandleBulkDelete(QModelIndexList proxyIndices) const {
     // Now it is safe to delete in a loop
     for (const QPersistentModelIndex &srcIdx: persistentRows) {
         if (srcIdx.isValid()) {
-            const QString queueUrl = _tableView->GetValue<QString>(srcIdx, 6);
-            const QString receiptHandle = _tableView->GetValue<QString>(srcIdx, 8);
+            const auto queueUrl = _tableView->GetValue<QString>(srcIdx, 6);
+            const auto receiptHandle = _tableView->GetValue<QString>(srcIdx, 8);
             _sqsService->DeleteMessage(queueUrl, receiptHandle);
             _tableView->RemoveRow(srcIdx);
         }
@@ -135,7 +136,7 @@ void SQSMessageList::HandleBulkDelete(QModelIndexList proxyIndices) const {
     logInfo << "Deleted messages, count: " << proxyIndices.count();
 }
 
-void SQSMessageList::HandleBulkResend(QModelIndexList proxyIndices) const {
+void SQSMessageList::HandleBulkResend(const QModelIndexList &proxyIndices) const {
 
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
@@ -146,15 +147,15 @@ void SQSMessageList::HandleBulkResend(QModelIndexList proxyIndices) const {
     // Now it is safe to delete in a loop
     for (const QPersistentModelIndex &srcIdx: persistentRows) {
         if (srcIdx.isValid()) {
-            const QString queueArn = _tableView->GetValue<QString>(srcIdx, 7);
-            const QString messageId = _tableView->GetValue<QString>(srcIdx, 0);
+            const auto queueArn = _tableView->GetValue<QString>(srcIdx, 7);
+            const auto messageId = _tableView->GetValue<QString>(srcIdx, 0);
             _sqsService->ResendMessage(queueArn, messageId);
         }
     }
     logInfo << "Resend messages, count: " << proxyIndices.count();
 }
 
-void SQSMessageList::HandleBulkRedrive(QModelIndexList proxyIndices) const {
+void SQSMessageList::HandleBulkRedrive(const QModelIndexList &proxyIndices) const {
 
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
@@ -165,8 +166,8 @@ void SQSMessageList::HandleBulkRedrive(QModelIndexList proxyIndices) const {
     // Now it is safe to delete in a loop
     for (const QPersistentModelIndex &srcIdx: persistentRows) {
         if (srcIdx.isValid()) {
-            const QString queueArn = _tableView->GetValue<QString>(srcIdx, 7);
-            const QString messageId = _tableView->GetValue<QString>(srcIdx, 0);
+            const auto queueArn = _tableView->GetValue<QString>(srcIdx, 7);
+            const auto messageId = _tableView->GetValue<QString>(srcIdx, 0);
             _sqsService->RedriveMessage(queueArn, messageId);
         }
     }
@@ -200,7 +201,7 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) {
     deleteAction->setToolTip("Delete the message");
 
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
-        const QString messageId = _tableView->GetValue<QString>(index, 0);
+        const auto messageId = _tableView->GetValue<QString>(index, 0);
         SQSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();
     } else if (selectedAction == resendAction) {

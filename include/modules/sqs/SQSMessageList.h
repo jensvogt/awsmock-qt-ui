@@ -11,6 +11,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/EventBus.h>
+#include <utils/AwsUtils.h>
 #include <components/PageableTable.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
@@ -70,11 +71,11 @@ private slots:
      */
     void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const;
 
-    void HandleBulkDelete(QModelIndexList proxyIndices) const;
+    void HandleBulkDelete(const QModelIndexList &proxyIndices) const;
 
-    void HandleBulkResend(QModelIndexList proxyIndices) const;
+    void HandleBulkResend(const QModelIndexList &proxyIndices) const;
 
-    void HandleBulkRedrive(QModelIndexList proxyIndices) const;
+    void HandleBulkRedrive(const QModelIndexList &proxyIndices) const;
 
 private:
     /**
@@ -101,6 +102,11 @@ private:
      * @brief DQL flag
      */
     bool _isDlq = false;
+
+    /**
+     *  @brief Title label
+     */
+    QLabel *_titleLabel;
 };
 
 #endif // AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
