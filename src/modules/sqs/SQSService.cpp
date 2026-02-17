@@ -46,7 +46,7 @@ void SQSService::PurgeQueue(const QString &queueUrl) {
     timer.start();
 
     QJsonObject jRequest;
-    jRequest["QueueUrl()"] = queueUrl;
+    jRequest["QueueUrl"] = queueUrl;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),

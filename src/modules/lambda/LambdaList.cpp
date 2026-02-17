@@ -6,7 +6,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Connect service
     _lambdaService = new LambdaService();
-    connect(_lambdaService, &LambdaService::LoadAllLambdas, this, &LambdaList::LoadContent);
+    connect(_lambdaService, &LambdaService::ReloadLambdas, this, &LambdaList::LoadContent);
     connect(_lambdaService, &LambdaService::ReloadLambdasSignal, this, &LambdaList::HandleListLambdasSignal);
 
     // Title label

@@ -137,9 +137,9 @@ public:
     /**
      * @brief Purge all messages
      *
-     * @param QueueUrl URL of the Queue to purge
+     * @param queueUrl URL of the Queue to purge
      */
-    void PurgeAllMessages(const QString &QueueUrl);
+    void PurgeAllMessages(const QString &queueUrl);
 
     /**
      * @brief Get message details response

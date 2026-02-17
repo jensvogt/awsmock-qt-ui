@@ -35,7 +35,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
         dialog.exec();
     });
 
-    // Toolbar add action
+    // Toolbar purge action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all objects");
@@ -105,6 +105,7 @@ void S3ObjectList::HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &b
 void S3ObjectList::LoadContent() {
     _bucketName = GetArgument<QString>("bucketName");
     _titleLabel->setText("S3 Object List: " + _bucketName);
+    _s3Service->GetBucketDetails(_bucketName);
     _s3Service->ListObjects(_bucketName, _tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
@@ -122,7 +123,7 @@ void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjec
     _tableView->UpdateSorting();
 }
 
-void S3ObjectList::HandleBulkDelete(QModelIndexList proxyIndices) const {
+void S3ObjectList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {
 
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
@@ -133,7 +134,7 @@ void S3ObjectList::HandleBulkDelete(QModelIndexList proxyIndices) const {
     // Now it is safe to delete in a loop
     for (const QPersistentModelIndex &srcIdx: persistentRows) {
         if (srcIdx.isValid()) {
-            const QString key = _tableView->GetValue<QString>(srcIdx, 0);
+            const auto key = _tableView->GetValue<QString>(srcIdx, 0);
             _s3Service->DeleteObject(_bucketName, key);
             _tableView->RemoveRow(srcIdx);
         }
@@ -141,10 +142,10 @@ void S3ObjectList::HandleBulkDelete(QModelIndexList proxyIndices) const {
     logInfo << "Deleted objects, count: " << proxyIndices.count();
 }
 
-void S3ObjectList::HandleBulkTouch(QModelIndexList proxyIndices) const {
+void S3ObjectList::HandleBulkTouch(const QModelIndexList &proxyIndices) const {
     for (const QModelIndex &proxyIdx: proxyIndices) {
         QModelIndex srcIdx = _tableView->GetSourceIndex(proxyIdx);
-        const QString key = _tableView->GetValue<QString>(srcIdx, 0);
+        const auto key = _tableView->GetValue<QString>(srcIdx, 0);
         _s3Service->TouchObject(_bucketName, key);
     }
     logInfo << "Touched objects, count: " << proxyIndices.count();
@@ -171,8 +172,8 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) {
     deleteAction->setToolTip("Delete the object");
 
     //_s3Service->DeleteObject(_bucketName, key);
-    const QString key = _tableView->GetValue<QString>(index, 0);
-    const QString objectId = _tableView->GetValue<QString>(index, 5);
+    const auto key = _tableView->GetValue<QString>(index, 0);
+    const auto objectId = _tableView->GetValue<QString>(index, 5);
     if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
         const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
         HandleBulkDelete(selectedProxyIndices);

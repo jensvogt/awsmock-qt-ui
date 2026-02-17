@@ -204,7 +204,7 @@ signals:
     /**
      * @brief Reload all lambdas signal
      */
-    void LoadAllLambdas();
+    void ReloadLambdas();
 
     /**
      * @brief Reload all environment signal
