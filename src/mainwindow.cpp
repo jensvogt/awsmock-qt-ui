@@ -1,11 +1,9 @@
 #include <mainwindow.h>
 
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Connect infrastructure signals
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
-    connect(_moduleService, &ModuleService::ExportResponseSignal, this, &WriteInfrastructureExport);
     connect(_moduleService, &ModuleService::CleanResponseSignal, this, &CleanInfrastructureResponse);
 
     // Start pinging server
@@ -200,14 +198,15 @@ void MainWindow::ImportInfrastructureResponse() {
     QMessageBox::information(nullptr, "Information", "Infrastructure imported");
 }
 
-void MainWindow::ExportInfrastructure() const {
-    // Create a QFileDialog set to select existing files
-    const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ExportInfrastructure", "/usr/local/awsmock-qt-_ui");
+void MainWindow::ExportInfrastructure() {
 
-    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
-                                                              filter); !filePath.isEmpty()) {
-        _moduleService->ExportInfrastructure(filePath);
+    if (ModuleExportDialog dialog; dialog.exec() == QDialog::Accepted) {
+        QString filePath = dialog.GetFilePath();
+        QStringList modules = dialog.GetModules();
+        _moduleService->GetInfrastructure();
+        connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, [filePath](const QString &infrastructure) {
+            WriteInfrastructureExport(filePath, infrastructure);
+        });
         Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }

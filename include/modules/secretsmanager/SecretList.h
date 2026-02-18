@@ -43,6 +43,12 @@ public:
     ~SecretList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+    }
+
+    /**
      * @brief Load page content
      */
     void LoadContent() override;

@@ -39,6 +39,13 @@ public:
     ~SQSMessageList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    };
+
+    /**
      * @brief ListQueues
      */
     void LoadContent() override;

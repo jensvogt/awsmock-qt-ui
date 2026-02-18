@@ -47,6 +47,13 @@ public:
     void HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse);
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    }
+
+    /**
      * @brief ListQueues
      */
     void LoadContent() override;

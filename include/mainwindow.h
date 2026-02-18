@@ -24,11 +24,13 @@
 
 #include <Version.h>
 #include <MainWidget.h>
+#include <MainRouter.h>
 #include <utils/About.h>
 #include <utils/EditConfigDialog.h>
 #include <utils/EventBus.h>
 #include <utils/BasePage.h>
 #include <utils/ScopedTimer.h>
+#include <utils/UpdateChecker.h>
 #include <modules/module/ShowInfrastructure.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
@@ -46,9 +48,7 @@
 #include <modules/secretsmanager/SecretList.h>
 #include <modules/dynamodb/DynamoDbTableList.h>
 #include <modules/dynamodb/DynamoDbItemList.h>
-
-#include "MainRouter.h"
-#include "utils/UpdateChecker.h"
+#include <modules/module/ModuleExportDialog.h>
 
 #define PAGE_DASHBOARD 0
 #define PAGE_SQS 1
@@ -83,21 +83,21 @@ private:
 
     void ImportInfrastructure() const;
 
-    static void ImportInfrastructureResponse();
-
-    void ExportInfrastructure() const;
-
-    static void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
+    void ExportInfrastructure();
 
     void CleanInfrastructure() const;
-
-    static void CleanInfrastructureResponse();
-
-    static void ShowInfrastructureDialog();
 
     void FtpUpload();
 
     void DockerStats();
+
+    static void ImportInfrastructureResponse();
+
+    static void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
+
+    static void CleanInfrastructureResponse();
+
+    static void ShowInfrastructureDialog();
 
     static void EditPreferences();
 

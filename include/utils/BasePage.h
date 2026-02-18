@@ -22,6 +22,8 @@ public:
 
     QAction *GetRefreshAction(QWidget *parent) const;
 
+    virtual void ClearContent() = 0;
+
     virtual void LoadContent() = 0;
 
     void SetArguments(const QMap<QString, QString> &arguments) {

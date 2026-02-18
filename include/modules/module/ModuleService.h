@@ -10,19 +10,22 @@
 #include <QElapsedTimer>
 
 // Awsmock includes
+#include <utils/Logging.h>
 #include <utils/EventBus.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
+#include <utils/BaseService.h>
 #include <dto/gateway/GatewayConfig.h>
+#include <dto/module/ListModuleNamesResponse.h>
 
-class ModuleService final : public QObject {
+class ModuleService final : public BaseService {
     Q_OBJECT
 
 public:
     /**
      * @brief Constructor
      */
-    ModuleService();
+    ModuleService() = default;
 
     /**
      * @brief Destructor
@@ -36,7 +39,12 @@ public:
      */
     void ExportInfrastructure(const QString &exportFilename);
 
-    void ExportInfrastructure(const QString &exportFilename, const QString &module);
+    /**
+     * @brief Exports the given modul
+     * @param exportFilename export file name
+     * @param modules
+     */
+    void ExportInfrastructure(const QString &exportFilename, const QStringList &modules);
 
     /**
      * @brief Import infrastructure
@@ -66,6 +74,12 @@ public:
      * @brief Send a ping to the server
      */
     void PingServer();
+
+    void SetLogLevel(const QString &logLevel);
+
+    void GetLogLevel();
+
+    void ListModuleNames();
 
 signals:
     /**
@@ -100,6 +114,20 @@ signals:
      */
     void GetInfrastructureSignal(const QString &infrastructure);
 
+    /**
+     * @brief Handler for the get loglevel callback
+     *
+     * @param logLevel logging level
+     */
+    void GetLoglevelSignal(const QString &logLevel);
+
+    /**
+     * @brief Handler for the get module names callback
+     *
+     * @param response list of module names
+     */
+    void ListModuleNamesSignal(const ListModuleNamesResponse &response);
+
 private:
     /**
      * @brief HTTP REST manager
@@ -110,6 +138,10 @@ private:
      * @brief Base URL
      */
     QUrl url;
+
+    /**
+     * @brief Export file
+     */
     QFile _exportFile;
 };
 #endif //AWSMOCK_QT_UI_MODULE_SERVICE_H

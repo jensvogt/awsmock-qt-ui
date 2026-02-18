@@ -113,13 +113,12 @@ public:
     }
 
     void SetRoute(const QString &pageName, const QMap<QString, QString> &arguments = {}) {
-
         // Setup content pane
         if (_routes.contains(pageName)) {
-
             // Set arguments
             BasePage *basePage = _routes[pageName];
             basePage->SetArguments(arguments);
+            basePage->ClearContent();
             basePage->LoadContent();
 
             // Set content
@@ -141,7 +140,6 @@ signals:
 private slots:
     void ChangeRoute(const QString &pageName, const QMap<QString, QString> &arguments) {
         if (_routes.contains(pageName)) {
-
             // Set content
             _contentPane->addWidget(_routes[pageName]);
             _contentPane->setCurrentWidget(_routes[pageName]);
@@ -159,7 +157,6 @@ private:
      * @param basePage new base pase
      */
     void ResetAutoUpdater(BasePage *basePage) {
-
         // Stop autoupdate on old route
         if (!_currentRoute.isEmpty()) {
             const BasePage *_currentPage = _routes[_currentRoute];

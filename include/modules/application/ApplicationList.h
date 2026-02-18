@@ -18,6 +18,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <dto/sns/SNSListTopicResult.h>
+#include <components/PageableTable.h>
 #include <modules/application/ApplicationService.h>
 #include <modules/application/ApplicationEditDialog.h>
 #include <modules/application/ApplicationAddDialog.h>
@@ -45,6 +46,12 @@ public:
     ~ApplicationList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+    }
+
+    /**
      * @brief Load page content
      */
     void LoadContent() override;
@@ -54,7 +61,7 @@ public:
      *
      * @param listApplicationResponse application counter list
      */
-    void HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse);
+    void HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) const;
 
 private slots:
     /**
@@ -73,32 +80,12 @@ private:
     /**
      * @brief Table widget
      */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Prefix value
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief Service
      */
     ApplicationService *_applicationService;
-
-    /**
-     * @brief Sort column index
-     */
-    int _sortColumn = 0;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::AscendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 };
 
 #endif //AWSMOCK_QT_UI_APPLICATION_LIST_H

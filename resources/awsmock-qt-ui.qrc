@@ -4,6 +4,8 @@
         <file>light/about.svg</file>
         <file>light/add.svg</file>
         <file>light/add-directory.svg</file>
+        <file>light/all-right-2-left.svg</file>
+        <file>light/all-left-2-right.svg</file>
         <file>light/back.svg</file>
         <file>light/begin.svg</file>
         <file>light/browse.svg</file>
@@ -29,6 +31,7 @@
         <file>light/help.svg</file>
         <file>light/import.svg</file>
         <file>light/kill.svg</file>
+        <file>light/left-2-right.svg</file>
         <file>light/logs.svg</file>
         <file>light/next.svg</file>
         <file>light/ok.svg</file>
@@ -43,6 +46,7 @@
         <file>light/rename.svg</file>
         <file>light/resend.svg</file>
         <file>light/restart.svg</file>
+        <file>light/right-2-left.svg</file>
         <file>light/running.svg</file>
         <file>light/save.svg</file>
         <file>light/scroll.svg</file>
@@ -58,6 +62,8 @@
         <file>dark/about.svg</file>
         <file>dark/add.svg</file>
         <file>dark/add-directory.svg</file>
+        <file>dark/all-right-2-left.svg</file>
+        <file>dark/all-left-2-right.svg</file>
         <file>dark/back.svg</file>
         <file>dark/begin.svg</file>
         <file>dark/browse.svg</file>
@@ -83,6 +89,7 @@
         <file>dark/help.svg</file>
         <file>dark/import.svg</file>
         <file>dark/kill.svg</file>
+        <file>dark/left-2-right.svg</file>
         <file>dark/logs.svg</file>
         <file>dark/next.svg</file>
         <file>dark/ok.svg</file>
@@ -97,6 +104,7 @@
         <file>dark/restart.svg</file>
         <file>dark/rename.svg</file>
         <file>dark/resend.svg</file>
+        <file>dark/right-2-left.svg</file>
         <file>dark/running.svg</file>
         <file>dark/save.svg</file>
         <file>dark/scroll.svg</file>

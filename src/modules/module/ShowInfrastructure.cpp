@@ -136,7 +136,6 @@ void ShowInfrastructure::SaveData() {
         // Save JSON data
         const QByteArray jsonData = _ui->infrastructureText->toPlainText().toUtf8();
         _currentFile->write(jsonData);
-        qDebug() << jsonData;
         _currentFile->close();
         QMessageBox::information(nullptr, "Information", "Infrastructure saved, file: " + _currentFile->fileName());
     }
