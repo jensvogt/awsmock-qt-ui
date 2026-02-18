@@ -180,6 +180,20 @@ public:
     static void setByPath(QJsonObject &obj, const QString &path, const QJsonValue &value) {
         setByPath(obj, splitPath(path), value);
     }
+
+    static QString PrettyPrint(const QString &rawJson) {
+        QJsonParseError error;
+
+        // Parse the raw string into a QJsonDocument
+        const QJsonDocument doc = QJsonDocument::fromJson(rawJson.toUtf8(), &error);
+
+        if (error.error != QJsonParseError::NoError) {
+            return "Invalid JSON: " + error.errorString();
+        }
+
+        // Convert back to QString using the Indented format
+        return doc.toJson(QJsonDocument::Indented);
+    }
 };
 
 #endif // JSON_UTILS_H

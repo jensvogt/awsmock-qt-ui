@@ -1,29 +1,24 @@
 #include <modules/application/ApplicationService.h>
 
-ApplicationService::ApplicationService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
-}
-
-void ApplicationService::ListApplications(const QString &prefix) {
+void ApplicationService::ListApplications(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "name";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
-                      requestDoc.toJson(),
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "list-applications"},
@@ -49,7 +44,7 @@ void ApplicationService::ListApplications(const QString &prefix) {
 }
 
 void ApplicationService::UploadApplication(const ApplicationUploadRequest &request) {
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       request.ToJson().toUtf8(),
                       {
                           {"x-awsmock-target", "application"},
@@ -66,7 +61,7 @@ void ApplicationService::UploadApplication(const ApplicationUploadRequest &reque
 }
 
 void ApplicationService::CreateApplication(const ApplicationCreateRequest &request) {
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       request.ToJson().toUtf8(),
                       {
                           {"x-awsmock-target", "application"},
@@ -92,7 +87,7 @@ void ApplicationService::GetApplication(const QString &name) {
     jRequest["name"] = name;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -119,7 +114,7 @@ void ApplicationService::UpdateApplication(const Application &application) {
     jRequest["application"] = application.ToJsonObject();
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -145,7 +140,7 @@ void ApplicationService::EnableApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -171,7 +166,7 @@ void ApplicationService::DisableApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -196,7 +191,7 @@ void ApplicationService::StartApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -221,7 +216,7 @@ void ApplicationService::StopApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -246,7 +241,7 @@ void ApplicationService::RestartApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -263,7 +258,7 @@ void ApplicationService::RestartApplication(const QString &name) {
 }
 
 void ApplicationService::RestartAllApplications() {
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       nullptr,
                       {
                           {"x-awsmock-target", "application"},
@@ -288,7 +283,7 @@ void ApplicationService::RebuildApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -311,7 +306,7 @@ void ApplicationService::UploadApplicationCode(const QString &applicationName, c
     jRequest["applicationCode"] = applicationCode;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -334,7 +329,7 @@ void ApplicationService::ListApplicationNames() {
     jRequest["pageIndex"] = -1;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
@@ -363,7 +358,7 @@ void ApplicationService::DeleteApplication(const QString &name) {
     jRequest["name"] = name;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},

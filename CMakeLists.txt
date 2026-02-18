@@ -96,7 +96,9 @@ set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cog
         include/dto/cognito/CognitoAddUserpoolRequest.h
         include/dto/cognito/CognitoAddUserpoolResponse.h
         include/dto/cognito/CognitoDeleteUserpoolRequest.h)
-set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h)
+set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
+        src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
+        src/modules/module/ModuleExportDialog.ui)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h
@@ -256,7 +258,8 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/utils/UpdateChecker.h
         include/utils/DroppableTreeView.h
         include/utils/NetworkUtils.h
-        include/utils/AwsUtils.h)
+        include/utils/AwsUtils.h
+        include/dto/module/ListModuleNamesResponse.h)
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})

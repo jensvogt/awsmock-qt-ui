@@ -182,6 +182,15 @@ void PageableTable::SetColumn(const int row, const int column, const long &value
     _dataModel->setData(index, static_cast<qlonglong>(value), Qt::DisplayRole);
 }
 
+void PageableTable::SetColumn(const int row, const int col, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) const {
+    auto *iconItem = new QStandardItem();
+    iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    iconItem->setData(Qt::DisplayRole, value ? 1 : 0);
+    iconItem->setText("");
+    iconItem->setIcon(value ? enabledIcon : disabledIcon);
+    _dataModel->setItem(row, col, iconItem);
+}
+
 void PageableTable::SetHiddenColumn(const int row, const int col, const QString &value) const {
     const auto item = new QStandardItem(value);
     item->setData(value, Qt::EditRole);

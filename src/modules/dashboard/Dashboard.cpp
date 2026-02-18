@@ -8,7 +8,6 @@
 #include "ui_Dashboard.h"
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), _ui(new Ui::Dashboard), _parent(parent) {
-
     // Connect service
     _dashboardService = new DashboardService();
     connect(_dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
@@ -198,6 +197,9 @@ ChartConfig Dashboard::CreateChart(ChartConfig &chartConfig) {
     _ui->gridLayout->addWidget(chartView, chartConfig.row, chartConfig.column, 1, 1);
     chartConfig.chart = chart;
     return chartConfig;
+}
+
+void Dashboard::ClearContent() {
 }
 
 void Dashboard::LoadContent() {

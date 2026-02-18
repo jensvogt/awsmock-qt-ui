@@ -64,7 +64,6 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
-
         // Extract ARN and URL
         QMap<QString, QString> arguments;
         arguments["queueUrl"] = _tableView->GetValue<QString>(index, 7);
@@ -92,11 +91,11 @@ SQSQueueList::~SQSQueueList() {
 }
 
 void SQSQueueList::LoadContent() {
+    _tableView->Clear();
     sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const {
-    _tableView->Clear();
     _tableView->SetTotalSize(queueListResponse.total);
     for (auto r = 0, c = 0; r < queueListResponse.queueCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).queueName);
@@ -114,7 +113,6 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
 }
 
 void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
-
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
     const bool isDql = _tableView->GetValue<bool>(index, 9);
 

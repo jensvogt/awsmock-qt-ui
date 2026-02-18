@@ -122,6 +122,16 @@ private:
      * @brief Log lines limit
      */
     long _logLimit = 500;
+
+    /**
+     * @brief Current log level, we start with 'info'.
+     */
+    QString _currentLogLevel = "info";
+
+    /**
+     * @brief Module service
+     */
+    ModuleService *_moduleService;
 };
 
 

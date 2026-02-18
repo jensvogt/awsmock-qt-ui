@@ -131,6 +131,9 @@
               </spacer>
              </item>
              <item>
+              <widget class="QComboBox" name="logLevelCombo"/>
+             </item>
+             <item>
               <widget class="QPushButton" name="externWindowButton">
                <property name="text">
                 <string>Extern</string>

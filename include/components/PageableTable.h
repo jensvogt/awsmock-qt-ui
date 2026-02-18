@@ -184,6 +184,8 @@ public:
      */
     void SetColumn(int row, int column, const long &value) const;
 
+    void SetColumn(int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) const;
+
     void SetHiddenColumn(int row, int col, const QString &value) const;
 
     void SetHiddenColumn(int row, int col, bool value) const;
@@ -247,6 +249,10 @@ public:
      * @brief Set multi row selection
      */
     void SetMultiRowSelection(bool enabled) const;
+
+    void ClearContent() {
+        Clear();
+    }
 
     /**
      * @brief Clears the whole table
@@ -349,7 +355,7 @@ private:
     /**
      * @brief Sort column index
      */
-    int _sortColumn;
+    int _sortColumn{};
 
     /**
      * @brief Database sort attribute
