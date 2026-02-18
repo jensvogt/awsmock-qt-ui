@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.9...v1.11.10) (2026-02-18)
+
+
+### Bug Fixes
+
+* windows port ([c54436b](https://github.com/jensvogt/awsmock-qt-ui/commit/c54436b7f5b4abed851adfdc16f108217bb759d2))
+* windows port ([829f3a0](https://github.com/jensvogt/awsmock-qt-ui/commit/829f3a0967708a05fa6887ca2265d7905b2331be))
+
 ## [1.11.9](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.8...v1.11.9) (2026-02-17)
 
 
