@@ -1,21 +1,24 @@
 #ifndef AWSMOCK_QT_UI_LAMBDA_LIST_RESPONSE_H
 #define AWSMOCK_QT_UI_LAMBDA_LIST_RESPONSE_H
 
+// Qt includes
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include <dto/sns/SNSTopicCounter.h>
-
+// Awsmock includes
 #include <dto/lambda/LambdaCounter.h>
 
 struct LambdaListResponse {
-    long total{};
+ long total{};
 
     QList<LambdaCounter> lambdaCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
+
+        total = jsonDoc.object()["total"].toInt();
+
         for (QJsonArray jArray = jsonDoc["functionCounters"].toArray(); const auto &element: jArray) {
             LambdaCounter lambdaCounter;
             lambdaCounter.FromJson(element.toObject());

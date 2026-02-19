@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="serverTab">
       <attribute name="title">
@@ -249,6 +249,19 @@
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,1">
+           <item row="4" column="0">
+            <widget class="QLabel" name="applicationLogLimitLabel">
+             <property name="text">
+              <string>Application Log Limit:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="localeCombo"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="applicationLogLimitEdit"/>
+           </item>
            <item row="2" column="0">
             <widget class="QLabel" name="localeLabel">
              <property name="text">
@@ -263,14 +276,8 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="styleTypeCombo"/>
-           </item>
            <item row="0" column="1">
             <widget class="QComboBox" name="styleCombo"/>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="localeCombo"/>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="styleTypeLabel">
@@ -279,15 +286,18 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="styleTypeCombo"/>
+           </item>
            <item row="3" column="0">
-            <widget class="QLabel" name="applicationLogLimitLabel">
+            <widget class="QLabel" name="fontSizeLabel">
              <property name="text">
-              <string>Application Log Limit:</string>
+              <string>Font Size:</string>
              </property>
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QLineEdit" name="applicationLogLimitEdit"/>
+            <widget class="QComboBox" name="fontSizeCombo"/>
            </item>
           </layout>
          </item>

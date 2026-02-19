@@ -74,16 +74,19 @@ int main(int argc, char *argv[]) {
     }
 
     // Set style
+    const int fontSize = Configuration::instance().GetValue<int>("ui.font-size", 10);
     app.setStyle(Configuration::instance().GetValue<QString>("ui.style", ""));
     if (Configuration::instance().GetValue<QString>("ui.style-type", "") == "Dark") {
         qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
         if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
             qApp->setStyleSheet(f.readAll());
+            qApp->setStyleSheet("QWidget { font-size: " + QString::number(fontSize) + "pt; background-color: #2b2b2b; color: #dcdcdc;}");
         }
     } else {
         qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
         if (QFile f(":/styles/styles/light.qss"); f.open(QFile::ReadOnly)) {
             qApp->setStyleSheet(f.readAll());
+            qApp->setStyleSheet("QWidget { font-size: " + QString::number(fontSize) + "pt; background-color: #ffffff; color: #dcdcdc;}");
         }
     }
 

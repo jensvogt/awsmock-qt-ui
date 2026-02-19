@@ -92,10 +92,8 @@ set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cog
         src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
         include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp
         src/modules/cognito/CognitoAddUserpoolDialog.cpp include/modules/cognito/CognitoAddUserpoolDialog.h
-        src/modules/cognito/CognitoAddUserpoolDialog.ui
-        include/dto/cognito/CognitoAddUserpoolRequest.h
-        include/dto/cognito/CognitoAddUserpoolResponse.h
-        include/dto/cognito/CognitoDeleteUserpoolRequest.h)
+        src/modules/cognito/CognitoAddUserpoolDialog.ui include/dto/cognito/CognitoAddUserpoolRequest.h
+        include/dto/cognito/CognitoAddUserpoolResponse.h include/dto/cognito/CognitoDeleteUserpoolRequest.h)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
         src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
         src/modules/module/ModuleExportDialog.ui)
