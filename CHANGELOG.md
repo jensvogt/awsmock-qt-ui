@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.14](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.13...v1.11.14) (2026-02-19)
+
+
+### Bug Fixes
+
+* SSM table fix, docker stats fix ([ced2abe](https://github.com/jensvogt/awsmock-qt-ui/commit/ced2abe4c5b7dfef45fca1504c4625fcb5b63065))
+
 ## [1.11.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.12...v1.11.13) (2026-02-19)
 
 
