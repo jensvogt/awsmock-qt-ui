@@ -49,27 +49,6 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    prefixEdit->setToolTip("Prefix for the lambda name");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    prefixClear->setToolTip("Clear the lambda name prefix");
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
                                     tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Instances"),
@@ -77,55 +56,33 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
                                     tr("ContainerId"), tr("ARN")
                                 };
 
-    tableWidget = new QTableWidget(this);
-    tableWidget->setColumnCount(static_cast<int>(headers.count()));
-    tableWidget->setShowGrid(true);
-    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableWidget->setHorizontalHeaderLabels(headers);
-    tableWidget->setSortingEnabled(true);
-    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(9, true);
-    tableWidget->setColumnHidden(10, true);
-    tableWidget->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable(this);
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({
+        QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents,
+        QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents
+    });
+    _tableView->SetHiddenColumns({9, 10});
+    _tableView->SetSorting(0, "function", 1);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
         // Extract ARN
-        const QString arn = tableWidget->item(row, 10)->text();
+        const auto arn = _tableView->GetValue<QString>(index, 10);
 
         LambdaDetailsDialog dialog(arn);
         dialog.exec();
     });
 
     // Add context menu
-    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &LambdaList::ShowContextMenu);
-
-    // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    _tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &LambdaList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
-    layout->addWidget(tableWidget, 2);
+    layout->addWidget(_tableView, 2);
 }
 
 LambdaList::~LambdaList() {
@@ -133,47 +90,37 @@ LambdaList::~LambdaList() {
 }
 
 void LambdaList::LoadContent() {
-    _lambdaService->ListLambdas(prefixValue);
+    _lambdaService->ListLambdas(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
-void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) {
-    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
-    tableWidget->setRowCount(0);
-    tableWidget->setSortingEnabled(false);
-    for (auto r = 0; r < listLambdaResponse.lambdaCounters.count(); r++) {
-        tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, 0, listLambdaResponse.lambdaCounters.at(r).name);
-        SetColumn(tableWidget, r, 1, listLambdaResponse.lambdaCounters.at(r).version);
-        SetColumn(tableWidget, r, 2, listLambdaResponse.lambdaCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
-        SetColumn(tableWidget, r, 3, listLambdaResponse.lambdaCounters.at(r).state == "Active", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
-        SetColumn(tableWidget, r, 4, listLambdaResponse.lambdaCounters.at(r).instances);
-        SetColumn(tableWidget, r, 5, listLambdaResponse.lambdaCounters.at(r).invocations);
-        SetColumn(tableWidget, r, 6, listLambdaResponse.lambdaCounters.at(r).averageRuntime);
-        SetColumn(tableWidget, r, 7, listLambdaResponse.lambdaCounters.at(r).created);
-        SetColumn(tableWidget, r, 8, listLambdaResponse.lambdaCounters.at(r).modified);
-        SetColumn(tableWidget, r, 9, listLambdaResponse.lambdaCounters.at(r).containerId);
-        SetColumn(tableWidget, r, 10, listLambdaResponse.lambdaCounters.at(r).arn);
+void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) const {
+
+    _tableView->SetTotalSize(listLambdaResponse.total);
+    for (auto r = 0, c = 0; r < listLambdaResponse.lambdaCounters.count(); r++, c = 0) {
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).name);
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).version);
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).state == "Active", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).instances);
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).invocations);
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).averageRuntime);
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).modified);
+        _tableView->SetHiddenColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).containerId);
+        _tableView->SetHiddenColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).arn);
     }
-    tableWidget->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
-    tableWidget->setSortingEnabled(true);
-    tableWidget->sortItems(_sortColumn, _sortOrder);
-    tableWidget->selectRow(selectedRow);
-    NotifyStatusBar();
+    _tableView->UpdateSorting();
 }
 
 void LambdaList::ShowContextMenu(const QPoint &pos) {
+
     // Cell index
-    const QModelIndex index = tableWidget->indexAt(pos);
-    if (!index.isValid()) {
-        return;
-    }
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    const int row = index.row();
-
-    const QString arn = tableWidget->item(row, 10)->text();
-    const QString name = tableWidget->item(row, 0)->text();
-    const QString version = tableWidget->item(row, 1)->text();
-    const QString containerId = tableWidget->item(row, 9)->text();
+    const QString arn = _tableView->GetValue<QString>(index, 10);
+    const QString name = _tableView->GetValue<QString>(index, 0);
+    const QString version = _tableView->GetValue<QString>(index, 1);
+    const QString containerId = _tableView->GetValue<QString>(index, 9);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -221,7 +168,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
     deleteAction->setToolTip("Delete the lambda function");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         LambdaDetailsDialog dialog(arn);
         dialog.exec();
     } else if (selectedAction == logsAction) {
