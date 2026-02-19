@@ -39,64 +39,23 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     toolBar->addWidget(addButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    prefixEdit->setToolTip("Prefix for parameter name");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    prefixClear->setToolTip("Clear the parameter name prefix");
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
                                     tr("Name"), tr("Created"), tr("Modified"), tr("Arn")
                                 };
 
     // Table
-    _tableView = new QTableView();
-    _dataModel = new QStandardItemModel(this);
-    _dataModel->setHorizontalHeaderLabels(headers);
-    _dataModel->setColumnCount(static_cast<int>(headers.count()));
-
-    // Proxy model for prefix filtering
-    _proxyModel = new PrefixFilterProxyModel(this);
-    _proxyModel->setSourceModel(_dataModel);
-    _tableView->setModel(_proxyModel);
-
-    _tableView->setShowGrid(true);
-    _tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    _tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _tableView->setSortingEnabled(true);
-    _tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _tableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    _tableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    _tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    _tableView->setColumnHidden(3, true);
-    _tableView->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable();
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetHiddenColumns({3});
+    _tableView->SetSorting(0, "name", 1);
 
     // Connect double-click
-    connect(_tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-
-        // Cell index
-        if (!index.isValid()) return;
-
-        const QModelIndex sourceIndex = _proxyModel->mapToSource(index);
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
         // Get container
-        const QString parameterName = _dataModel->item(sourceIndex.row(), 0)->text();
+        const QString parameterName = _tableView->GetValue<QString>(index, 0);
 
         // Open details dialog
         SSMParameterEditDialog dialog(parameterName, this);
@@ -104,20 +63,14 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     });
 
     // Add context menu
-    _tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_tableView, &QTableView::customContextMenuRequested, this, &SSMParameterList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &SSMParameterList::ShowContextMenu);
 
-    // Save sort column
-    const QHeaderView *header = _tableView->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    // Add context menu
+    connect(_tableView, &PageableTable::ReloadTable, this, &SSMParameterList::LoadContent);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
     layout->addWidget(_tableView, 2);
 }
 
@@ -126,30 +79,24 @@ SSMParameterList::~SSMParameterList() {
 }
 
 void SSMParameterList::LoadContent() {
-    _ssmService->ListParameters(prefixValue, _sortColumn, _sortOrder == Qt::AscendingOrder ? 1 : -1);
+    _tableView->Clear();
+    _ssmService->ListParameters(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void SSMParameterList::HandleParameterListSignal(const SSMParameterListResponse &listParameterResponse) const {
-    const int selectedRow = _tableView->selectionModel()->currentIndex().row();
-    _tableView->setSortingEnabled(false);
-    _dataModel->removeRows(0, _dataModel->rowCount());
+    _tableView->SetTotalSize(listParameterResponse.total);
     for (auto r = 0, c = 0; r < listParameterResponse.parameterCounters.count(); r++, c = 0) {
-        SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).name);
-        SetColumn(_dataModel, r, c++, DateTimeUtils::GetDateTimeFormat(listParameterResponse.parameterCounters.at(r).created));
-        SetColumn(_dataModel, r, c++, DateTimeUtils::GetDateTimeFormat(listParameterResponse.parameterCounters.at(r).modified));
-        SetColumn(_dataModel, r, c++, listParameterResponse.parameterCounters.at(r).arn);
+        _tableView->SetColumn(r, c++, listParameterResponse.parameterCounters.at(r).name);
+        _tableView->SetColumn(r, c++, listParameterResponse.parameterCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listParameterResponse.parameterCounters.at(r).modified);
+        _tableView->SetColumn(r, c++, listParameterResponse.parameterCounters.at(r).arn);
     }
-    // Reset selection
-    _tableView->setSortingEnabled(true);
-    _tableView->sortByColumn(_sortColumn, _sortOrder);
-    _tableView->selectRow(selectedRow);
+    _tableView->UpdateSorting();
 }
 
 void SSMParameterList::ShowContextMenu(const QPoint &pos) {
-    const QModelIndex proxyIndex = _tableView->indexAt(pos);
-    if (!proxyIndex.isValid()) return;
 
-    const QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -159,8 +106,8 @@ void SSMParameterList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Parameter");
     deleteAction->setToolTip("Delete the parameter");
 
-    const QString parameterName = _dataModel->item(sourceIndex.row(), 0)->text();
-    if (const auto selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == deleteAction) {
+    const QString parameterName = _tableView->GetValue<QString>(index, 0);
+    if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
         _ssmService->DeleteParameter(parameterName);
     } else if (selectedAction == editAction) {
         SSMParameterEditDialog dialog(parameterName, this);

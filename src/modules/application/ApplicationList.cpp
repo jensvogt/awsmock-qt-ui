@@ -93,7 +93,7 @@ void ApplicationList::LoadContent() {
 
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) const {
 
-    // _tableView->SetTotalSize(listApplicationResponse.total);
+    _tableView->SetTotalSize(listApplicationResponse.total);
     for (auto r = 0, c = 0; r < listApplicationResponse.applicationCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).name);
         _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).version);
@@ -110,7 +110,7 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {
- // Cell index
+    // Cell index
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     const auto name = _tableView->GetValue<QString>(index, 0);

@@ -22,6 +22,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
 #include <modules/ssm/SSMService.h>
 #include <modules/ssm/SSMParameterAddDialog.h>
 #include <modules/ssm/SSMParameterEditDialog.h>
@@ -84,7 +85,7 @@ private:
     /**
      * @brief SSM parameter table view
      */
-    QTableView *_tableView;
+    PageableTable *_tableView;
 
     /**
      * @brief Topic prefix search

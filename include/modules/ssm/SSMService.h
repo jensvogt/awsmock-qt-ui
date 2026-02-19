@@ -27,12 +27,13 @@ public:
      * @brief List SSM parameters
      *
      * @param prefix topic name prefix
-     * @param sortColumn
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
      * @param sortDirection
-     * @param sortColumn
      * @param sortDirection
      */
-    void ListParameters(const QString &prefix, int sortColumn, int sortDirection);
+    void ListParameters(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Adds a new SSM parameters
