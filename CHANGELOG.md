@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.12...v1.11.13) (2026-02-19)
+
+
+### Bug Fixes
+
+* SSM table ([cacf3fa](https://github.com/jensvogt/awsmock-qt-ui/commit/cacf3fad2c256790dc0d533b596962d47cd71bdc))
+
 ## [1.11.12](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.11...v1.11.12) (2026-02-19)
 
 
