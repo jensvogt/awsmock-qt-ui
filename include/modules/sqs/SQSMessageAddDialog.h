@@ -33,11 +33,11 @@ class SQSMessageAddDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit SQSMessageAddDialog(QString queueUrl, QWidget *parent = nullptr);
+    explicit SQSMessageAddDialog(const QString &queueUrl, const QString &queueArn, QWidget *parent = nullptr);
 
     ~SQSMessageAddDialog() override;
 
-    void HandleAccept() const;
+    void HandleAccept();
 
     void HandleSendMessageSignal(const SQSSendMessageResponse &response);
 
@@ -48,6 +48,8 @@ public:
     void HandlePrettyButton(bool checked) const;
 
     void HandleAddAttributeButton() const;
+
+    void SetupRequest();
 
     void LoadContent() override {
     };
@@ -67,6 +69,16 @@ private:
      * @brief Queue URL
      */
     QString _queueUrl;
+
+    /**
+     * @brief Queue ARN
+     */
+    QString _queueArn;
+
+    /**
+     * @brief QSQ message request
+     */
+    SQSSendMessageRequest _request;
 };
 
 

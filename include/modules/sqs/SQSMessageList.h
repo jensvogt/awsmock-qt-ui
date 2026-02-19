@@ -96,6 +96,11 @@ private:
     SQSService *_sqsService;
 
     /**
+     * @brief Parent queue
+     */
+    SQSQueueCounter _parentQueue;
+
+    /**
      * @brief SQS queue ARN
      */
     QString _queueArn;

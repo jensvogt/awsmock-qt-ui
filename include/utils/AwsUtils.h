@@ -12,6 +12,9 @@
 class AwsUtils {
 public:
     static QString ArnToName(const QString &arn) {
+        if (arn.isEmpty()) {
+            return {};
+        }
         return arn.split(":")[5];
     }
 };

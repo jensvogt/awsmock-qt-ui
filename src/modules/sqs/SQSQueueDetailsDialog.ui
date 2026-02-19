@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Edit SQS Queue</string>
   </property>
-  <widget class="QDialogButtonBox" name="sqsQueueDetailsButtonBox">
+  <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
      <x>950</x>
@@ -301,7 +301,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="attributesTab">
     <attribute name="title">
@@ -474,7 +474,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="defaultAttributeTable"/>
+        <widget class="QTableView" name="defaultAttributeTable"/>
        </item>
       </layout>
      </item>

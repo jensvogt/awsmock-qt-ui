@@ -112,6 +112,18 @@ public:
     void ListQueueDefaultAttributes(const QString &queueArn, const QString &prefix);
 
     /**
+     * @brief Adds a new SQS queue default attribute
+     * @param queueArn queue ARN
+     * @param key attribute key
+     * @param attribute
+     */
+    void AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const SQSMessageAttribute &attribute);
+
+    void UpdateQueueDefaultAttributes(const QString &queueArn, const QString &key, const QString &value, const QString &dataType);
+
+    void DeleteQueueDefaultAttributes(const QString &queueArn, const QString &key);
+
+    /**
      * @brief Delete Queue
      *
      * @param queueUrl Queue URL
@@ -208,6 +220,11 @@ signals:
      * @param listQueueDefaultAttributesResponse default attribute list response
      */
     void ListQueueDefaultAttributesSignal(const SQSListQueueDefaultAttributesResponse &listQueueDefaultAttributesResponse);
+
+    /**
+     * @brief Signaled when new default attributes should be reloaded
+     */
+    void ReloadQueueDefaultAttributesSignal();
 
     /**
      * @brief Signaled when new messages are available

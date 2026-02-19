@@ -259,7 +259,10 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/utils/DroppableTreeView.h
         include/utils/NetworkUtils.h
         include/utils/AwsUtils.h
-        include/dto/module/ListModuleNamesResponse.h)
+        include/dto/module/ListModuleNamesResponse.h
+        src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
+        include/modules/sqs/SQSQueueDefaultAttributeDialog.h
+        src/modules/sqs/SQSQueueDefaultAttributeDialog.ui)
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})
