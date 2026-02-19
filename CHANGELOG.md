@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.11](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.10...v1.11.11) (2026-02-19)
+
+
+### Bug Fixes
+
+* SQS queue default attributes ([5986c04](https://github.com/jensvogt/awsmock-qt-ui/commit/5986c040e65c5c6852abd8c91025b07911211906))
+
 ## [1.11.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.9...v1.11.10) (2026-02-18)
 
 
