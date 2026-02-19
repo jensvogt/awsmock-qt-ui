@@ -261,7 +261,6 @@ void MainWindow::DockerStats() {
     if (!_dockerStatsDialog) {
         _dockerStatsDialog = new DockerStatsDialog(nullptr);
         _dockerStatsDialog->setWindowFlags(Qt::Window);
-        _dockerStatsDialog->setAttribute(Qt::WA_DeleteOnClose);
         _dockerStatsDialog->show();
 
         // Reset the pointer to nullptr when the user clicks 'X'
