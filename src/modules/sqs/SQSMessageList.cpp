@@ -2,6 +2,7 @@
 #include <modules/sqs/SQSMessageList.h>
 
 SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage(parent) {
+
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::ListMessagesSignal, this, &SQSMessageList::HandleListMessageSignal);
@@ -27,7 +28,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new message");
     connect(addButton, &QPushButton::clicked, [this]() {
-        SQSMessageAddDialog dialog(_queueUrl);
+        SQSMessageAddDialog dialog(_queueUrl, _queueArn);
         dialog.exec();
     });
 
@@ -91,13 +92,14 @@ SQSMessageList::~SQSMessageList() {
 }
 
 void SQSMessageList::LoadContent() {
-    // Cleanup
-    _titleLabel->setText(QString("SQS Message List: %1").arg(AwsUtils::ArnToName(_queueArn)));
 
     // Get page arguments
     _queueArn = GetArgument<QString>("queueArn");
     _queueUrl = GetArgument<QString>("queueUrl");
     _isDlq = GetArgument<bool>("isDlq");
+
+    // Cleanup
+    _titleLabel->setText(QString("SQS Message List: %1").arg(AwsUtils::ArnToName(_queueArn)));
 
     // Get page content
     _sqsService->ListMessages(_queueArn, _tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());

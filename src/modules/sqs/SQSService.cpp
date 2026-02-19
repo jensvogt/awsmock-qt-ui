@@ -257,6 +257,87 @@ void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QStri
                       });
 }
 
+void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const SQSMessageAttribute &attribute) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["queueArn"] = queueArn;
+    jRequest["name"] = key;
+    jRequest["messageAttribute"] = attribute.ToJsonObject();
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "add-default-message-attribute-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadQueueDefaultAttributesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                      });
+}
+
+void SQSService::UpdateQueueDefaultAttributes(const QString &queueArn, const QString &key, const QString &value, const QString &dataType) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["queueArn"] = queueArn;
+    jRequest["name"] = key;
+    jRequest["value"] = value;
+    jRequest["dataType"] = dataType;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "update-default-message-attribute-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadQueueDefaultAttributesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                      });
+}
+
+void SQSService::DeleteQueueDefaultAttributes(const QString &queueArn, const QString &key) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["queueArn"] = queueArn;
+    jRequest["name"] = key;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "delete-default-message-attribute-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadQueueDefaultAttributesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                      });
+}
+
 void SQSService::DeleteQueue(const QString &queueUrl) {
     QElapsedTimer timer;
     timer.start();

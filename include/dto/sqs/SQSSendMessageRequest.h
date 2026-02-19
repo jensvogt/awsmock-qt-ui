@@ -18,7 +18,7 @@ struct SQSSendMessageRequest {
 
     long delaySeconds{};
 
-    std::map<std::string, MessageAttribute> messageAttributes;
+    std::map<QString, MessageAttribute> messageAttributes;
 
     void FromJson(const QJsonDocument &jsonDoc) {
         region = jsonDoc["Region"].toString();
@@ -41,7 +41,7 @@ struct SQSSendMessageRequest {
             QJsonObject attributeObject;
             attributeObject["DataType"] = "String";
             attributeObject["StringValue"] = snd.stringValue;
-            jAttributeObject[QString::fromStdString(fst)] = attributeObject;
+            jAttributeObject[fst] = attributeObject;
         }
         jObject["MessageAttributes"] = jAttributeObject;
 
