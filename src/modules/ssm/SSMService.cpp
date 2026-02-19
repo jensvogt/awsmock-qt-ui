@@ -32,26 +32,25 @@ void SSMService::CreateParameter(const SSMParameterCounter &parameter) {
                       });
 }
 
-void SSMService::ListParameters(const QString &prefix, const int sortColumn, const int sortDirection) {
+void SSMService::ListParameters(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
     jSorting["sortDirection"] = sortDirection;
-    jSorting["column"] = sortColumn == 0 ? "name" : "";
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "ssm"},
                           {"x-awsmock-action", "list-parameter-counters"},
