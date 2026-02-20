@@ -8,6 +8,10 @@
 #include "ui_MainWidget.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidget) {
+
+    // Setup module service
+    _moduleService = new ModuleService();
+
     // Get the log limit
     _logLimit = Configuration::instance().GetValue<long>("ui.log-limit", _logLimit);
 
@@ -77,6 +81,14 @@ void MainWidget::SetupContentPane() {
 }
 
 void MainWidget::SetupLogPane() {
+
+    // Get the log level from server
+    _moduleService->GetLogLevel();
+    connect(_moduleService, &ModuleService::GetLoglevelSignal, this, [this](const QString &logLevel) {
+        _currentLogLevel = logLevel;
+        _ui->logLevelCombo->setCurrentText(_currentLogLevel);
+    });
+
     // Setup server logs
     SetupServerLogs();
 
@@ -88,6 +100,7 @@ void MainWidget::SetupLogPane() {
 }
 
 void MainWidget::SetupServerLogs() {
+
     // Create websocket
     _webSocket = new QWebSocket();
 
@@ -116,6 +129,11 @@ void MainWidget::SetupServerLogs() {
     // Data model
     _serverLogDataModel = new QStandardItemModel(_ui->serverLogList);
     _ui->serverLogList->setModel(_serverLogDataModel);
+
+    // Loglevel combo
+    const auto logLevelList = QStringList({"trace", "debug", "info", "warning", "error"});
+    _ui->logLevelCombo->addItems(logLevelList);
+    _ui->logLevelCombo->setCurrentIndex(2);
 
     // Scroll button
     _ui->serverScrollButton->setText(nullptr);
@@ -172,7 +190,6 @@ void MainWidget::SetupServerLogs() {
         if (!_externalLogDialog) {
             _externalLogDialog = new ServerLogWidget();
             _externalLogDialog->setWindowFlags(Qt::Window);
-            _externalLogDialog->setAttribute(Qt::WA_DeleteOnClose);
             _externalLogDialog->setModal(false);
             _externalLogDialog->show();
 

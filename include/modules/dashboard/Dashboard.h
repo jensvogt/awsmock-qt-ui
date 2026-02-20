@@ -46,6 +46,8 @@ public:
 private:
     void LoadContent() override;
 
+    void ClearContent() override;
+
     static void CounterArrived(const DashboardCounter &dashboardCounters);
 
     /**

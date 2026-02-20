@@ -1,11 +1,5 @@
 #include <modules/module/ModuleService.h>
 
-#include "utils/Logging.h"
-
-ModuleService::ModuleService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
-}
-
 void ModuleService::ExportInfrastructure(const QString &exportFilename) {
     QElapsedTimer timer;
     timer.start();
@@ -31,7 +25,7 @@ void ModuleService::ExportInfrastructure(const QString &exportFilename) {
     jRequest["modules"] = array;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "module"},
@@ -49,21 +43,22 @@ void ModuleService::ExportInfrastructure(const QString &exportFilename) {
                       });
 }
 
-void ModuleService::ExportInfrastructure(const QString &exportFilename, const QString &module) {
+void ModuleService::ExportInfrastructure(const QString &exportFilename, const QStringList &modules) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonArray array;
-    array.append(module);
+    for (const auto &module: modules) {
+        array.append(module);
+    }
 
     QJsonObject jRequest;
     jRequest["includeObjects"] = false;
     jRequest["prettyPrint"] = true;
-    jRequest["cleanFirst"] = false;
     jRequest["modules"] = array;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "module"},
@@ -85,7 +80,7 @@ void ModuleService::ImportInfrastructure(const QString &content) {
     QElapsedTimer timer;
     timer.start();
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       content.toUtf8(),
                       {
                           {"x-awsmock-target", "module"},
@@ -118,7 +113,7 @@ void ModuleService::CleanInfrastructure() {
     jRequest["modules"] = array;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "module"},
@@ -140,7 +135,7 @@ void ModuleService::GetServerConfig() {
     QElapsedTimer timer;
     timer.start();
 
-    _restManager.get(url,
+    _restManager.get(GetBaseUrl(),
                      {
                          {"x-awsmock-target", "module"},
                          {"x-awsmock-action", "get-config"},
@@ -163,7 +158,7 @@ void ModuleService::GetInfrastructure() {
     QElapsedTimer timer;
     timer.start();
 
-    _restManager.get(url,
+    _restManager.get(GetBaseUrl(),
                      {
                          {"x-awsmock-target", "module"},
                          {"x-awsmock-action", "get-infrastructure"},
@@ -181,7 +176,7 @@ void ModuleService::GetInfrastructure() {
 }
 
 void ModuleService::PingServer() {
-    _restManager.get(url,
+    _restManager.get(GetBaseUrl(),
                      {
                          {"x-awsmock-target", "module"},
                          {"x-awsmock-action", "ping"},
@@ -189,5 +184,67 @@ void ModuleService::PingServer() {
                      },
                      [](const bool success, const QByteArray &, int, const QString &) {
                          emit EventBus::instance().PingSignal(success);
+                     });
+}
+
+void ModuleService::SetLogLevel(const QString &logLevel) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.get(GetBaseUrl(),
+                     {
+                         {"x-awsmock-target", "module"},
+                         {"x-awsmock-action", "set-loglevel"},
+                         {"content-type", "application/json"}
+                     },
+                     [this,timer](const bool success, const QByteArray &, int, const QString &error) {
+                         if (!success) {
+                             logError << error;
+                         }
+                         emit EventBus::instance().TimerSignal("SetLogLevel", timer.elapsed());
+                     });
+}
+
+void ModuleService::GetLogLevel() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.get(GetBaseUrl(),
+                     {
+                         {"x-awsmock-target", "module"},
+                         {"x-awsmock-action", "get-loglevel"},
+                         {"content-type", "application/json"}
+                     },
+                     [this,timer](const bool success, const QByteArray &response, int, const QString &error) {
+                         if (success) {
+                             // The API returns the loglevel as simple plain string
+                             emit GetLoglevelSignal(QString(response));
+                         } else {
+                             logError << error;
+                         }
+                         emit EventBus::instance().TimerSignal("GetLogLevel", timer.elapsed());
+                     });
+}
+
+void ModuleService::ListModuleNames() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.get(GetBaseUrl(),
+                     {
+                         {"x-awsmock-target", "module"},
+                         {"x-awsmock-action", "list-module-names"},
+                         {"content-type", "application/json"}
+                     },
+                     [this,timer](const bool success, const QByteArray &response, int, const QString &error) {
+                         if (success) {
+                             const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                             ListModuleNamesResponse modulesNames;
+                             modulesNames.FromJson(jsonDoc.object());
+                             emit ListModuleNamesSignal(modulesNames);
+                         } else {
+                             logError << error;
+                         }
+                         emit EventBus::instance().TimerSignal("ListModuleNames", timer.elapsed());
                      });
 }

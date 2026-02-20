@@ -98,6 +98,16 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
         Configuration::instance().SetValue<long>("ui.application-log-limit", _ui->applicationLogLimitEdit->text().toLong());
     });
 
+    const QFont font = QApplication::font();
+    const int fontSize = font.pointSize();
+
+    const QStringList fontSizes = {"8", "9", "10", "11", "12", "13", "14"};
+    _ui->fontSizeCombo->addItems(fontSizes);
+    _ui->fontSizeCombo->setCurrentText(QString::number(fontSize));
+    connect(_ui->fontSizeCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        qApp->setStyleSheet("QWidget { font-size: " + text + "pt; background-color: #2b2b2b; color: #dcdcdc;}");
+    });
+
     // Default tab
     _ui->tabWidget->setCurrentIndex(0);
 }

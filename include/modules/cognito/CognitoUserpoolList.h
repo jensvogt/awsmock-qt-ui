@@ -40,6 +40,12 @@ public:
     ~CognitoUserpoolList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+    }
+
+    /**
      * @brief Load content
      */
     void LoadContent() override;

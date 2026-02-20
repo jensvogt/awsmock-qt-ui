@@ -1,5 +1,51 @@
 # Changelog
 
+## [1.11.14](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.13...v1.11.14) (2026-02-19)
+
+
+### Bug Fixes
+
+* SSM table fix, docker stats fix ([ced2abe](https://github.com/jensvogt/awsmock-qt-ui/commit/ced2abe4c5b7dfef45fca1504c4625fcb5b63065))
+
+## [1.11.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.12...v1.11.13) (2026-02-19)
+
+
+### Bug Fixes
+
+* SSM table ([cacf3fa](https://github.com/jensvogt/awsmock-qt-ui/commit/cacf3fad2c256790dc0d533b596962d47cd71bdc))
+
+## [1.11.12](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.11...v1.11.12) (2026-02-19)
+
+
+### Bug Fixes
+
+* SQS queue default attributes ([2415289](https://github.com/jensvogt/awsmock-qt-ui/commit/241528970367900479f7f1e31a90e11de3249b2d))
+
+## [1.11.11](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.10...v1.11.11) (2026-02-19)
+
+
+### Bug Fixes
+
+* SQS queue default attributes ([5986c04](https://github.com/jensvogt/awsmock-qt-ui/commit/5986c040e65c5c6852abd8c91025b07911211906))
+
+## [1.11.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.9...v1.11.10) (2026-02-18)
+
+
+### Bug Fixes
+
+* windows port ([c54436b](https://github.com/jensvogt/awsmock-qt-ui/commit/c54436b7f5b4abed851adfdc16f108217bb759d2))
+* windows port ([829f3a0](https://github.com/jensvogt/awsmock-qt-ui/commit/829f3a0967708a05fa6887ca2265d7905b2331be))
+
+## [1.11.9](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.8...v1.11.9) (2026-02-17)
+
+
+### Bug Fixes
+
+* application environment add dialog ([b7c2530](https://github.com/jensvogt/awsmock-qt-ui/commit/b7c253050d87eb5721796fe6d3fdc8eaac86dd55))
+* application environment add dialog ([3de8182](https://github.com/jensvogt/awsmock-qt-ui/commit/3de81829a4e5abb417631f300d9822977ace35da))
+* windows port ([ca02be5](https://github.com/jensvogt/awsmock-qt-ui/commit/ca02be54f6497d3637a2999d07fba2a791cec16a))
+* windows port ([fedfe1d](https://github.com/jensvogt/awsmock-qt-ui/commit/fedfe1d28c6b031d9d1c7cd582f7fd0968e72bd3))
+
 ## [1.11.8](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.7...v1.11.8) (2026-02-16)
 
 

@@ -26,6 +26,8 @@
 #include <modules/lambda/LambdaUploadCodeDialog.h>
 #include <modules/docker/DockerService.h>
 
+#include "components/PageableTable.h"
+
 /**
  * @brief Lambda list widget. The widget will be placed in the content pane.
  */
@@ -47,6 +49,12 @@ public:
     ~LambdaList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+    }
+
+    /**
      * @brief Load page content
      */
     void LoadContent() override;
@@ -56,7 +64,7 @@ public:
      *
      * @param listLambdaResponse lambda counter list
      */
-    void HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse);
+    void HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) const;
 
 private slots:
     /**
@@ -75,12 +83,7 @@ private:
     /**
      * @brief Table widget
      */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Prefix value
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief Lambda service
@@ -91,21 +94,6 @@ private:
      * @brief Container service
      */
     DockerService *_containerService;
-
-    /**
-     * @brief Sort column index
-     */
-    int _sortColumn = 0;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::AscendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 };
 
 #endif //AWSMOCK_QT_UI_LAMBDA_LIST_H

@@ -1,27 +1,15 @@
 #ifndef AWSMOCK_QT_UI_SSM_PARAMETER_LIST_H
 #define AWSMOCK_QT_UI_SSM_PARAMETER_LIST_H
 
+// Qt includes
+#include <QHBoxLayout>
 #include <QLabel>
-#include <QMenu>
-#include <QVBoxLayout>
-#include <QTableWidget>
-#include <QListWidget>
-#include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QLineEdit>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QToolBar>
 #include <QPushButton>
-#include <QInputDialog>
-#include <QFormLayout>
-#include <QTreeWidget>
-#include <QTimer>
 
+// Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-#include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
 #include <modules/ssm/SSMService.h>
 #include <modules/ssm/SSMParameterAddDialog.h>
 #include <modules/ssm/SSMParameterEditDialog.h>
@@ -42,6 +30,12 @@ public:
      * Destructor
      */
     ~SSMParameterList() override;
+
+    /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+    }
 
     /**
      * @brief Load page content
@@ -78,44 +72,12 @@ private:
     /**
      * @brief SSM parameter table view
      */
-    QTableView *_tableView;
-
-    /**
-     * @brief Topic prefix search
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     SSMService *_ssmService;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'messages', index=1
-     */
-    int _sortColumn = 0;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
-
-    /**
-     *  @brief Table data model
-     */
-    QStandardItemModel *_dataModel;
-
-    /**
-     * @brief Data proxy model
-     */
-    PrefixFilterProxyModel *_proxyModel;
 };
 
 #endif // AWSMOCK_QT_UI_SSM_PARAMETER_LIST_H

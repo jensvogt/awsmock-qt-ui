@@ -1,6 +1,7 @@
 #ifndef GET_SQS_MESSAGE_DETAILS_RESPONSE_H
 #define GET_SQS_MESSAGE_DETAILS_RESPONSE_H
 
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -21,6 +22,15 @@ struct SQSMessageAttribute {
         dataType = jsonObject["DataType"].toString();
         stringValue = jsonObject["StringValue"].toString();
         stringListValue = jsonObject["StringListValue"].toString();
+    }
+
+    QJsonObject ToJsonObject() const {
+        QJsonObject attribute;
+        attribute.insert("Name", name);
+        attribute.insert("DataType", dataType);
+        attribute.insert("StringValue", stringValue);
+        attribute.insert("StringListValue", stringListValue);
+        return attribute;
     }
 };
 

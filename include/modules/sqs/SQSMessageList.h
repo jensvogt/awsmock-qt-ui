@@ -39,6 +39,13 @@ public:
     ~SQSMessageList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    };
+
+    /**
      * @brief ListQueues
      */
     void LoadContent() override;
@@ -87,6 +94,11 @@ private:
      * @brief REST service handler
      */
     SQSService *_sqsService;
+
+    /**
+     * @brief Parent queue
+     */
+    SQSQueueCounter _parentQueue;
 
     /**
      * @brief SQS queue ARN

@@ -28,7 +28,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new message");
     connect(addButton, &QPushButton::clicked, [this]() {
-        SQSMessageAddDialog dialog(_queueUrl);
+        SQSMessageAddDialog dialog(_queueUrl, _queueArn);
         dialog.exec();
     });
 
@@ -92,15 +92,20 @@ SQSMessageList::~SQSMessageList() {
 }
 
 void SQSMessageList::LoadContent() {
+
+    // Get page arguments
     _queueArn = GetArgument<QString>("queueArn");
     _queueUrl = GetArgument<QString>("queueUrl");
     _isDlq = GetArgument<bool>("isDlq");
+
+    // Cleanup
     _titleLabel->setText(QString("SQS Message List: %1").arg(AwsUtils::ArnToName(_queueArn)));
+
+    // Get page content
     _sqsService->ListMessages(_queueArn, _tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const {
-    _tableView->Clear();
     _tableView->SetTotalSize(listMessageResponse.total);
     for (auto r = 0, c = 0; r < listMessageResponse.messageCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).messageId);
@@ -117,7 +122,6 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
 }
 
 void SQSMessageList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {
-
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
     for (const QModelIndex &proxyIdx: proxyIndices) {
@@ -137,7 +141,6 @@ void SQSMessageList::HandleBulkDelete(const QModelIndexList &proxyIndices) const
 }
 
 void SQSMessageList::HandleBulkResend(const QModelIndexList &proxyIndices) const {
-
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
     for (const QModelIndex &proxyIdx: proxyIndices) {
@@ -156,7 +159,6 @@ void SQSMessageList::HandleBulkResend(const QModelIndexList &proxyIndices) const
 }
 
 void SQSMessageList::HandleBulkRedrive(const QModelIndexList &proxyIndices) const {
-
     // Convert to Persistent Source Indexes
     QList<QPersistentModelIndex> persistentRows;
     for (const QModelIndex &proxyIdx: proxyIndices) {

@@ -40,8 +40,12 @@ public:
      * @brief List lambdas
      *
      * @param prefix lambda name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListLambdas(const QString &prefix);
+    void ListLambdas(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Upload new lambda code

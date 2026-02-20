@@ -45,6 +45,13 @@ public:
     ~S3BucketList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    }
+
+    /**
      * @brief Load page content
      */
     void LoadContent() override;
