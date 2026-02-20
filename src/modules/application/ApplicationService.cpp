@@ -112,10 +112,9 @@ void ApplicationService::GetApplication(const QString &name) {
 void ApplicationService::UpdateApplication(const Application &application) {
     QJsonObject jRequest;
     jRequest["application"] = application.ToJsonObject();
-    const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "update-application"},

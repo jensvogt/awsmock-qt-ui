@@ -19,7 +19,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationEditDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationEditDialog::HandleReject);
 
-    // Connect start button
+    // Connect logs button
     _ui->logsButton->setText(nullptr);
     _ui->logsButton->setIcon(IconUtils::GetIcon("logs"));
     _ui->logsButton->setEnabled(false);
@@ -68,9 +68,40 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
         }
     });
 
+    // Connect Private/public ports
+    const auto intValidator = new QIntValidator(1, 65535, this);
+    _ui->privatePortEdit->setValidator(intValidator);
+    connect(_ui->privatePortEdit, &QLineEdit::textEdited, this, [this](const QString &text) {
+        // if (const int port = text.toInt(); port < 0 || port > 65535) {
+        //     QMessageBox::critical(this, "Error", "Port number out of range");
+        //     return;
+        // }
+        _application.privatePort = text.toInt();
+        _changed = true;
+    });
+
+    // Connect Private/public ports
+    _ui->publicPortEdit->setValidator(intValidator);
+    connect(_ui->publicPortEdit, &QLineEdit::textEdited, this, [this](const QString &text) {
+        // if (const int port = text.toInt(); port < 0 || port > 65535) {
+        //     QMessageBox::critical(this, "Error", "Port number out of range");
+        //     return;
+        // }
+        _application.publicPort = text.toInt();
+        _changed = true;
+    });
+
     // Connect description test area
     connect(_ui->descriptionEdit, &QTextEdit::textChanged, this, [this]() {
         _application.description = _ui->descriptionEdit->toPlainText();
+        _changed = true;
+    });
+
+    // Connect version
+    const QRegularExpression re("^\\d+\\.\\d+\\.\\d+$");
+    auto v = new QRegularExpressionValidator(re, this);
+    connect(_ui->versionEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        _application.version = text;
         _changed = true;
     });
 
@@ -410,5 +441,5 @@ void ApplicationEditDialog::HandleAccept() {
 
 
 void ApplicationEditDialog::HandleReject() {
-    accept();
+    reject();
 }
