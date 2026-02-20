@@ -207,7 +207,7 @@
      <item row="10" column="1">
       <widget class="QLineEdit" name="versionEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -257,7 +257,7 @@
         <bool>true</bool>
        </property>
        <property name="readOnly">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -274,7 +274,7 @@
         <bool>true</bool>
        </property>
        <property name="readOnly">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
