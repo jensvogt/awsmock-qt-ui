@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.16](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.15...v1.11.16) (2026-02-22)
+
+
+### Bug Fixes
+
+* add search/replace component ([cc443ac](https://github.com/jensvogt/awsmock-qt-ui/commit/cc443aca88d753218e9853bdcbc4906c6fad0d38))
+
 ## [1.11.15](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.14...v1.11.15) (2026-02-22)
 
 
