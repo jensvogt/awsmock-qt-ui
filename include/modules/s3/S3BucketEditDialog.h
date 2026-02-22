@@ -8,6 +8,7 @@
 // Qt includes
 #include <QMenu>
 #include <QDialog>
+#include <QTableView>
 #include <QStandardItemModel>
 
 // AwsMock includes
@@ -18,6 +19,7 @@
 #include <modules/s3/S3ObjectMetadataDialog.h>
 #include <modules/s3/S3BucketLifecycleDialog.h>
 #include <modules/s3/S3BucketMetadataDialog.h>
+#include <modules/s3/S3BucketLambdaNotificationDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -73,7 +75,7 @@ private:
     /**
      * @brief S3 bucket
      */
-    S3BucketCounter _bucket;
+    QString _bucket;
 
     /**
      * @brief Changed flag

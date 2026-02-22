@@ -18,7 +18,7 @@ class UpdateChecker : public QObject {
     Q_OBJECT
 
 public:
-    UpdateChecker(QObject *parent = nullptr) : QObject(parent) {
+    explicit UpdateChecker(QObject *parent = nullptr) : QObject(parent) {
     }
 
     void checkForUpdates() {
@@ -35,14 +35,28 @@ public:
         });
     }
 
+    void checkForUpdatesNoNotification() {
+        const QUrl url("https://jensvogt.github.io/awsmock-qt-ui/version.txt");
+        const QNetworkRequest request(url);
+
+        QNetworkReply *reply = manager.get(request);
+        connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+            if (reply->error() == QNetworkReply::NoError) {
+                const QString latestVersion = QString(reply->readAll()).trimmed();
+                compareVersions(latestVersion, false);
+            }
+            reply->deleteLater();
+        });
+    }
+
 private:
-    void compareVersions(const QString &latest) {
+    void compareVersions(const QString &latest, const bool notification = true) {
         const QVersionNumber currentV = QVersionNumber::fromString(APP_VERSION);
 
         if (const QVersionNumber latestV = QVersionNumber::fromString(latest); currentV < latestV) {
             logInfo << "Update Available! Current:" << currentV.toString() << "Latest:" << latest;
             emit UpdateAvailable(latest);
-        } else {
+        } else if (notification) {
             logInfo << "You have already the latest version";
             emit UpdateAvailable({});
         }

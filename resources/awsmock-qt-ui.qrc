@@ -20,6 +20,7 @@
         <file>light/disconnected.svg</file>
         <file>light/docker.svg</file>
         <file>light/docker-stats.svg</file>
+        <file>light/down.svg</file>
         <file>light/edit.svg</file>
         <file>light/enabled.svg</file>
         <file>light/end.svg</file>
@@ -57,6 +58,7 @@
         <file>light/stop.svg</file>
         <file>light/stopped.svg</file>
         <file>light/touch.svg</file>
+        <file>light/up.svg</file>
         <file>light/update.svg</file>
         <file>light/upload.svg</file>
         <file>dark/about.svg</file>
@@ -78,6 +80,7 @@
         <file>dark/disconnected.svg</file>
         <file>dark/docker.svg</file>
         <file>dark/docker-stats.svg</file>
+        <file>dark/down.svg</file>
         <file>dark/edit.svg</file>
         <file>dark/enabled.svg</file>
         <file>dark/end.svg</file>
@@ -115,6 +118,7 @@
         <file>dark/stop.svg</file>
         <file>dark/stopped.svg</file>
         <file>dark/touch.svg</file>
+        <file>dark/up.svg</file>
         <file>dark/update.svg</file>
         <file>dark/upload.svg</file>
     </qresource>

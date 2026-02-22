@@ -15,6 +15,7 @@
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 #include <dto/s3/S3GetObjectDetailsResponse.h>
 #include <dto/s3/S3ListObjectResponse.h>
+#include <dto/s3/S3PutBucketNotificationConfigurationRequest.h>
 
 class S3Service final : public BaseService {
     Q_OBJECT
@@ -29,14 +30,10 @@ public:
      * @brief List SNS Topics
      *
      * @param prefix topic name prefix
-     * @param pageSize
-     * @param pageIndex
-     * @param sortAttribute
-     * @param sortDirection
-     * @param pageSize
-     * @param pageIndex
-     * @param sortAttribute
-     * @param sortDirection
+     * @param pageSize page size
+     * @param pageIndex page index
+     * @param sortAttribute sort database attribute name
+     * @param sortDirection sort direction 1=ascending, -1=descending
      */
     void ListBuckets(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
@@ -85,6 +82,8 @@ public:
     void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
 
     void UpdateObject(const QString &region, const QString &bucketName, const QString &key, const QByteArray &content, const QString &storageClass, const QMap<QString, QString> &metadata);
+
+    void PutBucketNotificationConfiguration(const S3PutBucketNotificationConfigurationRequest &request);
 
     void TouchObject(const QString &bucketName, const QString &key);
 

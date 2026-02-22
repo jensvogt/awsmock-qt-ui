@@ -7,7 +7,7 @@
 #include <modules/s3/S3BucketEditDialog.h>
 #include "ui_S3BucketEditDialog.h"
 
-S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3BucketEditDialog) {
+S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3BucketEditDialog), _bucket(bucketName) {
 
     _s3Service = new S3Service();
 
@@ -19,7 +19,7 @@ S3BucketEditDialog::S3BucketEditDialog(const QString &bucketName, QWidget *paren
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &S3BucketEditDialog::HandleReject);
 
     // Versioned check box
-    connect(_ui->versionedCheckBox, &QCheckBox::checkStateChanged, this, [this]() {
+    connect(_ui->versionedCheckBox, &QCheckBox::checkStateChanged, this, [this](const Qt::CheckState &state) {
         this->_changed = true;
     });
 
@@ -179,14 +179,29 @@ void S3BucketEditDialog::SetupLambdaNotifications() {
     _ui->lambdaNotificationTable->setSortingEnabled(true);
     _ui->lambdaNotificationTable->sortByColumn(0, Qt::AscendingOrder);
 
+    // Connect double-click
+    connect(_ui->lambdaNotificationTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+
+        LambdaNotification notification{};
+        const QString id = _lambdaNotificationDataModel->item(index.row(), 0)->text();
+        for (const auto &n: _bucketGetResponse.lambdaNotifications) {
+            if (n.id == id) {
+                notification = n;
+            }
+        }
+        S3LambdaConfiguration configuration{};
+        configuration.lambdaArn = notification.lambdaArn;
+        configuration.filterRules = notification.filterRules;
+        configuration.events = notification.events;
+        S3BucketLambdaNotificationDialog lambdaNotificationDialog(_bucket, configuration, this);
+        lambdaNotificationDialog.exec();
+    });
+
     _ui->lambdaNotificationAddButton->setText(nullptr);
     _ui->lambdaNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->lambdaNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
-        /*S3ObjectMetadataDialog metadataAdd(this, true);
-        metadataAdd.exec();
-        const int row = _lambdaNotificationDataModel->rowCount();
-        SetColumn(_lambdaNotificationDataModel, row, 0, metadataAdd.GetKey());
-        SetColumn(_lambdaNotificationDataModel, row, 1, metadataAdd.GetValue());*/
+        S3BucketLambdaNotificationDialog lambdaNotificationDialog(_bucket, this);
+        lambdaNotificationDialog.exec();
         this->_changed = true;
     });
 }

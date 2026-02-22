@@ -111,7 +111,14 @@
     </layout>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="infrastructureText"/>
+    <widget class="Awsmock::Components::PlainTextEditor" name="plainTextEditor" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,1">
@@ -136,6 +143,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Awsmock::Components::PlainTextEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">components/PlainTextEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -1,4 +1,7 @@
 {
+  "general": {
+    "update-check-period": 86400
+  },
   "aws": {
     "region": "eu-central-1",
     "user": "jvo",

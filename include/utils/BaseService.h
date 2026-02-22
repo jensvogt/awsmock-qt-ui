@@ -33,6 +33,10 @@ public:
         return {Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1")};
     }
 
+    static QUrl GetBaseUrl(const QString &path) {
+        return {Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1") + "/" + path};
+    }
+
 private:
     /**
      * @brief Network access manager

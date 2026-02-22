@@ -43,7 +43,9 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         include/components/FTPFileTree.h include/components/FileFilterModel.h src/components/LocalFileTree.cpp
         include/components/LocalFileTree.h src/components/PageableTable.cpp include/components/PageableTable.h
         src/components/PageableTable.ui src/components/PageableList.cpp include/components/PageableList.h
-        src/components/PageableList.ui)
+        src/components/PageableList.ui src/components/ReplaceWordDialog.cpp include/components/ReplaceWordDialog.h
+        src/components/ReplaceWordDialog.ui src/components/ReplaceWidget.cpp include/components/ReplaceWidget.h
+        src/components/ReplaceWidget.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -67,7 +69,11 @@ set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSM
 set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
         include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
         include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h
-        src/modules/s3/S3ObjectEditDialog.cpp src/modules/s3/S3ObjectEditDialog.ui include/modules/s3/S3ObjectEditDialog.h)
+        src/modules/s3/S3ObjectEditDialog.cpp src/modules/s3/S3ObjectEditDialog.ui include/modules/s3/S3ObjectEditDialog.h
+        src/modules/s3/S3BucketLambdaNotificationDialog.cpp include/modules/s3/S3BucketLambdaNotificationDialog.h
+        src/modules/s3/S3BucketLambdaNotificationDialog.ui include/dto/s3/S3PutBucketNotificationRequest.h
+        include/dto/s3/S3TopicConfiguration.h include/dto/s3/S3QueueConfiguration.h include/dto/s3/S3FilterRule.h
+        include/dto/s3/S3NotificationEventType.h include/dto/s3/S3PutBucketNotificationConfigurationRequest.h)
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
@@ -260,7 +266,11 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/module/ListModuleNamesResponse.h
         src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
         include/modules/sqs/SQSQueueDefaultAttributeDialog.h
-        src/modules/sqs/SQSQueueDefaultAttributeDialog.ui)
+        src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
+        include/dto/lambda/LambdaListArnsResponse.h
+        include/components/PlainTextEditor.h
+        src/components/PlainTextEditor.cpp
+)
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})

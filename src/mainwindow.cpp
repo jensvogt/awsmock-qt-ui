@@ -1,6 +1,7 @@
 #include <mainwindow.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+
     // Connect infrastructure signals
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Setup menu bar
     SetupMenuBar();
 
-    // Setup tool bar
+    // Setup toolbar
     SetupToolBar();
 
     // Main widget
@@ -39,26 +40,38 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 
     // Updater
-    _updateChecker = new UpdateChecker(this);
-    connect(_updateChecker, &UpdateChecker::UpdateAvailable, this, [](const QString &version) {
-        if (version.isEmpty()) {
-            QMessageBox::information(nullptr, "Info", "You have already the latest version.");
-        } else {
-            QMessageBox::information(nullptr, "Info", "A new version is available, version: " + version);
-        }
-    });
+    StartUpdateChecker();
 }
 
 MainWindow::~MainWindow() {
-    _pingThread->quit();
-    _pingThread->wait(3000);
-    delete _pingThread;
-};
+    if (_pingThread) {
+        // Tell the thread's event loop to stop
+        _pingThread->quit();
+
+        // Wait for the thread to actually exit.
+        if (!_pingThread->wait(3000)) {
+            // Wait up to 3 seconds
+            _pingThread->terminate(); // Force kill if it hangs
+            _pingThread->wait();
+        }
+    }
+    if (_updaterThread) {
+        // Tell the thread's event loop to stop
+        _updaterThread->quit();
+
+        // Wait for the thread to actually exit.
+        if (!_updaterThread->wait(3000)) {
+            // Wait up to 3 seconds
+            _updaterThread->terminate(); // Force kill if it hangs
+            _updaterThread->wait();
+        }
+    }
+}
 
 void MainWindow::StartServerPing() {
     const int interval = Configuration::instance().GetValue<int>("ui.auto-update-period", 10);
 
-    _pingThread = new QThread(this);
+    _pingThread = new QThread();
     _pingTimer = new QTimer();
     _pingTimer->setInterval(interval * 1000);
 
@@ -78,6 +91,35 @@ void MainWindow::StartServerPing() {
     connect(_pingThread, &QThread::finished, _pingTimer, &QObject::deleteLater);
 
     _pingThread->start();
+}
+
+void MainWindow::StartUpdateChecker() {
+    const int interval = Configuration::instance().GetValue<int>("general.update-check-period", 24 * 3600);
+
+    _updaterThread = new QThread();
+    _updaterTimer = new QTimer();
+    _updaterTimer->setInterval(interval * 1000);
+
+    // Move timer to thread
+    _updaterTimer->moveToThread(_updaterThread);
+
+    // Start the timer when the thread starts. By connecting directly to the timer, Qt uses a 'QueuedConnection'
+    // to cross the thread boundary safely.
+    connect(_updaterThread, &QThread::started, _updaterTimer, QOverload<>::of(&QTimer::start));
+
+    // Perform the ping
+    connect(_updaterTimer, &QTimer::timeout, this, [this]() {
+        _updateChecker->checkForUpdates();
+    });
+
+    // Cleanup
+    connect(_updaterThread, &QThread::finished, _updaterTimer, &QObject::deleteLater);
+
+    _updaterThread->start();
+
+    // First time immediately
+    _updateChecker = new UpdateChecker(this);
+    _updateChecker->checkForUpdatesNoNotification();
 }
 
 void MainWindow::SetupMenuBar() {
