@@ -19,20 +19,16 @@
 #include <QFormLayout>
 #include <QTreeWidget>
 #include <QTimer>
-#include <QFileDialog>
 
 // AwsMock includes
-#include <utils/Logging.h>
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-#include <utils/StringUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
-#include <components/PageableList.h>
-#include <modules/module/ModuleService.h>
+//#include <dto/dynamodb/DynamoDbListItemResponse.h>
 #include <modules/dynamodb/DynamoDbService.h>
 
-class DynamoDbItemList final : public BasePage {
+class DynamoDbItemList : public BasePage {
     Q_OBJECT
 
 public:
@@ -42,7 +38,7 @@ public:
      * @param title widget title
      * @param parent parent widget
      */
-    explicit DynamoDbItemList(const QString &title, QWidget *parent);
+    explicit DynamoDbItemList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * Destructor
@@ -50,17 +46,12 @@ public:
     ~DynamoDbItemList() override;
 
     /**
-     * @brief Clear the page content
-     */
-    void ClearContent() override {
-    }
-
-    /**
      * @brief Load page content
      */
     void LoadContent() override;
 
-    void ExportItems() const;
+    void ClearContent() override {
+    }
 
     void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
@@ -77,6 +68,8 @@ signals:
      *
      * @param itemName name of the item
      */
+
+
     void ShowItemsSignal(const QString &itemName);
 
     /**
@@ -89,6 +82,8 @@ slots:
     /**
      * @brief Context menu callback
      */
+
+
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
@@ -100,17 +95,27 @@ private:
     /**
      * @brief Item list view
      */
-    PageableList *_itemView;
+    QListView *_itemView;
 
     /**
-     * @brief DynamoDB REST service handler
+     * @brief Topic prefix search
+     */
+    QString _prefixValue = "";
+
+    /**
+     * @brief REST service handler
      */
     DynamoDbService *_dynamoDbService;
 
     /**
-     * @brief Module REST service handler
+     *  @brief Item data model
      */
-    ModuleService *_moduleService;
+    QStandardItemModel *_dataModel;
+
+    /**
+     * @brief Data proxy model
+     */
+    PrefixFilterProxyModel *_proxyModel{};
 
     /**
      * @brief Sort column index
@@ -123,6 +128,11 @@ private:
      * @brief Sort order
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
+
+    /**
+     * @brief Prefix clear button
+     */
+    QPushButton *_prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H

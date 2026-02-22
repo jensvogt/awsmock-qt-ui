@@ -66,12 +66,15 @@ public:
      */
     void HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) const;
 
-private slots:
+private
+    slots:
     /**
      * @brief Show context menu
      *
      * @param pos table position
      */
+    
+
     void ShowContextMenu(const QPoint &pos);
 
 private:
@@ -93,7 +96,7 @@ private:
     /**
      * @brief Container service
      */
-    DockerService *_containerService;
+    DockerService *_containerService{};
 };
 
 #endif //AWSMOCK_QT_UI_LAMBDA_LIST_H

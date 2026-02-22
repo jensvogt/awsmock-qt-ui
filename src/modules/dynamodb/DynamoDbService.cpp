@@ -127,7 +127,7 @@ void DynamoDbService::DeleteTable(const QString &tableName) {
                       });
 }
 
-void DynamoDbService::ListItems(const QString &tableName, const QString &prefix, long pageSize, long pageIndex) {
+void DynamoDbService::ListItems(const QString &tableName, const QString &prefix, const long pageSize, const long pageIndex) {
     QElapsedTimer timer;
     timer.start();
 
@@ -139,7 +139,7 @@ void DynamoDbService::ListItems(const QString &tableName, const QString &prefix,
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["tableName"] = tableName;
+    jRequest["TableName"] = tableName;
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = static_cast<qlonglong>(pageSize);
     jRequest["pageIndex"] = static_cast<qlonglong>(pageIndex);

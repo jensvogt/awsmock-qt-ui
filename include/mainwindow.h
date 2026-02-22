@@ -70,6 +70,8 @@ public:
 
     void StartServerPing();
 
+    void StartUpdateChecker();
+
 private slots:
     void UpdateStatusBar(const QString &text) const;
 
@@ -139,9 +141,19 @@ private:
     QThread *_pingThread{};
 
     /**
-     * @brief Pin server timer
+     * @brief Ping server timer
      */
     QTimer *_pingTimer{};
+
+    /**
+     * @brief Updater thread
+     */
+    QThread *_updaterThread{};
+
+    /**
+     * @brief Updater timer
+     */
+    QTimer *_updaterTimer{};
 
     /**
      * @brief Update checker

@@ -5,7 +5,7 @@
 #include <modules/module/ShowInfrastructure.h>
 #include "ui_ShowInfrastructure.h"
 
-ShowInfrastructure::ShowInfrastructure(QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::ShowInfrastructure) {
+ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _ui(new Ui::ShowInfrastructure) {
 
     _moduleService = new ModuleService();
     connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, &ShowInfrastructure::HandleGetInfrastructure);
@@ -59,6 +59,13 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : ::BaseDialog(parent), 
     const auto previousShortcut = new QShortcut(QKeySequence(Qt::SHIFT | Qt::Key_F3), this);
     connect(previousShortcut, &QShortcut::activated, this, &ShowInfrastructure::FindPrevious);
 
+    // Text replacement
+    auto *replaceAction = new QAction(this);
+    replaceAction->setShortcut(QKeySequence("Ctrl+R"));
+    replaceAction->setShortcutContext(Qt::WidgetShortcut);
+    //_ui->plainTextEditor->addAction(replaceAction);
+    //connect(replaceAction, &QAction::triggered, this, &ShowInfrastructure::ReplaceText);
+
     // Get the infrastructure JSON from the server
     _moduleService->GetInfrastructure();
 }
@@ -68,7 +75,7 @@ ShowInfrastructure::~ShowInfrastructure() {
 }
 
 void ShowInfrastructure::HandleGetInfrastructure(const QString &infrastructureJson) const {
-    _ui->infrastructureText->setPlainText(infrastructureJson);
+    _ui->plainTextEditor->SetText(infrastructureJson);
     if (_ui->prettyPrintButton->isChecked()) {
         PrettyPrintClicked(true);
     }
@@ -105,11 +112,11 @@ void ShowInfrastructure::ReadData() const {
     const QByteArray jsonData = _currentFile->readAll();
     _currentFile->close();
 
-    _ui->infrastructureText->setPlainText(QString(jsonData));
+    _ui->plainTextEditor->SetText(QString(jsonData));
 }
 
 void ShowInfrastructure::ImportData() const {
-    _moduleService->ImportInfrastructure(_ui->infrastructureText->toPlainText());
+    _moduleService->ImportInfrastructure(_ui->plainTextEditor->GetText());
     connect(_moduleService, &ModuleService::ImportResponseSignal, this, []() {
         QMessageBox::information(nullptr, "Info", "JSON file imported");
     });
@@ -121,7 +128,7 @@ void ShowInfrastructure::SaveData() {
     const auto filter = "JSON Files (*.json);All Files (*.*)";
     const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-ui");
 
-    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
 
         // Get file
         _currentFile = new QFile(filePath);
@@ -134,7 +141,7 @@ void ShowInfrastructure::SaveData() {
         }
 
         // Save JSON data
-        const QByteArray jsonData = _ui->infrastructureText->toPlainText().toUtf8();
+        const QByteArray jsonData = _ui->plainTextEditor->GetText().toUtf8();
         _currentFile->write(jsonData);
         _currentFile->close();
         QMessageBox::information(nullptr, "Information", "Infrastructure saved, file: " + _currentFile->fileName());
@@ -143,21 +150,21 @@ void ShowInfrastructure::SaveData() {
 }
 
 void ShowInfrastructure::FindNext() const {
-    const QString searchText = _ui->searchEdit->text();
-    if (_ui->infrastructureText->find(searchText))
-        return;
+    /*    const QString searchText = _ui->searchEdit->text();
+        if (_ui->infrastructureText->find(searchText))
+            return;
 
-    // Wrap: restart from beginning
-    QTextCursor cursor = _ui->infrastructureText->textCursor();
-    cursor.movePosition(QTextCursor::Start);
-    _ui->infrastructureText->setTextCursor(cursor);
+        // Wrap: restart from beginning
+        QTextCursor cursor = _ui->infrastructureText->textCursor();
+        cursor.movePosition(QTextCursor::Start);
+        _ui->infrastructureText->setTextCursor(cursor);
 
-    _ui->infrastructureText->find(searchText);
+        _ui->infrastructureText->find(searchText);*/
 }
 
 void ShowInfrastructure::FindPrevious() const {
-    const QString searchText = _ui->searchEdit->text();
-    _ui->infrastructureText->find(searchText, QTextDocument::FindBackward);
+    /*const QString searchText = _ui->searchEdit->text();
+    _ui->infrastructureText->find(searchText, QTextDocument::FindBackward);*/
 }
 
 void ShowInfrastructure::ClearSearch() const {
@@ -165,7 +172,7 @@ void ShowInfrastructure::ClearSearch() const {
 }
 
 void ShowInfrastructure::PrettyPrintClicked(const bool checked) const {
-    if (checked) {
+    /*if (checked) {
         const QByteArray body = _ui->infrastructureText->toPlainText().toUtf8();
         QJsonParseError error;
         const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
@@ -192,5 +199,42 @@ void ShowInfrastructure::PrettyPrintClicked(const bool checked) const {
         cursor.movePosition(QTextCursor::Start);
         _ui->infrastructureText->setTextCursor(cursor);
         _ui->infrastructureText->find(text, QTextDocument::FindCaseSensitively);
+    }*/
+}
+
+void ShowInfrastructure::ReplaceText() const {
+
+    const auto replaceDialog = new ReplaceWordDialog(nullptr);
+    replaceDialog->setWindowTitle("Replace Text");
+    replaceDialog->setWindowModality(Qt::WindowModal);
+
+    if (replaceDialog->exec() == Accepted) {
+
+        const QString findText = replaceDialog->GetSearchText();
+        const QString replaceText = replaceDialog->GetReplacementText();
+
+        /*QTextDocument *doc = _ui->infrastructureText->document();
+        QTextCursor cursor(doc);
+
+        const auto *shortcut = new QShortcut(QKeySequence(Qt::Key_F3), _ui->infrastructureText);
+        connect(shortcut, &QShortcut::activated, this, [doc, cursor, findText]() mutable {
+            cursor = doc->find(findText, cursor);
+        });
+
+        // Start a "Block" so the entire replace-all is ONE undo step
+        cursor.beginEditBlock();
+
+        // Go to first occurrence
+        cursor = doc->find(findText, cursor);
+        while (!cursor.isNull() && !cursor.atEnd()) {
+        }
+
+                while (!cursor.isNull() && !cursor.atEnd()) {
+                    cursor = doc->find(findText, cursor);
+                    if (!cursor.isNull()) {
+                        cursor.insertText(replaceText);
+                    }
+                }
+        cursor.endEditBlock();*/
     }
 }

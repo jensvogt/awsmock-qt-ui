@@ -312,7 +312,6 @@ void LambdaService::GetLambdaResults(const QString &oid) {
                               } else {
                                   logWarning << "Response is not an object!";
                               }
-                              //emit ListLambdaLogsSignal();
                           } else {
                               logError << error;
                           }
@@ -424,9 +423,34 @@ void LambdaService::RebuildLambda(const QString &name, const QString &version) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
+                          emit EventBus::instance().DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
+                      });
+}
+
+void LambdaService::ListLambdaArns() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      {},
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "list-arns"},
+                          {"content-type", "application/json"}
+                      },
+                      [this,timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  LambdaListArnsResponse lambdaResponse;
+                                  lambdaResponse.FromJson(jsonDoc);
+                                  emit ListLambdaArnsSignal(lambdaResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
                       });
 }
 

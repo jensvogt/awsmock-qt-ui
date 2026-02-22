@@ -327,6 +327,29 @@ void S3Service::UpdateObject(const QString &region, const QString &bucketName, c
                       });
 }
 
+void S3Service::PutBucketNotificationConfiguration(const S3PutBucketNotificationConfigurationRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    qInfo() << request.ToXml().toUtf8();
+
+    _restManager.put(GetBaseUrl(request.bucket),
+                     request.ToXml().toUtf8(),
+                     {
+                         {"x-awsmock-target", "s3"},
+                         {"x-awsmock-action", "PutBucketNotificationConfiguration"},
+                         {"content-type", "application/xml; charset=utf-8"}
+                     },
+                     [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                         if (success) {
+                             emit ReloadObjectsSignal();
+                         } else {
+                             logError << error;
+                         }
+                         emit EventBus::instance().TimerSignal("PutBucketNotificationConfiguration", timer.elapsed());
+                     });
+}
+
 void S3Service::TouchObject(const QString &bucketName, const QString &key) {
     QElapsedTimer timer;
     timer.start();

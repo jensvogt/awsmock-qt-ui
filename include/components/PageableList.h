@@ -92,7 +92,7 @@ public:
       * @param pos mouse position
       * @return table row/column index
       */
-    QModelIndex GetIndexFromPosition(const QPoint &pos) const;
+    [[nodiscard]] QModelIndex GetIndexFromPosition(const QPoint &pos) const;
 
     /**
      * @brief Returns the global position
@@ -100,7 +100,7 @@ public:
      * @param tablePosition table position
      * @return global position
      */
-    QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+    [[nodiscard]] QPoint GetGlobalPosition(const QPoint &tablePosition) const;
 
     /**
      * @brief Clear all rows

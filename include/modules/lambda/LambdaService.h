@@ -26,6 +26,7 @@
 #include <dto/lambda/LambdaGetResultResponse.h>
 #include <dto/lambda/LambdaUploadRequest.h>
 #include <dto/lambda/LambdaUploadRequest.h>
+#include <dto/lambda/LambdaListArnsResponse.h>
 
 class LambdaService final : public BaseService {
     Q_OBJECT
@@ -112,6 +113,8 @@ public:
     void UpdateLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
 
     void RebuildLambda(const QString &name, const QString &version);
+
+    void ListLambdaArns();
 
     /**
      * @brief Stop an lambdas
@@ -214,6 +217,13 @@ signals:
      * @brief Reload all environment signal
      */
     void LoadLambdaEnvironment();
+
+    /**
+     * @brief List lambda ARNs signal
+     *
+     * @param listArnsResponse list of lambda ARNs
+     */
+    void ListLambdaArnsSignal(const LambdaListArnsResponse &listArnsResponse);
 
 private:
     /**

@@ -10,12 +10,16 @@
 #include <QMessageBox>
 #include <QShortcut>
 #include <QKeySequence>
+#include <QInputDialog>
 
 // AwsMock includes
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <modules/module/ModuleService.h>
+#include <components/ReplaceWordDialog.h>
+
+#include "components/PlainTextEditor.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -74,6 +78,8 @@ public:
 
     void PrettyPrintClicked(bool checked) const;
 
+    void ReplaceText() const;
+
     /**
      * @brief Load content
      */
@@ -95,6 +101,11 @@ private:
      * @brief Module service
      */
     ModuleService *_moduleService{};
+
+    /**
+     * @brief Plaintext edit
+     */
+    Awsmock::Components::PlainTextEditor *_plainTextEdit{};
 };
 
 
