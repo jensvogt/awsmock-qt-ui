@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.15](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.14...v1.11.15) (2026-02-22)
+
+
+### Bug Fixes
+
+* add search/replace component ([3f3c7a5](https://github.com/jensvogt/awsmock-qt-ui/commit/3f3c7a58293a72f92429b95b6a8d57dbc62249bc))
+* application environment add dialog ([b90cc48](https://github.com/jensvogt/awsmock-qt-ui/commit/b90cc48b82dbb9e742c3facaeda7c7e48b472af3))
+* SSM table fix, docker stats fix ([d9ec1cb](https://github.com/jensvogt/awsmock-qt-ui/commit/d9ec1cbaaad67252ff51b6008a7e4dabb6542371))
+
 ## [1.11.14](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.13...v1.11.14) (2026-02-19)
 
 
