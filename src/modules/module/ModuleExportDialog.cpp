@@ -222,7 +222,7 @@ void ModuleExportDialog::HandleAccept() {
         return;
     }
     if (_exportFilePath.isEmpty()) {
-        QMessageBox::warning(nullptr, "Error", "Output file cnanot be empty!");
+        QMessageBox::warning(nullptr, "Error", "Output file cannot be empty!");
         return;
     }
     accept();

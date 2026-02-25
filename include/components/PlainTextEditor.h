@@ -51,8 +51,20 @@ namespace Awsmock::Components {
          */
         void SearchPrevious(const QString &searchText);
 
+        /**
+         * @brief Replace one occurrency of search text with replacement text
+         *
+         * @param searchString search string
+         * @param replaceText replacement text
+         */
         void Replace(const QString &searchString, const QString &replaceText);
 
+        /**
+         * @brief Replace all occurrences of search text with replacement text
+         *
+         * @param searchString search string
+         * @param replaceText replacement text
+         */
         void ReplaceAll(const QString &searchString, const QString &replaceText);
 
         /**
@@ -63,6 +75,13 @@ namespace Awsmock::Components {
         QString GetText() const {
             return _plainTextEdit->toPlainText().toUtf8();
         }
+
+        /**
+         * @bnrief Sets the pretty print flag
+         *
+         * @param prettyPrint pretty print flag
+         */
+        void SetPrettyPrint(bool prettyPrint);
 
     private:
         /**

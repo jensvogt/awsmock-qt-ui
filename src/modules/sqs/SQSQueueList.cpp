@@ -1,3 +1,4 @@
+#include <ui_SQSMessageAddDialog.h>
 #include <modules/sqs/SQSQueueList.h>
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -118,6 +119,10 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     menu.setToolTipsVisible(true);
+
+    QAction *sendAction = menu.addAction(IconUtils::GetIcon("send"), "Send a Message");
+    sendAction->setToolTip("Send a Message to the queue");
+
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
@@ -141,6 +146,9 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     const auto queueArn = _tableView->GetValue<QString>(index, 8);
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
+    } else if (selectedAction == sendAction) {
+        SQSMessageAddDialog dialog(queueUrl, queueArn);
+        dialog.exec();
     } else if (selectedAction == redriveAction) {
         sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {

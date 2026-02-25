@@ -24,11 +24,11 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/EventBus.h>
+#include <components/PageableTable.h>
 #include <dto/sqs/SQSListQueueResponse.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
-
-#include "components/PageableTable.h"
+#include <modules/sqs/SQSMessageAddDialog.h>
 
 /**
  * @brief Helper widget for the content area.

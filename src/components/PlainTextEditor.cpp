@@ -47,6 +47,10 @@ namespace Awsmock::Components {
             ReplaceAll(searchText, replaceText);
         });
 
+        // Setup search widget
+        _searchWidget = new ReplaceWidget(this);
+        _replaceWidget->setHidden(true);
+
         // Setup plain text edit
         _plainTextEdit = new QPlainTextEdit(this);
 
@@ -69,13 +73,22 @@ namespace Awsmock::Components {
     void PlainTextEditor::SetText(const QString &text) {
         _text = text;
 
-        if (_beautify && _contentType == JSON) {
-            _text = StringUtils::ConvertToIndentedJson(text);
+        if (_contentType == JSON) {
+            if (_beautify) {
+                _text = StringUtils::ConvertToIndentedJson(_text);
+            } else {
+                _text = StringUtils::ConvertToCompactJson(_text);
+            }
         }
 
         _plainTextEdit->setPlainText(_text);
         _document = _plainTextEdit->document();
         _cursor = QTextCursor(_document);
+    }
+
+    void PlainTextEditor::SetPrettyPrint(const bool prettyPrint) {
+        _beautify = prettyPrint;
+        SetText(_text);
     }
 
     void PlainTextEditor::SearchNext(const QString &searchText) {

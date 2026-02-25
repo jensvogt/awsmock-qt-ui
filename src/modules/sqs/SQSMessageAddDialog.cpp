@@ -6,6 +6,7 @@
 
 #include <modules/sqs/SQSMessageAddDialog.h>
 #include "ui_SQSMessageAddDialog.h"
+#include "utils/AwsUtils.h"
 
 SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString &queueArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog), _queueUrl(std::move(queueUrl)), _queueArn(std::move(queueArn)) {
 
@@ -82,7 +83,7 @@ void SQSMessageAddDialog::HandleAccept() {
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
-    QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
+    QMessageBox::information(nullptr, "Info", "Message send to queue: '" + AwsUtils::ArnToName(_queueArn) + "' with messageId: '" + response.messageId + "'");
     accept();
 }
 
