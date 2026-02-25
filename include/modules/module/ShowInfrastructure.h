@@ -70,16 +70,6 @@ public:
 
     void SaveData();
 
-    void FindNext() const;
-
-    void FindPrevious() const;
-
-    void ClearSearch() const;
-
-    void PrettyPrintClicked(bool checked) const;
-
-    void ReplaceText() const;
-
     /**
      * @brief Load content
      */

@@ -9,7 +9,10 @@
 #include <QVBoxLayout>
 
 // Awsmock includes
+#include <utils/StringUtils.h>
 #include <components/ReplaceWidget.h>
+
+#include "SearchField.h"
 
 namespace Awsmock::Components {
 
@@ -23,7 +26,7 @@ namespace Awsmock::Components {
         Q_OBJECT
 
     public:
-        explicit PlainTextEditor(bool beautify = true, const TextContentType &contentType = JSON, QWidget *parent = nullptr);
+        explicit PlainTextEditor(bool prettyPrint = true, const TextContentType &contentType = JSON, QWidget *parent = nullptr);
 
         /**
          * @bried Destructor
@@ -60,8 +63,12 @@ namespace Awsmock::Components {
          *
          * @return edited text
          */
-        QString GetText() const {
+        [[nodiscard]] QString GetText() const {
             return _plainTextEdit->toPlainText().toUtf8();
+        }
+
+        void SetPrettyPrint(const bool prettyPrint) {
+            _prettyPrint = prettyPrint;
         }
 
     private:
@@ -74,6 +81,11 @@ namespace Awsmock::Components {
          * @brief Initialize the replace text widget
          */
         void InitializeReplaceText() const;
+
+        /**
+         * @brief Initialize the search text field
+         */
+        void InitializeSearchText() const;
 
         /**
          * @brief Count the number of occurrences of the search text
@@ -91,12 +103,17 @@ namespace Awsmock::Components {
         /**
          * @brief Plain text edit widget
          */
-        QPlainTextEdit *_plainTextEdit;
+        QPlainTextEdit *_plainTextEdit{};
 
         /**
          * @brief Replace widget
          */
-        ReplaceWidget *_replaceWidget;
+        ReplaceWidget *_replaceWidget{};
+
+        /**
+         * @brief Search field widget
+         */
+        SearchField *_searchWidget{};
 
         /**
          * @brief Content type
@@ -111,12 +128,12 @@ namespace Awsmock::Components {
         /**
          * @brief The actual document
          */
-        QTextDocument *_document;
+        QTextDocument *_document{};
 
         /**
          * @brief Pretty print flag
          */
-        bool _beautify = true;
+        bool _prettyPrint = true;
 
         /**
          * @brief Occurrence count
