@@ -19,6 +19,9 @@
      <property name="topMargin">
       <number>0</number>
      </property>
+     <property name="rightMargin">
+      <number>3</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -91,20 +94,6 @@
        </property>
        <property name="text">
         <string>Save</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLineEdit" name="searchEdit"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="clearSearchButton">
-       <property name="text">
-        <string>clearSearch</string>
        </property>
       </widget>
      </item>

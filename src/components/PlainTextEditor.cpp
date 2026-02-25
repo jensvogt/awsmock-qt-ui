@@ -9,7 +9,7 @@
 
 namespace Awsmock::Components {
 
-    PlainTextEditor::PlainTextEditor(const bool beautify, const TextContentType &contentType, QWidget *parent) : QWidget(parent), _contentType(contentType), _beautify(beautify) {
+    PlainTextEditor::PlainTextEditor(const bool prettyPrint, const TextContentType &contentType, QWidget *parent) : QWidget(parent), _contentType(contentType), _prettyPrint(prettyPrint) {
 
         Initialize();
     }
@@ -48,8 +48,17 @@ namespace Awsmock::Components {
         });
 
         // Setup search widget
-        _searchWidget = new ReplaceWidget(this);
-        _replaceWidget->setHidden(true);
+        _searchWidget = new SearchField(this);
+        _searchWidget->setHidden(true);
+        connect(_searchWidget, &SearchField::SigClose, this, [this]() {
+            _searchWidget->setHidden(true);
+        });
+        connect(_searchWidget, &SearchField::SigSearchForward, this, [this](const QString &searchText) {
+            SearchNext(searchText);
+        });
+        connect(_searchWidget, &SearchField::SigSearchBackward, this, [this](const QString &searchText) {
+            SearchPrevious(searchText);
+        });
 
         // Setup plain text edit
         _plainTextEdit = new QPlainTextEdit(this);
@@ -61,7 +70,15 @@ namespace Awsmock::Components {
         _plainTextEdit->addAction(replaceAction);
         connect(replaceAction, &QAction::triggered, this, &PlainTextEditor::InitializeReplaceText);
 
+        // Add search shortcut
+        auto *searchAction = new QAction(this);
+        searchAction->setShortcut(QKeySequence("Ctrl+F"));
+        searchAction->setShortcutContext(Qt::WidgetShortcut);
+        _plainTextEdit->addAction(searchAction);
+        connect(searchAction, &QAction::triggered, this, &PlainTextEditor::InitializeSearchText);
+
         const auto layout = new QVBoxLayout(this);
+        layout->addWidget(_searchWidget);
         layout->addWidget(_replaceWidget);
         layout->addWidget(_plainTextEdit);
     }
@@ -70,25 +87,20 @@ namespace Awsmock::Components {
         _replaceWidget->setHidden(false);
     }
 
+    void PlainTextEditor::InitializeSearchText() const {
+        _searchWidget->setHidden(false);
+    }
+
     void PlainTextEditor::SetText(const QString &text) {
         _text = text;
 
-        if (_contentType == JSON) {
-            if (_beautify) {
-                _text = StringUtils::ConvertToIndentedJson(_text);
-            } else {
-                _text = StringUtils::ConvertToCompactJson(_text);
-            }
+        if (_prettyPrint && _contentType == JSON) {
+            _text = StringUtils::ConvertToIndentedJson(text);
         }
 
         _plainTextEdit->setPlainText(_text);
         _document = _plainTextEdit->document();
         _cursor = QTextCursor(_document);
-    }
-
-    void PlainTextEditor::SetPrettyPrint(const bool prettyPrint) {
-        _beautify = prettyPrint;
-        SetText(_text);
     }
 
     void PlainTextEditor::SearchNext(const QString &searchText) {

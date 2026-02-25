@@ -31,8 +31,8 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->prettyPrintButton->setText(nullptr);
     _ui->prettyPrintButton->setIcon(IconUtils::GetIcon("pretty"));
     _ui->prettyPrintButton->toggle();
-    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, [this](bool checked) {
-        _ui->plainTextEditor->SetPrettyPrint(checked);
+    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, []() {
+
     });
 
     // Save locally
@@ -55,6 +55,9 @@ ShowInfrastructure::~ShowInfrastructure() {
 
 void ShowInfrastructure::HandleGetInfrastructure(const QString &infrastructureJson) const {
     _ui->plainTextEditor->SetText(infrastructureJson);
+    if (_ui->prettyPrintButton->isChecked()) {
+        _ui->plainTextEditor->SetPrettyPrint(true);
+    }
     _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
@@ -123,4 +126,3 @@ void ShowInfrastructure::SaveData() {
         QMessageBox::information(nullptr, "Information", "Infrastructure saved, file: " + _currentFile->fileName());
     }
 }
-
