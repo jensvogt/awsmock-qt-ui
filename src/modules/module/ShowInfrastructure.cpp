@@ -30,9 +30,9 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     // Pretty print
     _ui->prettyPrintButton->setText(nullptr);
     _ui->prettyPrintButton->setIcon(IconUtils::GetIcon("pretty"));
-    _ui->prettyPrintButton->toggle();
-    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, []() {
-
+    _ui->prettyPrintButton->setChecked(_ui->plainTextEditor->GetPrettyPrint());
+    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, [this](const bool checked) {
+        _ui->plainTextEditor->SetPrettyPrint(checked);
     });
 
     // Save locally
@@ -44,6 +44,15 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->saveButton->setText(nullptr);
     _ui->saveButton->setIcon(IconUtils::GetIcon("save"));
     connect(_ui->saveButton, &QPushButton::clicked, this, &ShowInfrastructure::SaveData);
+
+    // Correct way to chain 4 widgets
+    setTabOrder(_ui->plainTextEditor, _ui->prettyPrintButton);
+    setTabOrder(_ui->prettyPrintButton, _ui->refreshButton);
+    setTabOrder(_ui->refreshButton, _ui->searchFileButton);
+    setTabOrder(_ui->searchFileButton, _ui->saveButton);
+    setTabOrder(_ui->saveButton, _ui->refreshButton);
+
+    _ui->plainTextEditor->setFocus();
 
     // Get the infrastructure JSON from the server
     _moduleService->GetInfrastructure();
