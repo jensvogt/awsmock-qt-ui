@@ -31,7 +31,9 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->prettyPrintButton->setText(nullptr);
     _ui->prettyPrintButton->setIcon(IconUtils::GetIcon("pretty"));
     _ui->prettyPrintButton->toggle();
-    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, &ShowInfrastructure::PrettyPrintClicked);
+    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, []() {
+
+    });
 
     // Save locally
     _ui->importButton->setText(nullptr);
@@ -42,29 +44,6 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->saveButton->setText(nullptr);
     _ui->saveButton->setIcon(IconUtils::GetIcon("save"));
     connect(_ui->saveButton, &QPushButton::clicked, this, &ShowInfrastructure::SaveData);
-
-    // Search text field
-    connect(_ui->searchEdit, &QLineEdit::textChanged, this, &ShowInfrastructure::FindNext);
-
-    // Clear search button
-    _ui->clearSearchButton->setText(nullptr);
-    _ui->clearSearchButton->setIcon(IconUtils::GetIcon("clear"));
-    connect(_ui->clearSearchButton, &QPushButton::clicked, this, &ShowInfrastructure::ClearSearch);
-
-    // Find next
-    const auto nextShortcut = new QShortcut(QKeySequence(Qt::Key_F3), this);
-    connect(nextShortcut, &QShortcut::activated, this, &ShowInfrastructure::FindNext);
-
-    // Find previous
-    const auto previousShortcut = new QShortcut(QKeySequence(Qt::SHIFT | Qt::Key_F3), this);
-    connect(previousShortcut, &QShortcut::activated, this, &ShowInfrastructure::FindPrevious);
-
-    // Text replacement
-    auto *replaceAction = new QAction(this);
-    replaceAction->setShortcut(QKeySequence("Ctrl+R"));
-    replaceAction->setShortcutContext(Qt::WidgetShortcut);
-    //_ui->plainTextEditor->addAction(replaceAction);
-    //connect(replaceAction, &QAction::triggered, this, &ShowInfrastructure::ReplaceText);
 
     // Get the infrastructure JSON from the server
     _moduleService->GetInfrastructure();
@@ -77,7 +56,7 @@ ShowInfrastructure::~ShowInfrastructure() {
 void ShowInfrastructure::HandleGetInfrastructure(const QString &infrastructureJson) const {
     _ui->plainTextEditor->SetText(infrastructureJson);
     if (_ui->prettyPrintButton->isChecked()) {
-        PrettyPrintClicked(true);
+        _ui->plainTextEditor->SetPrettyPrint(true);
     }
     _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
@@ -145,96 +124,5 @@ void ShowInfrastructure::SaveData() {
         _currentFile->write(jsonData);
         _currentFile->close();
         QMessageBox::information(nullptr, "Information", "Infrastructure saved, file: " + _currentFile->fileName());
-    }
-
-}
-
-void ShowInfrastructure::FindNext() const {
-    /*    const QString searchText = _ui->searchEdit->text();
-        if (_ui->infrastructureText->find(searchText))
-            return;
-
-        // Wrap: restart from beginning
-        QTextCursor cursor = _ui->infrastructureText->textCursor();
-        cursor.movePosition(QTextCursor::Start);
-        _ui->infrastructureText->setTextCursor(cursor);
-
-        _ui->infrastructureText->find(searchText);*/
-}
-
-void ShowInfrastructure::FindPrevious() const {
-    /*const QString searchText = _ui->searchEdit->text();
-    _ui->infrastructureText->find(searchText, QTextDocument::FindBackward);*/
-}
-
-void ShowInfrastructure::ClearSearch() const {
-    _ui->searchEdit->clear();
-}
-
-void ShowInfrastructure::PrettyPrintClicked(const bool checked) const {
-    /*if (checked) {
-        const QByteArray body = _ui->infrastructureText->toPlainText().toUtf8();
-        QJsonParseError error;
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
-        if (error.error == QJsonParseError::NoError) {
-            _ui->infrastructureText->clear();
-            _ui->infrastructureText->setPlainText(jDoc.toJson(QJsonDocument::Indented));
-        } else {
-            QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
-        }
-    } else {
-        const QByteArray body = _ui->infrastructureText->toPlainText().toUtf8();
-        QJsonParseError error;
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
-        if (error.error == QJsonParseError::NoError) {
-            _ui->infrastructureText->clear();
-            _ui->infrastructureText->setPlainText(jDoc.toJson(QJsonDocument::Compact));
-        } else {
-            QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
-        }
-    }
-    if (!_ui->searchEdit->text().isEmpty()) {
-        const QString text = _ui->searchEdit->text();
-        QTextCursor cursor(_ui->infrastructureText->document());
-        cursor.movePosition(QTextCursor::Start);
-        _ui->infrastructureText->setTextCursor(cursor);
-        _ui->infrastructureText->find(text, QTextDocument::FindCaseSensitively);
-    }*/
-}
-
-void ShowInfrastructure::ReplaceText() const {
-
-    const auto replaceDialog = new ReplaceWordDialog(nullptr);
-    replaceDialog->setWindowTitle("Replace Text");
-    replaceDialog->setWindowModality(Qt::WindowModal);
-
-    if (replaceDialog->exec() == Accepted) {
-
-        const QString findText = replaceDialog->GetSearchText();
-        const QString replaceText = replaceDialog->GetReplacementText();
-
-        /*QTextDocument *doc = _ui->infrastructureText->document();
-        QTextCursor cursor(doc);
-
-        const auto *shortcut = new QShortcut(QKeySequence(Qt::Key_F3), _ui->infrastructureText);
-        connect(shortcut, &QShortcut::activated, this, [doc, cursor, findText]() mutable {
-            cursor = doc->find(findText, cursor);
-        });
-
-        // Start a "Block" so the entire replace-all is ONE undo step
-        cursor.beginEditBlock();
-
-        // Go to first occurrence
-        cursor = doc->find(findText, cursor);
-        while (!cursor.isNull() && !cursor.atEnd()) {
-        }
-
-                while (!cursor.isNull() && !cursor.atEnd()) {
-                    cursor = doc->find(findText, cursor);
-                    if (!cursor.isNull()) {
-                        cursor.insertText(replaceText);
-                    }
-                }
-        cursor.endEditBlock();*/
     }
 }

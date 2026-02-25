@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="serverTab">
       <attribute name="title">
@@ -93,20 +93,25 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="1,1">
-           <item row="0" column="0">
-            <widget class="QLabel" name="ftpUserLabel">
+          <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0" columnstretch="1,1">
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="ftpPortEdit"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="ftpProtocolabel">
              <property name="text">
-              <string>FTP User:</string>
+              <string>FTP Protocol:</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="ftpServerLabel">
-             <property name="text">
-              <string>FTP Server:</string>
-             </property>
-            </widget>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="ftpServerEdit"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QComboBox" name="ftpProtocolCombo"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ftpUserEdit"/>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="ftpPortLabel">
@@ -118,14 +123,12 @@
            <item row="1" column="1">
             <widget class="QLineEdit" name="ftpPasswordEdit"/>
            </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="ftpPortEdit"/>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="ftpServerEdit"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="ftpUserEdit"/>
+           <item row="0" column="0">
+            <widget class="QLabel" name="ftpUserLabel">
+             <property name="text">
+              <string>FTP User:</string>
+             </property>
+            </widget>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="ftpPasswordLabel">
@@ -134,15 +137,33 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label">
+           <item row="2" column="0">
+            <widget class="QLabel" name="ftpServerLabel">
              <property name="text">
-              <string>FTP Protocol:</string>
+              <string>FTP Server:</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
-            <widget class="QComboBox" name="ftpProtocolCombo"/>
+           <item row="5" column="0">
+            <widget class="QLabel" name="ftpStartFolderLabel">
+             <property name="text">
+              <string>Local Start Folder:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLineEdit" name="ftpStartFolderEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ftpStartFolderBrowseButton">
+               <property name="text">
+                <string>Browsse</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>

@@ -1,4 +1,6 @@
 
+#include <QFileDialog>
+#include <QMessageBox>
 #include <utils/EditConfigDialog.h>
 #include "ui_EditConfigDialog.h"
 
@@ -31,28 +33,7 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     });
 
     // FTP settings
-    _ui->ftpUserEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-user", "none"));
-    connect(_ui->ftpUserEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui.default-ftp-user", _ui->ftpUserEdit->text());
-    });
-    _ui->ftpPasswordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", "none"));
-    connect(_ui->ftpPasswordEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui.default-ftp-password", _ui->ftpPasswordEdit->text());
-    });
-    _ui->ftpServerEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-server", "localhost"));
-    connect(_ui->ftpServerEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui.default-ftp-server", _ui->ftpServerEdit->text());
-    });
-    _ui->ftpPortEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-port", "2121"));
-    connect(_ui->ftpPortEdit, &QLineEdit::textChanged, this, [this]() {
-        Configuration::instance().SetValue("ui.default-ftp-port", _ui->ftpPortEdit->text());
-    });
-    QStringList protocols = {"FTP", "SFTP"};
-    _ui->ftpProtocolCombo->addItems(protocols);
-    _ui->ftpProtocolCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.default-ftp-protocol"));
-    connect(_ui->ftpProtocolCombo, &QComboBox::currentIndexChanged, this, [protocols](const int index) {
-        Configuration::instance().SetValue<QString>("ui.default-ftp-protocol", protocols.at(index));
-    });
+    SetupFtpSettings();
 
     // AWS settings
     _ui->regionEdit->setText(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"));
@@ -122,4 +103,71 @@ void EditConfigDialog::HandleAccept() {
 
 void EditConfigDialog::HandleReject() {
     accept();
+}
+
+void EditConfigDialog::SetupFtpSettings() {
+    _ui->ftpUserEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-user", "none"));
+    connect(_ui->ftpUserEdit, &QLineEdit::textChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.default-ftp-user", _ui->ftpUserEdit->text());
+    });
+    _ui->ftpPasswordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", "none"));
+    connect(_ui->ftpPasswordEdit, &QLineEdit::textChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.default-ftp-password", _ui->ftpPasswordEdit->text());
+    });
+    _ui->ftpServerEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-server", "localhost"));
+    connect(_ui->ftpServerEdit, &QLineEdit::textChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.default-ftp-server", _ui->ftpServerEdit->text());
+    });
+    _ui->ftpPortEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-port", "2121"));
+    connect(_ui->ftpPortEdit, &QLineEdit::textChanged, this, [this]() {
+        Configuration::instance().SetValue("ui.default-ftp-port", _ui->ftpPortEdit->text());
+    });
+    QStringList protocols = {"FTP", "SFTP"};
+    _ui->ftpProtocolCombo->addItems(protocols);
+    _ui->ftpProtocolCombo->setCurrentText(Configuration::instance().GetValue<QString>("ui.default-ftp-protocol"));
+    connect(_ui->ftpProtocolCombo, &QComboBox::currentIndexChanged, this, [protocols](const int index) {
+        Configuration::instance().SetValue<QString>("ui.default-ftp-protocol", protocols.at(index));
+    });
+    _ui->ftpStartFolderEdit->setText(Configuration::instance().GetValue<QString>("ftp-client.local-base-dir", "C:\\"));
+    connect(_ui->ftpStartFolderEdit, &QLineEdit::textChanged, this, [](const QString &text) {
+        Configuration::instance().SetValue("ftp-client.local-base-dir", text);
+    });
+    _ui->ftpStartFolderBrowseButton->setText(nullptr);
+    _ui->ftpStartFolderBrowseButton->setIcon(IconUtils::GetIcon("search"));
+    connect(_ui->ftpStartFolderBrowseButton, &QPushButton::clicked, this, [this]() {
+
+        // Create a QFileDialog set to select existing files
+        const auto defaultDir = Configuration::instance().GetValue<QString>("ftp-client.local-base-dir", "/usr/local/awsmock-qt-_ui");
+
+        QFileDialog dialog(this);
+        dialog.setFileMode(QFileDialog::Directory); // Mandatory for folder selection
+        dialog.setOption(QFileDialog::ShowDirsOnly, true);
+        dialog.setDirectory(defaultDir);
+
+        if (dialog.exec() == Accepted) {
+            const QStringList dirs = dialog.selectedFiles();
+            const QString &filePath = dirs.at(0);
+            if (!IsDirectoryReady(filePath)) {
+                QMessageBox::critical(nullptr, "Error", "Could not open directory:" + filePath);
+                return;
+            }
+            _ui->ftpStartFolderEdit->setText(filePath);
+            Configuration::instance().SetValue<QString>("ftp-client.local-base-dir", QFileInfo(filePath).absolutePath());
+        }
+    });
+}
+
+bool EditConfigDialog::IsDirectoryReady(const QString &path) {
+    const QFileInfo checkInfo(path);
+
+    // 1. Check if it exists AND is actually a directory
+    if (!checkInfo.exists() || !checkInfo.isDir()) {
+        return false;
+    }
+
+    // 2. Check Permissions
+    const bool canRead = checkInfo.isReadable();
+    const bool canWrite = checkInfo.isWritable();
+
+    return (canRead && canWrite);
 }

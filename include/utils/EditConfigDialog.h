@@ -10,6 +10,7 @@
 #include <QList>
 
 // AwsMock includes
+#include <utils/IconUtils.h>
 #include <utils/Configuration.h>
 
 QT_BEGIN_NAMESPACE
@@ -39,14 +40,22 @@ public:
     ~EditConfigDialog() override;
 
 private
-    slots:
-    
-
+slots:
     void HandleAccept();
 
     void HandleReject();
 
+    void SetupFtpSettings();
+
 private:
+    /**
+     * @brief Check whether the directory exists and is writable.
+     *
+     * @param path directory absolute path
+     * @return true if directory exists and is writable
+     */
+    static bool IsDirectoryReady(const QString &path);
+
     /**
      * @brief UI components
      */
