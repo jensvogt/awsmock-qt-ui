@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.19](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.18...v1.11.19) (2026-03-01)
+
+
+### Bug Fixes
+
+* macos port ([2e8f39c](https://github.com/jensvogt/awsmock-qt-ui/commit/2e8f39cf25993da82f531947b0ddaf9002445177))
+
 ## [1.11.18](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.17...v1.11.18) (2026-03-01)
 
 
