@@ -92,7 +92,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>true</bool>
@@ -108,7 +108,7 @@
        <string>Request</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
-             <property name="leftMargin">
+       <property name="leftMargin">
         <number>9</number>
        </property>
        <property name="topMargin">
@@ -219,7 +219,7 @@
        <string>Logs</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayoutLogs">
-      <property name="leftMargin">
+       <property name="leftMargin">
         <number>9</number>
        </property>
        <property name="topMargin">
@@ -233,7 +233,7 @@
        </property>
        <item>
         <widget class="QTextEdit" name="logsEdit"/>
-      </item>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -241,7 +241,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Close</set>
      </property>
     </widget>
    </item>

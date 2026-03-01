@@ -25,8 +25,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setToolTip("Add a new Bucket");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal,
-                                                             "", &ok); ok && !bucketName.isEmpty()) {
+        if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal, "", &ok); ok && !bucketName.isEmpty()) {
             _s3Service->AddBucket(bucketName);
         }
     });
@@ -53,74 +52,38 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Keys"), tr("Size [kb]"), tr("Created"), tr("Modified"),
+                                    tr("Name"), tr("Keys"), tr("Size"), tr("Created"), tr("Modified"),
                                     tr("BucketArn")
                                 };
-    tableWidget = new QTableWidget(this);
-    tableWidget->setColumnCount(static_cast<int>(headers.count()));
-    tableWidget->setShowGrid(true);
-    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableWidget->setHorizontalHeaderLabels(headers);
-    tableWidget->setSortingEnabled(true);
-    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(5, true);
-    tableWidget->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable(this);
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetHiddenColumns({5});
+    _tableView->SetSorting(1, "keys", -1);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
         // Extract ARN and URL
-        const QString bucketName = tableWidget->item(row, 0)->text();
+        QMap<QString, QString> arguments;
+        arguments["bucketName"] = _tableView->GetValue<QString>(index, 0);
 
         // Send notification
-        emit ShowS3Objects(bucketName);
+        emit EventBus::instance().RouteChanged("S3 Object List", arguments);
     });
 
     // Add context menu
-    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &S3BucketList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &S3BucketList::ShowContextMenu);
 
-    // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    // Connect paging changes
+    connect(_tableView, &PageableTable::ReloadTable, this, &S3BucketList::LoadContent);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
-    layout->addWidget(tableWidget, 2);
+    layout->addWidget(_tableView, 2);
 }
 
 S3BucketList::~S3BucketList() {
@@ -128,40 +91,28 @@ S3BucketList::~S3BucketList() {
 }
 
 void S3BucketList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _s3Service->ListBuckets(prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _s3Service->ListBuckets(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
-void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) {
-    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
-    tableWidget->setRowCount(0);
-    tableWidget->setSortingEnabled(false);
+void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) const {
+    _tableView->Clear();
+    _tableView->SetTotalSize(listBucketResult.total);
     for (auto r = 0, c = 0; r < listBucketResult.bucketCounters.count(); r++, c = 0) {
-        tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketName);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).objectCount);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).size / 1024);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).created);
-        SetColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, c++, listBucketResult.bucketCounters.at(r).bucketArn);
+        _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).bucketName);
+        _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).objectCount);
+        _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).size);
+        _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).modified);
+        _tableView->SetHiddenColumn(r, c++, listBucketResult.bucketCounters.at(r).bucketArn);
     }
-    tableWidget->setRowCount(static_cast<int>(listBucketResult.bucketCounters.count()));
-    tableWidget->setSortingEnabled(true);
-    tableWidget->sortItems(_sortColumn, _sortOrder);
-    tableWidget->selectRow(selectedRow);
-    NotifyStatusBar();
+    _tableView->UpdateSorting();
 }
 
 void S3BucketList::ShowContextMenu(const QPoint &pos) const {
-    const QModelIndex index = tableWidget->indexAt(pos);
-    if (!index.isValid()) return;
-
-    const int row = index.row();
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
     editAction->setToolTip("Edit the bucket details");
 
@@ -175,9 +126,9 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Bucket");
     deleteAction->setToolTip("Delete the Bucket");
 
-    const QString bucketName = tableWidget->item(row, 0)->text();
-    const QString bucketArn = tableWidget->item(row, 5)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+    const auto bucketName = _tableView->GetValue<QString>(index, 0);
+    const auto bucketArn = _tableView->GetValue<QString>(index, 5);
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos));
         selectedAction == purgeAction) {
         _s3Service->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {

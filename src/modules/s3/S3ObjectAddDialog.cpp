@@ -17,8 +17,9 @@ S3ObjectAddDialog::S3ObjectAddDialog(const S3GetBucketDetailsResponse &bucket, Q
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &S3ObjectAddDialog::HandleReject);
 
     // Connect browse button
-    _ui->fileBrowseButton->setToolTip("Search for the file");
+    _ui->fileBrowseButton->setText(nullptr);
     _ui->fileBrowseButton->setIcon(IconUtils::GetIcon("search"));
+    _ui->fileBrowseButton->setToolTip("Search for the file");
     connect(_ui->fileBrowseButton, &QPushButton::clicked, this, &S3ObjectAddDialog::BrowseSourceFile);
 
     // Metadata

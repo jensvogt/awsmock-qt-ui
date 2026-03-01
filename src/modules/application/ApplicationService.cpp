@@ -1,29 +1,24 @@
 #include <modules/application/ApplicationService.h>
 
-ApplicationService::ApplicationService() {
-    url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
-}
-
-void ApplicationService::ListApplications(const QString &prefix) {
+void ApplicationService::ListApplications(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "name";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
-                      requestDoc.toJson(),
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "list-applications"},
@@ -37,103 +32,122 @@ void ApplicationService::ListApplications(const QString &prefix) {
                                   applicationResponse.FromJson(jsonDoc);
                                   emit ReloadApplicationsSignal(applicationResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
                       });
 }
 
 void ApplicationService::UploadApplication(const ApplicationUploadRequest &request) {
-    _restManager.post(url,
+    QElapsedTimer timer;
+    timer.start();
+
+    QString tmp = GetBaseUrl().toString();
+    _restManager.post(GetBaseUrl(),
                       request.ToJson().toUtf8(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "upload-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("UploadApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::CreateApplication(const ApplicationCreateRequest &request) {
-    _restManager.post(url,
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
                       request.ToJson().toUtf8(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "create-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   QMessageBox::information(nullptr, "Information", "Application uploaded!");
                                   emit LoadAllApplications();
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("CreateApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::GetApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest;
     jRequest["name"] = name;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "get-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   ApplicationGetResponse applicationResponse;
                                   applicationResponse.FromJson(jsonDoc.object());
                                   emit GetApplicationDetailsSignal(applicationResponse);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("GetApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::UpdateApplication(const Application &application) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest;
     jRequest["application"] = application.ToJsonObject();
-    const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
-                      requestDoc.toJson(),
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "update-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("UpdateApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::EnableApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -143,23 +157,26 @@ void ApplicationService::EnableApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "enable-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("EnableApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::DisableApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -169,23 +186,27 @@ void ApplicationService::DisableApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "disable-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("EnableApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::StartApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -194,23 +215,27 @@ void ApplicationService::StartApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "start-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("StartApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::StopApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -219,23 +244,27 @@ void ApplicationService::StopApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "stop-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("StartApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::RestartApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -244,40 +273,48 @@ void ApplicationService::RestartApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "restart-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("RestartApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::RestartAllApplications() {
-    _restManager.post(url,
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
                       nullptr,
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "restart-all-applications"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("RestartAllApplications", timer.elapsed());
                       });
 }
 
 void ApplicationService::RebuildApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jApplication;
     jApplication["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     jApplication["name"] = name;
@@ -286,60 +323,68 @@ void ApplicationService::RebuildApplication(const QString &name) {
     jRequest["application"] = jApplication;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "rebuild-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("RebuildApplication", timer.elapsed());
                       });
 }
 
 void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest;
     jRequest["version"] = version;
     jRequest["applicationName"] = applicationName;
     jRequest["applicationCode"] = applicationCode;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "upload-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("UploadApplicationCode", timer.elapsed());
                       });
 }
 
 void ApplicationService::ListApplicationNames() {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest;
     jRequest["prefix"] = "";
     jRequest["pageSize"] = -1;
     jRequest["pageIndex"] = -1;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "list-application-names"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isArray()) {
                                   QList<QString> applicationList;
@@ -348,31 +393,36 @@ void ApplicationService::ListApplicationNames() {
                                   }
                                   emit ListApplicationNamedSignal(applicationList);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("ListApplicationNames", timer.elapsed());
                       });
 }
 
 void ApplicationService::DeleteApplication(const QString &name) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest;
     jRequest["name"] = name;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "delete-application"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit LoadAllApplications();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("DeleteApplication", timer.elapsed());
                       });
 }

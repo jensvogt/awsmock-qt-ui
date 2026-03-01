@@ -7,6 +7,8 @@
 #include <utils/WordHIghLighter.h>
 #include <utils/IconUtils.h>
 
+#include "SQSMessageList.h"
+
 namespace Ui {
     class SQSMessageDetailsDialog;
 }

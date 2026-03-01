@@ -1,11 +1,11 @@
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 #include "ui_SQSQueueDetailsDialog.h"
-#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
-#include "utils/IconUtils.h"
 
 SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSQueueDetailsDialog), _queueArn(queueArn) {
 
     _ui->setupUi(this);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SQSQueueDetailsDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SQSQueueDetailsDialog::HandleReject);
 
     _sqsService = new SQSService();
 
@@ -57,7 +57,7 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
     connect(_ui->visibilityEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
 }
 
-void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_accepted() {
+void SQSQueueDetailsDialog::HandleAccept() {
     if (this->changed) {
         SQSQueueUpdateRequest updateQueueRequest;
         updateQueueRequest.queueArn = _queueArn;
@@ -69,8 +69,8 @@ void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_accepted() {
     accept();
 }
 
-void SQSQueueDetailsDialog::on_sqsQueueDetailsButtonBox_rejected() {
-    accept();
+void SQSQueueDetailsDialog::HandleReject() {
+    reject();
 }
 
 void SQSQueueDetailsDialog::SetupAttributesTab() const {
@@ -84,8 +84,7 @@ void SQSQueueDetailsDialog::SetupAttributesTab() const {
     });
 
     // Table
-    const QStringList headers = QStringList() << tr("Name")
-                                << tr("Value");
+    const QStringList headers = QStringList() = {tr("Name"), tr("Value")};
 
     _ui->attributesTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->attributesTable->setShowGrid(true);
@@ -100,7 +99,7 @@ void SQSQueueDetailsDialog::SetupAttributesTab() const {
 }
 
 void SQSQueueDetailsDialog::UpdateQueueAttributes(const SQSQueueAttributeListResponse &response) const {
-    _ui->attributesTable->setRowCount(0);
+    _ui->attributesTable->model()->removeRows(0, _ui->attributesTable->model()->rowCount());
     _ui->attributesTable->setSortingEnabled(false); // stop sorting
     for (auto r = 0, c = 0; r < response.queueAttributeCounters.count(); r++, c = 0) {
         _ui->attributesTable->insertRow(r);
@@ -152,45 +151,108 @@ void SQSQueueDetailsDialog::UpdateQueueLambdaTriggers(const SQSListQueueLambdaTr
     _ui->lambdaTable->sortItems(_lambdaTriggerSortColumn, _lambdaTriggerSortOrder);
 }
 
-void SQSQueueDetailsDialog::SetupDefaultAttributesTab() const {
+void SQSQueueDetailsDialog::SetupDefaultAttributesTab() {
+
+    connect(_sqsService, &SQSService::ReloadQueueDefaultAttributesSignal, this, [this]() {
+        _sqsService->ListQueueDefaultAttributes(_queueArn, "");
+    });
 
     // Add button
     _ui->addDefaultAttributeButton->setText(nullptr);
     _ui->addDefaultAttributeButton->setIcon(IconUtils::GetIcon("add"));
     _ui->addDefaultAttributeButton->setToolTip(tr("Add default attributes"));
     connect(_ui->addDefaultAttributeButton, &QPushButton::clicked, [this]() {
-        _sqsService->ListQueueDefaultAttributes(_queueArn, "");
+        if (SQSQueueDefaultAttributeDialog dialog; dialog.exec() == Accepted) {
+            const QString key = dialog.GetKey();
+            SQSMessageAttribute attribute;
+            attribute.name = key;
+            attribute.dataType = "String";
+            attribute.stringValue = dialog.GetValue();
+            _sqsService->AddQueueDefaultAttributes(_queueArn, key, attribute);
+        }
     });
+
+    _defaultAttributesModel = new QStandardItemModel();
+    _ui->defaultAttributeTable->setModel(_defaultAttributesModel);
 
     // Table
     const QStringList headers = QStringList() = {tr("Key"), tr("Data Type"), tr("Value")};
+    _defaultAttributesModel->setHorizontalHeaderLabels(headers);
 
-    _ui->defaultAttributeTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->defaultAttributeTable->setShowGrid(true);
     _ui->defaultAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
     _ui->defaultAttributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _ui->defaultAttributeTable->setHorizontalHeaderLabels(headers);
     _ui->defaultAttributeTable->setSortingEnabled(true);
     _ui->defaultAttributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
+    // Context menu
+    _ui->defaultAttributeTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->defaultAttributeTable, &QTableWidget::customContextMenuRequested, this, &SQSQueueDetailsDialog::ShowDefaultAttributeContextMenu);
+
+    // Context menu
+    _ui->defaultAttributeTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->defaultAttributeTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString key = _defaultAttributesModel->item(index.row(), 0)->text();
+        const QString dataType = _defaultAttributesModel->item(index.row(), 1)->text();
+        QString value = _defaultAttributesModel->item(index.row(), 2)->text();
+        if (SQSQueueDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
+            value = dialog.GetValue();
+            _sqsService->UpdateQueueDefaultAttributes(_queueArn, key, value, dataType);
+        }
+    });
+
+    // Get the default attribute list
     _sqsService->ListQueueDefaultAttributes(_queueArn, "");
 }
 
 void SQSQueueDetailsDialog::UpdateDefaultAttributes(const SQSListQueueDefaultAttributesResponse &response) const {
-    _ui->defaultAttributeTable->setRowCount(0);
+    _defaultAttributesModel->removeRows(0, _defaultAttributesModel->rowCount());
     _ui->defaultAttributeTable->setSortingEnabled(false); // stop sorting
     int r = 0;
     for (const auto &key: response.defaultAttributesCounters.keys()) {
-        _ui->defaultAttributeTable->insertRow(r);
         MessageAttribute defaultAttribute = response.defaultAttributesCounters[key];
-        SetColumn(_ui->defaultAttributeTable, r, 0, key);
-        SetColumn(_ui->defaultAttributeTable, r, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType).data());
-        SetColumn(_ui->defaultAttributeTable, r, 2, response.defaultAttributesCounters[key].stringValue);
+        SetColumn(_defaultAttributesModel, r, 0, key);
+        SetColumn(_defaultAttributesModel, r, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType).data());
+        SetColumn(_defaultAttributesModel, r, 2, response.defaultAttributesCounters[key].stringValue);
         r++;
     }
-    _ui->defaultAttributeTable->setRowCount(r);
     _ui->defaultAttributeTable->setSortingEnabled(true);
-    _ui->defaultAttributeTable->sortItems(_defaultAttributeSortColumn, _defaultAttributeSortOrder);
+    _defaultAttributesModel->sort(_defaultAttributeSortColumn, _defaultAttributeSortOrder);
+}
+
+void SQSQueueDetailsDialog::ShowDefaultAttributeContextMenu(const QPoint &pos) const {
+
+    const QModelIndex index = _ui->defaultAttributeTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    const int row = index.row();
+
+    QMenu menu;
+    menu.setToolTipsVisible(true);
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Default Attribute");
+    editAction->setToolTip("Edit the queue default attribute");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Default Attribute");
+    deleteAction->setToolTip("Delete the queue default attribute");
+
+    if (const QAction *selectedAction = menu.exec(_ui->defaultAttributeTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        const QString key = _defaultAttributesModel->item(row, 0)->text();
+        const QString dataType = _defaultAttributesModel->item(row, 1)->text();
+        QString value = _defaultAttributesModel->item(row, 2)->text();
+        if (SQSQueueDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
+            value = dialog.GetValue();
+            _sqsService->UpdateQueueDefaultAttributes(_queueArn, key, value, dataType);
+        }
+    } else if (selectedAction == deleteAction) {
+        const QString key = _defaultAttributesModel->item(row, 0)->text();
+        _sqsService->DeleteQueueDefaultAttributes(_queueArn, key);
+        _defaultAttributesModel->removeRow(row);
+    }
 }

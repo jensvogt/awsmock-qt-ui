@@ -1,16 +1,16 @@
 #include <utils/BasePage.h>
 
-BasePage::BasePage(QWidget *parent) : QWidget(parent), _autoUpdateTimer(nullptr) {
-    // Function key F5 refresh action
-    const auto refreshAction = new QAction(this);
-    refreshAction->setShortcut(QKeySequence(Qt::Key_F5));
-    refreshAction->setShortcutContext(Qt::ApplicationShortcut);
+BasePage::BasePage(QWidget *parent) : QWidget(parent) {
 
-    connect(refreshAction, &QAction::triggered, this, &BasePage::LoadContent);
+    // Function key F5 refresh action
+    _refreshAction = new QAction(this);
+    _refreshAction->setShortcut(QKeySequence(Qt::Key_F5));
+    _refreshAction->setShortcutContext(Qt::ApplicationShortcut);
+
+    connect(_refreshAction, &QAction::triggered, this, &BasePage::LoadContent);
 }
 
 void BasePage::StartAutoUpdate() {
-
     // Initial load
     LoadContent();
 
@@ -26,16 +26,12 @@ void BasePage::StartAutoUpdate() {
 
 void BasePage::StopAutoUpdate() const {
     // Stop the auto updater
-    if (_autoUpdateTimer) {
+    if (_autoUpdateTimer->isActive()) {
         _autoUpdateTimer->stop();
     }
+    _autoUpdateTimer->deleteLater();
 }
 
 QAction *BasePage::GetRefreshAction(QWidget *parent) const {
-    // Function key F5 refresh action
-    const auto refreshAction = new QAction(parent);
-    refreshAction->setShortcut(QKeySequence(Qt::Key_F5));
-    refreshAction->setShortcutContext(Qt::ApplicationShortcut);
-    connect(refreshAction, &QAction::triggered, this, &BasePage::LoadContent);
-    return refreshAction;
+    return _refreshAction;
 }

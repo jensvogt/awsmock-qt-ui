@@ -1,10 +1,13 @@
 #ifndef AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H
 #define AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H
 
-#include <modules/sqs/SQSService.h>
-#include <utils/BaseDialog.h>
+#include <QMenu>
 
-#include "dto/sqs/SQSListQueueDefaultAttribtesResponse.h"
+#include <utils/IconUtils.h>
+#include <utils/BaseDialog.h>
+#include <modules/sqs/SQSService.h>
+#include <modules/sqs/SQSQueueDefaultAttributeDialog.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 
 namespace Ui {
     class SQSQueueDetailsDialog;
@@ -21,11 +24,6 @@ public:
     void LoadContent() override {
     };
 
-private slots:
-    void on_sqsQueueDetailsButtonBox_accepted();
-
-    void on_sqsQueueDetailsButtonBox_rejected();
-
 private:
     /**
      * @brief Update SQS queue details
@@ -33,6 +31,10 @@ private:
      * @param response update queue details response DTO
      */
     void UpdateQueueDetails(const SQSGetQueueDetailsResponse &response);
+
+    void HandleAccept();
+
+    void HandleReject();
 
     /**
      * @brief Setup of the attributes tab
@@ -51,9 +53,11 @@ private:
     */
     void SetupLambdaTriggersTab() const;
 
-    void SetupDefaultAttributesTab() const;
+    void SetupDefaultAttributesTab();
 
     void UpdateDefaultAttributes(const SQSListQueueDefaultAttributesResponse &response) const;
+
+    void ShowDefaultAttributeContextMenu(const QPoint &pos) const;
 
     /**
      * @brief Update the lambda trigger tab
@@ -129,6 +133,8 @@ private:
      * @brief Tags sort order
      */
     Qt::SortOrder _tagsSortOrder = Qt::DescendingOrder;
+
+    QStandardItemModel *_defaultAttributesModel;
 };
 
 #endif // AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H

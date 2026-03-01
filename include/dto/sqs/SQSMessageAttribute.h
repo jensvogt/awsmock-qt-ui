@@ -23,7 +23,7 @@ struct MessageAttribute final {
     unsigned char *binaryValue = nullptr;
 
     /**
-     * Logical data type
+     * Logical data contentType
      */
     MessageAttributeDataType dataType{};
 

@@ -6,14 +6,20 @@
 #define AWSMOCK_QT_UI_S3_BUCKET_EDIT_DIALOG_H
 
 // Qt includes
+#include <QMenu>
 #include <QDialog>
+#include <QTableView>
 #include <QStandardItemModel>
 
 // AwsMock includes
-#include <modules/s3/S3Service.h>
-#include <modules/s3/S3ObjectMetadataDialog.h>
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
+#include <modules/s3/S3Service.h>
+#include <modules/s3/S3ObjectMetadataDialog.h>
+#include <modules/s3/S3BucketLifecycleDialog.h>
+#include <modules/s3/S3BucketMetadataDialog.h>
+#include <modules/s3/S3BucketLambdaNotificationDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -31,9 +37,21 @@ public:
 
     ~S3BucketEditDialog() override;
 
-    void UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse) const;
+    void UpdateBucket(const S3GetBucketDetailsResponse &bucketGetResponse);
 
     void SetupDefaultMetadataTab();
+
+    void ShowDefaultMetadataContextMenu(const QPoint &pos);
+
+    void SetupLambdaNotifications();
+
+    void SetupQueueNotifications();
+
+    void SetupTopicNotifications();
+
+    void SetupLifecycles();
+
+    void ShowLifecycleContextMenu(const QPoint &pos);
 
     void LoadContent() override {
     };
@@ -57,7 +75,7 @@ private:
     /**
      * @brief S3 bucket
      */
-    S3BucketCounter _bucket;
+    QString _bucket;
 
     /**
      * @brief Changed flag
@@ -65,9 +83,34 @@ private:
     bool _changed = false;
 
     /**
-     *  @brief Table data model
+     * @brief Get REST response
      */
-    QStandardItemModel *_dataModel{};
+    S3GetBucketDetailsResponse _bucketGetResponse;
+
+    /**
+     * @brief Default metadata table data model
+     */
+    QStandardItemModel *_defaultMetadataDataModel{};
+
+    /**
+     * @brief Lambda notification table model
+     */
+    QStandardItemModel *_lambdaNotificationDataModel{};
+
+    /**
+     * @brief Queue notification table model
+     */
+    QStandardItemModel *_queueNotificationDataModel{};
+
+    /**
+     * @brief Topic notification table model
+     */
+    QStandardItemModel *_topicNotificationDataModel{};
+
+    /**
+     * @brief Lifecycle rules
+     */
+    QStandardItemModel *_lifecycleDataModel{};
 };
 
 

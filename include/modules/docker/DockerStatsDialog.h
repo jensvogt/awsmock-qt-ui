@@ -5,16 +5,18 @@
 #ifndef AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
 #define AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
 
+// Qt includes
 #include <QMenu>
 #include <QDialog>
 #include <QList>
 
-#include <modules/docker/DockerService.h>
+// Awsmock includes
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/PrefixFilterModel.h>
+#include <modules/docker/DockerService.h>
 #include <modules/application/ApplicationEditDialog.h>
 #include <modules/application/ApplicationUploadCodeDialog.h>
-#include <utils/PrefixFilterModel.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -28,20 +30,53 @@ class DockerStatsDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor
+     *
+     * @param parent parent widget
+     */
     explicit DockerStatsDialog(QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~DockerStatsDialog() override;
 
+    /**
+     * @brief Handle OK button
+     */
     void HandleAccept();
 
+    /**
+     * @brief Handle CANCEL button
+     */
     void HandleReject();
 
+    /**
+     * @brief Returns the CPU value
+     *
+     * @param containerStats container statistics
+     * @return CPU percentage
+     */
     double GetCpuPercent(const ContainerStat &containerStats);
 
+    /**
+     * @brief Show the context menu
+     *
+     * @param pos table position
+     */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Load the container statistics
+     *
+     * @param dockerStatsResponse container statistics
+     */
     void LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse);
 
+    /**
+     * @brief Load content
+     */
     void LoadContent() override;
 
 private:
@@ -99,11 +134,6 @@ private:
      * @brief Data proxy model
      */
     PrefixFilterProxyModel *_proxyModel;
-
-    /**
-     * @brief Status bar connection
-     */
-    QMetaObject::Connection _statusConnection;
 };
 
 

@@ -30,6 +30,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="logsButton">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="refreshButton">
        <property name="text">
         <string>PushButton</string>
@@ -41,7 +48,11 @@
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="2,1,1">
      <item row="9" column="2">
-      <widget class="QLineEdit" name="statusEdit"/>
+      <widget class="QLineEdit" name="statusEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="nameLabel">
@@ -51,7 +62,11 @@
       </widget>
      </item>
      <item row="5" column="2">
-      <widget class="QLineEdit" name="avgExecutionEdit"/>
+      <widget class="QLineEdit" name="avgExecutionEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="roleLabel">
@@ -61,7 +76,11 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="versionEdit"/>
+      <widget class="QLineEdit" name="versionEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="2" column="2">
       <widget class="QLabel" name="invocationsLabel">
@@ -92,10 +111,18 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit"/>
+      <widget class="QLineEdit" name="regionEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="nameEdit"/>
+      <widget class="QLineEdit" name="nameEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="0" column="2">
       <widget class="QLabel" name="instancesLabel">
@@ -112,10 +139,18 @@
       </widget>
      </item>
      <item row="7" column="2">
-      <widget class="QLineEdit" name="zipFileEdit"/>
+      <widget class="QLineEdit" name="zipFileEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="runtimeEdit"/>
+      <widget class="QLineEdit" name="runtimeEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="handlerLabel">
@@ -146,7 +181,11 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="userEdit"/>
+      <widget class="QLineEdit" name="userEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="6" column="2">
       <widget class="QLabel" name="zipFileLabel">
@@ -156,7 +195,11 @@
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="QLineEdit" name="handlerEdit"/>
+      <widget class="QLineEdit" name="handlerEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="arnLabel">
@@ -166,13 +209,25 @@
       </widget>
      </item>
      <item row="9" column="0">
-      <widget class="QLineEdit" name="roleEdit"/>
+      <widget class="QLineEdit" name="roleEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLineEdit" name="arnEdit"/>
+      <widget class="QLineEdit" name="arnEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QLineEdit" name="instancesEdit"/>
+      <widget class="QLineEdit" name="instancesEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="8" column="1">
       <widget class="QLabel" name="concurrencyLabel">
@@ -182,13 +237,25 @@
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QLineEdit" name="concurrencyEdit"/>
+      <widget class="QLineEdit" name="concurrencyEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="3" column="2">
-      <widget class="QLineEdit" name="invocationsEdit"/>
+      <widget class="QLineEdit" name="invocationsEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QLineEdit" name="sizeEdit"/>
+      <widget class="QLineEdit" name="sizeEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

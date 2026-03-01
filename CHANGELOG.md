@@ -1,5 +1,574 @@
 # Changelog
 
+## [1.11.16](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.15...v1.11.16) (2026-02-22)
+
+
+### Bug Fixes
+
+* add search/replace component ([cc443ac](https://github.com/jensvogt/awsmock-qt-ui/commit/cc443aca88d753218e9853bdcbc4906c6fad0d38))
+
+## [1.11.15](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.14...v1.11.15) (2026-02-22)
+
+
+### Bug Fixes
+
+* add search/replace component ([3f3c7a5](https://github.com/jensvogt/awsmock-qt-ui/commit/3f3c7a58293a72f92429b95b6a8d57dbc62249bc))
+* application environment add dialog ([b90cc48](https://github.com/jensvogt/awsmock-qt-ui/commit/b90cc48b82dbb9e742c3facaeda7c7e48b472af3))
+* SSM table fix, docker stats fix ([d9ec1cb](https://github.com/jensvogt/awsmock-qt-ui/commit/d9ec1cbaaad67252ff51b6008a7e4dabb6542371))
+
+## [1.11.14](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.13...v1.11.14) (2026-02-19)
+
+
+### Bug Fixes
+
+* SSM table fix, docker stats fix ([ced2abe](https://github.com/jensvogt/awsmock-qt-ui/commit/ced2abe4c5b7dfef45fca1504c4625fcb5b63065))
+
+## [1.11.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.12...v1.11.13) (2026-02-19)
+
+
+### Bug Fixes
+
+* SSM table ([cacf3fa](https://github.com/jensvogt/awsmock-qt-ui/commit/cacf3fad2c256790dc0d533b596962d47cd71bdc))
+
+## [1.11.12](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.11...v1.11.12) (2026-02-19)
+
+
+### Bug Fixes
+
+* SQS queue default attributes ([2415289](https://github.com/jensvogt/awsmock-qt-ui/commit/241528970367900479f7f1e31a90e11de3249b2d))
+
+## [1.11.11](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.10...v1.11.11) (2026-02-19)
+
+
+### Bug Fixes
+
+* SQS queue default attributes ([5986c04](https://github.com/jensvogt/awsmock-qt-ui/commit/5986c040e65c5c6852abd8c91025b07911211906))
+
+## [1.11.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.9...v1.11.10) (2026-02-18)
+
+
+### Bug Fixes
+
+* windows port ([c54436b](https://github.com/jensvogt/awsmock-qt-ui/commit/c54436b7f5b4abed851adfdc16f108217bb759d2))
+* windows port ([829f3a0](https://github.com/jensvogt/awsmock-qt-ui/commit/829f3a0967708a05fa6887ca2265d7905b2331be))
+
+## [1.11.9](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.8...v1.11.9) (2026-02-17)
+
+
+### Bug Fixes
+
+* application environment add dialog ([b7c2530](https://github.com/jensvogt/awsmock-qt-ui/commit/b7c253050d87eb5721796fe6d3fdc8eaac86dd55))
+* application environment add dialog ([3de8182](https://github.com/jensvogt/awsmock-qt-ui/commit/3de81829a4e5abb417631f300d9822977ace35da))
+* windows port ([ca02be5](https://github.com/jensvogt/awsmock-qt-ui/commit/ca02be54f6497d3637a2999d07fba2a791cec16a))
+* windows port ([fedfe1d](https://github.com/jensvogt/awsmock-qt-ui/commit/fedfe1d28c6b031d9d1c7cd582f7fd0968e72bd3))
+
+## [1.11.8](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.7...v1.11.8) (2026-02-16)
+
+
+### Bug Fixes
+
+* application environment add dialog ([41cd693](https://github.com/jensvogt/awsmock-qt-ui/commit/41cd69367ad6a3ab35868530dc823a1ec1af28b3))
+* application environment add dialog ([35eecbc](https://github.com/jensvogt/awsmock-qt-ui/commit/35eecbc230773bad9803a06ac0fd9f45674e03be))
+
+## [1.11.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.6...v1.11.7) (2026-02-16)
+
+
+### Bug Fixes
+
+* fix S3 tables views ([0d56618](https://github.com/jensvogt/awsmock-qt-ui/commit/0d5661800def6406e6aace4ba25d51860aa20d9a))
+* fix SQS / SNS tables views ([aa945e6](https://github.com/jensvogt/awsmock-qt-ui/commit/aa945e6d11325af6256934fc7522fa02e0de5aea))
+
+## [1.11.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.5...v1.11.6) (2026-02-16)
+
+
+### Bug Fixes
+
+* fix SQS / SNS tables views ([715f7ba](https://github.com/jensvogt/awsmock-qt-ui/commit/715f7ba8602f535b8a4ed8d4597bc3fbf7b2deef))
+* fix SQS / SNS tables views ([503d40c](https://github.com/jensvogt/awsmock-qt-ui/commit/503d40ccc99091fea8b95df1a2e60b80440794b1))
+* windows port ([e1a08d6](https://github.com/jensvogt/awsmock-qt-ui/commit/e1a08d6fbe1ebc4cf279078222f31ee48f1ff3c9))
+* windows port ([67c69ec](https://github.com/jensvogt/awsmock-qt-ui/commit/67c69ecd53c76c0584b197e8703a682f9b274e22))
+
+## [1.11.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.4...v1.11.5) (2026-02-15)
+
+
+### Bug Fixes
+
+* fix S3 remote connection ([aee3492](https://github.com/jensvogt/awsmock-qt-ui/commit/aee349296a4267e87c46c567e912138eb1703385))
+
+## [1.11.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.3...v1.11.4) (2026-02-15)
+
+
+### Bug Fixes
+
+* fix S3 remote connection ([a641125](https://github.com/jensvogt/awsmock-qt-ui/commit/a641125e60580903602fca7046e8885f69d35a83))
+* fix SQS remote connection ([8a01c4e](https://github.com/jensvogt/awsmock-qt-ui/commit/8a01c4e7a073a556ebaa208077a80530abd59e4c))
+
+## [1.11.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.2...v1.11.3) (2026-02-15)
+
+
+### Bug Fixes
+
+* local FTP folder ([a368ad0](https://github.com/jensvogt/awsmock-qt-ui/commit/a368ad02ba0199162ba3e854aacfb00c9eafba7c))
+
+## [1.11.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.1...v1.11.2) (2026-02-15)
+
+
+### Bug Fixes
+
+* add paged lists ([d57e454](https://github.com/jensvogt/awsmock-qt-ui/commit/d57e454485b1d43a30b10b40559766c95798ea66))
+* SQS queue list ([50aea67](https://github.com/jensvogt/awsmock-qt-ui/commit/50aea675f9e91e48f32a8598e9a7a7bb35bc08f6))
+
+## [1.11.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.0...v1.11.1) (2026-02-15)
+
+
+### Bug Fixes
+
+* cognito included ([64f833c](https://github.com/jensvogt/awsmock-qt-ui/commit/64f833c78fd0359027c23c7f536b2f7ba95501be))
+
+## [1.11.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.29...v1.11.0) (2026-02-15)
+
+
+### Features
+
+* cognito included ([ffd6672](https://github.com/jensvogt/awsmock-qt-ui/commit/ffd66725c8db50848d8341a9958546ea5f68fbff))
+* cognito included ([d8ffdbe](https://github.com/jensvogt/awsmock-qt-ui/commit/d8ffdbed64e23c98088abf566203f0632664a6bb))
+
+
+### Bug Fixes
+
+* cognito included ([b83b3d1](https://github.com/jensvogt/awsmock-qt-ui/commit/b83b3d18cade449af14fceb0ad69ff67db957e7d))
+
+## [1.10.29](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.28...v1.10.29) (2026-02-14)
+
+
+### Bug Fixes
+
+* logging improvements ([30f6655](https://github.com/jensvogt/awsmock-qt-ui/commit/30f6655f20c7f95821c78cf5db430a7c0149af85))
+
+## [1.10.28](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.27...v1.10.28) (2026-02-13)
+
+
+### Bug Fixes
+
+* extra byte in FTP transfer ([04f9c50](https://github.com/jensvogt/awsmock-qt-ui/commit/04f9c5080437de706717c69feb9000da4e80db15))
+* extra byte in FTP transfer ([19ddecf](https://github.com/jensvogt/awsmock-qt-ui/commit/19ddecfb3821131f5a115e7819045e49a059ee38))
+
+## [1.10.27](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.26...v1.10.27) (2026-02-13)
+
+
+### Bug Fixes
+
+* extra byte in FTP transfer ([1f454d1](https://github.com/jensvogt/awsmock-qt-ui/commit/1f454d1251eb80bf3aced5ec168b5d15658817fc))
+* windows port ([b173216](https://github.com/jensvogt/awsmock-qt-ui/commit/b1732163898b3a983c8da856abd3b95847abe321))
+* windows port ([c4a52ce](https://github.com/jensvogt/awsmock-qt-ui/commit/c4a52ce74dc5b6972b4f1a0325911d759595dfa1))
+
+## [1.10.26](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.25...v1.10.26) (2026-02-13)
+
+
+### Bug Fixes
+
+* new log window ([ecf8c75](https://github.com/jensvogt/awsmock-qt-ui/commit/ecf8c75a80b38ce3ac65f1316f06e4450ee24df7))
+* SNS message list ([62099a6](https://github.com/jensvogt/awsmock-qt-ui/commit/62099a6c497ecca1d4cbefbf20db2483bb6353fe))
+* SNS message list ([a5de2a6](https://github.com/jensvogt/awsmock-qt-ui/commit/a5de2a6d8ed21994cf4bda84a20e0d820b4b8e01))
+
+## [1.10.25](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.24...v1.10.25) (2026-02-12)
+
+
+### Bug Fixes
+
+* SNS message list ([9fc6d88](https://github.com/jensvogt/awsmock-qt-ui/commit/9fc6d885edf55db53378681009e29d27c7e6c34a))
+
+## [1.10.24](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.23...v1.10.24) (2026-02-12)
+
+
+### Bug Fixes
+
+* fix FTP issues ([cd1412a](https://github.com/jensvogt/awsmock-qt-ui/commit/cd1412a2f69561bf6d0af8b4e0f0be2440e3b195))
+* fix FTP issues ([5db5921](https://github.com/jensvogt/awsmock-qt-ui/commit/5db592194bacf14e294b9b93245dc7c693632dfd))
+
+## [1.10.23](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.22...v1.10.23) (2026-02-11)
+
+
+### Bug Fixes
+
+* windows port ([a865733](https://github.com/jensvogt/awsmock-qt-ui/commit/a8657330695d5a803e75c0739d4ff1678495524b))
+
+## [1.10.22](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.21...v1.10.22) (2026-02-10)
+
+
+### Bug Fixes
+
+* windows port ([8f68e1b](https://github.com/jensvogt/awsmock-qt-ui/commit/8f68e1bc3b3c709674ca482076b6119ce0f2b823))
+
+## [1.10.21](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.20...v1.10.21) (2026-02-10)
+
+
+### Bug Fixes
+
+* windows port ([aa1f4a9](https://github.com/jensvogt/awsmock-qt-ui/commit/aa1f4a99b568493898379d6986bb2be8ee0dbd70))
+* windows port ([2ad97eb](https://github.com/jensvogt/awsmock-qt-ui/commit/2ad97eb4d999fca240a9a54dd3177085b58a6c7a))
+
+## [1.10.20](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.19...v1.10.20) (2026-02-10)
+
+
+### Bug Fixes
+
+* fix drop event, add FTP delete ([c65a914](https://github.com/jensvogt/awsmock-qt-ui/commit/c65a9143a2ff202443bd21ca09fda93715a2e635))
+* fix drop event, add FTP delete ([4731f5e](https://github.com/jensvogt/awsmock-qt-ui/commit/4731f5ebfc9872ba78a269cf51c7c967081a6ad7))
+
+## [1.10.19](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.18...v1.10.19) (2026-02-10)
+
+
+### Bug Fixes
+
+* add websocket URL to config ([c4b6eb3](https://github.com/jensvogt/awsmock-qt-ui/commit/c4b6eb3562ffc6d96f9705add21f8272da6f83e6))
+* add websocket URL to config ([d49d0a1](https://github.com/jensvogt/awsmock-qt-ui/commit/d49d0a199c04bf34754ab60eff17cc7a531052f9))
+* new linux installer ([2bc6ac5](https://github.com/jensvogt/awsmock-qt-ui/commit/2bc6ac5d7e1f5097f435e663795fdde5a92659d6))
+* remove curl ([d3cb024](https://github.com/jensvogt/awsmock-qt-ui/commit/d3cb0240364ea8f1f05af376d7123ead963b07a7))
+
+## [1.10.18](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.17...v1.10.18) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([d1ca541](https://github.com/jensvogt/awsmock-qt-ui/commit/d1ca5418e7b8963cf90646cd111ce8be6fd4d385))
+
+## [1.10.17](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.16...v1.10.17) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([366bd36](https://github.com/jensvogt/awsmock-qt-ui/commit/366bd366ec18f2681681861823cfdc92227bc774))
+
+## [1.10.16](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.15...v1.10.16) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([3856642](https://github.com/jensvogt/awsmock-qt-ui/commit/38566428a520f2ba10e08edf4c5ae0f1c03372b3))
+
+## [1.10.15](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.14...v1.10.15) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([00082d9](https://github.com/jensvogt/awsmock-qt-ui/commit/00082d96c8a15e672af5a5ee5f8d2306d0bbbf38))
+
+## [1.10.14](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.13...v1.10.14) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([04af671](https://github.com/jensvogt/awsmock-qt-ui/commit/04af671ddc531976845f8fd248a439bf24021b69))
+
+## [1.10.13](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.12...v1.10.13) (2026-02-08)
+
+
+### Bug Fixes
+
+* new linux installer ([84fb3e6](https://github.com/jensvogt/awsmock-qt-ui/commit/84fb3e6f7349f4002ae729b058fcbc0d4b149ba0))
+* new linux installer ([ded02b2](https://github.com/jensvogt/awsmock-qt-ui/commit/ded02b23a8a8f7ff893a0081dbf4904143c9be42))
+* new linux installer ([967e4f9](https://github.com/jensvogt/awsmock-qt-ui/commit/967e4f96269e7f481b98c6ec9a9012cb75a06622))
+* new linux installer ([341c48e](https://github.com/jensvogt/awsmock-qt-ui/commit/341c48eb0537eaffc0f0cd7bf31ed55be797b1b3))
+* new linux installer ([f560b02](https://github.com/jensvogt/awsmock-qt-ui/commit/f560b02396655d47d04a292e6fae77488c7a7ced))
+* new linux installer ([fb26086](https://github.com/jensvogt/awsmock-qt-ui/commit/fb2608670965743a33e387d8ced9d041f59ad203))
+* new linux installer ([d2efd35](https://github.com/jensvogt/awsmock-qt-ui/commit/d2efd3528e50a2f152fa98fd1f933dcd98a373fd))
+* new linux installer ([f4c011a](https://github.com/jensvogt/awsmock-qt-ui/commit/f4c011a20333958218091cea3078170127a9492c))
+* new linux installer ([33f7735](https://github.com/jensvogt/awsmock-qt-ui/commit/33f7735f8420e5eb541e0b01593d91f5c36eeb72))
+* new linux installer ([ed80bbf](https://github.com/jensvogt/awsmock-qt-ui/commit/ed80bbf65eedb78dc92a346a1e92cf78f098bb2c))
+* new linux installer ([1a5b69d](https://github.com/jensvogt/awsmock-qt-ui/commit/1a5b69db982dcd143f7d45baa338041414bc2baf))
+* new linux installer ([859b770](https://github.com/jensvogt/awsmock-qt-ui/commit/859b7704b7e200eaa51f9bd4665d65a69fbc475b))
+* new linux installer ([9873f60](https://github.com/jensvogt/awsmock-qt-ui/commit/9873f60050577a3bb364927b57fd1c457f4aa188))
+* new linux installer ([1861941](https://github.com/jensvogt/awsmock-qt-ui/commit/186194182da3095cbf19f2702b0926c0452c5f04))
+* new linux installer ([c7c5764](https://github.com/jensvogt/awsmock-qt-ui/commit/c7c57645b2c5e2c1812573ddd68ca722efa6f668))
+* new linux installer ([02f1723](https://github.com/jensvogt/awsmock-qt-ui/commit/02f1723066a1ed9819cec38fb5204ace20d38841))
+* new linux installer ([aac6c1e](https://github.com/jensvogt/awsmock-qt-ui/commit/aac6c1e1f634d20b322869f63e4dd5ac972639c9))
+* new linux installer ([095af8d](https://github.com/jensvogt/awsmock-qt-ui/commit/095af8de635ebaebdf2e18c9cc5e26a29105a8a9))
+* new linux installer ([7f5fd77](https://github.com/jensvogt/awsmock-qt-ui/commit/7f5fd7779f979caf175f099be0805bc37530c246))
+* new linux installer ([590f4bd](https://github.com/jensvogt/awsmock-qt-ui/commit/590f4bde842163a1655c52fc42121c18188c7e54))
+
+## [1.10.12](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.11...v1.10.12) (2026-02-08)
+
+
+### Bug Fixes
+
+* position of dialogs ([9bb3c56](https://github.com/jensvogt/awsmock-qt-ui/commit/9bb3c5687bf21c28b04c32245b4ee65c8bf08e43))
+
+## [1.10.11](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.10...v1.10.11) (2026-02-08)
+
+
+### Bug Fixes
+
+* add versioning ([3eccf02](https://github.com/jensvogt/awsmock-qt-ui/commit/3eccf02528b845465a8efd847d45b36170161db0))
+
+## [1.10.10](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.9...v1.10.10) (2026-02-08)
+
+
+### Bug Fixes
+
+* add versioning ([05f7cc7](https://github.com/jensvogt/awsmock-qt-ui/commit/05f7cc7fbb8f73ff9ac100294a02da31ac4513cf))
+
+## [1.10.9](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.8...v1.10.9) (2026-02-08)
+
+
+### Bug Fixes
+
+* add versioning ([806fd67](https://github.com/jensvogt/awsmock-qt-ui/commit/806fd67b5a209948a989a5eda1fd42dcac9f2594))
+
+## [1.10.8](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.7...v1.10.8) (2026-02-08)
+
+
+### Bug Fixes
+
+* add versioning ([b747363](https://github.com/jensvogt/awsmock-qt-ui/commit/b7473633c82fbfaa05b144c71fea0bb0dd6366ec))
+* add versioning ([eef7cb2](https://github.com/jensvogt/awsmock-qt-ui/commit/eef7cb27d8f3df35a56ef1a6bee984fc1128bed7))
+
+## [1.10.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.6...v1.10.7) (2026-02-07)
+
+
+### Bug Fixes
+
+* add SNS message add dialog, lambda kill/start/stop service calls ([2534b3a](https://github.com/jensvogt/awsmock-qt-ui/commit/2534b3a89d14dcb033f6b0c64be874f1a882b73d))
+* add SNS message add dialog, lambda kill/start/stop service calls ([f5cd709](https://github.com/jensvogt/awsmock-qt-ui/commit/f5cd7092db7ac4617b29221f99a32aace2244d84))
+* bug in logging ([f147c56](https://github.com/jensvogt/awsmock-qt-ui/commit/f147c56983056bc8c32f146c83b297659314197a))
+* bug in logging ([1e6f58d](https://github.com/jensvogt/awsmock-qt-ui/commit/1e6f58d0432e755d371cdf7da5f6b26295c444e8))
+
+## [1.10.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.5...v1.10.6) (2026-02-07)
+
+
+### Bug Fixes
+
+* add local logging ([325b199](https://github.com/jensvogt/awsmock-qt-ui/commit/325b199d5e1c237e0dbbcc59433a31d33a7d803e))
+
+## [1.10.5](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.4...v1.10.5) (2026-02-07)
+
+
+### Bug Fixes
+
+* add some KMS key update/edit stuff ([8321bec](https://github.com/jensvogt/awsmock-qt-ui/commit/8321bec5c6495752ddfcdd6346ef6e1fc087a464))
+* add some KMS key update/edit stuff ([6501ef7](https://github.com/jensvogt/awsmock-qt-ui/commit/6501ef7fdc793c95b4dca334b67846a0168ca3fb))
+
+## [1.10.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.3...v1.10.4) (2026-02-06)
+
+
+### Bug Fixes
+
+* some KMS list issues ([96d8440](https://github.com/jensvogt/awsmock-qt-ui/commit/96d84403299233761e588616f82b624cbe1b0397))
+
+## [1.10.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.2...v1.10.3) (2026-02-06)
+
+
+### Bug Fixes
+
+* configuration default file name ([b930d7d](https://github.com/jensvogt/awsmock-qt-ui/commit/b930d7d6cc5f88173eb7bda8d0aff3235990daf3))
+
+## [1.10.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.10.1...v1.10.2) (2026-02-06)
+
+
+### Bug Fixes
+
+* configuration default file name ([47f64e5](https://github.com/jensvogt/awsmock-qt-ui/commit/47f64e5175678558f3c5d598cd02dab50338158c))
+
+## [1.10.1](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.10.0...v1.10.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* add Qt6 websockets ([9e07745](https://github.com/jensvogt/awsmock-qt-ui/commit/9e07745f7409e203a2e776dce8e478e4e5322599))
+
+## [1.10.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.10...v1.10.0) (2026-02-06)
+
+
+### Features
+
+* add logging panel ([0f040cb](https://github.com/jensvogt/awsmock-qt-ui/commit/0f040cb6a8a6a603b1290091733a87bf4bf61023))
+
+## [1.9.10](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.9...v1.9.10) (2026-02-04)
+
+
+### Bug Fixes
+
+* application environment tab ([cc89f17](https://github.com/jensvogt/awsmock-qt-ui/commit/cc89f17a9eaba5809a4350c78052c5a7b0ea36ae))
+* application environment tab ([c14bf44](https://github.com/jensvogt/awsmock-qt-ui/commit/c14bf4408347769049fd36883cb9a126ac28a0d8))
+
+## [1.9.9](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.8...v1.9.9) (2026-02-04)
+
+
+### Bug Fixes
+
+* application environment tab ([3ea3612](https://github.com/jensvogt/awsmock-qt-ui/commit/3ea3612eb9ba21c22c0a2263bfa7e8ad4a830f01))
+
+## [1.9.8](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.7...v1.9.8) (2026-02-04)
+
+
+### Bug Fixes
+
+* import of infrastructure ([27b682d](https://github.com/jensvogt/awsmock-qt-ui/commit/27b682de9f9add47b0c9555b923e1562b5647547))
+
+## [1.9.7](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.6...v1.9.7) (2026-02-03)
+
+
+### Bug Fixes
+
+* add/edit parameter tag ([42ede53](https://github.com/jensvogt/awsmock-qt-ui/commit/42ede535bae0fe23dfa28e78d86bdb92b89b65ca))
+
+## [1.9.6](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.5...v1.9.6) (2026-02-03)
+
+
+### Bug Fixes
+
+* image support for S3 objects ([d38481d](https://github.com/jensvogt/awsmock-qt-ui/commit/d38481de08983f154b756c4cb715adab3573910d))
+* image support for S3 objects ([a93792d](https://github.com/jensvogt/awsmock-qt-ui/commit/a93792da448cf833264fe96d7a71227f40a7d6f8))
+
+## [1.9.5](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.9.4...v1.9.5) (2026-02-03)
+
+
+### Bug Fixes
+
+* infrastructure dialog ([6ff0dd5](https://github.com/jensvogt/awsmock-qt-ui/commit/6ff0dd573e7b3de85086d422e1e0e48181c5a662))
+
+## [1.9.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.3...v1.9.4) (2026-02-03)
+
+
+### Bug Fixes
+
+* infrastructure dialog ([b61e0ba](https://github.com/jensvogt/awsmock-qt-ui/commit/b61e0ba9e0b1119541804136c434839a5e83eeb6))
+
+## [1.9.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.2...v1.9.3) (2026-02-03)
+
+
+### Bug Fixes
+
+* add SSM tags ([6401595](https://github.com/jensvogt/awsmock-qt-ui/commit/6401595c4c79938303ffa92ac92db0ad34b67689))
+
+## [1.9.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.1...v1.9.2) (2026-02-03)
+
+
+### Bug Fixes
+
+* kms import/export ([957fc18](https://github.com/jensvogt/awsmock-qt-ui/commit/957fc186d69f7a9d370fe926ade4beee0a9a2f7d))
+* kms import/export ([606d96b](https://github.com/jensvogt/awsmock-qt-ui/commit/606d96b80f37e2e44bd0677b718ff34107b649ad))
+
+## [1.9.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.9.0...v1.9.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* fix resend SQS message ([02b5cfc](https://github.com/jensvogt/awsmock-qt-ui/commit/02b5cfc50c1bb6909ed308d478ca356fc287eadb))
+* public/private port for lambdas ([037ab64](https://github.com/jensvogt/awsmock-qt-ui/commit/037ab64431d8291f57e9ab58979b9ee490479316))
+
+## [1.9.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.4...v1.9.0) (2026-01-12)
+
+
+### Features
+
+* Add S3 lifecycles ([15e9719](https://github.com/jensvogt/awsmock-qt-ui/commit/15e971952c8d76aef4cb8fe681ee1705d950e5df))
+
+## [1.8.4](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.3...v1.8.4) (2026-01-07)
+
+
+### Bug Fixes
+
+* Add bucket betadata edit/add ([72ff4f8](https://github.com/jensvogt/awsmock-qt-ui/commit/72ff4f8d37c23fadd3b849c882c24ec2139148b1))
+* Add object metadata edit/add ([8420f60](https://github.com/jensvogt/awsmock-qt-ui/commit/8420f603e3b8d047a6534cdfabfec5b76860e4d9))
+
+## [1.8.3](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.2...v1.8.3) (2026-01-06)
+
+
+### Bug Fixes
+
+* S3 bucket owner ([2db51f2](https://github.com/jensvogt/awsmock-qt-ui/commit/2db51f2bc5aa9f8f5b00690d7f6bfdb366d20720))
+
+## [1.8.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.1...v1.8.2) (2026-01-06)
+
+
+### Bug Fixes
+
+* S3 notification tabs ([6dd506f](https://github.com/jensvogt/awsmock-qt-ui/commit/6dd506f5b4d518af82d7fbc33161d1363b99e9e9))
+* S3 notification tabs ([9bf64cc](https://github.com/jensvogt/awsmock-qt-ui/commit/9bf64cc44c8595f06d62255769a919931c49581f))
+
+## [1.8.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.8.0...v1.8.1) (2025-12-22)
+
+
+### Bug Fixes
+
+* fix bug in preferences, FTP protocol added, application log limit added ([d685c31](https://github.com/jensvogt/awsmock-qt-ui/commit/d685c31098b3a530f9eb6e2f7b08d8dee355cb85))
+* fix bug in preferences, FTP protocol added, application log limit added ([a2f44e8](https://github.com/jensvogt/awsmock-qt-ui/commit/a2f44e80206b556a22eb97ebca1fbb1c8c7ee535))
+
+## [1.8.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.7.0...v1.8.0) (2025-12-22)
+
+
+### Features
+
+* add dynamodb items list ([9abeabd](https://github.com/jensvogt/awsmock-qt-ui/commit/9abeabdb76cad7c43cc5876f60471867b67b8b5d))
+* add dynamodb items list ([b0fd9e5](https://github.com/jensvogt/awsmock-qt-ui/commit/b0fd9e51ee855b6a9b1266c9af54c9a38768c99e))
+
+## [1.7.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.2...v1.7.0) (2025-12-21)
+
+
+### Features
+
+* add dynamodb tables add/delete/list tables ([608a33a](https://github.com/jensvogt/awsmock-qt-ui/commit/608a33a7e93071a2ebf7fb723ed39f8277152a58))
+
+## [1.6.2](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.1...v1.6.2) (2025-12-20)
+
+
+### Bug Fixes
+
+* bug in remote connection of dashboard ([55f4d51](https://github.com/jensvogt/awsmock-qt-ui/commit/55f4d515b3924c3323faa5c4f6eaaf28db97105f))
+* bug in remote connection of dashboard ([5bbd836](https://github.com/jensvogt/awsmock-qt-ui/commit/5bbd83606960dfcb40b241174d318b88e58e0928))
+
+## [1.6.1](https://github.com/jensvogt/awsmock-qt-ui/compare/1.6.0...v1.6.1) (2025-12-20)
+
+
+### Bug Fixes
+
+* bug in datetime localization ([539262e](https://github.com/jensvogt/awsmock-qt-ui/commit/539262e476438eb1b547facddf0b9b0a3234f16a))
+
+## [1.6.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.5.0...v1.6.0) (2025-12-20)
+
+
+### Features
+
+* add SNS tabs (attributes, tags, subscriptions) ([ff25fd2](https://github.com/jensvogt/awsmock-qt-ui/commit/ff25fd21aa64f54a6518dd0b1ade8095da1b6073))
+
+## [1.5.0](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.88...v1.5.0) (2025-12-20)
+
+
+### Features
+
+* include SSM add dialog ([ab8c295](https://github.com/jensvogt/awsmock-qt-ui/commit/ab8c295b24a5317581b2054563b072db2602cf12))
+
+## [1.4.88](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.87...v1.4.88) (2025-12-19)
+
+
+### Bug Fixes
+
+* add SSM parameter list ([de36009](https://github.com/jensvogt/awsmock-qt-ui/commit/de36009ba45ffa16e37842dff6b0f463948d448a))
+* add SSM parameter list ([3538ed4](https://github.com/jensvogt/awsmock-qt-ui/commit/3538ed44f34aaa13580479bf9fb18cd1d10e20e9))
+
+## [1.4.87](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.86...v1.4.87) (2025-12-18)
+
+
+### Bug Fixes
+
+* fix some issues concerning dynamodb queries ([2fc766a](https://github.com/jensvogt/awsmock-qt-ui/commit/2fc766ab4db0ce2a510d9597d3ed3663e6104a42))
+
+## [1.4.86](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.4.85...v1.4.86) (2025-12-17)
+
+
+### Bug Fixes
+
+* add lambda result delete/refresh ([81245c7](https://github.com/jensvogt/awsmock-qt-ui/commit/81245c7ec1027e2ac2fb2800d94c6cae1e45ed73))
+
+## [1.4.85](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.84...v1.4.85) (2025-12-17)
+
+
+### Bug Fixes
+
+* add lambda result delete/refresh ([dd60ee7](https://github.com/jensvogt/awsmock-qt-ui/commit/dd60ee7bf55bcc744312ee293220435aefe108cb))
+* add secrets version list ([8bfe9d4](https://github.com/jensvogt/awsmock-qt-ui/commit/8bfe9d479af463190477a76cc448ebd50e1ec694))
+
 ## [1.4.84](https://github.com/jensvogt/awsmock-qt-ui/compare/1.4.83...v1.4.84) (2025-12-16)
 
 

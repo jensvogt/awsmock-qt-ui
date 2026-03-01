@@ -1,7 +1,6 @@
 #include <modules/dashboard/DashboardService.h>
 
 DashboardService::DashboardService() {
-    _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
 
     // Create RestManager in its own thread
     _restManager = new RestManager();
@@ -19,6 +18,7 @@ DashboardService::~DashboardService() {
 void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
     QElapsedTimer timer;
     timer.start();
+
     const QJsonObject jRequest{
         {"region", config.region},
         {"name", config.name},
@@ -37,7 +37,7 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
         [this, config, json = requestDoc.toJson(), timer]() {
             _restManager = new RestManager();
             _restManager->post(
-                _url,
+                GetBaseUrl(),
                 json,
                 {
                     {"x-awsmock-target", "monitoring"},
@@ -45,28 +45,19 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                     {"content-type", "application/json"}
                 },
                 [this, config, timer](const bool success, const QByteArray &response, const int status, const QString &error) {
-                    if (!success) {
-                        qDebug() << "Status:" << status
-                                << "Config:" << config.name << "/" << config.series
-                                << "Error:" << error;
-                        return;
+                    if (success) {
+                        if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                            DashboardCounter counter;
+                            counter.FromJson(jsonDoc.object());
+                            counter.chartConfig = config;
+                            logTrace << "GetMultiSeriesCounter succeeded, status: " << status << "response: " << response;
+                            emit ReloadMonitoringSignal(counter);
+                        } else {
+                            logWarning << "Response is not an object!";
+                        }
                     }
-
-                    Configuration::instance().SetConnectionState(true);
-
-                    const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-                    if (!jsonDoc.isObject())
-                        return;
-
-                    DashboardCounter counter;
-                    counter.FromJson(jsonDoc.object());
-                    counter.chartConfig = config;
-
                     emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
-                    emit ReloadMonitoringSignal(counter);
                 }
             );
-        },
-        Qt::QueuedConnection
-    );
+        }, Qt::QueuedConnection);
 }

@@ -22,7 +22,7 @@ struct ContainerStat {
     QString name;
 
     /**
-     * OS type
+     * OS contentType
      */
     QString osType;
 

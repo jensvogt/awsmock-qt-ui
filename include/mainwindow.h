@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef AWSMOCK_QT_UI_MAIN_WINDOW_H
+#define AWSMOCK_QT_UI_MAIN_WINDOW_H
 
 #include <utility>
 
@@ -23,14 +23,18 @@
 #include <QImageReader>
 
 #include <Version.h>
+#include <MainWidget.h>
+#include <MainRouter.h>
 #include <utils/About.h>
 #include <utils/EditConfigDialog.h>
 #include <utils/EventBus.h>
 #include <utils/BasePage.h>
 #include <utils/ScopedTimer.h>
+#include <utils/UpdateChecker.h>
+#include <modules/module/ShowInfrastructure.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/dashboard/Dashboard.h>
-#include <modules/ftp/FTPUploadDialog.h>
+#include <modules/ftpclient/FTPClientDialog.h>
 #include <modules/s3/S3BucketList.h>
 #include <modules/s3/S3ObjectList.h>
 #include <modules/sns/SNSTopicList.h>
@@ -38,9 +42,13 @@
 #include <modules/sqs/SQSQueueList.h>
 #include <modules/sqs/SQSMessageList.h>
 #include <modules/lambda/LambdaList.h>
-#include <modules/infrastructure/InfrastructureService.h>
+#include <modules/module/ModuleService.h>
 #include <modules/docker/DockerStatsDialog.h>
+#include <modules/ssm/SSMParameterList.h>
 #include <modules/secretsmanager/SecretList.h>
+#include <modules/dynamodb/DynamoDbTableList.h>
+#include <modules/dynamodb/DynamoDbItemList.h>
+#include <modules/module/ModuleExportDialog.h>
 
 #define PAGE_DASHBOARD 0
 #define PAGE_SQS 1
@@ -50,6 +58,7 @@
 #define PAGE_LAMBDA 5
 #define PAGE_SECRETS_MANAGER 6
 #define PAGE_SSM 7
+#define PAGE_DYNAMODB 8
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT
@@ -59,66 +68,52 @@ public:
 
     ~MainWindow() override;
 
-private slots:
-    void NavigationSelectionChanged(int currentRow);
+    void StartServerPing();
 
+    void StartUpdateChecker();
+
+private slots:
     void UpdateStatusBar(const QString &text) const;
 
 private:
-    // Setup menu bar
+    /**
+     * Setup menu bar
+     */
     void SetupMenuBar();
+
+    void SetupToolBar();
 
     void ImportInfrastructure() const;
 
-    static void ImportInfrastructureResponse();
-
-    void ExportInfrastructure() const;
-
-    static void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
+    void ExportInfrastructure();
 
     void CleanInfrastructure() const;
-
-    static void CleanInfrastructureResponse();
 
     void FtpUpload();
 
     void DockerStats();
 
-    static void EditPreferences();
+    static void ImportInfrastructureResponse();
 
-    BasePage *CreatePage(int currentRow);
+    static void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
+
+    static void CleanInfrastructureResponse();
+
+    static void ShowInfrastructureDialog();
+
+    static void EditPreferences();
 
     static void Exit();
 
     /**
      * @brief Main menu bar
      */
-    QMenuBar *mainMenuBar{};
-
-    /**
-     * @brief Navigation pane
-     */
-    QListWidget *m_navPane;
-
-    /**
-     * @brief Content pane
-     */
-    QStackedWidget *m_contentPane;
-
-    /**
-     * @brief List of loaded pages
-     */
-    QMap<int, BasePage *> loadedPages;
-
-    /**
-     * @brief Current widget shown in the content pane
-     */
-    int currentWidgetIndex = 0;
+    QMenuBar *_mainMenuBar{};
 
     /**
      * @brief Infrastructure service
      */
-    InfraStructureService *_infraStructureService{};
+    ModuleService *_moduleService{};
 
     /**
      * @brief Status bar
@@ -139,5 +134,40 @@ private:
      * @brief Server label in status bar
      */
     QLabel *_timerLabel{};
+
+    /**
+     * @brief Ping thread
+     */
+    QThread *_pingThread{};
+
+    /**
+     * @brief Ping server timer
+     */
+    QTimer *_pingTimer{};
+
+    /**
+     * @brief Updater thread
+     */
+    QThread *_updaterThread{};
+
+    /**
+     * @brief Updater timer
+     */
+    QTimer *_updaterTimer{};
+
+    /**
+     * @brief Update checker
+     */
+    UpdateChecker *_updateChecker{};
+
+    /**
+     * @brief FTP client dialog
+     */
+    FTPClientDialog *_ftpClientDialog{};
+
+    /**
+     * @brief Docker statistics dialog
+     */
+    DockerStatsDialog *_dockerStatsDialog{};
 };
-#endif // MAINWINDOW_H
+#endif // AWSMOCK_QT_UI_MAIN_WINDOW_H

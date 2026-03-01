@@ -1,6 +1,7 @@
-#ifndef SQS_QUEUE_LIST_H
-#define SQS_QUEUE_LIST_H
+#ifndef AWSMOCK_QT_UI_SQS_QUEUE_LIST_H
+#define AWSMOCK_QT_UI_SQS_QUEUE_LIST_H
 
+// Qt includes
 #include <QLabel>
 #include <QMenu>
 #include <QVBoxLayout>
@@ -19,10 +20,15 @@
 #include <QTreeWidget>
 #include <QTimer>
 
+// Awsmock include
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
+#include <utils/EventBus.h>
+#include <dto/sqs/SQSListQueueResponse.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
-#include <dto/sqs/SQSListQueueResponse.h>
+
+#include "components/PageableTable.h"
 
 /**
  * @brief Helper widget for the content area.
@@ -51,14 +57,21 @@ public:
     void LoadContent() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    };
+
+    /**
      * @brief Load page content
      *
      * @param queueListResponse queue counter list
      */
-    void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse);
+    void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const;
 
 signals:
-    void ShowMessages(const QString &QueueArn, const QString &QueueUrl);
+    void ShowMessages(const QString &QueueArn, const QString &QueueUrl, bool isDql);
 
 private slots:
     void ShowContextMenu(const QPoint &pos) const;
@@ -67,12 +80,7 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Prefix suche
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
@@ -101,4 +109,4 @@ private:
      */
     QPushButton *prefixClear;
 };
-#endif // SQS_QUEUE_LIST_H
+#endif // AWSMOCK_QT_UI_SQS_QUEUE_LIST_H

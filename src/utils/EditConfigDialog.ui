@@ -14,7 +14,7 @@
    <string>Edit Configuration</string>
   </property>
   <property name="sizeGripEnabled">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="serverTab">
       <attribute name="title">
@@ -49,6 +49,16 @@
            </item>
            <item row="0" column="1">
             <widget class="QComboBox" name="baseUrlComboBox"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="loggingLabel">
+             <property name="text">
+              <string>Logging URL:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="websocketUrlCombo"/>
            </item>
           </layout>
          </item>
@@ -83,16 +93,42 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="1,1">
+          <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0" columnstretch="1,1">
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="ftpPortEdit"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="ftpProtocolabel">
+             <property name="text">
+              <string>FTP Protocol:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="ftpServerEdit"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QComboBox" name="ftpProtocolCombo"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ftpUserEdit"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="ftpPortLabel">
+             <property name="text">
+              <string>FTP Port:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="ftpPasswordEdit"/>
+           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="ftpUserLabel">
              <property name="text">
               <string>FTP User:</string>
              </property>
             </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="ftpPasswordEdit"/>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="ftpPasswordLabel">
@@ -108,21 +144,26 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="ftpServerEdit"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="ftpUserEdit"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="ftpPortLabel">
+           <item row="5" column="0">
+            <widget class="QLabel" name="ftpStartFolderLabel">
              <property name="text">
-              <string>FTP Port:</string>
+              <string>Local Start Folder:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="ftpPortEdit"/>
+           <item row="5" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLineEdit" name="ftpStartFolderEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ftpStartFolderBrowseButton">
+               <property name="text">
+                <string>Browsse</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -228,9 +269,26 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="1">
-            <widget class="QComboBox" name="styleCombo"/>
+          <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,1">
+           <item row="4" column="0">
+            <widget class="QLabel" name="applicationLogLimitLabel">
+             <property name="text">
+              <string>Application Log Limit:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="localeCombo"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="applicationLogLimitEdit"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="localeLabel">
+             <property name="text">
+              <string>Locale:</string>
+             </property>
+            </widget>
            </item>
            <item row="0" column="0">
             <widget class="QLabel" name="styleLabel">
@@ -238,6 +296,9 @@
               <string>Style:</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="styleCombo"/>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="styleTypeLabel">
@@ -248,6 +309,16 @@
            </item>
            <item row="1" column="1">
             <widget class="QComboBox" name="styleTypeCombo"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="fontSizeLabel">
+             <property name="text">
+              <string>Font Size:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QComboBox" name="fontSizeCombo"/>
            </item>
           </layout>
          </item>

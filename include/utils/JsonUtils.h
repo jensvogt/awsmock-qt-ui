@@ -18,7 +18,7 @@ public:
         // Convert to compact string
         const QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
 
-        qDebug() << jsonString;
+        qDebug().noquote() << jsonString;
     }
 
     static void WriteJsonString(const QJsonArray &array) {
@@ -29,6 +29,14 @@ public:
         const QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
 
         qDebug() << jsonString;
+    }
+
+    static QString WriteJsonToString(const QJsonObject &object) {
+        // Convert to JSON document
+        const QJsonDocument doc(object);
+
+        // Convert to compact string
+        return QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
     }
 
     /**
@@ -171,6 +179,20 @@ public:
     // Public interface
     static void setByPath(QJsonObject &obj, const QString &path, const QJsonValue &value) {
         setByPath(obj, splitPath(path), value);
+    }
+
+    static QString PrettyPrint(const QString &rawJson) {
+        QJsonParseError error;
+
+        // Parse the raw string into a QJsonDocument
+        const QJsonDocument doc = QJsonDocument::fromJson(rawJson.toUtf8(), &error);
+
+        if (error.error != QJsonParseError::NoError) {
+            return "Invalid JSON: " + error.errorString();
+        }
+
+        // Convert back to QString using the Indented format
+        return doc.toJson(QJsonDocument::Indented);
     }
 };
 

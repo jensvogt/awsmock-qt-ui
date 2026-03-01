@@ -1,6 +1,7 @@
-#ifndef SNS_TOPIC_LIST_H
-#define SNS_TOPIC_LIST_H
+#ifndef AWSMOCK_QT_UI_SNS_QUEUE_LIST_H
+#define AWSMOCK_QT_UI_SNS_QUEUE_LIST_H
 
+// Qt includes
 #include <QLabel>
 #include <QMenu>
 #include <QVBoxLayout>
@@ -19,10 +20,12 @@
 #include <QTreeWidget>
 #include <QTimer>
 
+// Awsmock includes
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
+#include <components/PageableTable.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSTopicDetailsDialog.h>
-#include <utils/IconUtils.h>
 
 /**
  * @brief Helper widget for the content area.
@@ -46,6 +49,13 @@ public:
     ~SNSTopicList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    }
+
+    /**
      * @brief Load page content
      */
     void LoadContent() override;
@@ -55,7 +65,7 @@ public:
      *
      * @param listTopicResult topic counter list
      */
-    void HandleListTopicSignal(const SNSListTopicResult &listTopicResult);
+    void HandleListTopicSignal(const SNSListTopicResult &listTopicResult) const;
 
 signals:
     void ShowSnsMessages(const QString &topicArn);
@@ -72,34 +82,12 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableWidget *tableWidget;
-
-    /**
-     * @brief Topic prefix search
-     */
-    QString prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     SNSService *_snsService;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'messages', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 };
 
-#endif // SNS_TOPIC_LIST_H
+#endif // AWSMOCK_QT_UI_SNS_QUEUE_LIST_H

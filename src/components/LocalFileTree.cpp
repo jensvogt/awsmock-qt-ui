@@ -1,0 +1,410 @@
+//
+// Created by vogje01 on 2/10/26.
+//
+
+#include <QPushButton>
+#include <components/LocalFileTree.h>
+
+#include "components/FTPFileTree.h"
+
+LocalFileTree::LocalFileTree(const QString &rootFolder, QWidget *parent) : QWidget(parent) {
+
+    _layout = new QVBoxLayout;
+    setLayout(_layout);
+
+    // Setup FTP connection
+    //SetupFtpConnection();
+
+    // 1. Create the model and the view
+    _model = new QStandardItemModel(this);
+    _model->setHorizontalHeaderLabels({"Name", "Size", "Type", "Last Modified", "Permission", "Owner", "Group"});
+
+    // Root item
+    _rootItem = _model->invisibleRootItem();
+    _rootItem->setData("/", Qt::UserRole);
+
+    // Setup model
+    _folderProxyModel = new FolderFilterModel();
+    _folderProxyModel->setSourceModel(_model);
+
+    _folderTreeView = new QTreeView(this);
+    _folderTreeView->setModel(_folderProxyModel);
+    _folderTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Setup columns
+    _folderTreeView->header()->setStretchLastSection(false);
+    _folderTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _folderTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _folderTreeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _folderTreeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _folderTreeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    _folderTreeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    _folderTreeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+
+    // Setup options
+    _folderTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _folderTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _folderTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _folderTreeView->setAcceptDrops(true);
+    _folderTreeView->setDropIndicatorShown(true);
+    _folderTreeView->setDragEnabled(true);
+    _folderTreeView->setDragDropMode(QAbstractItemView::DragDrop);
+    _folderTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    HideColumns({1, 2, 3, 4, 5, 6, 7, 8});
+
+    // Enable sorting
+    _folderTreeView->setSortingEnabled(true);
+    _folderTreeView->sortByColumn(0, Qt::AscendingOrder);
+    connect(_folderTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFolderContextMenu);
+    connect(_folderTreeView, &QTreeView::doubleClicked, this, &LocalFileTree::ShowFolderContentFolder);
+    //    connect(_folderTreeView, &QTreeView::clicked, this, &LocalFileTree::ShowFolderContentFolder);
+
+    // Setup model
+    _fileProxyModel = new FileFilterModel();
+    _fileProxyModel->setSourceModel(_model);
+
+    // File tree view
+    _fileTreeView = new DroppableTreeView(this);
+    _fileTreeView->setModel(_fileProxyModel);
+    _fileTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Setup columns
+    _fileTreeView->header()->setStretchLastSection(false);
+    _fileTreeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _fileTreeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _fileTreeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _fileTreeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _fileTreeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    _fileTreeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    _fileTreeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+
+    // Setup options
+    _fileTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _fileTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _fileTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _fileTreeView->setAcceptDrops(true);
+    _fileTreeView->setDropIndicatorShown(true);
+    _fileTreeView->setDragEnabled(true);
+    _fileTreeView->setDragDropMode(QAbstractItemView::DragDrop);
+    _fileTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // Enable sorting
+    _fileTreeView->setSortingEnabled(true);
+    _fileTreeView->sortByColumn(0, Qt::AscendingOrder);
+    connect(_fileTreeView, &LocalFileTree::customContextMenuRequested, this, &LocalFileTree::ShowFileContextMenu);
+    connect(_fileTreeView, &QTreeView::doubleClicked, this, &LocalFileTree::ShowFolderContentFile);
+    connect(_fileTreeView, &QTreeView::clicked, this, &LocalFileTree::ShowFolderContentFile);
+
+    // Synchronization
+    connect(_folderTreeView, &QTreeView::clicked, this, &LocalFileTree::SynchronizeViews);
+
+    // Connect droppable event
+    connect(_fileTreeView, &DroppableTreeView::FileDropped, this, &LocalFileTree::FileDropped);
+
+    _menuBarLayout = new QHBoxLayout(this);
+    const auto spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    _menuBarLayout->addWidget(spacer);
+
+    auto *fileRefreshPushButton = new QPushButton(IconUtils::GetIcon("refresh"), nullptr);
+    connect(fileRefreshPushButton, &QPushButton::clicked, this, &LocalFileTree::RefreshFileView);
+
+    _menuBarLayout->addWidget(fileRefreshPushButton);
+
+    _layout->addWidget(_folderTreeView);
+    _layout->addLayout(_menuBarLayout);
+    _layout->addWidget(_fileTreeView);
+
+    ScanFolder(rootFolder, _rootItem);
+}
+
+LocalFileTree::~LocalFileTree() = default;
+
+void LocalFileTree::SetupFtpConnection() {
+    _ftpClientThread = new FTPClientThread();
+    connect(_ftpClientThread, &FTPClientThread::emitSuccess, this, &LocalFileTree::ConnectionSucceeded);
+    connect(_ftpClientThread, &FTPClientThread::finished, _ftpClientThread, &FTPClientThread::stop);
+}
+
+void LocalFileTree::ConnectionSucceeded() {
+    _connected = true;
+}
+
+void LocalFileTree::ScanFolder(const QString &rootFolder, QStandardItem *parent) const {
+    const auto root = QDir(rootFolder);
+
+    for (QFileInfoList files = root.entryInfoList(); const auto &file: files) {
+        if (file.fileName() != ".." && file.fileName() != ".") {
+            FileInfo fileInfo;
+            fileInfo.permissions = ToUnitPermString(file);
+            fileInfo.size = file.size();
+            fileInfo.username = file.owner();
+            fileInfo.groupname = file.group();
+            fileInfo.name = file.fileName();
+            fileInfo.path = file.absoluteFilePath();
+            AddItem(fileInfo, parent);
+        }
+    }
+}
+
+void LocalFileTree::ShowFolderContentFolder(const QModelIndex &index) const {
+
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _folderProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+
+    parentItem->removeRows(0, parentItem->rowCount());
+    ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
+    _fileTreeView->setRootIndex(fileProxyIndex);
+}
+
+void LocalFileTree::ShowFolderContentFile(const QModelIndex &index) const {
+
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _fileProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+    if (const QString fileType = parentItem->data(Qt::UserRole + 1).toString(); fileType == FTP_FILE_TYPE_FILE) {
+        return;
+    }
+
+    _fileTreeView->setRootIndex(fileProxyIndex);
+    parentItem->removeRows(0, parentItem->rowCount());
+    ScanFolder(parentItem->data(Qt::UserRole).toString(), parentItem);
+}
+
+void LocalFileTree::SynchronizeViews(const QModelIndex &index) {
+    // Get the source index from the folder view click
+    const QModelIndex sourceIndex = _folderProxyModel->mapToSource(index);
+
+    // Map that source index into the file proxy's coordinate system
+    const QModelIndex fileProxyIndex = _fileProxyModel->mapFromSource(sourceIndex);
+
+    // Point the file view to look INSIDE that folder
+    _fileTreeView->setRootIndex(fileProxyIndex);
+    QStandardItem *parentItem = _model->itemFromIndex(sourceIndex);
+    const QString absPath = parentItem->data(Qt::UserRole).toString();
+
+    parentItem->removeRows(0, parentItem->rowCount());
+    emit FolderSelectedSignal(absPath, parentItem);
+}
+
+void LocalFileTree::FileDropped(const QString &filePath) const {
+    if (_connected) {
+        _ftpClientThread->task = TUp;
+        _ftpClientThread->arglist[0] = filePath.toStdString();
+        _ftpClientThread->start();
+    }
+}
+
+void LocalFileTree::AddItem(const FileInfo &fileInfo, QStandardItem *parent) const {
+
+    if (HasChild(parent->index(), 0, fileInfo.name, _model)) {
+        return;
+    }
+    const QString parentPath = parent->data(Qt::UserRole).toString();
+    const QString absPath = fileInfo.path;
+    const QString fileType = fileInfo.permissions.startsWith("d") ? FTP_FILE_TYPE_FOLDER : FTP_FILE_TYPE_FILE;
+
+    const QMimeType mime = _mimeDb.mimeTypeForFile(fileInfo.name);
+    auto size = new QStandardItem(QString::number(fileInfo.size));
+    auto contentType = new QStandardItem(mime.name());
+    auto modified = new QStandardItem(fileInfo.timestamp);
+    auto perm = new QStandardItem(fileInfo.permissions);
+    auto userName = new QStandardItem(fileInfo.username);
+    auto groupName = new QStandardItem(fileInfo.groupname);
+
+    auto *item = new QStandardItem(GetIcon(fileInfo.contentType, fileType), fileInfo.name);
+    item->setData(absPath, Qt::UserRole);
+    item->setData(fileType, Qt::UserRole + 1);
+    logInfo << "ABSPath: " << absPath;
+
+    parent->appendRow({item, size, contentType, modified, perm, userName, groupName});
+
+    // Expand
+    if (fileType == FTP_FILE_TYPE_FOLDER && fileInfo.name != "..") {
+        _folderTreeView->expand(parent->index());
+    }
+
+    // Setup columns
+    SetFileHeaders(_fileTreeView);
+}
+
+void LocalFileTree::RefreshFileView() const {
+    if (const QModelIndex proxyIndex = _folderTreeView->currentIndex(); proxyIndex.isValid()) {
+        // Convert to Source Index (essential since you have a filter)
+        const QModelIndex sourceIndex = _folderProxyModel->mapToSource(proxyIndex);
+        QStandardItem *item = _model->itemFromIndex(sourceIndex);
+
+        // 3. Get the data
+        const QString path = sourceIndex.data(Qt::UserRole).toString();
+        ScanFolder(path, item);
+    }
+}
+
+QIcon LocalFileTree::GetIcon(const QString &mimeType, const QString &fileType) {
+    if (fileType == FTP_FILE_TYPE_FOLDER) {
+        return IconUtils::GetIcon(fileType.toLower());
+    }
+    return QIcon::fromTheme("text-x-generic");
+}
+
+void LocalFileTree::Clear() const {
+    _model->removeRows(0, _model->rowCount());
+}
+
+void LocalFileTree::HideColumns(const QVector<int> &columns) const {
+    _folderTreeView->setHeaderHidden(true);
+    for (const auto &column: columns) {
+        _folderTreeView->setColumnHidden(column, true);
+    }
+}
+
+void LocalFileTree::HideAllColumns() const {
+    _folderTreeView->setHeaderHidden(true);
+    for (int i = 0; i < _model->columnCount(); i++) {
+        _folderTreeView->setColumnHidden(i, true);
+    }
+}
+
+bool LocalFileTree::HasChild(const QModelIndex &parent, const int column, const QString &value, const QAbstractItemModel *model) {
+    for (int row = 0; row < model->rowCount(parent); ++row) {
+        QModelIndex index = model->index(row, column, parent);
+        if (index.data().toString() == value)
+            return true;
+    }
+    return false;
+}
+
+void LocalFileTree::ShowFileContextMenu(const QPoint &pos) {
+
+    const auto proxy = qobject_cast<QSortFilterProxyModel *>(_fileTreeView->model());
+
+    const QModelIndex proxyIndex = _fileTreeView->currentIndex();
+    const QModelIndex sourceIndex = proxy->mapToSource(proxyIndex);
+
+    if (!sourceIndex.isValid()) {
+        return;
+    }
+
+    // If not valid, allow only create directory
+    QMenu menu;
+    if (!sourceIndex.isValid()) {
+        QAction *addDirAction = menu.addAction(IconUtils::GetIcon("add-directory"), "Create directory");
+        addDirAction->setToolTip("Create directory");
+        if (const auto selectedAction = menu.exec(_fileTreeView->viewport()->mapToGlobal(pos)); selectedAction == addDirAction) {
+            //TargetTreeAddDirectory();
+        }
+        return;
+    }
+
+    const QString name = sourceIndex.siblingAtColumn(0).data().toString();
+    const QString absPath = sourceIndex.siblingAtColumn(0).data(Qt::UserRole).toString();
+
+    if (name == "..") {
+        return;
+    }
+
+    QAction *renameAction = menu.addAction(IconUtils::GetIcon("rename"), "Rename File");
+    renameAction->setToolTip("Rename the file");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete File");
+    deleteAction->setToolTip("Delete the file");
+
+    if (const auto selectedAction = menu.exec(_fileTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
+        emit TargetTreeFileRenameSignal(absPath);
+    } else if (selectedAction == deleteAction) {
+        _model->removeRow(sourceIndex.row(), sourceIndex.parent());
+        _fileTreeView->clearSelection();
+        emit TargetTreeFileDeleteSignal(absPath);
+    }
+}
+
+void LocalFileTree::ShowFolderContextMenu(const QPoint &pos) {
+
+    const auto proxy = qobject_cast<QSortFilterProxyModel *>(_folderTreeView->model());
+
+    const QModelIndex proxyIndex = _folderTreeView->currentIndex();
+    const QModelIndex sourceIndex = proxy->mapToSource(proxyIndex);
+    if (!sourceIndex.isValid()) {
+        return;
+    }
+
+    // If not valid, allow only create directory
+    QMenu menu;
+    if (!sourceIndex.isValid()) {
+        QAction *addDirAction = menu.addAction(IconUtils::GetIcon("add-directory"), "Create directory");
+        addDirAction->setToolTip("Create directory");
+        if (const auto selectedAction = menu.exec(_fileTreeView->viewport()->mapToGlobal(pos)); selectedAction == addDirAction) {
+            //TargetTreeAddDirectory();
+        }
+        return;
+    }
+
+    const QString name = sourceIndex.siblingAtColumn(0).data().toString();
+    const QString absPath = sourceIndex.siblingAtColumn(0).data(Qt::UserRole).toString();
+    const QString type = sourceIndex.siblingAtColumn(0).data(Qt::UserRole + 1).toString();
+
+    QAction *renameAction = menu.addAction(IconUtils::GetIcon("rename"), "Rename Directory");
+    renameAction->setToolTip("Rename the directory");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Directory");
+    deleteAction->setToolTip("Delete the directory");
+
+    if (const auto selectedAction = menu.exec(_folderTreeView->viewport()->mapToGlobal(pos)); selectedAction == renameAction) {
+        TargetTreeDirectoryRename(absPath);
+    } else if (selectedAction == deleteAction) {
+        TargetTreeDirectoryDelete(absPath);
+    }
+}
+
+QString LocalFileTree::ToUnitPermString(const QFileInfo &info) {
+    QString permString;
+    permString += (info.isDir() ? "d" : "-");
+
+    const QFile::Permissions p = info.permissions();
+
+    permString += (p & QFileDevice::ReadOwner) ? "r" : "-";
+    permString += (p & QFileDevice::WriteOwner) ? "w" : "-";
+    permString += (p & QFileDevice::ExeOwner) ? "x" : "-";
+
+    permString += (p & QFileDevice::ReadGroup) ? "r" : "-";
+    permString += (p & QFileDevice::WriteGroup) ? "w" : "-";
+    permString += (p & QFileDevice::ExeGroup) ? "x" : "-";
+
+    permString += (p & QFileDevice::ReadOther) ? "r" : "-";
+    permString += (p & QFileDevice::WriteOther) ? "w" : "-";
+    permString += (p & QFileDevice::ExeOther) ? "x" : "-";
+
+    return permString;
+}
+
+void LocalFileTree::SetFileHeaders(const QTreeView *treeView) {
+    treeView->header()->setStretchLastSection(false);
+    treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    treeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+}
+
+void LocalFileTree::SetBaseDir(const QString &baseDir) const {
+    ScanFolder(baseDir, _rootItem);
+}

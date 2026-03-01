@@ -2,7 +2,6 @@
 #include <modules/application/ApplicationList.h>
 
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
-    setAttribute(Qt::WA_DeleteOnClose);
 
     // Set region
     _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
@@ -10,8 +9,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     // Connect service
     _applicationService = new ApplicationService();
     connect(_applicationService, &ApplicationService::LoadAllApplications, this, &ApplicationList::LoadContent);
-    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this,
-            &ApplicationList::HandleListApplicationsSignal);
+    connect(_applicationService, &ApplicationService::ReloadApplicationsSignal, this, &ApplicationList::HandleListApplicationsSignal);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -26,8 +24,8 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "", this);
     addButton->setToolTip("Add a new application");
     connect(addButton, &QPushButton::clicked, []() {
-        if (ApplicationAddDialog dialog; dialog.exec() == QDialog::Accepted) {
-        }
+        ApplicationAddDialog dialog;
+        dialog.exec();
     });
 
     // Toolbar add action
@@ -50,25 +48,6 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
                                     tr("Name"), tr("Version"), tr("Enabled"), tr("Status"), tr("Private Port"),
@@ -76,54 +55,32 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
                                     tr("ContainerId")
                                 };
 
-    tableWidget = new QTableWidget(this);
-    tableWidget->setColumnCount(static_cast<int>(headers.count()));
-    tableWidget->setShowGrid(true);
-    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableWidget->setHorizontalHeaderLabels(headers);
-    tableWidget->setSortingEnabled(true);
-    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(9, true);
-    tableWidget->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable(this);
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({
+        QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents,
+        QHeaderView::ResizeToContents, QHeaderView::ResizeToContents
+    });
+    _tableView->SetHiddenColumns({9});
+    _tableView->SetSorting(0, "name", 1);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
-        // Extract ARN and URL
-        const QString name = tableWidget->item(row, 0)->text();
+        // Extract name
+        const auto name = _tableView->GetValue<QString>(index, 0);
 
-        ApplicationEditDialog dialog(name);
+        ApplicationEditDialog dialog(name, this);
         dialog.exec();
     });
 
     // Add context menu
-    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &ApplicationList::ShowContextMenu);
-
-    // Save sort column
-    const QHeaderView *header = tableWidget->horizontalHeader();
-    connect(header, &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order) {
-        _sortColumn = column;
-        _sortOrder = order;
-    });
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &ApplicationList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
-    layout->addWidget(tableWidget, 2);
+    layout->addWidget(_tableView, 2);
 }
 
 ApplicationList::~ApplicationList() {
@@ -131,53 +88,36 @@ ApplicationList::~ApplicationList() {
 }
 
 void ApplicationList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _applicationService->ListApplications(prefixValue);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _applicationService->ListApplications(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
-void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) {
-    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
-    tableWidget->setRowCount(0);
-    tableWidget->setSortingEnabled(false);
-    for (auto r = 0; r < listApplicationResponse.applicationCounters.count(); r++) {
-        tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, 0, listApplicationResponse.applicationCounters.at(r).name);
-        SetColumn(tableWidget, r, 1, listApplicationResponse.applicationCounters.at(r).version);
-        SetColumn(tableWidget, r, 2, listApplicationResponse.applicationCounters.at(r).enabled,
-                  IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
-        SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status == "RUNNING",
-                  IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
-        //SetColumn(tableWidget, r, 3, listApplicationResponse.applicationCounters.at(r).status);
-        SetColumn(tableWidget, r, 4, listApplicationResponse.applicationCounters.at(r).privatePort);
-        SetColumn(tableWidget, r, 5, listApplicationResponse.applicationCounters.at(r).publicPort);
-        SetColumn(tableWidget, r, 6, listApplicationResponse.applicationCounters.at(r).lastStarted);
-        SetColumn(tableWidget, r, 7, listApplicationResponse.applicationCounters.at(r).created);
-        SetColumn(tableWidget, r, 8, listApplicationResponse.applicationCounters.at(r).modified);
-        SetColumn(tableWidget, r, 9, listApplicationResponse.applicationCounters.at(r).containerId);
+void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) const {
+
+    _tableView->SetTotalSize(listApplicationResponse.total);
+    for (auto r = 0, c = 0; r < listApplicationResponse.applicationCounters.count(); r++, c = 0) {
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).name);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).version);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).status == "RUNNING", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).privatePort);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).publicPort);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).lastStarted);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).modified);
+        _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).containerId);
     }
-    tableWidget->setRowCount(static_cast<int>(listApplicationResponse.applicationCounters.count()));
-    tableWidget->setSortingEnabled(true);
-    tableWidget->sortItems(_sortColumn, _sortOrder);
-    tableWidget->selectRow(selectedRow);
-    NotifyStatusBar();
+    _tableView->UpdateSorting();
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {
-    StopAutoUpdate();
-
     // Cell index
-    const QModelIndex index = tableWidget->indexAt(pos);
-    if (!index.isValid()) return;
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    const int row = index.row();
-
-    const QString name = tableWidget->item(row, 0)->text();
-    const QString containerId = tableWidget->item(row, 9)->text();
+    const auto name = _tableView->GetValue<QString>(index, 0);
+    const auto containerId = _tableView->GetValue<QString>(index, 9);
 
     QMenu menu;
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
 
@@ -217,14 +157,14 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Application");
-    deleteAction->setToolTip("Delete the Topic");
+    deleteAction->setToolTip("Delete the application");
 
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos));
         selectedAction == editAction) {
-        ApplicationEditDialog dialog(name);
+        ApplicationEditDialog dialog(name, this);
         dialog.exec();
     } else if (selectedAction == logsAction) {
-        auto *dialog = new ApplicationLogsDialog(name, containerId);
+        auto *dialog = new ApplicationLogsDialog(name, containerId, this);
         dialog->setModal(false);
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
@@ -246,9 +186,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         _applicationService->DeleteApplication(name);
     } else if (selectedAction == editAction) {
-        ApplicationEditDialog dialog(name);
+        ApplicationEditDialog dialog(name, this);
         dialog.exec();
     }
-    LoadContent();
-    StartAutoUpdate();
 }

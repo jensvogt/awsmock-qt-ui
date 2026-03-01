@@ -6,6 +6,7 @@
 #define AWSMOCK_QT_UI_LAMBDA_DETAILS_DIALOG_H
 
 #include <QDialog>
+#include <QMenu>
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
@@ -13,6 +14,8 @@
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
 #include <modules/lambda/LambdaService.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
+#include <modules/lambda/LambdaEnvironmentDetailDialog.h>
+#include <modules/lambda/LambdaResultListDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,8 +55,7 @@ public:
 
     void HandleReject();
 
-    void LoadContent() override {
-    };
+    void LoadContent();
 
 private:
     /**

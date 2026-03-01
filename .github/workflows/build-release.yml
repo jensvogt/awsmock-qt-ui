@@ -70,7 +70,7 @@ jobs:
       - name: Install Qt and Qt Installer Framework (IFW)
         shell: powershell
         run: |
-          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
+          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts qtwebsockets qtnetworkauth
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
 
       - name: Configure CMake (Windows)
@@ -94,8 +94,7 @@ jobs:
           New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
           & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
           Copy-Item $exe $dataDir
-          Copy-Item dist\etc\awsmock-qt-ui.json $dataDir
-          Copy-Item extern\bin\libcurl.dll $dataDir
+          Copy-Item dist\etc\awsmock-qt-ui_windows.json $dataDir\awsmock-qt-ui.json
 
       - name: Build Qt Installer Framework installer (binarycreator)
         shell: pwsh
@@ -127,64 +126,6 @@ jobs:
           name: repository
           path: installer/repository
 
-  #  build-update:
-  #    name: Build & Package (Update)
-  #    runs-on: windows-latest
-  #    needs: release-please
-  #    if: ${{ needs.release-please.outputs.release_created == 'true' }}
-  #    env:
-  #      QT_DIR: "${{ github.workspace }}\\Qt"
-  #      BUILD_DIR: "${{ github.workspace }}\\build-windows"
-  #      INSTALLER_DIR: "${{ github.workspace }}\\installer"
-  #      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
-  #
-  #    steps:
-  #      - name: Checkout source
-  #        uses: actions/checkout@v4
-  #
-  #      - name: Install Python & aqtinstall
-  #        shell: powershell
-  #        run: |
-  #          python -m pip install --upgrade pip
-  #          python -m pip install -U aqtinstall
-  #
-  #      - name: Install Qt and Qt Installer Framework (IFW)
-  #        shell: powershell
-  #        run: |
-  #          python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts
-  #          python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
-  #
-  #      - name: Install Qt
-  #        uses: jurplel/install-qt-action@v4
-  #        with:
-  #          version: 6.10.1
-  #          arch: win64_msvc2022_64
-  #
-  #      - name: Install Qt Installer Framework
-  #        shell: powershell
-  #        run: |
-  #          choco install qt-installer-framework --no-progress
-  #
-  #      - name: Build (Windows, parallel)
-  #        shell: powershell
-  #        run: |
-  #          $qtPrefix = Join-Path $env:QT_DIR "$env:QT_VERSION\msvc2022_64"
-  #          if (!(Test-Path $qtPrefix)) { Write-Error "Qt prefix not found: $qtPrefix"; exit 1 }
-  #          if (!(Test-Path $env:BUILD_DIR)) { New-Item -ItemType Directory -Path $env:BUILD_DIR | Out-Null }
-  #          cmake --build $env:BUILD_DIR --config Release --parallel
-  #
-  #      - name: Prepare installer data
-  #        shell: powershell
-  #        run: |
-  #          $exe = Join-Path $env:BUILD_DIR "$env:APP_NAME.exe"
-  #          $dataDir = Join-Path $env:INSTALLER_DIR "packages\$env:INSTALLER_ID\data"
-  #          New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
-  #          & "$env:QT_DIR\$env:QT_VERSION\msvc2022_64\bin\windeployqt6.exe" $exe --dir $dataDir
-  #          Copy-Item $exe $dataDir
-  #          Copy-Item dist\etc\awsmock-qt-ui.json $dataDir
-  #          Copy-Item extern\bin\libcurl.dll $dataDir
-
-
   build-macos:
     name: Build & Package (macOS)
     runs-on: macos-latest
@@ -209,7 +150,7 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install aqtinstall
           ARCH="clang_64"
-          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats
+          python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats qtwebsockets qtnetworkauth
 
       - name: Configure (macOS)
         shell: bash
@@ -262,7 +203,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
-            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libcurl4-openssl-dev
+            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev
           sudo gem install --no-document fpm
 
       - name: Get version
@@ -275,7 +216,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: "qtcharts qtimageformats"
+          modules: qtcharts qtimageformats qtwebsockets qtnetworkauth
           install-deps: true
 
       - name: Configure (Linux)
@@ -308,7 +249,7 @@ jobs:
           cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/awsmock-qt-ui/lib
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/awsmock-qt-ui/plugins/
-          cp -r dist/etc/${APP_NAME}.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc
+          cp -r dist/etc/${APP_NAME}_linux.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui-json
           
           # Create Qt conf
           cat << EOF > $PACKAGE_DIR/usr/local/awsmock-qt-ui/bin/qt.conf
@@ -344,14 +285,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev libcurl4-openssl-dev
+          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev
           sudo gem install --no-document fpm
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: qtcharts qtimageformats
+          modules: qtcharts qtimageformats qtwebsockets qtnetworkauth
           install-deps: true
 
       - name: Configure & Build
@@ -373,11 +314,11 @@ jobs:
           # FIX: correct binary path
           cp $BUILD_DIR/$APP_NAME $PACKAGE_DIR/usr/local/$APP_NAME/bin/
           
-          cp dist/etc/$APP_NAME.json $PACKAGE_DIR/usr/local/$APP_NAME/etc/
+          cp -r dist/etc/${APP_NAME}_linux.json $PACKAGE_DIR/usr/local/awsmock-qt-ui/etc/awsmock-qt-ui-json
           cp -r $QT_ROOT_DIR/lib/* $PACKAGE_DIR/usr/local/$APP_NAME/lib/
           cp -r $QT_ROOT_DIR/plugins/platforms $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
           cp -r $QT_ROOT_DIR/plugins/imageformats $PACKAGE_DIR/usr/local/$APP_NAME/plugins/
-          
+
           cat << EOF > $PACKAGE_DIR/usr/local/$APP_NAME/bin/qt.conf
           [Paths]
           Prefix = ..
@@ -392,6 +333,77 @@ jobs:
         with:
           name: rpm-package-linux
           path: ${{ env.APP_NAME }}-${{ env.SEMVER }}-amd64.rpm
+
+  #  build-linux-installer:
+  #    name: Build & Package (Linux installer)
+  #    runs-on: ubuntu-22.04
+  #    needs: release-please
+  #    #if: ${{ needs.release-please.outputs.release_created == 'true' }}
+  #    env:
+  #      BUILD_DIR: "${{ github.workspace }}/build-linux"
+  #      SEMVER: "${{ needs.release-please.outputs.tag_name }}"
+  #    steps:
+  #      - name: Checkout
+  #        uses: actions/checkout@v4
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      # Step 2: Install dependencies
+  #      - name: Install system dependencies
+  #        run: |
+  #          sudo apt update
+  #          sudo apt install -y ninja-build libgl1-mesa-dev libfuse2
+  #
+  #      - name: Get version
+  #        id: get_version
+  #        run: |
+  #          CLEAN="${SEMVER#v}"
+  #          echo "version=$CLEAN" >> $GITHUB_OUTPUT
+  #
+  #      - name: Install Qt via install-qt-action
+  #        uses: jurplel/install-qt-action@v4
+  #        with:
+  #          version: ${{ env.QT_VERSION }}
+  #          modules: "qtcharts qtimageformats qtwebsockets"
+  #          install-deps: true
+  #
+  #      # Download linuxdeploy
+  #      - name: Download linuxdeploy
+  #        run: |
+  #          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+  #          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+  #          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+  #          chmod +x linuxdeploy*.AppImage
+  #
+  #      - name: Configure (Linux)
+  #        shell: bash
+  #        run: |
+  #          mkdir -p $BUILD_DIR
+  #          cmake -S . -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  #
+  #      - name: Build (Linux)
+  #        shell: bash
+  #        run: |
+  #          cmake --build $BUILD_DIR --parallel $(nproc)
+  #
+  #      # Prepare the .deb package directory
+  #      - name: Prepare package structure
+  #        run: |
+  #          mkdir -p AppDir/usr/bin
+  #          mkdir -p AppDir/etc
+  #          cp $BUILD_DIR/awsmock-qt-ui AppDir/usr/bin
+  #          cp dist/etc/awsmock-qt-ui_linux.json AppDir/etc/
+  #          cp dist/etc/awsmock-qt-ui.desktop AppDir/
+  #          cp dist/etc/awsmock.png AppDir/
+  #          export QML_SOURCES_PATHS=$GITHUB_WORKSPACE
+  #          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
+  #
+  #      # Upload artifact
+  #      - name: Upload installer
+  #        uses: actions/upload-artifact@v4
+  #        with:
+  #          name: ${{ env.APP_NAME }}-AppImage
+  #          path: ./*.AppImage
 
   publish:
     name: Publish Release & Attach Installers
@@ -429,6 +441,12 @@ jobs:
           name: rpm-package-linux
           path: artifacts/linux
 
+      #      - name: Download Linux installer package
+      #        uses: actions/download-artifact@v4
+      #        with:
+      #          name: ${{ env.APP_NAME }}-AppImage
+      #          path: artifacts/linux
+
       - name: Download Windows Updates
         uses: actions/download-artifact@v4
         with:
@@ -443,6 +461,7 @@ jobs:
             artifacts/macos/*.dmg
             artifacts/linux/*.deb
             artifacts/linux/*.rpm
+            artifacts/linux/*.installer
             artifacts/repository/*
           name: Release ${{ env.SEMVER }}
           tag_name: ${{ env.SEMVER }}
@@ -477,7 +496,7 @@ jobs:
           cp ./artifacts/rpm-package-linux/*.rpm public/ || true
           cp -r ./artifacts/repository/* public/ || true
           cp .github/pages/index.html public/index.html || true
-          find . -ls
+          cp version.txt public/version.txt || true
 
       - name: Generate files.json
         run: |

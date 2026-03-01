@@ -1,11 +1,12 @@
+#include <ui_SecretAddDialog.h>
 #include <modules/secretsmanager/SecretList.h>
 
 SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent) {
-    setAttribute(Qt::WA_DeleteOnClose);
 
     // Connect service
     _secretsManagerService = new SecretsManagerService();
     connect(_secretsManagerService, &SecretsManagerService::ReloadSecretsSignal, this, &SecretList::HandleListSecretsSignal);
+    connect(_secretsManagerService, &SecretsManagerService::LoadAllSecrets, this, &SecretList::LoadContent);
 
     // Title label
     const auto titleLabel = new QLabel(title, this);
@@ -18,16 +19,14 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), nullptr, this);
-    //addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new secret");
-    connect(addButton, &QPushButton::clicked, []() {
-        /*if (LambdaAddDialog dialog; dialog.exec() == QDialog::Accepted) {
-        }*/
+    connect(addButton, &QPushButton::clicked, [this]() {
+        SecretAddDialog dialog;
+        dialog.exec();
     });
 
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), nullptr, this);
-    //refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the secret list");
     connect(refreshButton, &QPushButton::clicked, this, [this]() {
         LoadContent();
@@ -97,7 +96,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
         // Extract ARN
         const auto secretId = _dataModel->item(index.row(), 1)->text();
 
-        SecretsDetailsDialog dialog(secretId);
+        SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();
     });
 
@@ -117,9 +116,6 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addLayout(toolBar, 0);
     layout->addLayout(prefixLayout, 0);
     layout->addWidget(_tableView, 2);
-
-    // List containers
-    StartAutoUpdate();
 }
 
 SecretList::~SecretList() {
@@ -127,16 +123,13 @@ SecretList::~SecretList() {
 }
 
 void SecretList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        _secretsManagerService->ListSecrets();
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _secretsManagerService->ListSecrets();
 }
 
-void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) {
+void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) const {
     const int selectedRow = _tableView->selectionModel()->currentIndex().row();
     _tableView->setSortingEnabled(false);
+    _dataModel->removeRows(0, _dataModel->rowCount());
     for (auto r = 0; r < secretsListResponse.secretCounters.count(); r++) {
         SetColumn(_dataModel, r, 0, secretsListResponse.secretCounters.at(r).name);
         SetColumn(_dataModel, r, 1, secretsListResponse.secretCounters.at(r).secretId);
@@ -144,11 +137,8 @@ void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListR
         SetColumn(_dataModel, r, 3, secretsListResponse.secretCounters.at(r).lastChangedDate);
         SetColumn(_dataModel, r, 4, secretsListResponse.secretCounters.at(r).arn);
     }
-    //_tableView->setRowCount(static_cast<int>(listLambdaResponse.lambdaCounters.count()));
     _tableView->setSortingEnabled(true);
-    //_tableView->sortItems(_sortColumn, _sortOrder);
     _tableView->selectRow(selectedRow);
-    NotifyStatusBar();
 }
 
 void SecretList::ShowContextMenu(const QPoint &pos) {
@@ -169,50 +159,16 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Secret");
     editAction->setToolTip("Edit the secret.");
 
-    // QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the lambda logs");
-    // logsAction->setToolTip("Show the lambda logs");
-    // if (containerId.isEmpty()) {
-    //     logsAction->setDisabled(true);
-    // }
-    //
-    // menu.addSeparator();
-    //
-    // QAction *enableAction = menu.addAction(IconUtils::GetIcon("enabled"), "Enable Lambda");
-    // enableAction->setToolTip("Enable the lambda.");
-    //
-    // QAction *disableAction = menu.addAction(IconUtils::GetIcon("disabled"), "Disable Lambda");
-    // disableAction->setToolTip("Disable the lambda.");
-    //
-    // menu.addSeparator();
-    //
-    // QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Lambda");
-    // startAction->setToolTip("Start the lambda");
-    //
-    // QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Lambda");
-    // stopAction->setToolTip("Stop the lambda");
-    //
-    // QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
-    // restartAction->setToolTip("Restart the lambda");
-    //
-    // menu.addSeparator();
-    //
-    // QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
-    // rebuildAction->setToolTip("Rebuild the lambda by creating a new image and container.");
-    //
-    // QAction *uploadAction = menu.addAction(IconUtils::GetIcon("upload"), "Upload Lambda Code");
-    // uploadAction->setToolTip("Upload new lambda code");
-    //
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Secret");
     deleteAction->setToolTip("Delete the secret");
 
-
     if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
-        SecretsDetailsDialog dialog(secretId);
+        SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        //  _lambdaService->DeleteLambda(name);
+        _secretsManagerService->DeleteSecret(secretId);
     }
     LoadContent();
     StartAutoUpdate();

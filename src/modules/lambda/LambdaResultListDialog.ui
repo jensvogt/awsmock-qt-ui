@@ -37,13 +37,22 @@
      </item>
      <item>
       <widget class="QPushButton" name="deleteButton">
+       <property name="toolTip">
+        <string>Deletes all lambda result logs.</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="refreshButton">
+       <property name="toolTip">
+        <string>Refresh the list of lambda result logs.</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -57,7 +66,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Close</set>
      </property>
     </widget>
    </item>

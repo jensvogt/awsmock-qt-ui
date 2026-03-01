@@ -6,11 +6,14 @@
 #define AWSMOCK_QT_UI_STRING_UTILS_H
 
 // C++ standard includes
-#include <algorithm>
 #include <string>
 
 // Qt includes
 #include <QString>
+#include <QRandomGenerator>
+
+// Awsmock includes
+#include <utils/Logging.h>
 
 class StringUtils {
 
@@ -26,6 +29,42 @@ public:
             // Note: This approach discards any non-printable character.
         }
         return QString(result);
+    }
+
+    static QString ConvertToIndentedJson(const QString &input) {
+
+        QJsonParseError parseError;
+        const QJsonDocument doc = QJsonDocument::fromJson(input.toUtf8(), &parseError);
+        if (parseError.error != QJsonParseError::NoError) {
+            logError << "Cannot parse JSON document: " << parseError.errorString();
+            return input;
+        }
+        return doc.toJson(QJsonDocument::Indented);
+    }
+
+    static QString GenerateRandomString(const int length) {
+        const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+        QString randomString;
+        randomString.reserve(length);
+
+        for (int i = 0; i < length; ++i) {
+            const int index = QRandomGenerator::global()->bounded(possibleCharacters.length());
+            randomString.append(possibleCharacters.at(index));
+        }
+        return randomString;
+    }
+
+    static QString GenerateRandomNumericString(const int length) {
+        const QString digits = "0123456789";
+        QString result;
+        result.reserve(length); // Efficiency: Allocate memory once
+
+        for (int i = 0; i < length; ++i) {
+            // Generates a random index from 0 to 9
+            const quint32 index = QRandomGenerator::global()->bounded(10);
+            result.append(digits.at(index));
+        }
+        return result;
     }
 
 private:

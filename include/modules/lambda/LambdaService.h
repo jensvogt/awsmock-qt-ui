@@ -13,6 +13,7 @@
 #include <QtNetwork/QNetworkRequest>
 
 // Awsmock Qt includes
+#include <utils/Logging.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
@@ -25,6 +26,7 @@
 #include <dto/lambda/LambdaGetResultResponse.h>
 #include <dto/lambda/LambdaUploadRequest.h>
 #include <dto/lambda/LambdaUploadRequest.h>
+#include <dto/lambda/LambdaListArnsResponse.h>
 
 class LambdaService final : public BaseService {
     Q_OBJECT
@@ -39,8 +41,12 @@ public:
      * @brief List lambdas
      *
      * @param prefix lambda name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListLambdas(const QString &prefix);
+    void ListLambdas(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Upload new lambda code
@@ -104,6 +110,12 @@ public:
 
     void UpdateLambda(const QString &lambdaArn, bool enabled);
 
+    void UpdateLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
+
+    void RebuildLambda(const QString &name, const QString &version);
+
+    void ListLambdaArns();
+
     /**
      * @brief Stop an lambdas
      *
@@ -151,6 +163,8 @@ public:
      */
     void DeleteLambda(const QString &name);
 
+    void DeleteLambdaResults(const QString &lambdaArn);
+
 signals:
     /**
      * @brief Get lambda list signal
@@ -197,12 +211,19 @@ signals:
     /**
      * @brief Reload all lambdas signal
      */
-    void LoadAllLambdas();
+    void ReloadLambdas();
 
     /**
      * @brief Reload all environment signal
      */
     void LoadLambdaEnvironment();
+
+    /**
+     * @brief List lambda ARNs signal
+     *
+     * @param listArnsResponse list of lambda ARNs
+     */
+    void ListLambdaArnsSignal(const LambdaListArnsResponse &listArnsResponse);
 
 private:
     /**
