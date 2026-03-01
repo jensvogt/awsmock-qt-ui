@@ -173,7 +173,8 @@ jobs:
             exit 1
           fi
           MACDEPLOYQT="$(find ${HOME}/Qt -type f -name macdeployqt | head -n 1)"
-          "$MACDEPLOYQT" "$APP_BUNDLE" -always-overwrite -verbose=2
+          "$MACDEPLOYQT" "$APP_BUNDLE" -always-overwrite
+          codesign --force --deep --sign - "$APP_BUNDLE"
           mkdir -p dist
           DMG_NAME="${APP_NAME}-${SEMVER}-macos.dmg"
           hdiutil create "dist/$DMG_NAME" -volname "${APP_NAME}" -srcfolder "$APP_BUNDLE" -ov -format UDZO
