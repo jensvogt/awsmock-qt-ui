@@ -10,12 +10,15 @@
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
 #include <modules/application/ApplicationService.h>
 #include <modules/application/ApplicationTagDialog.h>
-#include <modules/application/ApplicationEnvironmentEditDialog.h>
+#include <modules/application/ApplicationEnvironmentDialog.h>
 #include <modules/application/ApplicationDependencyDialog.h>
+#include <modules/application/ApplicationLogsDialog.h>
 
 #include "ApplicationLogsDialog.h"
+#include "utils/PrefixFilterModel.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -77,29 +80,39 @@ private:
     bool _changed = false;
 
     /**
-     * @brief Sort column index environment table
-     */
-    int _sortColumnEnv = 0;
-
-    /**
      * @brief Application logs dialog
      */
     ApplicationLogsDialog *_applicationLogsDialog;
 
     /**
+     *  @brief Table data model
+     */
+    QStandardItemModel *_envDataModel;
+
+    /**
+     * @brief Data proxy model
+     */
+    PrefixFilterProxyModel *_envProxyModel;
+
+    /**
+     * @brief Sort column index environment table
+     */
+    int _envSortColumn = 0;
+
+    /**
      * @brief Sort order environment table
      */
-    Qt::SortOrder _sortOrderEnv = Qt::AscendingOrder;
+    Qt::SortOrder _envSortOrder = Qt::AscendingOrder;
 
     /**
      * @brief Sort column index tags table
      */
-    int _sortColumnTag = 1;
+    int _tagSortColumn = 0;
 
     /**
      * @brief Sort order tag table
      */
-    Qt::SortOrder _sortOrderTag = Qt::AscendingOrder;
+    Qt::SortOrder _tagSortOrder = Qt::AscendingOrder;
 
     /**
      * @brief Container ID

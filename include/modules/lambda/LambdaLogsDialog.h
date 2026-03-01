@@ -5,11 +5,15 @@
 #ifndef AWSMOCK_QT_UI_LAMBDA_LOGS_DIALOG_H
 #define AWSMOCK_QT_UI_LAMBDA_LOGS_DIALOG_H
 
+// Qt includes
 #include <QDialog>
 #include <QDialogButtonBox>
 
-#include <modules/lambda/LambdaService.h>
+// AwsMock includes
 #include <utils/IconUtils.h>
+#include <utils/DateTimeUtils.h>
+#include <utils/StringUtils.h>
+#include <modules/lambda/LambdaService.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -31,6 +31,11 @@ struct SecretCounter {
     QString name;
 
     /**
+     * Description
+     */
+    QString description;
+
+    /**
      * SecretId
      */
     QString secretId;

@@ -1,30 +1,24 @@
-
 #include <modules/s3/S3Service.h>
 
-S3Service::S3Service() {
-    _url = QUrl(Configuration::instance().GetValue<QString>("server.base-url", "http://localhost:4566"));
-}
-
-void S3Service::ListBuckets(const QString &prefix) {
+void S3Service::ListBuckets(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
-                      requestDoc.toJson(),
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "s3"},
                           {"x-awsmock-action", "ListBucketCounters"},
@@ -38,10 +32,10 @@ void S3Service::ListBuckets(const QString &prefix) {
                                   s3Response.FromJson(jsonDoc);
                                   emit ListBucketSignal(s3Response);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
                       });
@@ -54,7 +48,7 @@ void S3Service::PurgeBucket(const QString &bucketName) {
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -65,7 +59,7 @@ void S3Service::PurgeBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("PurgeBucket", timer.elapsed());
                       });
@@ -79,7 +73,7 @@ void S3Service::AddBucket(const QString &bucketName) {
     jRequest["Name"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -90,13 +84,13 @@ void S3Service::AddBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("AddBucket", timer.elapsed());
                       });
 }
 
-void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata) {
+void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, QVector<LifecycleRule> &lifecycleRules, const QString &versionStatus) {
     QElapsedTimer timer;
     timer.start();
 
@@ -105,15 +99,23 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
         jMetadata[k] = metadata[k];
     }
 
+    QJsonArray jLifecycleRules;
+    for (auto &lifecycleRule: lifecycleRules) {
+        jLifecycleRules.append(lifecycleRule.ToJson());
+    }
+
     QJsonObject jBucket = CreateBaseRequest();
-    jBucket["bucketName"] = bucketName;
-    jBucket["defaultMetadata"] = jMetadata;
+    jBucket["Region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    jBucket["BucketName"] = bucketName;
+    jBucket["DefaultMetadata"] = jMetadata;
+    jBucket["VersionStatus"] = versionStatus;
+    jBucket["LifecycleRules"] = jLifecycleRules;
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["bucket"] = jBucket;
+    jRequest["Bucket"] = jBucket;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -124,7 +126,7 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("UpdateBucket", timer.elapsed());
                       });
@@ -139,7 +141,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
     jRequest["Bucket"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -150,7 +152,7 @@ void S3Service::DeleteBucket(const QString &bucketName) {
                           if (success) {
                               emit ReloadBucketListSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteBucket", timer.elapsed());
                       });
@@ -164,7 +166,7 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
     jRequest["bucketName"] = bucketName;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -173,25 +175,24 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an JSON document
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               S3GetBucketDetailsResponse bucketResponse;
                               bucketResponse.FromJson(jsonDoc);
                               emit GetBucketDetailsSignal(bucketResponse);
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("GetBucketDetails", timer.elapsed());
                       });
 }
 
-void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
+void S3Service::ListObjects(const QString &bucketName, const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
@@ -199,13 +200,12 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["bucket"] = bucketName;
     jRequest["prefix"] = prefix;
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
-    const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
-                      requestDoc.toJson(),
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "s3"},
                           {"x-awsmock-action", "ListObjectCounters"},
@@ -213,16 +213,15 @@ void S3Service::ListObjects(const QString &bucketName, const QString &prefix) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   S3ListObjectsResponse s3Response;
                                   s3Response.FromJson(jsonDoc);
                                   emit ListObjectsSignal(s3Response);
                               } else {
-                                  qCritical() << "Response is not an object!";
+                                  logWarning << "Response is not an object!";
                               }
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListObjects", timer.elapsed());
                       });
@@ -236,7 +235,7 @@ void S3Service::GetObjectDetails(const QString &objectId) {
     jRequest["oid"] = objectId;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -251,7 +250,7 @@ void S3Service::GetObjectDetails(const QString &objectId) {
                               objectDetailsResponse.FromJson(jsonDoc["objectCounter"].toObject());
                               emit GetObjectDetailsSignal(objectDetailsResponse);
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("GetObjectDetails", timer.elapsed());
                       });
@@ -275,7 +274,7 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
     jRequest["metadata"] = jMetadata;
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -286,9 +285,94 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
+                      });
+}
+
+void S3Service::UpdateObject(const QString &region, const QString &bucketName, const QString &key, const QByteArray &content, const QString &storageClass, const QMap<QString, QString> &metadata) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jMetadata;
+    for (const auto &k: metadata.keys()) {
+        jMetadata[k] = metadata[k];
+    }
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["region"] = region;
+    jRequest["bucket"] = bucketName;
+    jRequest["key"] = key;
+    jRequest["content"] = QString(content.toBase64());
+    jRequest["storageClass"] = storageClass;
+    jRequest["contentType"] = "application/json";
+    jRequest["metadata"] = jMetadata;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "UpdateObject"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadObjectsSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("UploadObject", timer.elapsed());
+                      });
+}
+
+void S3Service::PutBucketNotificationConfiguration(const S3PutBucketNotificationConfigurationRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    qInfo() << request.ToXml().toUtf8();
+
+    _restManager.put(GetBaseUrl(request.bucket),
+                     request.ToXml().toUtf8(),
+                     {
+                         {"x-awsmock-target", "s3"},
+                         {"x-awsmock-action", "PutBucketNotificationConfiguration"},
+                         {"content-type", "application/xml; charset=utf-8"}
+                     },
+                     [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                         if (success) {
+                             emit ReloadObjectsSignal();
+                         } else {
+                             logError << error;
+                         }
+                         emit EventBus::instance().TimerSignal("PutBucketNotificationConfiguration", timer.elapsed());
+                     });
+}
+
+void S3Service::TouchObject(const QString &bucketName, const QString &key) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["bucket"] = bucketName;
+    jRequest["key"] = key;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "TouchObject"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadObjectsSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteObject", timer.elapsed());
                       });
 }
 
@@ -302,7 +386,7 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
     jRequest["VersionId"] = "";
     const QJsonDocument requestDoc(jRequest);
 
-    _restManager.post(_url,
+    _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "s3"},
@@ -313,9 +397,8 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
-                              qCritical() << error;
+                              logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteObject", timer.elapsed());
                       });
 }
-

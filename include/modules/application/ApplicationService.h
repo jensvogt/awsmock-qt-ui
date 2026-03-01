@@ -16,26 +16,33 @@
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
+#include <utils/Logging.h>
+#include <utils/BaseService.h>
 #include <dto/application/ApplicationListResponse.h>
 #include <dto/application/ApplicationUploadRequest.h>
 #include <dto/application/ApplicationCreateRequest.h>
 #include <dto/application/ApplicationGetResponse.h>
 
-class ApplicationService final : public QObject {
+
+class ApplicationService final : public BaseService {
     Q_OBJECT
 
 public:
     /**
      * @brief ApplicationService
      */
-    ApplicationService();
+    ApplicationService() = default;
 
     /**
      * @brief List applications
      *
      * @param prefix application name prefix
+     * @param pageSize
+     * @param pageIndex
+     * @param sortAttribute
+     * @param sortDirection
      */
-    void ListApplications(const QString &prefix);
+    void ListApplications(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Upload new application code

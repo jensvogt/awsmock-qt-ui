@@ -26,6 +26,9 @@ static std::function<void()> makeRequest(
         case QNetworkAccessManager::PostOperation:
             reply = mgr.post(req, body);
             break;
+        case QNetworkAccessManager::PutOperation:
+            reply = mgr.put(req, body);
+            break;
         case QNetworkAccessManager::GetOperation:
             reply = mgr.get(req);
             break;
@@ -40,7 +43,7 @@ static std::function<void()> makeRequest(
         const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         const QByteArray data = reply->readAll();
         const QString error = reply->errorString();
-        const bool success = (reply->error() == QNetworkReply::NoError);
+        const bool success = reply->error() == QNetworkReply::NoError;
 
         reply->deleteLater();
         callback(success, data, status, error);
@@ -66,6 +69,13 @@ std::function<void()> RestManager::get(const QUrl &url,
                                        const QMap<QString, QString> &headers,
                                        std::function<void(bool, QByteArray, int, QString)> callback) {
     return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, {}, headers, std::move(callback));
+}
+
+std::function<void()> RestManager::put(const QUrl &url,
+                                       const QByteArray &body,
+                                       const QMap<QString, QString> &headers,
+                                       std::function<void(bool, QByteArray, int, QString)> callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::PutOperation, url, body, headers, std::move(callback));
 }
 
 std::function<void()> RestManager::del(const QUrl &url,

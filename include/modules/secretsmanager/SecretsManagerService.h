@@ -17,8 +17,10 @@
 #include <utils/RestManager.h>
 #include <utils/EventBus.h>
 #include <utils/BaseService.h>
+#include <utils/Logging.h>
 #include <dto/secretsmanager/SecretsManagerListSecretsResponse.h>
 #include <dto/secretsmanager/SecretGetResponse.h>
+#include <dto/secretsmanager/SecretGetVersionsResponse.h>
 
 class SecretsManagerService final : public BaseService {
     Q_OBJECT
@@ -28,6 +30,8 @@ public:
      * @brief Secrets Manager Service
      */
     SecretsManagerService() = default;
+
+    void CreateSecret(const SecretCounter &secretCounter);
 
     /**
      * @brief List all secrets
@@ -42,12 +46,16 @@ public:
      */
     void GetSecret(const QString &secretId);
 
+    void GetVersions(const QString &secretId);
+
     /**
      * @brief Update the secret
      *
      * @param secretCounter secret counter
      */
     void UpdateSecret(const SecretCounter &secretCounter);
+
+    void DeleteSecret(const QString &secretId);
 
 signals:
     /**
@@ -65,14 +73,16 @@ signals:
     void GetSecretsDetailsSignal(const SecretCounter &secretCounter);
 
     /**
+     * @brief Get secret versions signal
+     *
+     * @param secretVersionResponse secrets versions
+     */
+    void GetSecretsVersionsSignal(const SecretGetVersionResponse &secretVersionResponse);
+
+    /**
      * @brief Reload all secrets signal
      */
     void LoadAllSecrets();
-
-    /**
-     * @brief Reload all environment signal
-     */
-    //void LoadSecretsManagerEnvironment();
 
 private:
     /**

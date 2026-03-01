@@ -17,7 +17,7 @@
 ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
 
     // Connect service
-    applicationService = new ApplicationService();
+    _applicationService = new ApplicationService();
 
     // 1. Setup UI Components
     setWindowTitle("Add Application");
@@ -309,7 +309,7 @@ void ApplicationAddDialog::UploadFile(const QFileInfo &fileInfo) {
     request.application.version = versionEdit->text();
     request.application.archive = fileInfo.fileName();
     request.applicationCode = fileData.toBase64();
-    applicationService->CreateApplication(request);
+    _applicationService->CreateApplication(request);
 
     file.close();
 }

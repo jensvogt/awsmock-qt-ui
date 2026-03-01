@@ -5,6 +5,8 @@
 #include <QStandardItemModel>
 #include <utils/TableUtils.h>
 
+#include "utils/DateTimeUtils.h"
+
 
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const QString &value) {
     tableWidget->setItem(row, col, new QTableWidgetItem(value));
@@ -34,7 +36,7 @@ void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int c
 
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const QDateTime &value) {
     const auto item = new QTableWidgetItem();
-    item->setData(Qt::EditRole, value.toString("yyyy-MM-dd hh:mm:ss"));
+    item->setData(Qt::EditRole, DateTimeUtils::GetDateTimeFormat(value));
     tableWidget->setItem(row, col, item);
 }
 
@@ -51,6 +53,12 @@ void TableUtils::SetHiddenColumn(QTableWidget *tableWidget, const int row, const
     const auto item = new QTableWidgetItem;
     item->setData(Qt::EditRole, value);
     tableWidget->setItem(row, col, item);
+}
+
+void TableUtils::SetHiddenColumn(QStandardItemModel *tableModel, const int row, const int col, const QString &value) {
+    const auto item = new QStandardItem;
+    item->setData(value, Qt::EditRole);
+    tableModel->setItem(row, col, item);
 }
 
 void TableUtils::SetHiddenColumn(QTableWidget *tableWidget, const int row, const int col, const bool value) {
@@ -80,8 +88,8 @@ void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const i
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const long value) {
     const QModelIndex index = dataModel->index(row, col);
     dataModel->setData(index, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
-    dataModel->setData(index, static_cast<int>(value), Qt::UserRole);
-    dataModel->setData(index, static_cast<int>(value), Qt::DisplayRole);
+    dataModel->setData(index, static_cast<qlonglong>(value), Qt::UserRole);
+    dataModel->setData(index, static_cast<qlonglong>(value), Qt::DisplayRole);
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const double value, const int digits) {
@@ -92,7 +100,7 @@ void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const i
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const QDateTime &value) {
-    dataModel->setItem(row, col, new QStandardItem(value.toString("yyyy-MM-dd hh:mm:ss")));
+    dataModel->setItem(row, col, new QStandardItem(DateTimeUtils::GetDateTimeFormat(value)));
 }
 
 void TableUtils::SetColumn(QStandardItemModel *dataModel, const int row, const int col, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) {

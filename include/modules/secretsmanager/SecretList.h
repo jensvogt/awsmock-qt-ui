@@ -20,6 +20,7 @@
 #include <utils/PrefixFilterModel.h>
 #include <modules/secretsmanager/SecretsManagerService.h>
 #include <modules/secretsmanager/SecretsDetailsDialog.h>
+#include <modules/secretsmanager/SecretAddDialog.h>
 
 /**
  * @brief Secrets list widget. The widget will be placed in the content pane.
@@ -42,6 +43,12 @@ public:
     ~SecretList() override;
 
     /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+    }
+
+    /**
      * @brief Load page content
      */
     void LoadContent() override;
@@ -51,7 +58,7 @@ public:
      *
      * @param secretsListResponse secrets counter list
      */
-    void HandleListSecretsSignal(const SecretsListResponse &secretsListResponse);
+    void HandleListSecretsSignal(const SecretsListResponse &secretsListResponse) const;
 
 private slots:
     /**

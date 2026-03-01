@@ -1,9 +1,13 @@
 
 #include <modules/sns/SNSMessageDetailsDialog.h>
 #include "ui_SNSMessageDetailsDialog.h"
+#include "utils/DateTimeUtils.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
+ // Setup UI
     _ui->setupUi(this);
+    connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SNSMessageDetailsDialog::HandleAccept);
+    connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SNSMessageDetailsDialog::HandleReject);
 
     _snsService = new SNSService();
 
@@ -46,8 +50,8 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     _ui->messageIdEdit->setText(response.messageId);
     _ui->topicArnEdit->setText(response.topicArn);
     _ui->contentTypeEdit->setText(response.contentType);
-    _ui->createdEdit->setText(response.created.toString("yyyy-MM-dd hh:mm:ss"));
-    _ui->modifiedEdit->setText(response.modified.toString("yyyy-MM-dd hh:mm:ss"));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(response.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(response.modified));
 
     // Body
     _ui->bodyPlainTextEdit->setPlainText(response.message);
@@ -75,4 +79,12 @@ void SNSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked) const {
         _ui->bodyPlainTextEdit->clear();
         _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
     }
+}
+
+void SNSMessageDetailsDialog::HandleAccept() {
+    accept();
+}
+
+void SNSMessageDetailsDialog::HandleReject() {
+    accept();
 }

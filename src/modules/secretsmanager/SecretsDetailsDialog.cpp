@@ -1,13 +1,8 @@
-//
-// Created by vogje01 on 12/16/25.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_SecretsDetails.h" resolved
-
 #include <modules/secretsmanager/SecretsDetailsDialog.h>
 #include "ui_SecretsDetailsDialog.h"
+#include "utils/DateTimeUtils.h"
 
-SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) : QDialog(parent), _ui(new Ui::SecretsDetailsDialog), _secretArn(std::move(secretArn)) {
+SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SecretsDetailsDialog), _secretArn(std::move(secretArn)) {
 
     // Initialize service
     _secretsManagerService = new SecretsManagerService();
@@ -24,15 +19,49 @@ SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) :
     // Refresh button
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
+        LoadContent();
+    });
+
+    // Version refreshButton
+    _ui->versionRefreshButton->setText(nullptr);
+    _ui->versionRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
 
     // Pretty print
     _ui->prettyButton->setText(nullptr);
     _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
     connect(_ui->prettyButton, &QPushButton::toggled, this, &SecretsDetailsDialog::PrettyPrintClicked);
+
     // Value edit
     connect(_ui->valueEdit, &QTextEdit::textChanged, this, [this]() {
         _changed = true;
     });
+
+    // Reset tabs
+    connect(_ui->tabWidget, &QTabWidget::currentChanged, this, &SecretsDetailsDialog::HandleTabChanged);
+    connect(_secretsManagerService, &SecretsManagerService::GetSecretsVersionsSignal, this, &SecretsDetailsDialog::HandleVersionsList);
+    _ui->tabWidget->setCurrentIndex(0);
+
+    // Table
+    const QStringList headers = QStringList() = {
+                                    tr("ID"), tr("State")
+                                };
+
+    // Table
+    _versionDataModel = new QStandardItemModel(this);
+    _versionDataModel->setHorizontalHeaderLabels(headers);
+    _versionDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->versionTableView->setModel(_versionDataModel);
+
+    _ui->versionTableView->setShowGrid(true);
+    _ui->versionTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->versionTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->versionTableView->setSortingEnabled(true);
+    _ui->versionTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->versionTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _ui->versionTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _ui->versionTableView->setColumnHidden(4, true);
+    //_ui->versionTableView->addAction(GetRefreshAction(this));
 }
 
 SecretsDetailsDialog::~SecretsDetailsDialog() {
@@ -52,7 +81,7 @@ void SecretsDetailsDialog::HandleReject() {
 }
 
 void SecretsDetailsDialog::LoadContent() {
-
+    _secretsManagerService->GetSecret(_secretArn);
 }
 
 void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
@@ -61,13 +90,16 @@ void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
     _ui->nameEdit->setText(secretCounter.name);
     _ui->arnEdit->setText(secretCounter.arn);
     _ui->secretIdEdit->setText(secretCounter.secretId);
-    _ui->lastRotatedEdit->setText(secretCounter.lastRotatedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->nextRotationEdit->setText(secretCounter.nextRotatedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->lastAccessedEdit->setText(secretCounter.lastAccessedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->deleteDateEdit->setText(secretCounter.deletedDate.toString("yyyy-mm-dd HH:mm"));
-    _ui->createdEdit->setText(secretCounter.created.toString("yyyy-mm-dd HH:mm"));
-    _ui->modifiedEdit->setText(secretCounter.modified.toString("yyyy-mm-dd HH:mm"));
+    _ui->lastRotatedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.lastRotatedDate));
+    _ui->nextRotationEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.nextRotatedDate));
+    _ui->lastAccessedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.lastAccessedDate));
+    _ui->deleteDateEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.deletedDate));
+    _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.created));
+    _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.modified));
     _ui->valueEdit->setText(secretCounter.secretString);
+
+    // Save secret ID
+    _secretId = secretCounter.secretId;
 }
 
 void SecretsDetailsDialog::PrettyPrintClicked(const bool checked) const {
@@ -92,12 +124,24 @@ void SecretsDetailsDialog::PrettyPrintClicked(const bool checked) const {
             QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
         }
     }
-    /*
-    if (!_ui->searchEdit->text().isEmpty()) {
-        const QString text = _ui->searchEdit->text();
-        QTextCursor cursor(_ui->valueEdit->document());
-        cursor.movePosition(QTextCursor::Start);
-        _ui->valueEdit->setTextCursor(cursor);
-        _ui->valueEdit->find(text, QTextDocument::FindWholeWords);
-    }*/
+}
+
+void SecretsDetailsDialog::HandleTabChanged(const int tabIndex) const {
+    if (tabIndex == 1) {
+        _secretsManagerService->GetVersions(_secretId);
+    }
+}
+
+void SecretsDetailsDialog::HandleVersionsList(const SecretGetVersionResponse &secretVersionResponse) {
+    const int selectedRow = _ui->versionTableView->selectionModel()->currentIndex().row();
+    _ui->versionTableView->setSortingEnabled(false);
+    _versionDataModel->removeRows(0, _versionDataModel->rowCount());
+    for (auto r = 0; r < secretVersionResponse.secretVersionCounters.count(); r++) {
+        auto states = QStringList(secretVersionResponse.secretVersionCounters[r].states.begin(), secretVersionResponse.secretVersionCounters[r].states.end()).join(", ");
+        SetColumn(_versionDataModel, r, 0, secretVersionResponse.secretVersionCounters.at(r).versionId);
+        SetColumn(_versionDataModel, r, 1, states);
+    }
+    _ui->versionTableView->setSortingEnabled(true);
+    _ui->versionTableView->selectRow(selectedRow);
+
 }

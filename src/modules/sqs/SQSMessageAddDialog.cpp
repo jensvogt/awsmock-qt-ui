@@ -7,7 +7,8 @@
 #include <modules/sqs/SQSMessageAddDialog.h>
 #include "ui_SQSMessageAddDialog.h"
 
-SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog), _queueUrl(std::move(queueUrl)) {
+SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString &queueArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSMessageAddDialog), _queueUrl(std::move(queueUrl)), _queueArn(std::move(queueArn)) {
+
     // Connect service events
     _sqsService = new SQSService();
     connect(_sqsService, &SQSService::SendMessagesSignal, this, &SQSMessageAddDialog::HandleSendMessageSignal);
@@ -47,21 +48,24 @@ SQSMessageAddDialog::SQSMessageAddDialog(QString queueUrl, QWidget *parent) : Ba
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    SetupRequest();
 }
 
 SQSMessageAddDialog::~SQSMessageAddDialog() {
     delete _ui;
 }
 
-void SQSMessageAddDialog::HandleAccept() const {
+void SQSMessageAddDialog::HandleAccept() {
+
+    // Check body size
     if (_ui->bodyEdit->toPlainText().isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "Body can't be empty!");
         return;
     }
-    SQSSendMessageRequest request;
-    request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
-    request.queueUrl = _queueUrl;
-    request.body = _ui->bodyEdit->toPlainText().toUtf8();
+    _request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    _request.queueUrl = _queueUrl;
+    _request.body = _ui->bodyEdit->toPlainText().toUtf8();
 
     const int rows = _ui->tableWidget->rowCount();
 
@@ -72,9 +76,9 @@ void SQSMessageAddDialog::HandleAccept() const {
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
         const QTableWidgetItem *value = _ui->tableWidget->item(r, 1);
         messageAttribute.stringValue = value->text().toUtf8();
-        request.messageAttributes[key->text().toStdString()] = messageAttribute;
+        _request.messageAttributes[key->text()] = messageAttribute;
     }
-    _sqsService->SendMessage(request);
+    _sqsService->SendMessage(_request);
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
@@ -149,4 +153,21 @@ void SQSMessageAddDialog::HandleAddAttributeButton() const {
         SetColumn(_ui->tableWidget, row, 0, keyEdit->text());
         SetColumn(_ui->tableWidget, row, 1, valueEdit->text());
     }
+}
+
+void SQSMessageAddDialog::SetupRequest() {
+    _sqsService->ListQueueDefaultAttributes(_queueArn, "");
+    connect(_sqsService, &SQSService::ListQueueDefaultAttributesSignal, this, [this](const SQSListQueueDefaultAttributesResponse &response) {
+        for (const auto &key: response.defaultAttributesCounters.keys()) {
+
+            // Add ro request
+            _request.messageAttributes[key] = response.defaultAttributesCounters[key];
+
+            // Add to message attribute list
+            const int row = _ui->tableWidget->rowCount();
+            _ui->tableWidget->insertRow(row);
+            SetColumn(_ui->tableWidget, row, 0, key);
+            SetColumn(_ui->tableWidget, row, 1, response.defaultAttributesCounters[key].stringValue);
+        }
+    });
 }

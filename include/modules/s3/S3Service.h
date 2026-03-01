@@ -3,11 +3,10 @@
 
 // Qt includes
 #include <QMessageBox>
-#include <QObject>
-#include <QUrlQuery>
 #include <QElapsedTimer>
 
 // AwsMock includes
+#include <utils/Logging.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
 #include <utils/BaseService.h>
@@ -16,6 +15,7 @@
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 #include <dto/s3/S3GetObjectDetailsResponse.h>
 #include <dto/s3/S3ListObjectResponse.h>
+#include <dto/s3/S3PutBucketNotificationConfigurationRequest.h>
 
 class S3Service final : public BaseService {
     Q_OBJECT
@@ -24,14 +24,18 @@ public:
     /**
      * @brief S3 service
      */
-    S3Service();
+    S3Service() = default;
 
     /**
      * @brief List SNS Topics
      *
      * @param prefix topic name prefix
+     * @param pageSize page size
+     * @param pageIndex page index
+     * @param sortAttribute sort database attribute name
+     * @param sortDirection sort direction 1=ascending, -1=descending
      */
-    void ListBuckets(const QString &prefix);
+    void ListBuckets(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Purge all objects
@@ -40,19 +44,48 @@ public:
      */
     void PurgeBucket(const QString &bucketName);
 
+    /**
+     * @brief Add a new bucket
+     *
+     * @param bucketName name of the bucket
+     */
     void AddBucket(const QString &bucketName);
 
-    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata);
+    /**
+     * @brief Update bucket
+     *
+     * @param bucketName bucket name
+     * @param metadata bucket metadata array
+     * @param lifecycleRules
+     * @param versionStatus version status, can be either 'enabled' or 'disabled'.
+     */
+    void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, QVector<LifecycleRule> &lifecycleRules, const QString &versionStatus);
 
+    /**
+     * @brief delete the bucket
+     *
+     * @param bucketName name of the bucket
+     */
     void DeleteBucket(const QString &bucketName);
 
+    /**
+     * @brief Get the bucket details
+     *
+     * @param bucketName name of the bucket
+     */
     void GetBucketDetails(const QString &bucketName);
 
-    void ListObjects(const QString &bucketName, const QString &prefix);
+    void ListObjects(const QString &bucketName, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     void GetObjectDetails(const QString &objectId);
 
     void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
+
+    void UpdateObject(const QString &region, const QString &bucketName, const QString &key, const QByteArray &content, const QString &storageClass, const QMap<QString, QString> &metadata);
+
+    void PutBucketNotificationConfiguration(const S3PutBucketNotificationConfigurationRequest &request);
+
+    void TouchObject(const QString &bucketName, const QString &key);
 
     void DeleteObject(const QString &bucketName, const QString &key);
 
@@ -101,11 +134,6 @@ private:
      * @brief HTTP REST manager
      */
     RestManager _restManager;
-
-    /**
-     * @brief Base URL
-     */
-    QUrl _url;
 };
 
 

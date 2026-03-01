@@ -8,16 +8,12 @@
 #include "ui_ApplicationLogsDialog.h"
 
 
-ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, const QString &containerId,
-                                             QWidget *parent) : QDialog(parent),
-                                                                _ui(new Ui::ApplicationLogsDialog),
-                                                                _containerId(containerId) {
+ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, const QString &containerId, QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationLogsDialog), _containerId(containerId) {
+    const long limit = Configuration::instance().GetValue<long>("ui.application-log-limit", 1000);
 #ifdef _WIN32
-    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::Tcp, "localhost:2375",
-                                           this);
+    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::Tcp, "localhost:2375", limit, this);
 #else
-    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::UnixSocket, "/var/run/docker.sock",
-                                           this);
+    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::UnixSocket, "/var/run/docker.sock", limit, this);
 #endif
     connect(_dockerLogClient, &DockerLogClient::Connected, [this]() {
         _ui->statusLabel->setText("Status: Connected");

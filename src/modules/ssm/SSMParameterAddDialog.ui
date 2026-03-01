@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SSMParameterAddDialog</class>
+ <widget class="QDialog" name="SSMParameterAddDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>778</width>
+    <height>460</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Add SSM Parameter</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="6" column="0">
+      <widget class="QLabel" name="kmsKeyLabel">
+       <property name="text">
+        <string>KMS Key:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QComboBox" name="kmsKeyCombo">
+       <property name="placeholderText">
+        <string>KMS Key ID</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="descriptionLabel">
+       <property name="text">
+        <string>Description:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="nameLlabel">
+       <property name="text">
+        <string>Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="nameEdit">
+       <property name="placeholderText">
+        <string>Secret Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="regionEdit">
+       <property name="placeholderText">
+        <string>AWS Region</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="regionLabel">
+       <property name="text">
+        <string>Region:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLineEdit" name="valueEdit">
+       <property name="placeholderText">
+        <string>Secret Value</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="valueLabel">
+       <property name="text">
+        <string>Value:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QTextEdit" name="descriptionEdit">
+       <property name="placeholderText">
+        <string>Description</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>regionEdit</tabstop>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>valueEdit</tabstop>
+  <tabstop>kmsKeyCombo</tabstop>
+  <tabstop>descriptionEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

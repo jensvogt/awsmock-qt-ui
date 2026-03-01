@@ -1,29 +1,18 @@
-#ifndef SQSMESSAGELIST_H
-#define SQSMESSAGELIST_H
+#ifndef AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
+#define AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H
 
-#include <QLabel>
 #include <QMenu>
+#include <QLabel>
 #include <QVBoxLayout>
-#include <QTableWidget>
-#include <QListWidget>
-#include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QLineEdit>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QToolBar>
 #include <QPushButton>
-#include <QInputDialog>
-#include <QFormLayout>
-#include <QTreeWidget>
-#include <QTimer>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
 
+// Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
+#include <utils/EventBus.h>
+#include <utils/AwsUtils.h>
+#include <components/PageableTable.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include <modules/sqs/SQSMessageAddDialog.h>
@@ -40,16 +29,21 @@ public:
      * @brief SQSQueueList
      *
      * @param title widget title
-     * @param queueArn queue ARN
-     * @param queueUrl queue URL
      * @param parent parent widget
      */
-    SQSMessageList(const QString &title, QString queueArn, const QString &queueUrl, QWidget *parent = nullptr);
+    explicit SQSMessageList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
     ~SQSMessageList() override;
+
+    /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    };
 
     /**
      * @brief ListQueues
@@ -60,14 +54,9 @@ signals:
     /**
      * @brief Sent a show SQS message to the main window
      *
-     * @param QueueArn Queue ARN of the Queue for the messages
+     * @param queueArn Queue ARN of the Queue for the messages
      */
-    void ShowMessages(const QString &QueueArn);
-
-    /**
-     * @brief Sends a back message to the main window
-     */
-    void BackToQueueList();
+    void ShowMessages(const QString &queueArn);
 
     /**
      * @brief Sends a reload message list to the message list
@@ -80,30 +69,26 @@ private slots:
      *
      * @param pos position in table
      */
-    void ShowContextMenu(const QPoint &pos) const;
-
-    void OnBackClicked() {
-        StopAutoUpdate();
-        emit BackToQueueList();
-    }
+    void ShowContextMenu(const QPoint &pos);
 
     /**
      * @brief Handle message list request
      *
      * @param listMessageResponse message counter list
      */
-    void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse);
+    void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const;
 
-    /**
-     * @brief Handle message reload
-     */
-    void HandleReloadMessageSignal() const;
+    void HandleBulkDelete(const QModelIndexList &proxyIndices) const;
+
+    void HandleBulkResend(const QModelIndexList &proxyIndices) const;
+
+    void HandleBulkRedrive(const QModelIndexList &proxyIndices) const;
 
 private:
     /**
-     * @brief QT table
+     * @brief Pageable Qt table
      */
-    QTableWidget *tableWidget;
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
@@ -111,9 +96,9 @@ private:
     SQSService *_sqsService;
 
     /**
-     * @brief prefix search
+     * @brief Parent queue
      */
-    QString prefixValue = "";
+    SQSQueueCounter _parentQueue;
 
     /**
      * @brief SQS queue ARN
@@ -126,21 +111,14 @@ private:
     QString _queueUrl;
 
     /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'Available', index=1
+     * @brief DQL flag
      */
-    int _sortColumn = 1;
+    bool _isDlq = false;
 
     /**
-     * @brief Sort order
+     *  @brief Title label
      */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
+    QLabel *_titleLabel;
 };
 
-#endif // SQSMESSAGELIST_H
+#endif // AWSMOCK_QT_UI_SQS_MESSAGE_LIST_H

@@ -7,34 +7,47 @@
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
 #include "ui_LambdaEnvironmentDetailDialog.h"
 
+LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
+    // Initialize
+    Initialize();
 
-LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(const QString &key, const QString &value, const bool add, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
+    // Key field
+    _ui->keyEdit->setText(nullptr);
+    _ui->keyEdit->setDisabled(false);
+    _ui->valueEdit->setText(nullptr);
+    _ui->valueEdit->setDisabled(false);
+}
 
+LambdaEnvironmentDetailDialog::LambdaEnvironmentDetailDialog(const QString &key, const QString &value, QWidget *parent) : QDialog(parent), _ui(new Ui::LambdaEnvironmentDetailDialog) {
+    // Initialize
+    Initialize();
+
+    _key = key;
+    _value = value;
+
+    // Key field
+    _ui->keyEdit->setText(key);
+    _ui->keyEdit->setDisabled(true);
+    _ui->valueEdit->setText(value);
+}
+
+LambdaEnvironmentDetailDialog::~LambdaEnvironmentDetailDialog() {
+    delete _ui;
+}
+
+void LambdaEnvironmentDetailDialog::Initialize() {
     // Setup dialog
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaEnvironmentDetailDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &LambdaEnvironmentDetailDialog::HandleReject);
 
-    // Key field
-    if (!add) {
-        _ui->keyEdit->setText(key);
-        _ui->keyEdit->setDisabled(true);
-    }
-    connect(_ui->keyEdit, &QLineEdit::textChanged, this, [this]() {
-        _key = _ui->keyEdit->text();
+    // Connect fields
+    connect(_ui->keyEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        _key = text;
     });
-
-    // Value field
-    if (!add) {
-        _ui->valueEdit->setText(value);
-    }
-    connect(_ui->valueEdit, &QLineEdit::textChanged, this, [this]() {
-        _value = _ui->valueEdit->text();
+    connect(_ui->valueEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        _value = text;
     });
-}
-
-LambdaEnvironmentDetailDialog::~LambdaEnvironmentDetailDialog() {
-    delete _ui;
 }
 
 void LambdaEnvironmentDetailDialog::HandleAccept() {
@@ -42,7 +55,7 @@ void LambdaEnvironmentDetailDialog::HandleAccept() {
 }
 
 void LambdaEnvironmentDetailDialog::HandleReject() {
-    accept();
+    reject();
 }
 
 QString LambdaEnvironmentDetailDialog::GetKey() {

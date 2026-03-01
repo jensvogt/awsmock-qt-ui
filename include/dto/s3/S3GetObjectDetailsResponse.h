@@ -13,6 +13,8 @@ struct S3GetObjectDetailsResponse {
 
     QString contentType;
 
+    QString storageClass;
+
     QMimeType mimeType;
 
     QString internalName;
@@ -22,6 +24,8 @@ struct S3GetObjectDetailsResponse {
     long size;
 
     QString owner;
+
+    QString versionId;
 
     QDateTime created;
 
@@ -34,10 +38,12 @@ struct S3GetObjectDetailsResponse {
         bucketName = jsonObject["bucketName"].toString();
         key = jsonObject["key"].toString();
         contentType = jsonObject["contentType"].toString();
+        storageClass = jsonObject["storageClass"].toString();
         internalName = jsonObject["internalName"].toString();
         size = jsonObject["size"].toInt();
         owner = jsonObject["owner"].toString();
         body = QByteArray::fromBase64(jsonObject["body"].toString().toUtf8());
+        versionId = jsonObject["versionId"].toString();
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
 

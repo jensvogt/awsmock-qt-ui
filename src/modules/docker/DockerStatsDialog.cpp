@@ -1,8 +1,3 @@
-//
-// Created by jensv on 08/12/2025.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_DockerStatsDIalog.h" resolved
 
 #include <modules/docker/DockerStatsDialog.h>
 #include "ui_DockerStatsDialog.h"
@@ -12,11 +7,10 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     _applicationService = new ApplicationService();
 
     // Event bus connection
-    _statusConnection =
-            connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, const qint64 elapsed) {
-                const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
-                _ui->statusLabel->setText(msg);
-            });
+    connect(&EventBus::instance(), &EventBus::DockerStatsTimerSignal, [this](const QString &name, const qint64 elapsed) {
+        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]";
+        _ui->statusLabel->setText(msg);
+    });
 
     // Connect service
     _containerService = new DockerService();
@@ -97,7 +91,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
 }
 
 DockerStatsDialog::~DockerStatsDialog() {
-    disconnect(_statusConnection);
+    StopAutoUpdate();
     delete _ui;
 }
 
@@ -116,6 +110,7 @@ void DockerStatsDialog::LoadContent() {
 void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse) {
     const int selectedRow = _ui->statsTable->selectionModel()->currentIndex().row();
     _ui->statsTable->setSortingEnabled(false);
+    _dataModel->removeRows(0, _dataModel->rowCount());
 
     for (int r = 0, c = 0; r < dockerStatsResponse.containerStats.count(); r++, c = 0) {
         SetColumn(_dataModel, r, c++, dockerStatsResponse.containerStats.at(r).name);
@@ -219,7 +214,6 @@ void DockerStatsDialog::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == deleteAction) {
         _containerService->DeleteContainer(containerId);
     }
-    LoadContent();
     StartAutoUpdate();
 }
 

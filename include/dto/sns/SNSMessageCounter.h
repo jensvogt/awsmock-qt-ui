@@ -25,7 +25,7 @@ struct SNSMessageCounter {
     QDateTime lastSend;
 
     void FromJson(const QJsonObject &jsonObject) {
-        topicArn = jsonObject["topicArn"].toString();
+        topicArn = jsonObject["_topicArn"].toString();
         messageId = jsonObject["messageId"].toString();
         message = jsonObject["message"].toString();
         messageStatus = jsonObject["messageStatus"].toString();

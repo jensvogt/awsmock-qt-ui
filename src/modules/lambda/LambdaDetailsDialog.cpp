@@ -2,18 +2,14 @@
 // Created by vogje01 on 11/25/25.
 //
 
-#include <QMenu>
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include "ui_LambdaDetailsDialog.h"
-#include "modules/application/ApplicationEnvironmentEditDialog.h"
-#include "modules/lambda/LambdaEnvironmentDetailDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
-
     _lambdaService = new LambdaService();
 
-    _lambdaService->GetLambda(lambdaArn);
     connect(_lambdaService, &LambdaService::GetLambdaDetailsSignal, this, &LambdaDetailsDialog::UpdateLambda);
+    connect(_lambdaService, &LambdaService::LoadLambdaEnvironment, this, &LambdaDetailsDialog::LoadContent);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaDetailsDialog::HandleAccept);
@@ -26,6 +22,16 @@ LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *pare
         _lambdaService->GetLambda(_lambdaArn);
     });
 
+    // Logs button
+    _ui->logsButton->setText(nullptr);
+    _ui->logsButton->setIcon(IconUtils::GetIcon("logs"));
+    connect(_ui->logsButton, &QPushButton::clicked, [this]() {
+        auto *dialog = new LambdaResultListDialog(_lambdaArn, this);
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->show();
+    });
+
     // Setup instances tab
     SetupInstancesTab();
 
@@ -34,10 +40,17 @@ LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *pare
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    // Load content
+    LoadContent();
 }
 
 LambdaDetailsDialog::~LambdaDetailsDialog() {
     delete _ui;
+}
+
+void LambdaDetailsDialog::LoadContent() {
+    _lambdaService->GetLambda(_lambdaArn);
 }
 
 void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const {
@@ -64,7 +77,7 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     connect(_lambdaService, &LambdaService::ListLambdaInstancesSignal, this, &LambdaDetailsDialog::UpdateLambdaInstances);
 
     // Table
-    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Port"), tr("Status"), tr("Last Invocation")};
+    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Private Port"), tr("Public Port"), tr("Status"), tr("Last Invocation")};
     _ui->instanceTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->instanceTable->setShowGrid(true);
     _ui->instanceTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -74,8 +87,8 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     _ui->instanceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
 
@@ -93,7 +106,8 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).instanceId);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).containerId);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).hostname);
-        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).port);
+        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).privatePort);
+        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).publicPort);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).status);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).lastInvocation);
     }
@@ -104,12 +118,11 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
 }
 
 void LambdaDetailsDialog::SetupEnvironmentTab() const {
-
     // Add button
     _ui->environmentAddButton->setText(nullptr);
     _ui->environmentAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->environmentAddButton, &QPushButton::clicked, [this]() {
-        if (LambdaEnvironmentDetailDialog dialog("", "", true); dialog.exec() == Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog{}; dialog.exec() == Accepted) {
             const int newRowIndex = _ui->environmentTable->rowCount();
             _ui->environmentTable->insertRow(newRowIndex);
             SetColumn(_ui->environmentTable, newRowIndex, 0, dialog.GetKey());
@@ -154,16 +167,14 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
         const QString key = _ui->environmentTable->item(row, 0)->text();
         const QString value = _ui->environmentTable->item(row, 1)->text();
 
-        if (LambdaEnvironmentDetailDialog dialog(key, value, false); dialog.exec() == Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog(key, value); dialog.exec() == Accepted) {
             SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
-            //_lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+            _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
         }
     });
-
 }
 
 void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
-
     const int selectedRow = _ui->environmentTable->selectionModel()->currentIndex().row();
     _ui->environmentTable->setRowCount(0);
     _ui->environmentTable->setSortingEnabled(false);
@@ -182,7 +193,6 @@ void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentRes
 }
 
 void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
-
     // Cell index
     const QModelIndex index = _ui->environmentTable->indexAt(pos);
     if (!index.isValid()) return;
@@ -202,10 +212,10 @@ void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
     const QString value = _ui->environmentTable->item(row, 1)->text();
     if (const QAction *selectedAction = menu.exec(_ui->environmentTable->viewport()->mapToGlobal(pos));
         selectedAction == editAction) {
-        if (ApplicationEnvironmentEditDialog dialog(key, value, false); dialog.exec() == QDialog::Accepted) {
+        if (LambdaEnvironmentDetailDialog dialog(key, value); dialog.exec() == Accepted) {
             SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
-            //   _application.environment[key] = dialog.GetValue();
-            //            _changed = true;
+            SetColumn(_ui->environmentTable, row, 1, dialog.GetValue());
+            _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
         }
     } else if (selectedAction == deleteAction) {
         _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);

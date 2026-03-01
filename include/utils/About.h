@@ -9,7 +9,7 @@
 
 #include <utils/Configuration.h>
 
-#include <modules/infrastructure/InfrastructureService.h>
+#include <modules/module/ModuleService.h>
 #include <Version.h>
 
 QT_BEGIN_NAMESPACE
@@ -35,7 +35,7 @@ public:
 private:
     Ui::About *_ui;
 
-    InfraStructureService *_infraStructureService;
+    ModuleService *_infraStructureService;
 };
 
 

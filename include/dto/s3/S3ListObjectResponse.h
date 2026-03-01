@@ -15,7 +15,7 @@ struct S3ListObjectsResponse {
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
-        //JsonUtils::WriteJsonString(jsonDoc.object());
+        total = jsonDoc.object()["total"].toInt();
 
         for (QJsonArray jArray = jsonDoc["objectCounters"].toArray(); const auto &element: jArray) {
             S3ObjectCounter objectCounter;

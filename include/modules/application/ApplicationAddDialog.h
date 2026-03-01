@@ -65,7 +65,7 @@ private:
     /**
      * @brief Service
      */
-    ApplicationService *applicationService;
+    ApplicationService *_applicationService;
 };
 
 

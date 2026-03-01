@@ -1,106 +1,126 @@
 #include <mainwindow.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    // Connect infrastructure signals
-    _infraStructureService = new InfraStructureService();
-    connect(_infraStructureService, &InfraStructureService::ImportResponseSignal, this, &ImportInfrastructureResponse);
-    connect(_infraStructureService, &InfraStructureService::ExportResponseSignal, this, &WriteInfrastructureExport);
-    connect(_infraStructureService, &InfraStructureService::CleanResponseSignal, this, &CleanInfrastructureResponse);
 
-    setWindowTitle("AwsMock UI v" + QString(APP_VERSION));
-    resize(1600, 900);
+    // Connect infrastructure signals
+    _moduleService = new ModuleService();
+    connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
+    connect(_moduleService, &ModuleService::CleanResponseSignal, this, &CleanInfrastructureResponse);
+
+    // Start pinging server
+    StartServerPing();
 
     // Setup menu bar
     SetupMenuBar();
 
-    // 1. Create the main layout container (QSplitter)
-    const auto mainSplitter = new QSplitter(this);
-    mainSplitter->setOrientation(Qt::Horizontal);
+    // Setup toolbar
+    SetupToolBar();
 
-    // 2. Create the Navigation Pane (QListWidget)
-    m_navPane = new QListWidget(mainSplitter);
-    m_navPane->setMaximumWidth(200); // Set a maximum width for the navigation bar
-    m_navPane->setMinimumWidth(150);
+    // Main widget
+    QWidget *mainWidget = new MainWidget(this);
 
-    m_navPane->addItem("Dashboard");
-    m_navPane->addItem("SQS");
-    m_navPane->addItem("SNS");
-    m_navPane->addItem("S3");
-    m_navPane->addItem("Application");
-    m_navPane->addItem("Lambda");
-    m_navPane->addItem("Secrets Manager");
+    // Set the splitter as the central widget of the QMainWindow
+    setCentralWidget(mainWidget);
 
-    // Select the first item by default
-    m_navPane->setCurrentRow(0);
-
-    // 3. Create the Content Pane (QStackedWidget)
-    // QStackedWidget allows us to stack multiple widgets and show only one at a time.
-    m_contentPane = new QStackedWidget(this);
-    m_contentPane->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    // 4. Add the panes to the splitter
-    mainSplitter->addWidget(m_navPane);
-    mainSplitter->addWidget(m_contentPane);
-
-    // Set initial proportional sizes for the panes (e.g., 20% nav, 80% content)
-    QList<int> sizes;
-    sizes << 200 << 600; // Initial widths in pixels (QSplitter prefers list of sizes)
-    mainSplitter->setSizes(sizes);
-
-    // 5. Set the splitter as the central widget of the QMainWindow
-    setCentralWidget(mainSplitter);
-
-    // 6. Connect navigation signal to content slot
-    // When the selected row in the list changes, update the content pane index.
-    connect(m_navPane, &QListWidget::currentRowChanged, this, &MainWindow::NavigationSelectionChanged);
-
-    // Create dashboard
-    NavigationSelectionChanged(0);
-
-    // "Status bar" at the bottom
-    _serverName = new QLabel(QString("Server: ") + Configuration::instance().GetValue<QString>("server.base-url", ""),
-                             this);
-    _statusBar = new QStatusBar(this);
-    _statusBar->showMessage("Ready");
-    _statusBar->addPermanentWidget(_serverName);
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this,
-            [this](const QString &key, const QString &value) {
-                if (key == "server.base-url") {
-                    _serverName->setText(value);
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
+        if (key == "ui.style") {
+            qApp->setStyle(QStyleFactory::create(value));
+        }
+        if (key == "ui.style-type") {
+            if (value == "Dark") {
+                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+                if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
+                    qApp->setStyleSheet(f.readAll());
                 }
-            });
-
-    _timerLabel = new QLabel("", this);
-    _statusBar->addWidget(_timerLabel);
-    connect(&EventBus::instance(), &EventBus::TimerSignal, [this](const QString &name, qint64 elapsed) {
-        const QString msg = "Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" +
-                            QString::number(elapsed) + "ms]";
-        _statusBar->showMessage(msg);
+            } else {
+                qApp->setStyleSheet("");
+                qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
+            }
+        }
     });
-    setStatusBar(_statusBar);
 
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged,
-            [&](const QString &key, const QString &value) {
-                if (key == "ui.style") {
-                    qApp->setStyle(QStyleFactory::create(value));
-                }
-                if (key == "ui.style-type") {
-                    if (value == "Dark") {
-                        qApp->setStyle(
-                            QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
-                        if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {
-                            qApp->setStyleSheet(f.readAll());
-                        }
-                    } else {
-                        qApp->setStyleSheet("");
-                        qApp->setStyle(
-                            QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
-                    }
-                }
-            });
+    // Updater
+    StartUpdateChecker();
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() {
+    if (_pingThread) {
+        // Tell the thread's event loop to stop
+        _pingThread->quit();
+
+        // Wait for the thread to actually exit.
+        if (!_pingThread->wait(3000)) {
+            // Wait up to 3 seconds
+            _pingThread->terminate(); // Force kill if it hangs
+            _pingThread->wait();
+        }
+    }
+    if (_updaterThread) {
+        // Tell the thread's event loop to stop
+        _updaterThread->quit();
+
+        // Wait for the thread to actually exit.
+        if (!_updaterThread->wait(3000)) {
+            // Wait up to 3 seconds
+            _updaterThread->terminate(); // Force kill if it hangs
+            _updaterThread->wait();
+        }
+    }
+}
+
+void MainWindow::StartServerPing() {
+    const int interval = Configuration::instance().GetValue<int>("ui.auto-update-period", 10);
+
+    _pingThread = new QThread();
+    _pingTimer = new QTimer();
+    _pingTimer->setInterval(interval * 1000);
+
+    // Move timer to thread
+    _pingTimer->moveToThread(_pingThread);
+
+    // Start the timer when the thread starts. By connecting directly to the timer, Qt uses a 'QueuedConnection'
+    // to cross the thread boundary safely.
+    connect(_pingThread, &QThread::started, _pingTimer, QOverload<>::of(&QTimer::start));
+
+    // Perform the ping
+    connect(_pingTimer, &QTimer::timeout, this, [this]() {
+        _moduleService->PingServer();
+    });
+
+    // Cleanup
+    connect(_pingThread, &QThread::finished, _pingTimer, &QObject::deleteLater);
+
+    _pingThread->start();
+}
+
+void MainWindow::StartUpdateChecker() {
+    const int interval = Configuration::instance().GetValue<int>("general.update-check-period", 24 * 3600);
+
+    _updaterThread = new QThread();
+    _updaterTimer = new QTimer();
+    _updaterTimer->setInterval(interval * 1000);
+
+    // Move timer to thread
+    _updaterTimer->moveToThread(_updaterThread);
+
+    // Start the timer when the thread starts. By connecting directly to the timer, Qt uses a 'QueuedConnection'
+    // to cross the thread boundary safely.
+    connect(_updaterThread, &QThread::started, _updaterTimer, QOverload<>::of(&QTimer::start));
+
+    // Perform the ping
+    connect(_updaterTimer, &QTimer::timeout, this, [this]() {
+        _updateChecker->checkForUpdates();
+    });
+
+    // Cleanup
+    connect(_updaterThread, &QThread::finished, _updaterTimer, &QObject::deleteLater);
+
+    _updaterThread->start();
+
+    // First time immediately
+    _updateChecker = new UpdateChecker(this);
+    _updateChecker->checkForUpdatesNoNotification();
+}
 
 void MainWindow::SetupMenuBar() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -121,6 +141,10 @@ void MainWindow::SetupMenuBar() {
     connect(cleanAction, &QAction::triggered, this, &MainWindow::CleanInfrastructure);
     fileMenu->addAction(cleanAction);
 
+    const auto showAction = new QAction(IconUtils::GetIcon("show"), tr("&Show infrastructure file"), this);
+    connect(showAction, &QAction::triggered, this, &MainWindow::ShowInfrastructureDialog);
+    fileMenu->addAction(showAction);
+
     fileMenu->addSeparator();
 
     const auto exitAction = new QAction(IconUtils::GetIcon("exit"), tr("E&xit"), this);
@@ -133,9 +157,9 @@ void MainWindow::SetupMenuBar() {
     editMenu->addAction(prefAction);
 
     // Tools menu
-    const auto uploadAction = new QAction(IconUtils::GetIcon("upload"), tr("&Upload file"), this);
-    connect(uploadAction, &QAction::triggered, this, &MainWindow::FtpUpload);
-    toolsMenu->addAction(uploadAction);
+    const auto ftpClientAction = new QAction(IconUtils::GetIcon("upload"), tr("&FTP client"), this);
+    connect(ftpClientAction, &QAction::triggered, this, &MainWindow::FtpUpload);
+    toolsMenu->addAction(ftpClientAction);
 
     const auto dockerStatsAction = new QAction(IconUtils::GetIcon("docker-stats"), tr("&Docker Statistics"), this);
     connect(dockerStatsAction, &QAction::triggered, this, &MainWindow::DockerStats);
@@ -153,16 +177,51 @@ void MainWindow::SetupMenuBar() {
         aboutDialog.exec();
     });
     helpMenu->addAction(aboutAction);
+
+    // Check for updates
+    const auto updateAction = new QAction(IconUtils::GetIcon("update"), tr("Check for &Update"), this);
+    connect(updateAction, &QAction::triggered, this, [this]() {
+        _updateChecker->checkForUpdates();
+    });
+    helpMenu->addAction(updateAction);
+}
+
+void MainWindow::SetupToolBar() {
+    const auto toolBar = new QToolBar(this);
+    toolBar->setMovable(true);
+
+    const auto ftpClientAction = new QAction(IconUtils::GetIcon("ftp"), tr("Open &FTP client"), this);
+    connect(ftpClientAction, &QAction::triggered, this, &MainWindow::FtpUpload);
+    toolBar->addAction(ftpClientAction);
+
+    const auto dockerStatsAction = new QAction(IconUtils::GetIcon("docker"), tr("Opens the &Docker Statistics"), this);
+    connect(dockerStatsAction, &QAction::triggered, this, &MainWindow::DockerStats);
+    toolBar->addAction(dockerStatsAction);
+
+    // Create the spacer widget
+    auto *spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    // Add the spacer, then your right-aligned button
+    toolBar->addWidget(spacer);
+
+    // Settings button
+    auto *settingsButton = new QPushButton(IconUtils::GetIcon("settings"), nullptr);
+    settingsButton->setToolTip("Opens the preferences");
+    toolBar->addWidget(settingsButton);
+    toolBar->addSeparator();
+    connect(settingsButton, &QPushButton::clicked, this, &MainWindow::EditPreferences);
+
+    // Add the toolbar to the main window
+    addToolBar(toolBar);
 }
 
 void MainWindow::ImportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-_ui");
 
-    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir,
-                                                              filter); !filePath.isEmpty()) {
+    if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
             QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
@@ -172,8 +231,8 @@ void MainWindow::ImportInfrastructure() const {
         const QByteArray jsonData = file.readAll();
         file.close();
 
-        _infraStructureService->ImportInfrastructure(jsonData);
-        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        _moduleService->ImportInfrastructure(jsonData);
+        Configuration::instance().SetValue<QString>("ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -181,16 +240,16 @@ void MainWindow::ImportInfrastructureResponse() {
     QMessageBox::information(nullptr, "Information", "Infrastructure imported");
 }
 
-void MainWindow::ExportInfrastructure() const {
-    // Create a QFileDialog set to select existing files
-    const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>(
-        "ui.default-directory", "/usr/local/awsmock-qt-ui");
+void MainWindow::ExportInfrastructure() {
 
-    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir,
-                                                              filter); !filePath.isEmpty()) {
-        _infraStructureService->ExportInfrastructure(filePath);
-        Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+    if (ModuleExportDialog dialog; dialog.exec() == QDialog::Accepted) {
+        QString filePath = dialog.GetFilePath();
+        QStringList modules = dialog.GetModules();
+        _moduleService->GetInfrastructure();
+        connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, [filePath](const QString &infrastructure) {
+            WriteInfrastructureExport(filePath, infrastructure);
+        });
+        Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     }
 }
 
@@ -201,39 +260,61 @@ void MainWindow::WriteInfrastructureExport(const QString &filename, const QStrin
         return;
     }
 
-    QJsonParseError parseError;
-    const QJsonDocument doc = QJsonDocument::fromJson(exportResponse.toUtf8(), &parseError);
-    if (parseError.error != QJsonParseError::NoError) {
-        QMessageBox::warning(nullptr, "Warning", "Could not convert to pretty print, file: " + file.fileName());
-        return;
-    }
-
     // Write formatted (pretty-printed) JSON
-    file.write(doc.toJson(QJsonDocument::Indented));
+    file.write(StringUtils::ConvertToIndentedJson(exportResponse).toUtf8());
     file.close();
     QMessageBox::information(nullptr, "Information", "Infrastructure saved to file: " + file.fileName());
 }
 
 void MainWindow::CleanInfrastructure() const {
-    _infraStructureService->CleanInfrastructure();
+    _moduleService->CleanInfrastructure();
 }
 
 void MainWindow::CleanInfrastructureResponse() {
     QMessageBox::information(nullptr, "Information", "Infrastructure cleaned");
 }
 
+void MainWindow::ShowInfrastructureDialog() {
+    ShowInfrastructure dialog;
+    dialog.exec();
+}
+
 void MainWindow::FtpUpload() {
-    const auto dialog = new FTPUploadDialog(this);
-    dialog->setModal(false);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
+    // If the dialog doesn't exist, create it
+    if (!_ftpClientDialog) {
+        _ftpClientDialog = new FTPClientDialog(nullptr);
+        _ftpClientDialog->setWindowFlags(Qt::Window);
+        _ftpClientDialog->show();
+
+        // Reset the pointer to nullptr when the user clicks 'X'
+        connect(_ftpClientDialog, &QObject::destroyed, this, [this]() {
+            _ftpClientDialog = nullptr;
+        });
+    } else {
+        // If it already exists, bring it to the front
+        _ftpClientDialog->show();
+        _ftpClientDialog->raise();
+        _ftpClientDialog->activateWindow();
+    }
 }
 
 void MainWindow::DockerStats() {
-    const auto dialog = new DockerStatsDialog(this);
-    dialog->setModal(false);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
+    // If the dialog doesn't exist, create it
+    if (!_dockerStatsDialog) {
+        _dockerStatsDialog = new DockerStatsDialog(nullptr);
+        _dockerStatsDialog->setWindowFlags(Qt::Window);
+        _dockerStatsDialog->show();
+
+        // Reset the pointer to nullptr when the user clicks 'X'
+        connect(_dockerStatsDialog, &QObject::destroyed, this, [this]() {
+            _dockerStatsDialog = nullptr;
+        });
+    } else {
+        // If it already exists, bring it to the front
+        _dockerStatsDialog->show();
+        _dockerStatsDialog->raise();
+        _dockerStatsDialog->activateWindow();
+    }
 }
 
 void MainWindow::EditPreferences() {
@@ -241,178 +322,9 @@ void MainWindow::EditPreferences() {
     dialog.exec();
 }
 
-void MainWindow::NavigationSelectionChanged(const int currentRow) {
-    currentWidgetIndex = currentRow;
-    if (!loadedPages.contains(currentRow)) {
-        // Lazy load page
-        BasePage *page = CreatePage(currentRow);
-        loadedPages[currentRow] = page;
-        m_contentPane->addWidget(page);
-    }
-    for (const auto &loadedPage: loadedPages) {
-        if (loadedPage) {
-            loadedPage->StopAutoUpdate();
-        }
-    }
-    loadedPages[currentRow]->StartAutoUpdate();
-    m_contentPane->setCurrentWidget(loadedPages[currentRow]);
-}
-
 void MainWindow::UpdateStatusBar(const QString &text) const {
     if (_statusBar)
         _statusBar->showMessage(text);
-}
-
-BasePage *MainWindow::CreatePage(const int currentRow) {
-    switch (currentRow) {
-        case PAGE_DASHBOARD: {
-            const auto dashboardPage = new Dashboard("Dashboard", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(dashboardPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return dashboardPage;
-        }
-
-        case PAGE_SQS: {
-            const auto queueListPage = new SQSQueueList("SQS Queue List");
-
-            // Connect child's signal to update status bar
-            connect(queueListPage, &SQSQueueList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the message list
-            connect(queueListPage, &SQSQueueList::ShowMessages, this,
-                    [this, queueListPage](const QString &queueArn, const QString &queueUrl) {
-                        // Stop the auto updater
-                        queueListPage->StopAutoUpdate();
-
-                        // Get the Queue name
-                        const QString queueName = queueArn.mid(queueArn.lastIndexOf(":") + 1);
-
-                        // Create the message list page
-                        const auto messageListPage = new SQSMessageList("SQS Message List: " + queueName, queueArn,
-                                                                        queueUrl, nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(messageListPage);
-                        m_contentPane->setCurrentWidget(messageListPage);
-
-                        connect(messageListPage, &SQSMessageList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(messageListPage, &SQSMessageList::BackToQueueList, this, [&]() {
-                            NavigationSelectionChanged(1);
-                        });
-
-                        // Start auto updater
-                        messageListPage->StartAutoUpdate();
-                    });
-            return queueListPage;
-        }
-
-        case PAGE_SNS: {
-            const auto topicListPage = new SNSTopicList("SNS Topic List");
-
-            // Connect child's signal to update status bar
-            connect(topicListPage, &SNSTopicList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the message list
-            connect(topicListPage, &SNSTopicList::ShowSnsMessages, this,
-                    [this, topicListPage](const QString &topicArn) {
-                        // Stop the auto updater
-                        topicListPage->StopAutoUpdate();
-
-                        // Get the Queue name
-                        const QString topicName = topicArn.mid(topicArn.lastIndexOf(":") + 1);
-
-                        // Create the message list page
-                        const auto messageListPage = new SNSMessageList("SNS Message List: " + topicName, topicArn,
-                                                                        nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(messageListPage);
-                        m_contentPane->setCurrentWidget(messageListPage);
-
-                        connect(messageListPage, &SNSMessageList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(messageListPage, &SNSMessageList::BackToTopicList, this, [&]() {
-                            NavigationSelectionChanged(2);
-                        });
-
-                        // Start auto updater
-                        messageListPage->StartAutoUpdate();
-                    });
-
-            return topicListPage;
-        }
-
-        case PAGE_S3: {
-            const auto bucketListPage = new S3BucketList("S3 Bucket List");
-
-            // Connect child's signal to update status bar
-            connect(bucketListPage, &S3BucketList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            // Route to the S3 object list
-            connect(bucketListPage, &S3BucketList::ShowS3Objects, this,
-                    [this,bucketListPage](const QString &bucketName) {
-                        // Stop the auto updater
-                        bucketListPage->StopAutoUpdate();
-
-                        // Create the message list page
-                        const auto objectListPage = new S3ObjectList("S3 Object List: " + bucketName, bucketName,
-                                                                     nullptr);
-
-                        // Add it to the loaded pages list
-                        m_contentPane->addWidget(objectListPage);
-                        m_contentPane->setCurrentWidget(objectListPage);
-                        connect(objectListPage, &S3ObjectList::StatusUpdateRequested, this,
-                                &MainWindow::UpdateStatusBar);
-
-                        // Connect the back button
-                        connect(objectListPage, &S3ObjectList::BackToBucketList, this, [&]() {
-                            NavigationSelectionChanged(3);
-                        });
-
-                        // Start auto updater
-                        objectListPage->StartAutoUpdate();
-                    });
-
-            return bucketListPage;
-        }
-
-        case PAGE_APPLICATION: {
-            const auto applicationPage = new ApplicationList("Applications", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(applicationPage, &ApplicationList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return applicationPage;
-        }
-
-        case PAGE_LAMBDA: {
-            const auto lambdaPage = new LambdaList("Lambdas", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(lambdaPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return lambdaPage;
-        }
-
-        case PAGE_SECRETS_MANAGER: {
-            const auto secretsManagerPage = new SecretList("SecretsManager", m_contentPane);
-
-            // Connect child's signal to update status bar
-            connect(secretsManagerPage, &LambdaList::StatusUpdateRequested, this, &MainWindow::UpdateStatusBar);
-
-            return secretsManagerPage;
-        }
-
-        default:
-            return nullptr;
-    }
 }
 
 void MainWindow::Exit() {

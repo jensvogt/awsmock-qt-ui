@@ -1,0 +1,122 @@
+//
+// Created by vogje01 on 11/8/25.
+//
+
+#ifndef AWSMOCK_QT_UI_FTP_CLIENT_DIALOG_H
+#define AWSMOCK_QT_UI_FTP_CLIENT_DIALOG_H
+
+// Qt includes
+#include <QDialog>
+#include <QLineEdit>
+#include <QValidator>
+#include <QMessageBox>
+#include <QStandardItemModel>
+#include <QComboBox>
+#include <QMenu>
+#include <QTableView>
+#include <QInputDialog>
+
+// Awsmock includes
+#include <utils/Configuration.h>
+#include <utils/NonEmptyValidator.h>
+#include <utils/IconUtils.h>
+#include <utils/DateTimeUtils.h>
+#include <utils/DroppableTreeView.h>
+#include <modules/ftpclient/FTPClientThread.h>
+#include <components/FTPFileTree.h>
+#include <components/LocalFileTree.h>
+
+QT_BEGIN_NAMESPACE
+
+namespace Ui {
+    class FTPClientDialog;
+}
+
+QT_END_NAMESPACE
+
+class FTPClientDialog final : public QDialog {
+    Q_OBJECT
+
+public:
+    /**
+     * @brief Constructor
+     *
+     * @param parent parent widget
+     */
+    explicit FTPClientDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief Destructor
+     */
+    ~FTPClientDialog() override;
+
+    void SetupLogPanel();
+
+    void LogInfoMessage(const QString &message) const;
+
+    /**
+     * @brief Text input verification
+     *
+     * @param text text to verify
+     */
+    void UpdateLineEditStyle(const QString &text) const;
+
+    /**
+     * @brief Sets the line edit color.
+     *
+     * @param lineEdit line edit widget
+     * @param state validator status
+     */
+    static void SetLineEditColor(QLineEdit *lineEdit, QValidator::State state);
+
+private slots:
+    /**
+     * @brief Verification of the connect input fields
+     */
+    void HandleConnectButton();
+
+private:
+    /**
+     * @brief Dialog reject callback
+     */
+    void HandleReject();
+
+    /**
+     * UI components
+     */
+    Ui::FTPClientDialog *_ui;
+
+    /**
+     * @brief Local folder tree
+     */
+    LocalFileTree *_localFolderTree;
+
+    /**
+     * @brief FTP folder tree
+     */
+    FTPFileTree *_ftpFolderTree;
+
+    /**
+     *  @brief Log item data model
+     */
+    QStandardItemModel *_logDataModel{};
+
+    /**
+     * @brief Log scrolling flag
+     */
+    bool _logScrolling = true;
+
+    /**
+     * @brief Connected flag
+     */
+    bool _connected = false;
+
+    /**
+     * @brief Local base dir
+     */
+    QString _localBaseDir;
+
+};
+
+
+#endif // AWSMOCK_QT_UI_FTP_CLIENT_DIALOG_H

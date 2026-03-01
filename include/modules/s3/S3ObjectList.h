@@ -3,22 +3,24 @@
 
 #include <QMenu>
 #include <QHBoxLayout>
+#include <QFileDialog>
+#include <QHeaderView>
 #include <QInputDialog>
 #include <QLabel>
 #include <QPushButton>
 #include <QTableWidgetItem>
 
 #include <utils/BasePage.h>
+#include <utils/IconUtils.h>
+#include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
 #include <dto/s3/S3ListObjectResponse.h>
 #include <modules/s3/S3Service.h>
-//#include <modules/s3/S3ObjectDetailsDialog.h>
-#include <utils/IconUtils.h>
 #include <modules/s3/S3ObjectAddDialog.h>
 #include <modules/s3/S3ObjectEditDialog.h>
 
 /**
- * @brief Helper widget for the content area.
- * Displays a simple object based on the section selected.
+ * @brief S3 object table.
  */
 class S3ObjectList final : public BasePage {
     Q_OBJECT
@@ -28,17 +30,28 @@ public:
      * @brief SQSQueueList
      *
      * @param title widget title
-     * @param bucketName ARN of the parent topic
      * @param parent parent widget
      */
-    S3ObjectList(const QString &title, const QString &bucketName, QWidget *parent = nullptr);
+    explicit S3ObjectList(const QString &title, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
     ~S3ObjectList() override;
 
+    /**
+     * @brief Handles the bucket details signal
+     *
+     * @param bucketDetailsResponse bucker response
+     */
     void HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse);
+
+    /**
+     * @brief Clear the page content
+     */
+    void ClearContent() override {
+        _tableView->Clear();
+    }
 
     /**
      * @brief ListQueues
@@ -50,12 +63,16 @@ public:
      *
      * @param listObjectResponse object counter list
      */
-    void HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse);
+    void HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse) const;
 
     /**
      * @brief Handle object reload
      */
     void HandleReloadObjectSignal();
+
+    void HandleBulkDelete(const QModelIndexList &proxyIndices) const;
+
+    void HandleBulkTouch(const QModelIndexList &proxyIndices) const;
 
 signals:
     /**
@@ -68,7 +85,7 @@ signals:
     /**
      * @brief Sends a back object to the main window
      */
-    void BackToBucketList();
+    void BackNavigationSignal();
 
 private slots:
     /**
@@ -76,45 +93,28 @@ private slots:
      *
      * @param pos position in table
      */
-    void ShowContextMenu(const QPoint &pos) const;
+    void ShowContextMenu(const QPoint &pos);
 
 private:
     /**
+     * @brief Widget label
+     */
+    QLabel *_titleLabel;
+
+    /**
      * @brief Parent bucket name
      */
-    QString bucketName;
+    QString _bucketName;
 
     /**
      * @brief Object table
      */
-    QTableWidget *tableWidget;
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     S3Service *_s3Service;
-
-    /**
-     * @brief Prefix search
-     */
-    QString prefixValue = "";
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'objects', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *prefixClear;
 
     /**
      * @brief Bucket details

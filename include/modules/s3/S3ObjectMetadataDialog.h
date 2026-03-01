@@ -20,9 +20,18 @@ class S3ObjectMetadataDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit S3ObjectMetadataDialog(QWidget *parent = nullptr, bool isAdded = true);
+    /**
+     * @brief Constructor for new metadata
+     *
+     * @param parent parent widget
+     */
+    explicit S3ObjectMetadataDialog(QWidget *parent = nullptr);
+
+    explicit S3ObjectMetadataDialog(const QString &key, const QString &value, QWidget *parent = nullptr);
 
     ~S3ObjectMetadataDialog() override;
+
+    void Initialize();
 
     void HandleAccept();
 

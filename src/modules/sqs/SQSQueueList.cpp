@@ -1,5 +1,4 @@
 #include <modules/sqs/SQSQueueList.h>
-#include "utils/IconUtils.h"
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
     // Connect service
@@ -50,81 +49,41 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        prefixValue = prefixEdit->text();
-        prefixClear->setEnabled(true);
-        LoadContent();
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    prefixClear->setDisabled(true);
-    connect(prefixClear, &QPushButton::clicked, this, [this, prefixEdit]() {
-        prefixEdit->clear();
-        prefixValue = "";
-        prefixClear->setEnabled(false);
-    });
-    prefixLayout->addWidget(prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {
                                     tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"),
                                     tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
                                 };
 
-    tableWidget = new QTableWidget();
-    tableWidget->setColumnCount(static_cast<int>(headers.count()));
-    tableWidget->setShowGrid(true);
-    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableWidget->setHorizontalHeaderLabels(headers);
-    tableWidget->setSortingEnabled(true);
-    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
-    tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    tableWidget->setColumnHidden(7, true);
-    tableWidget->setColumnHidden(8, true);
-    tableWidget->setColumnHidden(9, true);
-    tableWidget->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable();
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetHiddenColumns({7, 8, 9});
+    _tableView->SetSortColumn(1, "attributes.approximateNumberOfMessages");
+    _tableView->SetSortDirection(-1);
 
     // Connect double-click
-    connect(tableWidget, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        // Get the position
-        const int row = index.row();
-
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
         // Extract ARN and URL
-        const QString queueUrl = tableWidget->item(row, 7)->text();
-        const QString queueArn = tableWidget->item(row, 8)->text();
+        QMap<QString, QString> arguments;
+        arguments["queueUrl"] = _tableView->GetValue<QString>(index, 7);
+        arguments["queueArn"] = _tableView->GetValue<QString>(index, 8);
+        arguments["isDlq"] = _tableView->GetValue<bool>(index, 9) ? "true" : "false";
 
         // Send notification
-        emit ShowMessages(queueArn, queueUrl);
+        emit EventBus::instance().RouteChanged("SQS Message List", arguments);
     });
 
-    // Add context menu
-    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
+    // Connect paging changes
+    connect(_tableView, &PageableTable::ReloadTable, this, &SQSQueueList::LoadContent);
 
-    // Save sort column
-    _tableHeader = tableWidget->horizontalHeader();
-    connect(_tableHeader, &QHeaderView::sortIndicatorChanged, this,
-            [this](const int column, const Qt::SortOrder &order) {
-                _sortColumn = column;
-                _sortOrder = order;
-            });
+    // Add context menu
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
-    layout->addWidget(tableWidget, 2);
+    layout->addWidget(_tableView, 2);
 }
 
 SQSQueueList::~SQSQueueList() {
@@ -132,46 +91,33 @@ SQSQueueList::~SQSQueueList() {
 }
 
 void SQSQueueList::LoadContent() {
-    if (Configuration::instance().GetConnectionState()) {
-        sqsService->ListQueues(prefixValue, _sortOrder);
-    } else {
-        QMessageBox::critical(nullptr, "Error", "Backend is not reachable");
-    }
+    _tableView->Clear();
+    sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
-void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) {
-    const int selectedRow = tableWidget->selectionModel()->currentIndex().row();
-    tableWidget->setRowCount(0);
-    tableWidget->setSortingEnabled(false); // stop sorting
-    for (auto r = 0; r < queueListResponse.queueCounters.count(); r++) {
-        tableWidget->insertRow(r);
-        SetColumn(tableWidget, r, 0, queueListResponse.queueCounters.at(r).queueName);
-        SetColumn(tableWidget, r, 1, queueListResponse.queueCounters.at(r).available);
-        SetColumn(tableWidget, r, 2, queueListResponse.queueCounters.at(r).invisible);
-        SetColumn(tableWidget, r, 3, queueListResponse.queueCounters.at(r).delayed);
-        SetColumn(tableWidget, r, 4, queueListResponse.queueCounters.at(r).size / 1024);
-        SetColumn(tableWidget, r, 5, queueListResponse.queueCounters.at(r).created);
-        SetColumn(tableWidget, r, 6, queueListResponse.queueCounters.at(r).modified);
-        SetHiddenColumn(tableWidget, r, 7, queueListResponse.queueCounters.at(r).queueUrl);
-        SetHiddenColumn(tableWidget, r, 8, queueListResponse.queueCounters.at(r).queueArn);
-        SetHiddenColumn(tableWidget, r, 9, queueListResponse.queueCounters.at(r).isDlq);
+void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const {
+    _tableView->SetTotalSize(queueListResponse.total);
+    for (auto r = 0, c = 0; r < queueListResponse.queueCounters.count(); r++, c = 0) {
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).queueName);
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).available);
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).invisible);
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).delayed);
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).size / 1024);
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).created);
+        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).modified);
+        _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).queueUrl);
+        _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).queueArn);
+        _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).isDlq);
     }
-    tableWidget->setRowCount(static_cast<int>(queueListResponse.queueCounters.count()));
-    tableWidget->setSortingEnabled(true);
-    tableWidget->sortItems(_sortColumn, _sortOrder);
-    tableWidget->selectRow(selectedRow);
-    NotifyStatusBar();
+    _tableView->UpdateSorting();
 }
 
 void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
-    const QModelIndex index = tableWidget->indexAt(pos);
-    if (!index.isValid()) return;
-
-    const int row = index.row();
-    const bool isDql = tableWidget->item(row, 9)->checkState();
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const bool isDql = _tableView->GetValue<bool>(index, 9);
 
     QMenu menu;
-
+    menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
@@ -191,10 +137,9 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     // Conditional logic
     redriveAction->setEnabled(isDql);
 
-    const QString queueUrl = tableWidget->item(row, 7)->text();
-    const QString queueArn = tableWidget->item(row, 8)->text();
-    if (const QAction *selectedAction = menu.exec(tableWidget->viewport()->mapToGlobal(pos));
-        selectedAction == purgeAction) {
+    const auto queueUrl = _tableView->GetValue<QString>(index, 7);
+    const auto queueArn = _tableView->GetValue<QString>(index, 8);
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == redriveAction) {
         sqsService->RedriveQueue(queueArn);

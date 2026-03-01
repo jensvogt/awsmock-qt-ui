@@ -20,19 +20,27 @@ class LambdaEnvironmentDetailDialog final : public QDialog {
 
 public:
     /**
-     * @brief Add/edit environment dialog constructor
+     * @brief Environment add dialog constructor
+     *
+     * @param parent parent widget
+     */
+    explicit LambdaEnvironmentDetailDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief Environment edit dialog constructor
      *
      * @param key environment variable key
      * @param value environment variable value
-     * @param add add flag
      * @param parent  parent widget
      */
-    explicit LambdaEnvironmentDetailDialog(const QString &key, const QString &value, bool add, QWidget *parent = nullptr);
+    LambdaEnvironmentDetailDialog(const QString &key, const QString &value, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
      */
     ~LambdaEnvironmentDetailDialog() override;
+
+    void Initialize();
 
     /**
      * @brief Accept dialog

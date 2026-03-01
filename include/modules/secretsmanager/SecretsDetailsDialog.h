@@ -10,7 +10,12 @@
 
 // Qt includes
 #include <QDialog>
+#include <QStringList>
 #include <QDialogButtonBox>
+#include <QStandardItemModel>
+
+// AwsMock includes
+#include <utils/BaseDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -24,7 +29,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class SecretsDetailsDialog : public QDialog {
+class SecretsDetailsDialog : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -54,7 +59,7 @@ public:
     /**
      * @brief Load dialog content
      */
-    void LoadContent();
+    void LoadContent() override;
 
     /**
      * @brief Update secret values
@@ -71,6 +76,20 @@ public:
      */
     void PrettyPrintClicked(bool checked) const;
 
+    /**
+     * @brief Tab widget current tab changed
+     *
+     * @param tabIndex current tab index
+     */
+    void HandleTabChanged(int tabIndex) const;
+
+    /**
+     * @brief Handle version list
+     *
+     * @param secretVersionResponse secrets version list
+     */
+    void HandleVersionsList(const SecretGetVersionResponse &secretVersionResponse);
+
 private:
     /**
      * @brief UI components
@@ -81,6 +100,11 @@ private:
      * @brief Secret AWS ARN
      */
     QString _secretArn;
+
+    /**
+     * @brief Secret ID
+     */
+    QString _secretId;
 
     /**
      * @brief Service
@@ -96,6 +120,11 @@ private:
      * @brief Secret counter
      */
     SecretCounter _secretCounter;
+
+    /**
+     * @brief Data model
+     */
+    QStandardItemModel *_versionDataModel{};
 };
 
 

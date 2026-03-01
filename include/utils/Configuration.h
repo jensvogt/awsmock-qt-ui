@@ -37,6 +37,28 @@ public:
     }
 
     template<class T>
+    T GetValue(const QString &path) {
+        const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
+        if constexpr (std::is_same_v<T, int>) {
+            return static_cast<T>(v.toInt());
+        } else if constexpr (std::is_same_v<T, long>) {
+            return static_cast<T>(v.toInteger());
+        } else if constexpr (std::is_same_v<T, double>) {
+            return static_cast<T>(v.toDouble());
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return static_cast<T>(v.toString());
+        } else if constexpr (std::is_same_v<T, bool>) {
+            return static_cast<T>(v.toBool());
+        } else if constexpr (std::is_same_v<T, QJsonObject>) {
+            return static_cast<T>(v.toObject());
+        } else if constexpr (std::is_same_v<T, QJsonArray>) {
+            return static_cast<T>(v.toArray());
+        } else {
+            return {};
+        }
+    }
+
+    template<class T>
     T GetValue(const QString &path, T defaultValue) {
         const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
         if constexpr (std::is_same_v<T, int>) {
@@ -60,9 +82,15 @@ public:
 
     template<class T>
     void SetValue(const QString &path, T value) {
-        JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
-        WriteConfigurationFile(filePath);
-        emit ConfigurationChanged(path, value);
+        if constexpr (std::is_same_v<T, long>) {
+            JsonUtils::setByPath(_configurationRoot, path, static_cast<qint64>(value));
+            WriteConfigurationFile(_filePath);
+            emit ConfigurationChanged(path, QString::number(value));
+        } else {
+            JsonUtils::setByPath(_configurationRoot, path, static_cast<T>(value));
+            WriteConfigurationFile(_filePath);
+            emit ConfigurationChanged(path, value);
+        }
     }
 
     /**
@@ -86,20 +114,6 @@ public:
      */
     void SetFilePath(const QString &filePath);
 
-    /**
-     * @brief Sets the connection state
-     *
-     * @param connected connection state.
-     */
-    void SetConnectionState(bool connected) { this->connected = connected; }
-
-    /**
-     * @brief Sets the default directory.
-     *
-     * @return connection state
-     */
-    [[nodiscard]] bool GetConnectionState() const { return this->connected; }
-
 signals:
     /**
      * @brief Send when a preferences changed
@@ -118,12 +132,12 @@ private:
     /**
      * @brief File path
      */
-    QString filePath = DEFAULT_CONFIGURATION_FILE_PATH;
+    QString _filePath = DEFAULT_CONFIGURATION_FILE_PATH;
 
     /**
      * @brief Connection flag
      */
-    bool connected = true;
+    bool _connected = true;
 };
 
 #endif // CONFIGURATION_H
