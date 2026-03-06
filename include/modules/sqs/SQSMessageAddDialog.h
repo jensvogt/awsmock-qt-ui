@@ -17,6 +17,7 @@
 // AwsMOck includes
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
+#include <utils/AwsUtils.h>
 #include <dto/sqs/SQSSendMessageRequest.h>
 #include <dto/sqs/SQSSendMessageResponse.h>
 #include <modules/sqs/SQSService.h>
@@ -44,8 +45,6 @@ public:
     void HandleReject();
 
     void HandleBrowseButton() const;
-
-    void HandlePrettyButton(bool checked) const;
 
     void HandleAddAttributeButton() const;
 

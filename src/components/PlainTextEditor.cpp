@@ -94,8 +94,12 @@ namespace Awsmock::Components {
     void PlainTextEditor::SetText(const QString &text) {
         _text = text;
 
-        if (_prettyPrint && _contentType == JSON) {
-            _text = StringUtils::ConvertToIndentedJson(text);
+        if (_contentType == JSON) {
+            if (_prettyPrint) {
+                _text = StringUtils::ConvertToIndentedJson(_text);
+            } else {
+                _text = StringUtils::ConvertToCompactJson(_text);
+            }
         }
 
         _plainTextEdit->setPlainText(_text);
@@ -111,7 +115,7 @@ namespace Awsmock::Components {
 
         // Wrap: restart from beginning
         _cursor = _plainTextEdit->textCursor();
-        _cursor.movePosition(QTextCursor::Down);
+        _cursor.movePosition(QTextCursor::Start);
         _plainTextEdit->setTextCursor(_cursor);
     }
 
@@ -123,7 +127,7 @@ namespace Awsmock::Components {
 
         // Wrap: restart from beginning
         _cursor = _plainTextEdit->textCursor();
-        _cursor.movePosition(QTextCursor::Up);
+        _cursor.movePosition(QTextCursor::End);
         _plainTextEdit->setTextCursor(_cursor);
     }
 

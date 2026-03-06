@@ -245,3 +245,26 @@ void PageableTable::SetMultiRowSelection(const bool enabled) const {
         _ui->tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     }
 }
+
+void PageableTable::SaveSelection() {
+    const QItemSelectionModel *selectionModel = _ui->tableView->selectionModel();
+    for (QModelIndexList selectedRows = selectionModel->selectedRows(); const QModelIndex &index: selectedRows) {
+        // Assume column 0 contains a unique ID
+        _savedIds.insert(index.data(Qt::DisplayRole).toString());
+    }
+}
+
+void PageableTable::RestoreSelection() {
+
+    _ui->tableView->selectionModel()->clearSelection(); // Clear existing
+    for (int i = 0; i < _dataModel->rowCount(); ++i) {
+        if (QString currentId = _dataModel->index(i, 0).data(Qt::DisplayRole).toString(); _savedIds.contains(currentId)) {
+            // Select the row
+            _ui->tableView->selectionModel()->select(
+                _dataModel->index(i, 0),
+                QItemSelectionModel::Select | QItemSelectionModel::Rows
+            );
+        }
+    }
+    _savedIds.clear();
+}

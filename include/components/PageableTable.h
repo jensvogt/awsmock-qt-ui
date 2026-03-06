@@ -10,7 +10,6 @@
 #include <QStandardItemModel>
 
 // Awsmock includes
-#include <qtablewidget.h>
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/Configuration.h>
@@ -72,6 +71,11 @@ public:
      */
     void SetResizeModes(const QList<QHeaderView::ResizeMode> &resizeModes) const;
 
+    /**
+     * @brief Sets the hidden columns
+     *
+     * @param hiddenColumns list of column indexes
+     */
     void SetHiddenColumns(const QList<int> &hiddenColumns) const;
 
     /**
@@ -84,6 +88,10 @@ public:
         _maxPage = (_totalSize + _pageSize - 1) / _pageSize;
         CalculatePageStatus();
     }
+
+    void SaveSelection();
+
+    void RestoreSelection();
 
     /**
      * @brief Sets the total size
@@ -366,6 +374,11 @@ private:
      * @brief Sort column
      */
     int _sortDirection = -1;
+
+    /**
+     * @brief Selected row
+     */
+    QSet<QString> _savedIds;
 };
 
 #endif // AWSMOCK_QT_UI_PAGEABLE_TABLE_H

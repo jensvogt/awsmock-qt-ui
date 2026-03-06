@@ -140,6 +140,13 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>saveButton</tabstop>
+  <tabstop>importButton</tabstop>
+  <tabstop>searchFileButton</tabstop>
+  <tabstop>refreshButton</tabstop>
+  <tabstop>prettyPrintButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

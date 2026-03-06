@@ -19,9 +19,12 @@ SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString 
 
     // Pretty print button
     _ui->prettyButton->setCheckable(true);
+    _ui->prettyButton->setChecked(_ui->plainTextEdit->GetPrettyPrint());
     _ui->prettyButton->setText(nullptr);
     _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
-    connect(_ui->prettyButton, &QPushButton::toggled, this, &SQSMessageAddDialog::HandlePrettyButton);
+    connect(_ui->prettyButton, &QPushButton::toggled, this, [this](const bool checked) {
+        _ui->plainTextEdit->SetPrettyPrint(checked);
+    });
 
     // Browse button
     _ui->browseButton->setText(nullptr);
@@ -59,13 +62,13 @@ SQSMessageAddDialog::~SQSMessageAddDialog() {
 void SQSMessageAddDialog::HandleAccept() {
 
     // Check body size
-    if (_ui->bodyEdit->toPlainText().isEmpty()) {
+    if (_ui->plainTextEdit->GetText().isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "Body can't be empty!");
         return;
     }
     _request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     _request.queueUrl = _queueUrl;
-    _request.body = _ui->bodyEdit->toPlainText().toUtf8();
+    _request.body = _ui->plainTextEdit->GetText().toUtf8();
 
     const int rows = _ui->tableWidget->rowCount();
 
@@ -82,7 +85,7 @@ void SQSMessageAddDialog::HandleAccept() {
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
-    QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
+    QMessageBox::information(nullptr, "Info", "Message send to queue: '" + AwsUtils::ArnToName(_queueArn) + "' with messageId: '" + response.messageId + "'");
     accept();
 }
 
@@ -106,22 +109,8 @@ void SQSMessageAddDialog::HandleBrowseButton() const {
         file.close();
 
         // Set the body
-        _ui->bodyEdit->setText(QString::fromUtf8(jsonData));
+        _ui->plainTextEdit->SetText(QString::fromUtf8(jsonData));
         Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
-    }
-}
-
-void SQSMessageAddDialog::HandlePrettyButton(const bool checked) const {
-    if (checked) {
-        const QByteArray body = _ui->bodyEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyEdit->clear();
-        _ui->bodyEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
-    } else {
-        const QByteArray body = _ui->bodyEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyEdit->clear();
-        _ui->bodyEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
     }
 }
 

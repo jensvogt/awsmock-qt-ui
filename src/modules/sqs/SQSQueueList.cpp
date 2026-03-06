@@ -1,3 +1,4 @@
+#include <ui_SQSMessageAddDialog.h>
 #include <modules/sqs/SQSQueueList.h>
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -50,10 +51,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Table
-    const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"),
-                                    tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
-                                };
+    const QStringList headers = {tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")};
 
     _tableView = new PageableTable();
     _tableView->SetHeaderNames(headers);
@@ -91,6 +89,7 @@ SQSQueueList::~SQSQueueList() {
 }
 
 void SQSQueueList::LoadContent() {
+    _tableView->SaveSelection();
     _tableView->Clear();
     sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
@@ -110,6 +109,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
         _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).isDlq);
     }
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
@@ -118,6 +118,10 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu menu;
     menu.setToolTipsVisible(true);
+
+    QAction *sendAction = menu.addAction(IconUtils::GetIcon("send"), "Send a Message");
+    sendAction->setToolTip("Send a Message to the queue");
+
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
@@ -141,6 +145,9 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     const auto queueArn = _tableView->GetValue<QString>(index, 8);
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         sqsService->PurgeQueue(queueUrl);
+    } else if (selectedAction == sendAction) {
+        SQSMessageAddDialog dialog(queueUrl, queueArn);
+        dialog.exec();
     } else if (selectedAction == redriveAction) {
         sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {

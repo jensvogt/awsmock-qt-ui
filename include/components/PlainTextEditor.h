@@ -67,8 +67,23 @@ namespace Awsmock::Components {
             return _plainTextEdit->toPlainText().toUtf8();
         }
 
+        /**
+         * @brief Sets the pretty print flag and reformats the plain text window
+         *
+         * @param prettyPrint pretty print flag
+         */
         void SetPrettyPrint(const bool prettyPrint) {
             _prettyPrint = prettyPrint;
+            SetText(_plainTextEdit->toPlainText());
+        }
+
+        /**
+         * @brief Returns the pretty print flag
+         *
+         * @return pretty print flag
+         */
+        bool GetPrettyPrint() const {
+            return _prettyPrint;
         }
 
     private:

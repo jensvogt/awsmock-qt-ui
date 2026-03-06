@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SQSMessageAddDialog</class>
- <widget class="QDialog" name="SNSMessageAddDialog">
+ <widget class="QDialog" name="SQSMessageAddDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
       <attribute name="title">
        <string>Body</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,2">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="rightMargin">
@@ -59,7 +59,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTextEdit" name="bodyEdit"/>
+        <widget class="Awsmock::Components::PlainTextEditor" name="plainTextEdit" native="true"/>
        </item>
       </layout>
      </widget>
@@ -117,6 +117,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Awsmock::Components::PlainTextEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">components/PlainTextEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

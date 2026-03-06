@@ -42,6 +42,17 @@ public:
         return doc.toJson(QJsonDocument::Indented);
     }
 
+    static QString ConvertToCompactJson(const QString &input) {
+
+        QJsonParseError parseError;
+        const QJsonDocument doc = QJsonDocument::fromJson(input.toUtf8(), &parseError);
+        if (parseError.error != QJsonParseError::NoError) {
+            logError << "Cannot parse JSON document: " << parseError.errorString();
+            return input;
+        }
+        return doc.toJson(QJsonDocument::Compact);
+    }
+
     static QString GenerateRandomString(const int length) {
         const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
         QString randomString;

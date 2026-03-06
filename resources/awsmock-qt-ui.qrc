@@ -52,6 +52,7 @@
         <file>light/save.svg</file>
         <file>light/scroll.svg</file>
         <file>light/search.svg</file>
+        <file>light/send.svg</file>
         <file>light/settings.svg</file>
         <file>light/show.svg</file>
         <file>light/start.svg</file>
@@ -111,6 +112,7 @@
         <file>dark/running.svg</file>
         <file>dark/save.svg</file>
         <file>dark/scroll.svg</file>
+        <file>dark/send.svg</file>
         <file>dark/search.svg</file>
         <file>dark/settings.svg</file>
         <file>dark/show.svg</file>

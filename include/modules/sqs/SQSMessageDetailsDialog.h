@@ -21,9 +21,6 @@ public:
 
     ~SQSMessageDetailsDialog() override;
 
-private slots:
-    void PrettyPrintClicked(bool checked) const;
-
 private:
     void UpdateMessageDetails(const SQSGetMessageDetailsResponse &response) const;
 
@@ -31,7 +28,6 @@ private:
     QString _messageId;
     SQSService *_sqsService;
     bool _changed = false;
-    WordHighlighter *_wordHighlighter;
 };
 
 #endif // SQS_MESSAGE_DETAILS_DIALOG_H

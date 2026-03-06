@@ -137,8 +137,9 @@ void MainWidget::SetupServerLogs() {
 
     // Scroll button
     _ui->serverScrollButton->setText(nullptr);
-    _ui->serverScrollButton->setIcon(IconUtils::GetIcon("scroll"));
+    _ui->serverScrollButton->setIcon(IconUtils::GetIcon("purge"));
     _ui->serverScrollButton->setToolTip("Start/stop scrolling");
+    _ui->serverScrollButton->setEnabled(_serverScrolling);
     connect(_ui->serverScrollButton, &QPushButton::toggled, this, [this](const bool value) {
         _serverScrolling = value;
     });

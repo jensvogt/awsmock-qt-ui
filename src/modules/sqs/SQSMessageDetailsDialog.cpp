@@ -1,4 +1,3 @@
-#include "modules/sqs/SQSMessageDetailsDialog.h"
 
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include "ui_SQSMessageDetailsDialog.h"
@@ -12,11 +11,8 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     _sqsService->GetSqsMessageDetails(messageId);
     connect(_sqsService, &SQSService::GetSqsMessageDetailsSignal, this, &SQSMessageDetailsDialog::UpdateMessageDetails);
 
-    const QStringList messageAttributeHeaders = QStringList() << tr("Key")
-                                                << tr("Value");
-
-    const QStringList systemAttributeHeaders = QStringList() << tr("Key")
-                                               << tr("Value");
+    const QStringList messageAttributeHeaders = {tr("Key"), tr("Value")};
+    const QStringList systemAttributeHeaders = {tr("Key"), tr("Value")};
 
     // Message attributes table
     _ui->messageAttributeTable->setColumnCount(static_cast<int>(messageAttributeHeaders.count()));
@@ -42,23 +38,20 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Set body tab
     _ui->tabWidget->setCurrentIndex(0);
+    // Pretty print button
+    _ui->prettyButton->setCheckable(true);
+    _ui->prettyButton->setChecked(_ui->bodyTextWidget->GetPrettyPrint());
+    _ui->prettyButton->setText(nullptr);
+    _ui->prettyButton->setIcon(IconUtils::GetIcon("pretty"));
+    connect(_ui->prettyButton, &QPushButton::toggled, this, [this](const bool checked) {
+        _ui->bodyTextWidget->SetPrettyPrint(checked);
+    });
 
-    // Pretty print
-    _ui->prettyPushButton->setText(nullptr);
-    _ui->prettyPushButton->setIcon(IconUtils::GetIcon("pretty"));
-    connect(_ui->prettyPushButton, &QPushButton::toggled, this, &SQSMessageDetailsDialog::PrettyPrintClicked);
-
-    // Word highlighter
-    _wordHighlighter = new WordHighlighter(_ui->bodyPlainTextEdit->document());
-    connect(_ui->searchEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
-        _wordHighlighter->word = text;
-        _wordHighlighter->format.setBackground(Qt::yellow);
-        _wordHighlighter->format.setForeground(Qt::black);
-        _wordHighlighter->rehighlight();
-        QTextCursor cursor(_ui->bodyPlainTextEdit->document());
-        cursor.movePosition(QTextCursor::Start);
-        _ui->bodyPlainTextEdit->setTextCursor(cursor);
-        _ui->bodyPlainTextEdit->find(text, QTextDocument::FindWholeWords);
+    // Refresh button
+    _ui->refreshButton->setText(nullptr);
+    _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->prettyButton, &QPushButton::toggled, this, [this](const bool checked) {
+        _sqsService->GetSqsMessageDetails(_messageId);
     });
 }
 
@@ -76,7 +69,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     _ui->modifiedEdit->setText(response.modified.toString());
 
     // Body
-    _ui->bodyPlainTextEdit->setPlainText(response.body);
+    _ui->bodyTextWidget->SetText(response.body);
 
     // Message attributes
     _ui->messageAttributeTable->setRowCount(0);
@@ -96,36 +89,5 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
         _ui->systemAttributeTable->insertRow(r);
         _ui->systemAttributeTable->setItem(r, 0, new QTableWidgetItem(response.attributes.at(r).key));
         _ui->systemAttributeTable->setItem(r, 1, new QTableWidgetItem(response.attributes.at(r).value));
-    }
-}
-
-void SQSMessageDetailsDialog::PrettyPrintClicked(const bool checked) const {
-    if (checked) {
-        const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        QJsonParseError error;
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
-        if (error.error == QJsonParseError::NoError) {
-            _ui->bodyPlainTextEdit->clear();
-            _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
-        } else {
-            QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
-        }
-    } else {
-        const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        QJsonParseError error;
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body, &error);
-        if (error.error == QJsonParseError::NoError) {
-            _ui->bodyPlainTextEdit->clear();
-            _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
-        } else {
-            QMessageBox::warning(nullptr, "Warning", "Invalid file, error: " + error.errorString());
-        }
-    }
-    if (!_ui->searchEdit->text().isEmpty()) {
-        const QString text = _ui->searchEdit->text();
-        QTextCursor cursor(_ui->bodyPlainTextEdit->document());
-        cursor.movePosition(QTextCursor::Start);
-        _ui->bodyPlainTextEdit->setTextCursor(cursor);
-        _ui->bodyPlainTextEdit->find(text, QTextDocument::FindWholeWords);
     }
 }
