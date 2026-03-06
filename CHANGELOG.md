@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.11.21](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.20...v1.11.21) (2026-03-06)
+
+
+### Bug Fixes
+
+* add search/replace component ([fc03057](https://github.com/jensvogt/awsmock-qt-ui/commit/fc03057da363b3b40c567c415d88632bf94efeaa))
+
+## [1.11.20](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.19...v1.11.20) (2026-03-01)
+
+
+### Bug Fixes
+
+* macos port ([d528183](https://github.com/jensvogt/awsmock-qt-ui/commit/d528183f92630d119a19f6c784b574a65200d287))
+
+## [1.11.19](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.18...v1.11.19) (2026-03-01)
+
+
+### Bug Fixes
+
+* macos port ([2e8f39c](https://github.com/jensvogt/awsmock-qt-ui/commit/2e8f39cf25993da82f531947b0ddaf9002445177))
+
+## [1.11.18](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.17...v1.11.18) (2026-03-01)
+
+
+### Bug Fixes
+
+* macos port ([116143d](https://github.com/jensvogt/awsmock-qt-ui/commit/116143d7510e326827a0389a616696378798c798))
+
+## [1.11.17](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.16...v1.11.17) (2026-03-01)
+
+
+### Bug Fixes
+
+* macos port ([04de2cb](https://github.com/jensvogt/awsmock-qt-ui/commit/04de2cbde4ae64d61f0e7249d41e69e2e3b09717))
+* macos port ([e361b14](https://github.com/jensvogt/awsmock-qt-ui/commit/e361b149f3de2176d9bdc6c4da88195157bd8f92))
+* SSM table fix, docker stats fix ([612b9ca](https://github.com/jensvogt/awsmock-qt-ui/commit/612b9ca34ea2c9b3810da3182c89ef964dc38abb))
+* SSM table fix, docker stats fix ([bd9466d](https://github.com/jensvogt/awsmock-qt-ui/commit/bd9466d0bf6a4f90b8606fd3f27d70f45ce4554a))
+
 ## [1.11.16](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.15...v1.11.16) (2026-02-22)
 
 
