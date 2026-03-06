@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>AwsMockQtUI</DisplayName>
+    <Description>AwsMock UI</Description>
+    <Version>1.11.14</Version>
+    <ReleaseDate>2026-02-25 15:32:34</ReleaseDate>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+</Package>
+
+
