@@ -51,10 +51,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Table
-    const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"),
-                                    tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")
-                                };
+    const QStringList headers = {tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")};
 
     _tableView = new PageableTable();
     _tableView->SetHeaderNames(headers);
@@ -92,6 +89,7 @@ SQSQueueList::~SQSQueueList() {
 }
 
 void SQSQueueList::LoadContent() {
+    _tableView->SaveSelection();
     _tableView->Clear();
     sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
@@ -111,6 +109,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
         _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).isDlq);
     }
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void SQSQueueList::ShowContextMenu(const QPoint &pos) const {

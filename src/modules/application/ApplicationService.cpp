@@ -35,7 +35,7 @@ void ApplicationService::ListApplications(const QString &prefix, const long page
                                   logWarning << "Response is not an object!";
                               }
                           } else {
-                              logError << error;
+                              logError << "http status: " << error;
                           }
                           emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
                       });
