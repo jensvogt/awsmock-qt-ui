@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.23](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.22...v1.11.23) (2026-03-07)
+
+
+### Bug Fixes
+
+* add pageable table view for dynamodb tables ([93b360b](https://github.com/jensvogt/awsmock-qt-ui/commit/93b360bb7380f611749b965d97d16c4be2a0f083))
+
 ## [1.11.22](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.21...v1.11.22) (2026-03-06)
 
 
