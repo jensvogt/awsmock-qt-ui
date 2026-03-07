@@ -26,10 +26,10 @@ void BasePage::StartAutoUpdate() {
 
 void BasePage::StopAutoUpdate() const {
     // Stop the auto updater
-    if (_autoUpdateTimer->isActive()) {
+    if (_autoUpdateTimer && _autoUpdateTimer->isActive()) {
         _autoUpdateTimer->stop();
+        _autoUpdateTimer->deleteLater();
     }
-    _autoUpdateTimer->deleteLater();
 }
 
 QAction *BasePage::GetRefreshAction(QWidget *parent) const {

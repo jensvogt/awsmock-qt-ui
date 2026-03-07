@@ -23,6 +23,7 @@
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
 #include <dto/dynamodb/DynamoDbListTableResponse.h>
 #include <modules/dynamodb/DynamoDbService.h>
 #include <modules/dynamodb/DynamoDbAddTableDialog.h>
@@ -62,7 +63,7 @@ public:
      * @param listTableResponse
      * @param listTableResponse
      */
-    void HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse);
+    void HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) const;
 
 signals:
     /**
@@ -87,7 +88,7 @@ private:
     /**
      * @brief Qt network manager
      */
-    QTableView *_tableView;
+    PageableTable *_tableView;
 
     /**
      * @brief Topic prefix search
@@ -98,33 +99,6 @@ private:
      * @brief REST service handler
      */
     DynamoDbService *_dynamoDbService;
-
-    /**
-     *  @brief Table data model
-     */
-    QStandardItemModel *_dataModel;
-
-    /**
-     * @brief Data proxy model
-     */
-    PrefixFilterProxyModel *_proxyModel;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'messages', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *_prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H
