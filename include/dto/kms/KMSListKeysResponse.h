@@ -1,12 +1,13 @@
 #ifndef AWSMOCK_QT_UI_KMS_LIST_KEYS_RESPONSE_H
 #define AWSMOCK_QT_UI_KMS_LIST_KEYS_RESPONSE_H
 
+// Qt includes
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include <dto/sqs/SQSQueueCounter.h>
+// Awsmock includes
 #include <dto/kms/KeyCounter.h>
 
 struct KMSListKeysResponse {
@@ -16,6 +17,8 @@ struct KMSListKeysResponse {
     QList<KeyCounter> keyCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
+
+        total = jsonDoc.object()["total"].toInt();
 
         for (QJsonArray jArray = jsonDoc["keyCounters"].toArray(); const auto &element: jArray) {
             KeyCounter keyCounter;

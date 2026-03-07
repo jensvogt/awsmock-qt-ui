@@ -2,11 +2,8 @@
 // Created by vogje01 on 2/15/26.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_PageableTable.h" resolved
-
-#include <components/PageableTable.h>
+#include <modules/cognito/CognitoUserpoolList.h>
 #include "ui_PageableTable.h"
-#include "modules/cognito/CognitoUserpoolList.h"
 
 PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::PageableTable) {
 

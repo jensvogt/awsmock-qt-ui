@@ -34,21 +34,21 @@ void SecretsManagerService::CreateSecret(const SecretCounter &secretCounter) {
                       });
 }
 
-void SecretsManagerService::ListSecrets() {
+void SecretsManagerService::ListSecrets(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = -1;
-    jSorting["column"] = "name";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["prefix"] = "";
-    jRequest["pageSize"] = -1;
-    jRequest["pageIndex"] = -1;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
     jRequest["sortColumns"] = jSortingArray;
     const QJsonDocument requestDoc(jRequest);
 
