@@ -1,6 +1,7 @@
 #include <modules/dynamodb/DynamoDbTableList.h>
 
 DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : BasePage(parent) {
+
     // Set region
     _region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
 
@@ -52,80 +53,33 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Prefix editor
-    auto *prefixLayout = new QHBoxLayout();
-    auto *prefixEdit = new QLineEdit(this);
-    prefixEdit->setPlaceholderText("Prefix");
-    prefixEdit->setToolTip("Prefix to the table name");
-    connect(prefixEdit, &QLineEdit::textChanged, this, [this,prefixEdit]() {
-        _prefixClear->setDisabled(false);
-        _proxyModel->setFilterColumn(0);
-        _proxyModel->setFilterPrefix(prefixEdit->text());
-    });
-    _prefixClear = new QPushButton(IconUtils::GetIcon("clear"), "", this);
-    _prefixClear->setDisabled(true);
-    _prefixClear->setToolTip("Clear the table name prefix");
-    connect(_prefixClear, &QPushButton::clicked, this, [this]() {
-        _proxyModel->clearFilter();
-        _prefixClear->setDisabled(true);
-    });
-    prefixLayout->addWidget(prefixEdit);
-    prefixLayout->addWidget(_prefixClear);
-
     // Table
     const QStringList headers = QStringList() = {tr("Name"), tr("Items"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("TableArn")};
 
     // Table
-    _tableView = new QTableView(this);
-    _dataModel = new QStandardItemModel(this);
-    _dataModel->setHorizontalHeaderLabels(headers);
-    _dataModel->setColumnCount(static_cast<int>(headers.count()));
-
-    // Proxy model for prefix filtering
-    _proxyModel = new PrefixFilterProxyModel(this);
-    _proxyModel->setSourceModel(_dataModel);
-    _tableView->setModel(_proxyModel);
-
-    _tableView->setShowGrid(true);
-    _tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    _tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _tableView->setSortingEnabled(true);
-    _tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _tableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    _tableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
-    _tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
-    _tableView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    _tableView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    _tableView->setColumnHidden(5, true);
-    _tableView->addAction(GetRefreshAction(this));
+    _tableView = new PageableTable(this);
+    _tableView->SetHeaderNames(headers);
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetHiddenColumns({5});
+    _tableView->SetSorting(1, "keys", -1);
 
     // Connect double-click
-    connect(_tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
-        const QModelIndex sourceIndex = _proxyModel->mapToSource(index);
-
-        // Extract table name
+        // Extract ARN and URL
         QMap<QString, QString> arguments;
-        arguments["tableName"] = _dataModel->item(sourceIndex.row(), 0)->text();
+        arguments["tableName"] = _tableView->GetValue<QString>(index, 0);
 
-        // Send notification to main window
+        // Send notification
         emit EventBus::instance().RouteChanged("DynamoDB Item List", arguments);
     });
 
     // Add context menu
-    _tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &DynamoDbTableList::ShowContextMenu);
-
-    // Save sort column
-    connect(_tableView->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](const int column, const Qt::SortOrder order)-> void {
-        this->_sortColumn = column;
-        this->_sortOrder = order;
-    });
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &DynamoDbTableList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
-    layout->addLayout(prefixLayout, 0);
     layout->addWidget(_tableView, 2);
 }
 
@@ -137,39 +91,27 @@ void DynamoDbTableList::LoadContent() {
     _dynamoDbService->ListTables(_prefixValue);
 }
 
-void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) {
-    const int selectedRow = _tableView->selectionModel()->currentIndex().row();
-    _tableView->setSortingEnabled(false);
-    _dataModel->removeRows(0, _dataModel->rowCount());
-
+void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) const {
+    _tableView->Clear();
+    _tableView->SetTotalSize(listTableResponse.total);
     for (auto r = 0, c = 0; r < listTableResponse.tableCounters.count(); r++, c = 0) {
-        SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).tableName);
-        SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).itemCount);
-        SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).size / 1024);
-        SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).created);
-        SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).modified);
-        SetColumn(_dataModel, r, c++, listTableResponse.tableCounters.at(r).tableArn);
+        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).tableName);
+        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).itemCount);
+        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).size / 1024);
+        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).created);
+        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).modified);
+        _tableView->SetHiddenColumn(r, c++, listTableResponse.tableCounters.at(r).tableArn);
     }
-
-    // Reset selection
-    _tableView->setSortingEnabled(true);
-    _tableView->sortByColumn(_sortColumn, _sortOrder);
-    _tableView->selectRow(selectedRow);
-
-    NotifyStatusBar();
+    _tableView->UpdateSorting();
 }
 
 void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
 
-    // Cell index
-    const QModelIndex proxyIndex = _tableView->indexAt(pos);
-    if (!proxyIndex.isValid()) return;
-
-    const QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     // Get container
-    const QString tableName = _dataModel->item(sourceIndex.row(), 0)->text();
-    // const QString tableArn = _dataModel->item(sourceIndex.row(), 5)->text();
+    const auto tableName = _tableView->GetValue<QString>(index, 0);
+    const auto tableArn = _tableView->GetValue<QString>(index, 5);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -186,7 +128,7 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Table");
     deleteAction->setToolTip("Delete the table");
 
-    if (const QAction *selectedAction = menu.exec(_tableView->viewport()->mapToGlobal(pos)); selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _dynamoDbService->PurgeTable(tableName);
     } else if (selectedAction == deleteAction) {
         _dynamoDbService->DeleteTable(tableName);

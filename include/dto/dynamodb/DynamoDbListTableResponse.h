@@ -11,11 +11,14 @@
 #include <dto/dynamodb/DynamoDbTableCounter.h>
 
 struct DynamoDbListTableResponse {
-    long total;
+    long total{};
 
     QList<DynamoDbTableCounter> tableCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
+
+        total = jsonDoc.object()["total"].toInt();
+
         for (QJsonArray jArray = jsonDoc["tableCounters"].toArray(); const auto &element: jArray) {
             DynamoDbTableCounter tableCounter;
             tableCounter.FromJson(element.toObject());
