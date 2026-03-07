@@ -28,6 +28,9 @@
 #include <dto/kms/KMSListKeysRequest.h>
 #include <dto/kms/KMSListKeysResponse.h>
 #include <modules/kms/KMSService.h>
+#include <modules/kms/KMSKeyDialog.h>
+
+#include "components/PageableTable.h"
 
 class KMSKeyList final : public BasePage {
     Q_OBJECT
@@ -62,7 +65,7 @@ public:
      *
      * @param listKeysResponse list KMS keys response
      */
-    void HandleListKeysSignal(const KMSListKeysResponse &listKeysResponse);
+    void HandleListKeysSignal(const KMSListKeysResponse &listKeysResponse) const;
 
 signals:
     /**
@@ -83,46 +86,14 @@ private:
     QString _region;
 
     /**
-     * @brief Qt network manager
+     * @brief Table view
      */
-    QTableView *_tableView;
-
-    /**
-     * @brief Topic prefix search
-     */
-    QString _prefixValue = "";
+    PageableTable *_tableView;
 
     /**
      * @brief REST service handler
      */
     KMSService *_kmsService;
-
-    /**
-     *  @brief Table data model
-     */
-    QStandardItemModel *_dataModel;
-
-    /**
-     * @brief Data proxy model
-     */
-    PrefixFilterProxyModel *_proxyModel;
-
-    /**
-     * @brief Sort column index
-     *
-     * @par Default sort column is 'messages', index=1
-     */
-    int _sortColumn = 1;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::DescendingOrder;
-
-    /**
-     * @brief Prefix clear button
-     */
-    QPushButton *_prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_KMS_KEY_LIST_H

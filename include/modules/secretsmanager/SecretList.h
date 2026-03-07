@@ -18,6 +18,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
 #include <modules/secretsmanager/SecretsManagerService.h>
 #include <modules/secretsmanager/SecretsDetailsDialog.h>
 #include <modules/secretsmanager/SecretAddDialog.h>
@@ -75,29 +76,9 @@ private:
     SecretsManagerService *_secretsManagerService;
 
     /**
-     * @brief Sort column index
-     */
-    int _sortColumn = 0;
-
-    /**
-     * @brief Sort order
-     */
-    Qt::SortOrder _sortOrder = Qt::AscendingOrder;
-
-    /**
      * @brief Secrets table view
      */
-    QTableView *_tableView;
-
-    /**
-     * @brief Data model
-     */
-    QStandardItemModel *_dataModel{};
-
-    /**
-     * @brief Data proxy model
-     */
-    PrefixFilterProxyModel *_proxyModel{};
+    PageableTable *_tableView;
 };
 
 #endif // AWSMOCK_QT_UI_SECRET_LIST_H

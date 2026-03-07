@@ -37,7 +37,7 @@ public:
      * @brief List all secrets
      *
      */
-    void ListSecrets();
+    void ListSecrets(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
      * @brief Get secret details
