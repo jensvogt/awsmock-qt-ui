@@ -343,7 +343,7 @@ void SQSService::DeleteQueue(const QString &queueUrl) {
     timer.start();
 
     QJsonObject jRequest;
-    jRequest["QueueGetUrl"] = queueUrl;
+    jRequest["QueueUrl"] = queueUrl;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),

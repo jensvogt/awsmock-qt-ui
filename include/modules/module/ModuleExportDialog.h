@@ -9,8 +9,10 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QDialogButtonBox>
+#include <QButtonGroup>
 
 // Awsmock in
+
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
 #include <modules/module/ModuleService.h>
@@ -44,6 +46,8 @@ public:
     QString GetFilePath();
 
     QStringList GetModules();
+
+    ExportType GetExportType() const;
 
     void HandleAccept();
 
@@ -91,9 +95,16 @@ private:
     bool _includeObjects = false;
 
     /**
+     * @brief export type, either INFRA_STRUCTURE, OBJECTS, or BOTH
+     */
+    ExportType _exportType = INFRA_STRUCTURE;
+
+    /**
      * @brief Excluded modules
      */
     static QStringList _excluded;
+
+    QButtonGroup *_exportTypeGroup;
 };
 
 

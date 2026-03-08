@@ -1,7 +1,9 @@
 #include <modules/sns/SNSTopicDetailsDialog.h>
+
+#include <utility>
 #include "ui_SNSTopicDetailsDialog.h"
 
-SNSTopicDetailsDialog::SNSTopicDetailsDialog(const QString &topicArn, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::SNSTopicDetailsDialog), topicArn(topicArn) {
+SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::SNSTopicDetailsDialog), topicArn(std::move(topicArn)) {
 
     // Setup UI
     _ui->setupUi(this);
@@ -51,7 +53,7 @@ void SNSTopicDetailsDialog::UpdateTopicDetails(const SNSGetTopicDetailsResponse 
     _ui->topicNameEdit->setText(response.topicName);
     _ui->topicArnEdit->setText(response.topicArn);
     _ui->messageCountEdit->setText(QString::number(response.messageCount));
-    _ui->messageSizeEdit->setText(QString::number(response.size / 1024));
+    _ui->messageSizeEdit->setText(StringUtils::FormatSizeColumn(response.size, 1));
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(response.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(response.modified));
 }

@@ -17,7 +17,7 @@ struct DynamoDbListTableResponse {
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
-        total = jsonDoc.object()["total"].toInt();
+        total = jsonDoc.object()["total"].toInteger();
 
         for (QJsonArray jArray = jsonDoc["tableCounters"].toArray(); const auto &element: jArray) {
             DynamoDbTableCounter tableCounter;

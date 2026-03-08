@@ -2,6 +2,7 @@
 #include <modules/sqs/SQSQueueList.h>
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
+
     // Connect service
     sqsService = new SQSService();
     connect(sqsService, &SQSService::ListQueuesSignal, this, &SQSQueueList::HandleListQueueSignal);
@@ -51,7 +52,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Table
-    const QStringList headers = {tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")};
+    const QStringList headers = {tr("Name"), tr("Available"), tr("InFlight"), tr("Delayed"), tr("Size"), tr("Created"), tr("Modified"), tr("QueueUrl"), tr("QueueArn"), tr("IsDLQ")};
 
     _tableView = new PageableTable();
     _tableView->SetHeaderNames(headers);
@@ -101,7 +102,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).available);
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).invisible);
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).delayed);
-        _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).size / 1024);
+        _tableView->SetColumn(r, c++, StringUtils::FormatSizeColumn(queueListResponse.queueCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).created);
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).queueUrl);

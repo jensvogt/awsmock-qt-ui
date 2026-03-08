@@ -82,7 +82,7 @@
     <item row="4" column="1">
      <widget class="QLabel" name="maxMessageSizeEditLabel">
       <property name="text">
-       <string>Max Message Size (kB):</string>
+       <string>Max Message Size:</string>
       </property>
      </widget>
     </item>
@@ -247,7 +247,7 @@
     <item row="4" column="2">
      <widget class="QLabel" name="messageSizeLabel">
       <property name="text">
-       <string>Total Size (kB):</string>
+       <string>Total Size:</string>
       </property>
      </widget>
     </item>

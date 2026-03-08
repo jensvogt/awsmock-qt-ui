@@ -35,6 +35,8 @@ public:
                                                  int status,
                                                  QString error)> callback);
 
+    std::function<void()> get(const QUrl &url, const QByteArray &body, const QMap<QString, QString> &headers, std::function<void(bool, QByteArray, int, QString)> callback);
+
     std::function<void()> put(const QUrl &url, const QByteArray &body, const QMap<QString, QString> &headers, std::function<void(bool, QByteArray, int, QString)> callback);
 
     std::function<void()> del(const QUrl &url,

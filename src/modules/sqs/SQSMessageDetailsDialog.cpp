@@ -61,6 +61,7 @@ SQSMessageDetailsDialog::~SQSMessageDetailsDialog() {
 
 void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsResponse &response) const {
     _ui->regionEdit->setText(response.region);
+    _ui->queueEdit->setText(response.queueName);
     _ui->messageIdEdit->setText(response.messageId);
     _ui->receiptHandleEdit->setText(response.receiptHandle);
     _ui->md5BodyEdit->setText(response.md5Body);

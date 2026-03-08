@@ -243,9 +243,12 @@ void MainWindow::ImportInfrastructureResponse() {
 void MainWindow::ExportInfrastructure() {
 
     if (ModuleExportDialog dialog; dialog.exec() == QDialog::Accepted) {
+
         QString filePath = dialog.GetFilePath();
-        QStringList modules = dialog.GetModules();
-        _moduleService->GetInfrastructure();
+        const QStringList modules = dialog.GetModules();
+        const ExportType exportType = dialog.GetExportType();
+
+        _moduleService->GetInfrastructure(modules, exportType);
         connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, [filePath](const QString &infrastructure) {
             WriteInfrastructureExport(filePath, infrastructure);
         });

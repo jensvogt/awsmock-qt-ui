@@ -30,7 +30,7 @@ static std::function<void()> makeRequest(
             reply = mgr.put(req, body);
             break;
         case QNetworkAccessManager::GetOperation:
-            reply = mgr.get(req);
+            reply = mgr.get(req, body);
             break;
         case QNetworkAccessManager::DeleteOperation:
             reply = mgr.deleteResource(req);
@@ -69,6 +69,13 @@ std::function<void()> RestManager::get(const QUrl &url,
                                        const QMap<QString, QString> &headers,
                                        std::function<void(bool, QByteArray, int, QString)> callback) {
     return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, {}, headers, std::move(callback));
+}
+
+std::function<void()> RestManager::get(const QUrl &url,
+                                       const QByteArray &body,
+                                       const QMap<QString, QString> &headers,
+                                       std::function<void(bool, QByteArray, int, QString)> callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, body, headers, std::move(callback));
 }
 
 std::function<void()> RestManager::put(const QUrl &url,

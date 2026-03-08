@@ -50,17 +50,18 @@ public:
      */
     void LoadContent() override;
 
+    /**
+     * @brief Clear content
+     */
     void ClearContent() override {
     }
-
-    void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
     /**
      * @brief Load page content
      *
      * @param listItemResponse
      */
-    //void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
+    void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
 
 signals:
     /**
@@ -68,8 +69,6 @@ signals:
      *
      * @param itemName name of the item
      */
-
-
     void ShowItemsSignal(const QString &itemName);
 
     /**
@@ -82,8 +81,6 @@ slots:
     /**
      * @brief Context menu callback
      */
-
-
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
@@ -91,6 +88,11 @@ private:
      * @brief DynamoDb table name
      */
     QString _tableName;
+
+    /**
+     * @brief Page title
+     */
+    QLabel *_titleLabel;
 
     /**
      * @brief Item list view

@@ -28,7 +28,7 @@ public:
             }
             // Note: This approach discards any non-printable character.
         }
-        return QString(result);
+        return {result};
     }
 
     static QString ConvertToIndentedJson(const QString &input) {
@@ -76,6 +76,16 @@ public:
             result.append(digits.at(index));
         }
         return result;
+    }
+
+    static QString FormatSizeColumn(const long value, const int precision) {
+        if (value < 1024) {
+            return QString::number(static_cast<double>(value), 'f', 0) + " b";
+        }
+        if (value < 1024 * 1024) {
+            return QString::number(static_cast<double>(value) / 1024, 'f', precision) + " kb";
+        }
+        return QString::number(static_cast<double>(value) / 1024 / 1024, 'f', precision) + " mb";
     }
 
 private:

@@ -26,7 +26,7 @@ struct SNSGetTopicDetailsResponse {
     void FromJson(const QJsonDocument &jsonDoc) {
         region = jsonDoc["region"].toString();
         topicName = jsonDoc["topicName"].toString();
-        topicArn = jsonDoc["_topicArn"].toString();
+        topicArn = jsonDoc["topicArn"].toString();
         messageCount = jsonDoc["messageCount"].toInteger();
         size = jsonDoc["size"].toInteger();
         owner = jsonDoc["owner"].toString();

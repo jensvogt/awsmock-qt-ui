@@ -1,5 +1,7 @@
 #include <modules/dynamodb/DynamoDbTableList.h>
 
+#include "utils/StringUtils.h"
+
 DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -54,14 +56,14 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     toolBar->addWidget(refreshButton);
 
     // Table
-    const QStringList headers = QStringList() = {tr("Name"), tr("Items"), tr("Size [kb]"), tr("Created"), tr("Modified"), tr("TableArn")};
+    const QStringList headers = QStringList() = {tr("Name"), tr("Items"), tr("Size"), tr("Created"), tr("Modified"), tr("TableArn")};
 
     // Table
     _tableView = new PageableTable(this);
     _tableView->SetHeaderNames(headers);
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({5});
-    _tableView->SetSorting(1, "keys", -1);
+    _tableView->SetSorting(1, "itemCount", -1);
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -97,10 +99,10 @@ void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &l
     for (auto r = 0, c = 0; r < listTableResponse.tableCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).tableName);
         _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).itemCount);
-        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).size / 1024);
+        _tableView->SetColumn(r, c++, StringUtils::FormatSizeColumn(listTableResponse.tableCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
         _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).created);
         _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).modified);
-        _tableView->SetHiddenColumn(r, c++, listTableResponse.tableCounters.at(r).tableArn);
+        _tableView->SetHiddenColumn(r, c, listTableResponse.tableCounters.at(r).tableArn);
     }
     _tableView->UpdateSorting();
 }
