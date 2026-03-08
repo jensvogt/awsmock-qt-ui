@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.24](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.23...v1.11.24) (2026-03-08)
+
+
+### Bug Fixes
+
+* add pageable table view for secrets manager tables ([2db7918](https://github.com/jensvogt/awsmock-qt-ui/commit/2db7918cb2c598040a27ea620488f91cffd32d06))
+* fix number columns with size ([5ac8e9c](https://github.com/jensvogt/awsmock-qt-ui/commit/5ac8e9c3d2bd374e0ad67f2c6e3b59b295a13ebb))
+
 ## [1.11.23](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.22...v1.11.23) (2026-03-07)
 
 
