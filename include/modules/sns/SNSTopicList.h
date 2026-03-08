@@ -23,6 +23,7 @@
 // Awsmock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
+#include <utils/StringUtils.h>
 #include <components/PageableTable.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSTopicDetailsDialog.h>

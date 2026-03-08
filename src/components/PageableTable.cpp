@@ -110,7 +110,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
 
     // Double click proxy
     connect(_ui->tableView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
-        emit DoubleClicked(index);
+        emit DoubleClicked(_proxyModel->mapToSource(index));
     });
 
     // Defaults

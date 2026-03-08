@@ -18,6 +18,32 @@
 #include <dto/gateway/GatewayConfig.h>
 #include <dto/module/ListModuleNamesResponse.h>
 
+enum ExportType {
+    INFRA_STRUCTURE,
+    OBJECTS,
+    BOTH
+};
+
+
+static std::map<ExportType, QString> ExportTypeNames{
+    {INFRA_STRUCTURE, "INFRA_STRUCTURE"},
+    {OBJECTS, "OBJECTS"},
+    {BOTH, "BOTH"},
+};
+
+[[maybe_unused]] static QString ExportTypeToString(const ExportType &exportType) {
+    return ExportTypeNames[exportType];
+}
+
+[[maybe_unused]] static ExportType ExportTypeFromString(const QString &exportType) {
+    for (auto &[fst, snd]: ExportTypeNames) {
+        if (snd == exportType) {
+            return fst;
+        }
+    }
+    return INFRA_STRUCTURE;
+}
+
 class ModuleService final : public BaseService {
     Q_OBJECT
 
@@ -68,7 +94,7 @@ public:
     /**
      * @brief Get infrastructure JSON from server
      */
-    void GetInfrastructure();
+    void GetInfrastructure(const QStringList &modules, const ExportType &exportType);
 
     /**
      * @brief Send a ping to the server

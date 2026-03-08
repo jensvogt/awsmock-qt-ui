@@ -70,10 +70,15 @@ public:
      */
     void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const;
 
-signals:
+    signals:
+    
+
     void ShowMessages(const QString &QueueArn, const QString &QueueUrl, bool isDql);
 
-private slots:
+private
+    slots:
+    
+
     void ShowContextMenu(const QPoint &pos) const;
 
 private:
@@ -102,11 +107,11 @@ private:
     /**
      * @brief Table header
      */
-    QHeaderView *_tableHeader;
+    QHeaderView *_tableHeader{};
 
     /**
      * @brief Prefix clear button
      */
-    QPushButton *prefixClear;
+    QPushButton *prefixClear{};
 };
 #endif // AWSMOCK_QT_UI_SQS_QUEUE_LIST_H

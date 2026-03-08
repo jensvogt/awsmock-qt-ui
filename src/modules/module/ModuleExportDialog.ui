@@ -129,9 +129,23 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QCheckBox" name="incudeObjectsCheck">
+      <widget class="QRadioButton" name="infrastructureRadio">
        <property name="text">
-        <string>Include Objects</string>
+        <string>Infrastructure</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="objectsRadio">
+       <property name="text">
+        <string>Objects</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="bothRadio">
+       <property name="text">
+        <string>Both</string>
        </property>
       </widget>
      </item>

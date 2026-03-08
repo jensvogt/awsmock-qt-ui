@@ -5,6 +5,7 @@
 
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
+#include <utils/StringUtils.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSQueueDefaultAttributeDialog.h>
 #include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
@@ -134,7 +135,7 @@ private:
      */
     Qt::SortOrder _tagsSortOrder = Qt::DescendingOrder;
 
-    QStandardItemModel *_defaultAttributesModel;
+    QStandardItemModel *_defaultAttributesModel{};
 };
 
 #endif // AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H

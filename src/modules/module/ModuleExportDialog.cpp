@@ -52,8 +52,14 @@ ModuleExportDialog::ModuleExportDialog(QWidget *parent) : BaseDialog(parent), _u
     connect(_moduleService, &ModuleService::ListModuleNamesSignal, this, &ModuleExportDialog::LoadAvailableModules);
 
     // Check boxes
-    _ui->incudeObjectsCheck->setChecked(_includeObjects);
     _ui->prettyPrintCheck->setChecked(_prettyPrint);
+
+    // Export type radio group
+    _exportTypeGroup = new QButtonGroup(this);
+    _exportTypeGroup->addButton(_ui->infrastructureRadio, 0);
+    _exportTypeGroup->addButton(_ui->objectsRadio, 1);
+    _exportTypeGroup->addButton(_ui->bothRadio, 2);
+    _ui->infrastructureRadio->setChecked(true);
 
     ModuleExportDialog::LoadContent();
 }
@@ -234,6 +240,16 @@ QString ModuleExportDialog::GetFilePath() {
 
 QStringList ModuleExportDialog::GetModules() {
     return _selectedModules;
+}
+
+ExportType ModuleExportDialog::GetExportType() const {
+    if (_exportTypeGroup->checkedId() == 0) {
+        return INFRA_STRUCTURE;
+    }
+    if (_exportTypeGroup->checkedId() == 1) {
+        return OBJECTS;
+    }
+    return BOTH;
 }
 
 void ModuleExportDialog::HandleReject() {

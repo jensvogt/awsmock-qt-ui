@@ -42,13 +42,13 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
     _ui->dlqMaxReceiveEdit->setText(QString::number(response.dlqMaxReceived));
     _ui->visibilityEdit->setText(QString::number(response.visibilityTimeout));
     _ui->delayEdit->setText(QString::number(response.delay));
-    _ui->maxMessageSizeEdit->setText(QString::number(response.maxMessageSize / 1024));
+    _ui->maxMessageSizeEdit->setText(StringUtils::FormatSizeColumn(response.maxMessageSize, 1));
     _ui->availableEdit->setText(QString::number(response.available));
     _ui->invisibleEdit->setText(QString::number(response.invisible));
     _ui->delayedEdit->setText(QString::number(response.delayed));
     _ui->retentionPeriodEdit->setText(QString::number(response.retentionPeriod));
     _ui->messageCountEdit->setText(QString::number(response.messageCount));
-    _ui->messageSizeEdit->setText(QString::number(response.size / 1024));
+    _ui->messageSizeEdit->setText(StringUtils::FormatSizeColumn(response.size, 1));
     _ui->createdEdit->setText(response.created.toString());
     _ui->modifiedEdit->setText(response.modified.toString());
 

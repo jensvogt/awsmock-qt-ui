@@ -43,6 +43,8 @@ struct SQSAttribute {
 struct SQSGetMessageDetailsResponse {
     QString region;
 
+    QString queueName;
+
     QString messageId;
 
     QString id;
@@ -65,6 +67,7 @@ struct SQSGetMessageDetailsResponse {
 
     void FromJson(QJsonObject jsonObject) {
         region = jsonObject["Region"].toString();
+        queueName = jsonObject["QueueName"].toString();
         id = jsonObject["Id"].toString();
         messageId = jsonObject["MessageId"].toString();
         receiptHandle = jsonObject["ReceiptHandle"].toString();

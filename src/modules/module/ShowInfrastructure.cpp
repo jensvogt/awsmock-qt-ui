@@ -24,7 +24,7 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
-        _moduleService->GetInfrastructure();
+        _moduleService->GetInfrastructure({}, BOTH);
     });
 
     // Pretty print
@@ -55,7 +55,7 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->plainTextEditor->setFocus();
 
     // Get the infrastructure JSON from the server
-    _moduleService->GetInfrastructure();
+    _moduleService->GetInfrastructure({}, BOTH);
 }
 
 ShowInfrastructure::~ShowInfrastructure() {

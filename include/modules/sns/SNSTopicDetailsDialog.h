@@ -9,6 +9,7 @@
 #include <utils/PrefixFilterModel.h>
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
+#include <utils/StringUtils.h>
 #include <modules/sns/SNSService.h>
 
 namespace Ui {
@@ -25,7 +26,7 @@ public:
      * @param topicArn AWS topic ARN
      * @param parent parent widget
      */
-    explicit SNSTopicDetailsDialog(const QString &topicArn, QWidget *parent = nullptr);
+    explicit SNSTopicDetailsDialog(QString topicArn, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor

@@ -48,7 +48,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="topicArnLabel">
        <property name="text">
-        <string>Queue ARN:</string>
+        <string>Topic ARN:</string>
        </property>
       </widget>
      </item>
@@ -110,7 +110,7 @@
      <item row="2" column="1">
       <widget class="QLabel" name="messageSizeLabel">
        <property name="text">
-        <string>Total Size (kB):</string>
+        <string>Total Size:</string>
        </property>
       </widget>
      </item>

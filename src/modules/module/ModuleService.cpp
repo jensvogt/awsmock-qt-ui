@@ -1,5 +1,7 @@
 #include <modules/module/ModuleService.h>
 
+#include "modules/module/ModuleExportDialog.h"
+
 void ModuleService::ExportInfrastructure(const QString &exportFilename) {
     QElapsedTimer timer;
     timer.start();
@@ -154,11 +156,23 @@ void ModuleService::GetServerConfig() {
                      });
 }
 
-void ModuleService::GetInfrastructure() {
+void ModuleService::GetInfrastructure(const QStringList &modules, const ExportType &exportType) {
     QElapsedTimer timer;
     timer.start();
 
+    QJsonArray array;
+    for (const auto &module: modules) {
+        array.append(module);
+    }
+
+    QJsonObject jRequest;
+    jRequest["includeObjects"] = false;
+    jRequest["prettyPrint"] = true;
+    jRequest["exportType"] = ExportTypeToString(exportType);
+    jRequest["modules"] = array;
+
     _restManager.get(GetBaseUrl(),
+                     QJsonDocument(jRequest).toJson(),
                      {
                          {"x-awsmock-target", "module"},
                          {"x-awsmock-action", "get-infrastructure"},

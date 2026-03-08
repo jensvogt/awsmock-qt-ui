@@ -7,7 +7,7 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
     connect(_dynamoDbService, &DynamoDbService::ListItemsSignal, this, &DynamoDbItemList::HandleListItemSignal);
 
     // Title label
-    const auto titleLabel = new QLabel(title, this);
+    _titleLabel = new QLabel(title, this);
 
     // Define toolbar
     const auto toolBar = new QHBoxLayout();
@@ -50,7 +50,7 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
     });
 
     toolBar->addWidget(backButton);
-    toolBar->addWidget(titleLabel);
+    toolBar->addWidget(_titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
@@ -117,6 +117,7 @@ DynamoDbItemList::~DynamoDbItemList() {
 void DynamoDbItemList::LoadContent() {
     _tableName = GetArgument<QString>("tableName");
     _dynamoDbService->ListItems(_tableName, _prefixValue, 1000, 0);
+    _titleLabel->setText("DynamoDB Item List: " + _tableName);
 }
 
 void DynamoDbItemList::HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse) {

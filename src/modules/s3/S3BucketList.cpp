@@ -53,10 +53,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(refreshButton);
 
     // Table
-    const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("Keys"), tr("Size"), tr("Created"), tr("Modified"),
-                                    tr("BucketArn")
-                                };
+    const QStringList headers = QStringList() = {tr("Name"), tr("Keys"), tr("Size"), tr("Created"), tr("Modified"), tr("BucketArn")};
     _tableView = new PageableTable(this);
     _tableView->SetHeaderNames(headers);
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
@@ -100,7 +97,7 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
     for (auto r = 0, c = 0; r < listBucketResult.bucketCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).bucketName);
         _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).objectCount);
-        _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).size);
+        _tableView->SetColumn(r, c++, StringUtils::FormatSizeColumn(listBucketResult.bucketCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
         _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).created);
         _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listBucketResult.bucketCounters.at(r).bucketArn);

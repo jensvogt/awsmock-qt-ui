@@ -74,7 +74,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     });
 
     // Add context menu
-    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &SNSTopicList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &SNSTopicList::ShowContextMenu);
 
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SNSTopicList::LoadContent);
@@ -101,7 +101,7 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).messages);
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).messagesSend);
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).messagesResend);
-        _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).size);
+        _tableView->SetColumn(r, c++, StringUtils::FormatSizeColumn(listTopicResult.topicCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).created);
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listTopicResult.topicCounters.at(r).topicArn);
