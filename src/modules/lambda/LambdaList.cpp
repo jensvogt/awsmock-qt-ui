@@ -77,8 +77,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     });
 
     // Add context menu
-    _tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_tableView, &QTableWidget::customContextMenuRequested, this, &LambdaList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &LambdaList::ShowContextMenu);
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
