@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.25](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.24...v1.11.25) (2026-03-10)
+
+
+### Bug Fixes
+
+* lambda context menu ([d6b4780](https://github.com/jensvogt/awsmock-qt-ui/commit/d6b4780baa4de64e5366a28f2ee39fb54a350bc9))
+* lambda context menu ([e4bc7c2](https://github.com/jensvogt/awsmock-qt-ui/commit/e4bc7c2229617bbd42036f074216075485e2a27f))
+
 ## [1.11.24](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.23...v1.11.24) (2026-03-08)
 
 
