@@ -42,9 +42,10 @@ public:
     /**
      * @brief Add topic
      *
+     * @param region
      * @param topicName name of the topic
      */
-    void AddTopic(const QString &topicName);
+    void AddTopic(const QString &region, const QString &topicName);
 
     /**
      * @brief List SNS Topics

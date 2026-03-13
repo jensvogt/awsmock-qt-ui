@@ -26,11 +26,11 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
         if (const QString topicName = QInputDialog::getText(nullptr, "Topic Name", "Topic name:", QLineEdit::Normal, "", &ok); ok && !topicName.isEmpty()) {
-            _snsService->AddTopic(topicName);
+            _snsService->AddTopic(_region, topicName);
         }
     });
 
-    // Toolbar add action
+    // Toolbar purge action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "", this);
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all topics");
