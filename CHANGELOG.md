@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.26](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.25...v1.11.26) (2026-03-13)
+
+
+### Bug Fixes
+
+* create topic ([ff9677b](https://github.com/jensvogt/awsmock-qt-ui/commit/ff9677b369e4375f02b9ec11bd1f6f2be6cce100))
+
 ## [1.11.25](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.24...v1.11.25) (2026-03-10)
 
 
