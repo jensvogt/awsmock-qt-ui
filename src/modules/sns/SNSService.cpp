@@ -1,10 +1,11 @@
 #include <modules/sns/SNSService.h>
 
-void SNSService::AddTopic(const QString &topicName) {
+void SNSService::AddTopic(const QString &region, const QString &topicName) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
+    jRequest["region"] = region;
     jRequest["topicName"] = topicName;
     const QJsonDocument requestDoc(jRequest);
 
