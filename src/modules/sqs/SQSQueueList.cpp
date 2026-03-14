@@ -4,9 +4,9 @@
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service
-    sqsService = new SQSService();
-    connect(sqsService, &SQSService::ListQueuesSignal, this, &SQSQueueList::HandleListQueueSignal);
-    connect(sqsService, &SQSService::ReloadQueuesSignal, this, &SQSQueueList::LoadContent);
+    _sqsService = new SQSService();
+    connect(_sqsService, &SQSService::ListQueuesSignal, this, &SQSQueueList::HandleListQueueSignal);
+    connect(_sqsService, &SQSService::ReloadQueuesSignal, this, &SQSQueueList::LoadContent);
 
     // Define toolbar
     auto *toolBar = new QHBoxLayout();
@@ -19,27 +19,36 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     // Toolbar add action
     auto *addButton = new QPushButton(IconUtils::GetIcon("add"), "");
     addButton->setIconSize(QSize(16, 16));
-    addButton->setToolTip("Add a new Queue");
+    addButton->setToolTip("Add a new queue");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
         if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
             ; ok && !text.isEmpty()) {
-            sqsService->AddQueue(text);
+            _sqsService->AddQueue(text);
         }
     });
 
     // Toolbar add action
     auto *purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
     purgeAllButton->setIconSize(QSize(16, 16));
-    purgeAllButton->setToolTip("Purge all Queues");
+    purgeAllButton->setToolTip("Purge all queues");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
-        sqsService->PurgeAllQueues();
+        _sqsService->PurgeAllQueues();
+    });
+
+    // Toolbar reset counter action
+    auto *resetCounterButton = new QPushButton(IconUtils::GetIcon("reset-counter"), "", this);
+    resetCounterButton->setIconSize(QSize(16, 16));
+    resetCounterButton->setToolTip("Refresh the queue message counters");
+    connect(resetCounterButton, &QPushButton::clicked, [this]() {
+        _sqsService->ResetMessageCounters();
+        LoadContent();
     });
 
     // Toolbar refresh action
     auto *refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
-    refreshButton->setToolTip("Refresh the Queue list");
+    refreshButton->setToolTip("Refresh the queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
         LoadContent();
     });
@@ -49,6 +58,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(resetCounterButton);
     toolBar->addWidget(refreshButton);
 
     // Table
@@ -92,7 +102,7 @@ SQSQueueList::~SQSQueueList() {
 void SQSQueueList::LoadContent() {
     _tableView->SaveSelection();
     _tableView->Clear();
-    sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
+    _sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const {
@@ -145,14 +155,14 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
     const auto queueUrl = _tableView->GetValue<QString>(index, 7);
     const auto queueArn = _tableView->GetValue<QString>(index, 8);
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
-        sqsService->PurgeQueue(queueUrl);
+        _sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == sendAction) {
         SQSMessageAddDialog dialog(queueUrl, queueArn);
         dialog.exec();
     } else if (selectedAction == redriveAction) {
-        sqsService->RedriveQueue(queueArn);
+        _sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {
-        sqsService->DeleteQueue(queueUrl);
+        _sqsService->DeleteQueue(queueUrl);
     } else if (selectedAction == editAction) {
         SQSQueueDetailsDialog dialog(queueArn);
         dialog.exec();

@@ -418,6 +418,25 @@ void SQSService::GetQueueDetails(const QString &queueArn) {
                       });
 }
 
+void SQSService::ResetMessageCounters() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "reload-all-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("GetQueueDetails", timer.elapsed());
+                      });
+}
+
 void SQSService::GetSqsMessageDetails(const QString &messageId) {
     QElapsedTimer timer;
     timer.start();

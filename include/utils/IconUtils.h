@@ -20,6 +20,10 @@ public:
 
     static QIcon GetIcon(const QString &style, const QString &name);
 
+    static QIcon GetPngIcon(const QString &style, const QString &name);
+
+    static QIcon GetPngIcon(const QString &name);
+
     static QIcon GetCommonIcon(const QString &name);
 };
 
