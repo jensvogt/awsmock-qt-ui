@@ -90,7 +90,7 @@ private:
     /**
      * @brief REST service handler
      */
-    SQSService *sqsService;
+    SQSService *_sqsService;
 
     /**
      * @brief Sort column index

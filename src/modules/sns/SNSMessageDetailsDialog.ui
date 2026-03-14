@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="2,1">
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item row="2" column="1">
       <widget class="QLabel" name="createdLabel">
        <property name="text">
@@ -24,10 +27,21 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="modifiedEdit"/>
+      <widget class="QLineEdit" name="modifiedEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit"/>
+      <widget class="QLineEdit" name="regionEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="regionLabel">
@@ -37,13 +51,34 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLineEdit" name="topicArnEdit"/>
+      <widget class="QLineEdit" name="topicArnEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="contentTypeEdit"/>
+      <widget class="QLineEdit" name="contentTypeEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="messageIdEdit"/>
+      <widget class="QLineEdit" name="messageIdEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="4" column="1">
       <widget class="QLabel" name="modifiedLabel">
@@ -74,14 +109,18 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="createdEdit"/>
+      <widget class="QLineEdit" name="createdEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="bodyTab">
       <attribute name="title">

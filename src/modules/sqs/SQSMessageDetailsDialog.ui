@@ -32,7 +32,10 @@
      <item row="5" column="0">
       <widget class="QLineEdit" name="messageIdEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -41,15 +44,28 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit"/>
+      <widget class="QLineEdit" name="regionEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="7" column="0">
       <widget class="QLineEdit" name="md5BodyEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -67,6 +83,9 @@
          <horstretch>2</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -99,7 +118,14 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="queueEdit"/>
+      <widget class="QLineEdit" name="queueEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
       <widget class="QLabel" name="modifiedLabel">
@@ -125,7 +151,10 @@
      <item row="5" column="1">
       <widget class="QLineEdit" name="md5AttributesEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -140,7 +169,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="bodyTab">
       <property name="sizePolicy">

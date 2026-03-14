@@ -46,6 +46,7 @@
         <file>light/refresh.svg</file>
         <file>light/rename.svg</file>
         <file>light/resend.svg</file>
+        <file>light/reset-counter.svg</file>
         <file>light/restart.svg</file>
         <file>light/right-2-left.svg</file>
         <file>light/running.svg</file>
@@ -105,6 +106,7 @@
         <file>dark/reconnect.svg</file>
         <file>dark/redrive.svg</file>
         <file>dark/refresh.svg</file>
+        <file>dark/reset-counter.svg</file>
         <file>dark/restart.svg</file>
         <file>dark/rename.svg</file>
         <file>dark/resend.svg</file>

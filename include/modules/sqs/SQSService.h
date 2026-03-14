@@ -80,6 +80,8 @@ public:
      */
     void GetQueueDetails(const QString &queueArn);
 
+    void ResetMessageCounters();
+
     /**
      * @brief Update a Queue
      *
