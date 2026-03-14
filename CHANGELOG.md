@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.27](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.26...v1.11.27) (2026-03-14)
+
+
+### Bug Fixes
+
+* SQS/SNS details fields ([861436b](https://github.com/jensvogt/awsmock-qt-ui/commit/861436bdab17b038ae3c032bbc40b91287285115))
+
 ## [1.11.26](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.25...v1.11.26) (2026-03-13)
 
 
