@@ -137,19 +137,6 @@ public:
 signals:
     void RouterChangedSignal(const BasePage *basePage);
 
-private slots:
-    void ChangeRoute(const QString &pageName, const QMap<QString, QString> &arguments) {
-        if (_routes.contains(pageName)) {
-            // Set content
-            _contentPane->addWidget(_routes[pageName]);
-            _contentPane->setCurrentWidget(_routes[pageName]);
-            _contentPane->update();
-
-            // Start auto updater
-            _routes[pageName]->StartAutoUpdate();
-        }
-    }
-
 private:
     /**
      * @brif Stops the old auto updater and start the new one
