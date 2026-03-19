@@ -85,9 +85,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addWidget(_tableView, 2);
 }
 
-LambdaList::~LambdaList() {
-    StopAutoUpdate();
-}
+LambdaList::~LambdaList() = default;
 
 void LambdaList::LoadContent() {
     _lambdaService->ListLambdas(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
@@ -117,10 +115,10 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     // Cell index
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    const QString arn = _tableView->GetValue<QString>(index, 10);
-    const QString name = _tableView->GetValue<QString>(index, 0);
-    const QString version = _tableView->GetValue<QString>(index, 1);
-    const QString containerId = _tableView->GetValue<QString>(index, 9);
+    const auto arn = _tableView->GetValue<QString>(index, 10);
+    const auto name = _tableView->GetValue<QString>(index, 0);
+    const auto version = _tableView->GetValue<QString>(index, 1);
+    const auto containerId = _tableView->GetValue<QString>(index, 9);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
