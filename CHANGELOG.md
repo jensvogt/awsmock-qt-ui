@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.28](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.27...v1.11.28) (2026-03-19)
+
+
+### Bug Fixes
+
+* cleanup router ([8296e61](https://github.com/jensvogt/awsmock-qt-ui/commit/8296e61bf44d97cd4b32dfa237bafef786d24c5b))
+* cleanup router ([df10882](https://github.com/jensvogt/awsmock-qt-ui/commit/df1088257f3c4cf820218b9bacbfc70311c8fdcf))
+
 ## [1.11.27](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.26...v1.11.27) (2026-03-14)
 
 
