@@ -203,7 +203,7 @@ void SNSTopicDetailsDialog::UpdateTopicSubscriptions(const ListTopicSubscription
 
     for (int r = 0, c = 0; r < response.topicSubscriptions.count(); r++, c = 0) {
         SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).id);
-        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).topicArn);
+        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).endpoint);
         SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).protocol);
         SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).owner);
     }

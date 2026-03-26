@@ -34,7 +34,6 @@ PageableList::PageableList(QWidget *parent) : QWidget(parent), _ui(new Ui::Pagea
     });
 
     // Item
-    _ui->listView = new QListView(this);
     _ui->listView->setWordWrap(true);
     _ui->listView->setResizeMode(QListView::Adjust);
     _ui->listView->setUniformItemSizes(false);
@@ -102,6 +101,11 @@ PageableList::PageableList(QWidget *parent) : QWidget(parent), _ui(new Ui::Pagea
     _ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->listView, &QListView::customContextMenuRequested, this, [this](const QPoint &pos) {
         emit ContextMenuRequested(pos);
+    });
+
+    // Double click proxy
+    connect(_ui->listView, &QListView::doubleClicked, this, [this](const QModelIndex &index) {
+        emit DoubleClicked(_proxyModel->mapToSource(index));
     });
 
     // Defaults

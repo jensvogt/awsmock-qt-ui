@@ -103,6 +103,15 @@ public:
     }
 
     /**
+     * @brief Sets the size
+     *
+     * @return item count
+     */
+    [[nodiscard]] int GetSize() const {
+        return _dataModel->rowCount();
+    }
+
+    /**
      * @brief Returns the sort column
      *
      * @return sort column name
@@ -216,6 +225,24 @@ public:
         }
     }
 
+    template<class T>
+    T GetValue(const int row, const int column) {
+        QString sValue = _dataModel->item(row, column)->text();
+        if constexpr (std::is_same_v<T, int>) {
+            return static_cast<T>(sValue.toInt());
+        } else if constexpr (std::is_same_v<T, long>) {
+            return static_cast<T>(sValue.toInt());
+        } else if constexpr (std::is_same_v<T, double>) {
+            return static_cast<T>(sValue.toDouble());
+        } else if constexpr (std::is_same_v<T, QString>) {
+            return static_cast<T>(sValue);
+        } else if constexpr (std::is_same_v<T, bool>) {
+            return static_cast<T>(_dataModel->item(row, column)->checkState());
+        } else {
+            return {};
+        }
+    }
+
     /**
      * @brief Returns the table index
      *
@@ -234,7 +261,7 @@ public:
 
     void RemoveRow(const QModelIndex &index) const;
 
-    QModelIndexList GetSelectedRows() const;
+    [[nodiscard]] QModelIndexList GetSelectedRows() const;
 
     /**
      * @brief Converts a proxy index to a source index
@@ -274,6 +301,22 @@ public:
      * @brief Refresh the sort order
      */
     void UpdateSorting() const;
+
+    void DataChanged(const QModelIndex &startIndex, const QModelIndex &endIndex) const {
+        _dataModel->dataChanged(startIndex, endIndex);
+    }
+
+    QHash<QString, int> GetRowIndexesFromIds(const QVector<QString> &ids) {
+        QHash<QString, int> result;
+        for (const auto &id: ids) {
+            for (int j = 0; j < _dataModel->rowCount(); j++) {
+                if (GetValue<QString>(j, 0) == id) {
+                    result.insert(id, j);
+                }
+            }
+        }
+        return result;
+    }
 
 signals:
     /**
@@ -356,7 +399,7 @@ private:
     QStandardItemModel *_dataModel;
 
     /**
-     * @brief Prefix table model
+     * @brief Proxy table model for prefixes
      */
     PrefixFilterProxyModel *_proxyModel;
 

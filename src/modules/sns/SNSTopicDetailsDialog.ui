@@ -31,7 +31,7 @@
      <item row="3" column="0">
       <widget class="QLineEdit" name="topicNameEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -55,7 +55,10 @@
      <item row="8" column="0">
       <widget class="QLineEdit" name="ownerEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -76,7 +79,7 @@
      <item row="5" column="0">
       <widget class="QLineEdit" name="topicArnEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -86,7 +89,10 @@
      <item row="1" column="0">
       <widget class="QLineEdit" name="regionEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -100,7 +106,7 @@
      <item row="1" column="1">
       <widget class="QLineEdit" name="messageCountEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -117,7 +123,7 @@
      <item row="3" column="1">
       <widget class="QLineEdit" name="messageSizeEdit">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="readOnly">
         <bool>true</bool>

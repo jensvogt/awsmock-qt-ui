@@ -29,8 +29,7 @@
 #include <dto/kms/KMSListKeysResponse.h>
 #include <modules/kms/KMSService.h>
 #include <modules/kms/KMSKeyDialog.h>
-
-#include "components/PageableTable.h"
+#include <components/PageableTable.h>
 
 class KMSKeyList final : public BasePage {
     Q_OBJECT

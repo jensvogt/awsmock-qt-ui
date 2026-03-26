@@ -21,6 +21,8 @@ static std::function<void()> makeRequest(
         req.setRawHeader(it.key().toUtf8(), it.value().toUtf8());
 
     QNetworkReply *reply = nullptr;
+    mgr.setTransferTimeout(std::chrono::milliseconds(300000));
+    req.setTransferTimeout(std::chrono::milliseconds(300000));
 
     switch (op) {
         case QNetworkAccessManager::PostOperation:

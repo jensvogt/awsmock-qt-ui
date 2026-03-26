@@ -28,6 +28,8 @@
 //#include <dto/dynamodb/DynamoDbListItemResponse.h>
 #include <modules/dynamodb/DynamoDbService.h>
 
+#include "components/PageableList.h"
+
 class DynamoDbItemList : public BasePage {
     Q_OBJECT
 
@@ -61,7 +63,7 @@ public:
      *
      * @param listItemResponse
      */
-    void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse);
+    void HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse) const;
 
 signals:
     /**
@@ -97,12 +99,12 @@ private:
     /**
      * @brief Item list view
      */
-    QListView *_itemView;
+    PageableList *_itemView;
 
     /**
      * @brief Topic prefix search
      */
-    QString _prefixValue = "";
+    //QString _prefixValue = "";
 
     /**
      * @brief REST service handler
@@ -112,12 +114,12 @@ private:
     /**
      *  @brief Item data model
      */
-    QStandardItemModel *_dataModel;
+    //QStandardItemModel *_dataModel;
 
     /**
      * @brief Data proxy model
      */
-    PrefixFilterProxyModel *_proxyModel{};
+    //PrefixFilterProxyModel *_proxyModel{};
 
     /**
      * @brief Sort column index
@@ -134,7 +136,7 @@ private:
     /**
      * @brief Prefix clear button
      */
-    QPushButton *_prefixClear;
+    //QPushButton *_prefixClear;
 };
 
 #endif // AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H

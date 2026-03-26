@@ -28,6 +28,17 @@ struct DynamoDbTableCounter {
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
+
+    bool operator==(const DynamoDbTableCounter &other) const {
+        return tableArn == other.tableArn &&
+               itemCount == other.itemCount &&
+               size == other.size &&
+               modified == other.modified;
+    }
+
+    bool operator!=(const DynamoDbTableCounter &other) const {
+        return !(*this == other);
+    }
 };
 
 

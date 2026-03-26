@@ -1,6 +1,11 @@
 #ifndef AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H
 #define AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H
 
+// C++ includes
+#include <ranges>
+#include <algorithm>
+
+// Qt includes
 #include <QLabel>
 #include <QMenu>
 #include <QVBoxLayout>
@@ -21,6 +26,7 @@
 
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
+#include <utils/StringUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
 #include <components/PageableTable.h>
@@ -61,9 +67,8 @@ public:
      * @brief Load page content
      *
      * @param listTableResponse
-     * @param listTableResponse
      */
-    void HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) const;
+    void HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse);
 
 signals:
     /**
@@ -99,6 +104,7 @@ private:
      * @brief REST service handler
      */
     DynamoDbService *_dynamoDbService;
+    QList<DynamoDbTableCounter> _internalData;
 };
 
 #endif // AWSMOCK_QT_UI_DYNAMODB_TABLE_LIST_H

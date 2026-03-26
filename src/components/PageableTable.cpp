@@ -2,12 +2,12 @@
 // Created by vogje01 on 2/15/26.
 //
 
-#include <modules/cognito/CognitoUserpoolList.h>
+#include <components/PageableTable.h>
 #include "ui_PageableTable.h"
 
 PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::PageableTable) {
 
-    // Set defaaut page size
+    // Set default page size
     _pageSize = Configuration::instance().GetValue<int>("ui.page-size");
 
     // Setup component
@@ -20,6 +20,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
         _ui->prefixClearButton->setDisabled(false);
         _proxyModel->setFilterColumn(0);
         _proxyModel->setFilterPrefix(_ui->prefixEdit->text());
+        emit ReloadTable();
     });
 
     // Prefix clear button
@@ -31,6 +32,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
         _proxyModel->clearFilter();
         _ui->prefixEdit->setText(nullptr);
         _ui->prefixClearButton->setDisabled(true);
+        emit ReloadTable();
     });
 
     // Table
