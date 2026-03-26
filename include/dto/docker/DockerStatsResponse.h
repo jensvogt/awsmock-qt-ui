@@ -13,6 +13,9 @@ struct DockerStatsResponse {
     QList<ContainerStat> containerStats;
 
     void FromJson(const QJsonDocument &jsonDoc) {
+
+        total = jsonDoc.object()["total"].toInt();
+
         for (QJsonArray jArray = jsonDoc["containerStats"].toArray(); const auto &element: jArray) {
             ContainerStat containerStat;
             containerStat.FromJson(element.toObject());

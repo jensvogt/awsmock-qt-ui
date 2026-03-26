@@ -25,8 +25,7 @@
 #include <modules/lambda/LambdaResultListDialog.h>
 #include <modules/lambda/LambdaUploadCodeDialog.h>
 #include <modules/docker/DockerService.h>
-
-#include "components/PageableTable.h"
+#include <components/PageableTable.h>
 
 /**
  * @brief Lambda list widget. The widget will be placed in the content pane.
@@ -67,13 +66,13 @@ public:
     void HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) const;
 
 private
-    slots:
+slots:
     /**
      * @brief Show context menu
      *
      * @param pos table position
      */
-    
+
 
     void ShowContextMenu(const QPoint &pos);
 

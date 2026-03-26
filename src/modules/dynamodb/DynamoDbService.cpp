@@ -38,7 +38,7 @@ void DynamoDbService::ListTables(const QString &prefix) {
 
     QJsonObject jSorting;
     jSorting["sortDirection"] = -1;
-    jSorting["column"] = "messages";
+    jSorting["column"] = "itemCount";
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);

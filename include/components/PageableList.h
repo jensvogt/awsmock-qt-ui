@@ -119,8 +119,8 @@ public:
     }
 
     template<class T>
-    T GetValue(const QModelIndex &index, const int column) {
-        QString sValue = _dataModel->item(index.row(), column)->text();
+    T GetValue(const QModelIndex &index) {
+        QString sValue = _dataModel->item(index.row())->text();
         if constexpr (std::is_same_v<T, int>) {
             return static_cast<T>(sValue.toInt());
         } else if constexpr (std::is_same_v<T, long>) {
@@ -147,6 +147,13 @@ signals:
      * @brief Send when a context menu is requested
      */
     void ContextMenuRequested(const QPoint &pos);
+
+    /**
+     * @brief Double click proxy signal
+     *
+     * @param index normalized table index
+     */
+    void DoubleClicked(const QModelIndex &index);
 
 private:
     void CalculatePageStatus() const;

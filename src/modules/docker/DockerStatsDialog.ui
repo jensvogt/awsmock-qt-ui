@@ -22,7 +22,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,5,0">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -48,34 +48,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="topMargin">
-      <number>5</number>
-     </property>
-     <property name="bottomMargin">
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QLineEdit" name="prefixEdit"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="prefixClearButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QTableView" name="statsTable">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
+    <widget class="PageableTable" name="statsTable" native="true"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -85,19 +58,6 @@
      <property name="bottomMargin">
       <number>6</number>
      </property>
-     <item>
-      <widget class="QLabel" name="statusLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Status:</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="sizePolicy">
@@ -115,6 +75,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PageableTable</class>
+   <extends>QWidget</extends>
+   <header location="global">components/PageableTable.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

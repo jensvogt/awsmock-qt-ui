@@ -1,7 +1,5 @@
 #include <modules/dynamodb/DynamoDbTableList.h>
 
-#include "utils/StringUtils.h"
-
 DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -93,17 +91,28 @@ void DynamoDbTableList::LoadContent() {
     _dynamoDbService->ListTables(_prefixValue);
 }
 
-void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) const {
-    _tableView->Clear();
+void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &listTableResponse) {
+
+    // Get the ids
+    auto view = listTableResponse.tableCounters | std::views::transform(&DynamoDbTableCounter::tableName);
+    const QVector<QString> names(view.begin(), view.end());
+
+    // Get the rows
+    QHash<QString, int> idToRow = _tableView->GetRowIndexesFromIds(names);
+
     _tableView->SetTotalSize(listTableResponse.total);
     for (auto r = 0, c = 0; r < listTableResponse.tableCounters.count(); r++, c = 0) {
-        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).tableName);
-        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).itemCount);
-        _tableView->SetColumn(r, c++, StringUtils::FormatSizeColumn(listTableResponse.tableCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
-        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).created);
-        _tableView->SetColumn(r, c++, listTableResponse.tableCounters.at(r).modified);
-        _tableView->SetHiddenColumn(r, c, listTableResponse.tableCounters.at(r).tableArn);
+        const int row = idToRow.contains(listTableResponse.tableCounters.at(r).tableName) ? idToRow[listTableResponse.tableCounters.at(r).tableName] : _tableView->GetSize();
+        if (r == _tableView->GetSize() || _internalData.at(r) != listTableResponse.tableCounters.at(r)) {
+            _tableView->SetColumn(row, c++, listTableResponse.tableCounters.at(r).tableName);
+            _tableView->SetColumn(row, c++, listTableResponse.tableCounters.at(r).itemCount);
+            _tableView->SetColumn(row, c++, StringUtils::FormatSizeColumn(listTableResponse.tableCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
+            _tableView->SetColumn(row, c++, listTableResponse.tableCounters.at(r).created);
+            _tableView->SetColumn(row, c++, listTableResponse.tableCounters.at(r).modified);
+            _tableView->SetHiddenColumn(row, c, listTableResponse.tableCounters.at(r).tableArn);
+        }
     }
+    _internalData = listTableResponse.tableCounters;
     _tableView->UpdateSorting();
 }
 

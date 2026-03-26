@@ -14,6 +14,7 @@
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
 #include <utils/PrefixFilterModel.h>
+#include <components/PageableTable.h>
 #include <modules/docker/DockerService.h>
 #include <modules/application/ApplicationEditDialog.h>
 #include <modules/application/ApplicationUploadCodeDialog.h>
@@ -65,7 +66,7 @@ public:
      *
      * @param pos table position
      */
-    void ShowContextMenu(const QPoint &pos);
+    void ShowContextMenu(const QPoint &pos) const;
 
     /**
      * @brief Load the container statistics
