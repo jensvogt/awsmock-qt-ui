@@ -77,7 +77,7 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
     });
 
     // Add context menu
-    connect(_itemView, &PageableList::customContextMenuRequested, this, &DynamoDbItemList::ShowContextMenu);
+    connect(_itemView, &PageableList::ContextMenuRequested, this, &DynamoDbItemList::ShowContextMenu);
 
     const auto mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(toolBar, 0); // fixed height
