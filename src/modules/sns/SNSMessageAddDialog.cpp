@@ -8,6 +8,7 @@
 #include "ui_SNSMessageAddDialog.h"
 
 SNSMessageAddDialog::SNSMessageAddDialog(const QString &topicArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SNSMessageAddDialog), _topicArn(std::move(topicArn)) {
+
     // Connect service events
     _snsService = new SNSService();
     connect(_snsService, &SNSService::SendMessagesSignal, this, &SNSMessageAddDialog::HandleSendMessageSignal);

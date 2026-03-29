@@ -2,16 +2,8 @@
 // Created by vogje01 on 11/24/25.
 //
 
-#include <QEvent>
-#include <QMenu>
-#include <QScrollArea>
-#include <QShortcut>
-#include <QWheelEvent>
-#include <QtGlobal>
 #include <modules/s3/S3ObjectEditDialog.h>
 #include "ui_S3ObjectEditDialog.h"
-#include "modules/s3/S3ObjectMetadataDialog.h"
-#include "utils/ImageUtils.h"
 
 S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent) : BaseDialog(parent),
                                                                                    _ui(new Ui::S3ObjectEditDialog), _objectId(objectId) {
@@ -41,6 +33,7 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     const QFontMetrics fm(_plaintextEdit->font());
     const int tabWidth = fm.horizontalAdvance(' ') * 2;
     _plaintextEdit->setTabStopDistance(tabWidth);
+    _plaintextEdit->setMaximumBlockCount(0);
 
     // Image widget (inside scroll area)
     _imageLabel = new QLabel();
@@ -91,9 +84,16 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     // Body refresh button
     _ui->bodyRefreshButton->setText(nullptr);
     _ui->bodyRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    _ui->bodyRefreshButton->setToolTip("Refresh the S3 object body");
     connect(_ui->bodyRefreshButton, &QAbstractButton::clicked, this, [this, objectId]() {
         _s3Service->GetObjectDetails(objectId);
     });
+
+    // Body save button
+    _ui->bodySaveButton->setText(nullptr);
+    _ui->bodySaveButton->setIcon(IconUtils::GetIcon("save"));
+    _ui->bodySaveButton->setToolTip("Save the data to a local file");
+    connect(_ui->bodySaveButton, &QPushButton::clicked, this, &S3ObjectEditDialog::SaveToFile);
 
     // Metadata add button
     _ui->metadataAddButton->setText(nullptr);
@@ -180,12 +180,15 @@ void S3ObjectEditDialog::HandleReject() {
 
 void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse) {
 
+    _objectDetails = objectDetailsResponse;
     _ui->regionEdit->setText(objectDetailsResponse.region);
     _ui->bucketEdit->setText(objectDetailsResponse.bucketName);
     _ui->keyEdit->setText(objectDetailsResponse.key);
     _ui->ownerEdit->setText(objectDetailsResponse.owner);
     _ui->contentTypeEdit->setText(objectDetailsResponse.contentType);
-    _ui->sizeEdit->setText(QString::number(objectDetailsResponse.size));
+    _ui->sizeEdit->setText(StringUtils::FormatSizeColumn(objectDetailsResponse.size, 1));
+    _ui->internalNameEdit->setText(objectDetailsResponse.internalName);
+    _ui->versionIdEdit->setText(objectDetailsResponse.versionId.size() > 0 ? objectDetailsResponse.versionId : "not versioned");
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.modified));
     if (ImageUtils::IsImageContentType(objectDetailsResponse.contentType)) {
@@ -197,7 +200,12 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
         ApplyImageScale();
         _ui->stackedWidget->setCurrentWidget(_imageScrollArea);
     } else {
-        _plaintextEdit->setPlainText(objectDetailsResponse.body);
+        if (objectDetailsResponse.size > _maxSize) {
+            _plaintextEdit->setPlainText(objectDetailsResponse.body.left(_maxSize) + "\n\n... [truncated]");
+            _ui->statusLabel->setText("Body is truncated to " + StringUtils::FormatSizeColumn(_maxSize, 1));
+        } else {
+            _plaintextEdit->setPlainText(objectDetailsResponse.body);
+        }
         _ui->stackedWidget->setCurrentWidget(_plaintextEdit);
     }
 
@@ -275,4 +283,38 @@ void S3ObjectEditDialog::FitImageToViewport() const {
     const QSize scaled = _imageOriginal.size().scaled(viewportSize, Qt::KeepAspectRatio);
     _imageLabel->setPixmap(_imageOriginal.scaled(scaled, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     _imageLabel->adjustSize();
+}
+
+void S3ObjectEditDialog::SaveToFile() const {
+
+    if (const QString fileName = SelectFilename(); !fileName.isEmpty()) {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + fileName);
+        }
+        const long count = file.write(_objectDetails.body);
+        file.close();
+        logInfo << "S3 object body save to file: " << fileName << ", fileSize: " << count;
+        _ui->statusLabel->setText("S3 object body saved to file: " + fileName + ", size: " + StringUtils::FormatSizeColumn(count, 0));
+    }
+}
+
+QString S3ObjectEditDialog::SelectFilename() {
+
+    // Create a QFileDialog set to select existing files
+    const auto filter = "JSON Files (*.json);All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.S3SaveBodyToFile", "/usr/local/awsmock-qt-_ui");
+
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadWrite)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
+            return {};
+        }
+        file.close();
+        Configuration::instance().SetValue<QString>("ui.default-directory.S3SaveBodyToFile", QFileInfo(filePath).absolutePath());
+        logDebug << "S3 object file path: " << filePath;
+        return filePath;
+    }
+    return {};
 }

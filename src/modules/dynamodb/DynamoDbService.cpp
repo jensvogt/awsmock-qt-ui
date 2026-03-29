@@ -1,6 +1,7 @@
 
 #include <modules/dynamodb/DynamoDbService.h>
 
+#include "dto/dynamodb/DynamoDbExportItemsResponse.h"
 #include "utils/Logging.h"
 
 void DynamoDbService::CreateTable(const DynamoDbCreateTableRequest &request) {
@@ -169,6 +170,31 @@ void DynamoDbService::ListItems(const QString &tableName, const QString &prefix,
                       });
 }
 
+void DynamoDbService::ExportItems(const QString &tableName) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["TableName"] = tableName;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "dynamodb"},
+                          {"x-awsmock-action", "export-items"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ExportItemsSignal(QString(response));
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ExportItems", timer.elapsed());
+                      });
+}
+
 void DynamoDbService::PurgeTable(const QString &tableName) {
     QElapsedTimer timer;
     timer.start();
@@ -194,6 +220,25 @@ void DynamoDbService::PurgeTable(const QString &tableName) {
                                   logWarning << "Response is not an object!";
                               }
                           } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
+                      });
+}
+
+void DynamoDbService::ResetItemCounters() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      {},
+                      {
+                          {"x-awsmock-target", "dynamodb"},
+                          {"x-awsmock-action", "reset-item-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());

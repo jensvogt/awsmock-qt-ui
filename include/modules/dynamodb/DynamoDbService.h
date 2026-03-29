@@ -17,6 +17,7 @@
 #include <dto/dynamodb/DynamoDbCreateTableResponse.h>
 #include <dto/dynamodb/DynamoDbDescribeTableResponse.h>
 #include <dto/dynamodb/DynamoDbListItemResponse.h>
+#include <dto/dynamodb/DynamoDbExportItemsResponse.h>
 
 class DynamoDbService final : public BaseService {
     Q_OBJECT
@@ -48,6 +49,8 @@ public:
      */
     void DescribeTable(const QString &tableName);
 
+    void ExportItems(const QString &tableName);
+
     /**
      * @brief Delete a DynamoDB table
      *
@@ -74,6 +77,11 @@ public:
      * @param tableName table name
      */
     void PurgeTable(const QString &tableName);
+
+    /**
+     * @brief Sends a recalculate item counter request
+     */
+    void ResetItemCounters();
 
 signals:
     /**
@@ -108,6 +116,13 @@ signals:
      * @param listItemsResponse list of table items
      */
     void ListItemsSignal(const DynamoDbListItemResponse &listItemsResponse);
+
+    /**
+     * @brief Signaled when a table export items list is available
+     *
+     * @param exportitemsResponse list of table items
+     */
+    void ExportItemsSignal(const QString &exportitemsResponse);
 
 private:
     /**

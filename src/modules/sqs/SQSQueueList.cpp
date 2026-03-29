@@ -18,7 +18,6 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Toolbar add action
     auto *addButton = new QPushButton(IconUtils::GetIcon("add"), "");
-    addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new queue");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
@@ -30,7 +29,6 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Toolbar add action
     auto *purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
-    purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all queues");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _sqsService->PurgeAllQueues();
@@ -38,7 +36,6 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Toolbar reset counter action
     auto *resetCounterButton = new QPushButton(IconUtils::GetIcon("reset-counter"), "", this);
-    resetCounterButton->setIconSize(QSize(16, 16));
     resetCounterButton->setToolTip("Refresh the queue message counters");
     connect(resetCounterButton, &QPushButton::clicked, [this]() {
         _sqsService->ResetMessageCounters();
@@ -47,7 +44,6 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Toolbar refresh action
     auto *refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
-    refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
         LoadContent();
