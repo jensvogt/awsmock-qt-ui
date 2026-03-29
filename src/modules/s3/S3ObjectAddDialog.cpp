@@ -6,6 +6,7 @@
 
 #include <modules/s3/S3ObjectAddDialog.h>
 #include "ui_S3ObjectAddDialog.h"
+#include "modules/s3/S3BucketMetadataDialog.h"
 
 S3ObjectAddDialog::S3ObjectAddDialog(const S3GetBucketDetailsResponse &bucket, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3ObjectAddDialog), _bucket(bucket) {
     // S3 REST service
@@ -50,6 +51,16 @@ S3ObjectAddDialog::S3ObjectAddDialog(const S3GetBucketDetailsResponse &bucket, Q
     _ui->metadataTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
     _ui->metadataTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+
+    // Connect double-click
+    connect(_ui->metadataTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString key = _dataModel->item(index.row(), 0)->text();
+        const QString value = _dataModel->item(index.row(), 1)->text();
+        S3BucketMetadataDialog dialog(nullptr, key, value);
+        dialog.exec();
+        _dataModel->item(index.row(), 1)->setText(dialog.GetValue());
+        _metadata[dialog.GetKey()] = dialog.GetValue();
+    });
 
     // Fill in metadata table
     int r = 0;

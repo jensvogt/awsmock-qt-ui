@@ -1,5 +1,7 @@
 #include <modules/dynamodb/DynamoDbTableList.h>
 
+#include "../../../include/modules/dynamodb/DynamoDbExportTableDialog.h"
+
 DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -47,10 +49,19 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
         LoadContent();
     });
 
+    // Toolbar reset counter action
+    auto *resetCounterButton = new QPushButton(IconUtils::GetIcon("reset-counter"), "", this);
+    resetCounterButton->setToolTip("Refresh the item counters");
+    connect(resetCounterButton, &QPushButton::clicked, [this]() {
+        _dynamoDbService->ResetItemCounters();
+        LoadContent();
+    });
+
     //    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(resetCounterButton);
     toolBar->addWidget(refreshButton);
 
     // Table
@@ -134,6 +145,9 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
     QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Table");
     purgeAction->setToolTip("Purge the table");
 
+    QAction *exportAction = menu.addAction(IconUtils::GetIcon("export"), "Export Table Data");
+    exportAction->setToolTip("Export the table items");
+
     menu.addSeparator();
 
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Table");
@@ -141,6 +155,9 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
 
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _dynamoDbService->PurgeTable(tableName);
+    } else if (selectedAction == exportAction) {
+        DynamoDbExportTableDialog dialog(tableName);
+        dialog.exec();
     } else if (selectedAction == deleteAction) {
         _dynamoDbService->DeleteTable(tableName);
     } else if (selectedAction == editAction) {

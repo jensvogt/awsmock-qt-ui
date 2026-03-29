@@ -59,6 +59,20 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
         _ui->connectButton->setText("Disconnect");
     });
 
+    // File types
+    const QStringList fileTypeNames = {
+        "ONIX", "IMAGE", "VLB_PREISREFERENZ", "FASTBOOK_INVENTORY", "INGRAM_INVENTORY", "GARDNER_INVENTORY", "ARCHIVE", "KATALOGDATEN_VORLAGE", "L2000_KATALOGDATEN", "ARVATO_BOOK_PREVIEW", "BOOK_2_LOOK_BOOK_PREVIEW", "MIDVOX_BOOK_PREVIEW", "DIGITAL_ASSET",
+        "PDX", "UNKNOWN"
+    };
+    _ui->fileTypeCombo->addItems(fileTypeNames);
+    _ui->fileTypeCombo->setCurrentIndex(0);
+
+    // File origin
+    const QStringList fileOriginNames = {"FTP_UPLOAD", "FILE_PICKUP", "ORIGINALDATEI_UPLOAD", "IMPORT_L2000", "IMPORT_KATALOGDATEN_VORLAGE"};
+    _ui->fileOriginCombo->addItems(fileOriginNames);
+    _ui->fileOriginCombo->setCurrentIndex(0);
+
+    // Datenlieferant
     // Setup verification
     UpdateLineEditStyle(_ui->serverEdit->text());
     UpdateLineEditStyle(_ui->portEdit->text());
@@ -67,7 +81,9 @@ FTPClientDialog::FTPClientDialog(QWidget *parent) : QDialog(parent), _ui(new Ui:
 
     // Set defaults
     if (!Configuration::instance().GetValue<QString>("ui.default-ftp-user", "").isEmpty()) {
-        _ui->userEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-user", ""));
+        auto user = Configuration::instance().GetValue<QString>("ui.default-ftp-user", "");
+        _ui->userEdit->setText(user);
+        _ui->lieferantEdit->setText(user);
     }
     if (!Configuration::instance().GetValue<QString>("ui.default-ftp-password", "").isEmpty()) {
         _ui->passwordEdit->setText(Configuration::instance().GetValue<QString>("ui.default-ftp-password", ""));

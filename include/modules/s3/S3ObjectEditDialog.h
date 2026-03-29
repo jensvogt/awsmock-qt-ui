@@ -8,12 +8,21 @@
 // Qt includes
 #include <QPlainTextEdit>
 #include <QPixmap>
+#include <QEvent>
+#include <QMenu>
+#include <QScrollArea>
+#include <QShortcut>
+#include <QWheelEvent>
+#include <QtGlobal>
 
 // AwsMock includes
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
 #include <utils/DateTimeUtils.h>
+#include <utils/ImageUtils.h>
+#include <utils/StringUtils.h>
 #include <modules/s3/S3Service.h>
+#include <modules/s3/S3ObjectMetadataDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -83,6 +92,18 @@ private:
     void FitImageToViewport() const;
 
     /**
+     * @brief Save the body to a file
+     */
+    void SaveToFile() const;
+
+    /**
+     * @biref Opens a save file dialog and returns the selected file path.
+     *
+     * @return file path
+     */
+    static QString SelectFilename();
+
+    /**
      * @brief UI components
      */
     Ui::S3ObjectEditDialog *_ui;
@@ -140,9 +161,19 @@ private:
     qreal _imageZoom = 1.0;
 
     /**
+     * @brief Local copy of object response
+     */
+    S3GetObjectDetailsResponse _objectDetails;
+
+    /**
      * @brief Fit-to-window toggle
      */
     bool _imageFitToWindow = false;
+
+    /**
+     * @brief Max size for body plain text edit
+     */
+    long _maxSize = 100 * 1024;
 };
 
 

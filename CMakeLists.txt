@@ -101,6 +101,22 @@ set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cog
         src/modules/cognito/CognitoAddUserpoolDialog.cpp include/modules/cognito/CognitoAddUserpoolDialog.h
         src/modules/cognito/CognitoAddUserpoolDialog.ui include/dto/cognito/CognitoAddUserpoolRequest.h
         include/dto/cognito/CognitoAddUserpoolResponse.h include/dto/cognito/CognitoDeleteUserpoolRequest.h)
+set(DYNAMODB_SOURCES src/modules/dynamodb/DynamoDbExportTableDialog.cpp src/modules/dynamodb/DynamoDbExportTableDialog.ui
+        include/modules/dynamodb/DynamoDbExportTableDialog.h include/modules/dynamodb/DynamoDbTableList.h
+        include/modules/dynamodb/DynamoDbService.h include/dto/dynamodb/DynamoDbListTableResponse.h
+        include/dto/dynamodb/DynamoDbTableCounter.h src/modules/dynamodb/DynamoDbService.cpp
+        src/modules/dynamodb/DynamoDbTableList.cpp include/dto/dynamodb/DynamoDbCreateTableRequest.h
+        include/dto/dynamodb/DynamoDbCreateTableResponse.h include/dto/dynamodb/DynamoDbAttribute.h
+        include/dto/dynamodb/DynamoDbKeySchema.h src/modules/dynamodb/DynamoDbAddTableDialog.cpp
+        include/modules/dynamodb/DynamoDbAddTableDialog.h src/modules/dynamodb/DynamoDbAddTableDialog.ui
+        src/modules/dynamodb/DynamoDbAddAttributeDialog.cpp include/modules/dynamodb/DynamoDbAddAttributeDialog.h
+        src/modules/dynamodb/DynamoDbAddAttributeDialog.ui include/modules/dynamodb/DynamoDbAddKeySchemaDialog.h
+        src/modules/dynamodb/DynamoDbAddKeySchemaDialog.cpp include/dto/dynamodb/DynamoDbProvisionedThroughput.h
+        src/modules/dynamodb/DynamoDbEditTableDialog.cpp include/modules/dynamodb/DynamoDbEditTableDialog.h
+        src/modules/dynamodb/DynamoDbEditTableDialog.ui include/dto/dynamodb/DynamoDbDescribeTableResponse.h
+        src/modules/dynamodb/DynamoDbItemList.cpp include/modules/dynamodb/DynamoDbItemList.h
+        include/dto/dynamodb/DynamoDbListItemResponse.h include/dto/dynamodb/DynamoDbItem.h
+        include/dto/dynamodb/DynamoDbExportItemsResponse.h)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
         src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
         src/modules/module/ModuleExportDialog.ui)
@@ -115,7 +131,7 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         include/utils/ServerLogWidget.h src/utils/ServerLogWidget.ui)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
         ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
-        ${COMPONENTS_SOURCES}
+        ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES}
         src/modules/docker/DockerLogClient.cpp
         include/modules/docker/DockerLogClient.h
         include/modules/lambda/LambdaList.h
@@ -213,33 +229,6 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/sns/SNSTopicSubscription.h
         include/dto/sns/SNSListTopicSubscriptionsResponse.h
         include/utils/DateTimeUtils.h
-        include/modules/dynamodb/DynamoDbTableList.h
-        include/modules/dynamodb/DynamoDbService.h
-        include/dto/dynamodb/DynamoDbListTableResponse.h
-        include/dto/dynamodb/DynamoDbTableCounter.h
-        src/modules/dynamodb/DynamoDbService.cpp
-        src/modules/dynamodb/DynamoDbTableList.cpp
-        include/dto/dynamodb/DynamoDbCreateTableRequest.h
-        include/dto/dynamodb/DynamoDbCreateTableResponse.h
-        include/dto/dynamodb/DynamoDbAttribute.h
-        include/dto/dynamodb/DynamoDbKeySchema.h
-        src/modules/dynamodb/DynamoDbAddTableDialog.cpp
-        include/modules/dynamodb/DynamoDbAddTableDialog.h
-        src/modules/dynamodb/DynamoDbAddTableDialog.ui
-        src/modules/dynamodb/DynamoDbAddAttributeDialog.cpp
-        include/modules/dynamodb/DynamoDbAddAttributeDialog.h
-        src/modules/dynamodb/DynamoDbAddAttributeDialog.ui
-        include/modules/dynamodb/DynamoDbAddKeySchemaDialog.h
-        src/modules/dynamodb/DynamoDbAddKeySchemaDialog.cpp
-        include/dto/dynamodb/DynamoDbProvisionedThroughput.h
-        src/modules/dynamodb/DynamoDbEditTableDialog.cpp
-        include/modules/dynamodb/DynamoDbEditTableDialog.h
-        src/modules/dynamodb/DynamoDbEditTableDialog.ui
-        include/dto/dynamodb/DynamoDbDescribeTableResponse.h
-        src/modules/dynamodb/DynamoDbItemList.cpp
-        include/modules/dynamodb/DynamoDbItemList.h
-        include/dto/dynamodb/DynamoDbListItemResponse.h
-        include/dto/dynamodb/DynamoDbItem.h
         include/modules/s3/S3BucketMetadataDialog.h
         src/modules/s3/S3BucketMetadataDialog.cpp
         src/modules/s3/S3BucketLifecycleDialog.cpp

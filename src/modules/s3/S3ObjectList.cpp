@@ -153,6 +153,8 @@ void S3ObjectList::HandleBulkTouch(const QModelIndexList &proxyIndices) const {
 
 void S3ObjectList::ShowContextMenu(const QPoint &pos) {
 
+    StopAutoUpdate();
+
     // Cell index
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
@@ -184,4 +186,5 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) {
         S3ObjectEditDialog dialog(objectId, this);
         dialog.exec();
     }
+    StartAutoUpdate();
 }
