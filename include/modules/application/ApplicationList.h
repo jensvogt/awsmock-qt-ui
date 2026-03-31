@@ -6,24 +6,25 @@
 #define AWSMOCK_QT_UI_APPLICATION_LIST_H
 
 // QT includes
-#include <QTableWidget>
 #include <QHBoxLayout>
+#include <QHeaderView>
+#include <QHeaderView>
 #include <QInputDialog>
-#include <QPushButton>
-#include <QHeaderView>
 #include <QMenu>
-#include <QHeaderView>
+#include <QPushButton>
+#include <QTableWidget>
 
 // Awsmock Qt includes
+#include <components/ContextMenu.h>
+#include <components/PageableTable.h>
+#include <dto/sns/SNSListTopicResult.h>
+#include <modules/application/ApplicationAddDialog.h>
+#include <modules/application/ApplicationEditDialog.h>
+#include <modules/application/ApplicationLogsDialog.h>
+#include <modules/application/ApplicationService.h>
+#include <modules/application/ApplicationUploadCodeDialog.h>
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-#include <dto/sns/SNSListTopicResult.h>
-#include <components/PageableTable.h>
-#include <modules/application/ApplicationService.h>
-#include <modules/application/ApplicationEditDialog.h>
-#include <modules/application/ApplicationAddDialog.h>
-#include <modules/application/ApplicationUploadCodeDialog.h>
-#include <modules/application/ApplicationLogsDialog.h>
 
 /**
  * @brief Application list widget. The widget will be placed in the content pane.

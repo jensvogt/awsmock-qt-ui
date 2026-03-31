@@ -24,6 +24,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/StringUtils.h>
+#include <components/ContextMenu.h>
 #include <components/PageableTable.h>
 #include <modules/sns/SNSService.h>
 #include <modules/sns/SNSTopicDetailsDialog.h>
@@ -72,7 +73,7 @@ signals:
     void ShowSnsMessages(const QString &topicArn);
 
 private slots:
-    void ShowContextMenu(const QPoint &pos) const;
+    void ShowContextMenu(const QPoint &pos);
 
 private:
     /**

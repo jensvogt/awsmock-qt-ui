@@ -82,8 +82,10 @@ void MainWidget::SetupContentPane() {
 
 void MainWidget::SetupLogPane() {
 
+    // Set server log level
+    _moduleService->SetLogLevel(_currentLogLevel);
+
     // Get the log level from server
-    _moduleService->GetLogLevel();
     connect(_moduleService, &ModuleService::GetLoglevelSignal, this, [this](const QString &logLevel) {
         _currentLogLevel = logLevel;
         _ui->logLevelCombo->setCurrentText(_currentLogLevel);
@@ -100,6 +102,18 @@ void MainWidget::SetupLogPane() {
 }
 
 void MainWidget::SetupServerLogs() {
+
+    // Loglevel combo
+    const auto logLevelList = QStringList({"trace", "debug", "info", "warning", "error"});
+    _ui->logLevelCombo->addItems(logLevelList);
+    _ui->logLevelCombo->setCurrentText(_currentLogLevel);
+    logInfo << "Server log level set to " << _currentLogLevel;
+
+    connect(_ui->logLevelCombo, &QComboBox::currentTextChanged, this, [this](const QString &logLevel) {
+        _moduleService->SetLogLevel(logLevel);
+        _currentLogLevel = logLevel;
+        logInfo << "Server log level changed to " << _currentLogLevel;
+    });
 
     // Create websocket
     _webSocket = new QWebSocket();
@@ -129,11 +143,6 @@ void MainWidget::SetupServerLogs() {
     // Data model
     _serverLogDataModel = new QStandardItemModel(_ui->serverLogList);
     _ui->serverLogList->setModel(_serverLogDataModel);
-
-    // Loglevel combo
-    const auto logLevelList = QStringList({"trace", "debug", "info", "warning", "error"});
-    _ui->logLevelCombo->addItems(logLevelList);
-    _ui->logLevelCombo->setCurrentIndex(2);
 
     // Scroll button
     _ui->serverScrollButton->setText(nullptr);
@@ -174,10 +183,12 @@ void MainWidget::SetupServerLogs() {
             _webSocket->close();
             _ui->logStopButton->setToolTip("Start the server websocket connection");
             _ui->logStopButton->setIcon(IconUtils::GetIcon("start"));
+            logInfo << "Web socket connection started";
         } else if (_webSocket->state() == QAbstractSocket::UnconnectedState) {
             _webSocket->open(QUrl(_websocketUrl));
             _ui->logStopButton->setToolTip("Stop the server websocket connection");
             _ui->logStopButton->setIcon(IconUtils::GetIcon("stop"));
+            logInfo << "Web socket connection stopped";
         }
     });
 

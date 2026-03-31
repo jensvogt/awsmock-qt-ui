@@ -209,17 +209,21 @@ public:
 
     template<class T>
     T GetValue(const QModelIndex &index, const int column) {
-        QString sValue = _dataModel->item(index.row(), column)->text();
+        const auto *item = _dataModel->item(index.row(), column);
+        if (!item) return {};
+
+        QString sValue = item->text();
+
         if constexpr (std::is_same_v<T, int>) {
-            return static_cast<T>(sValue.toInt());
+            return sValue.toInt();
         } else if constexpr (std::is_same_v<T, long>) {
-            return static_cast<T>(sValue.toInt());
+            return sValue.toLong();
         } else if constexpr (std::is_same_v<T, double>) {
-            return static_cast<T>(sValue.toDouble());
+            return sValue.toDouble();
         } else if constexpr (std::is_same_v<T, QString>) {
-            return static_cast<T>(sValue);
+            return sValue;
         } else if constexpr (std::is_same_v<T, bool>) {
-            return static_cast<T>(_dataModel->item(index.row(), column)->checkState());
+            return item->data().toBool();
         } else {
             return {};
         }

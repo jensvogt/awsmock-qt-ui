@@ -125,9 +125,9 @@ private:
     long _logLimit = 500;
 
     /**
-     * @brief Current log level, we start with 'info'.
+     * @brief Current log level, we start with 'warning'.
      */
-    QString _currentLogLevel = "info";
+    QString _currentLogLevel = "warning";
 
     /**
      * @brief Module service

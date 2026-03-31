@@ -179,30 +179,30 @@ void SQSMessageList::HandleBulkRedrive(const QModelIndexList &proxyIndices) cons
 void SQSMessageList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Message");
+    QMenu *menu = new ContextMenu(this);
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Message");
     editAction->setToolTip("Edit message");
 
-    QAction *resendAction = menu.addAction(IconUtils::GetIcon("resend"), "Resend Messages");
+    QAction *resendAction = menu->addAction(IconUtils::GetIcon("resend"), "Resend Messages");
     resendAction->setToolTip("Resend message");
     if (_isDlq) {
         resendAction->setEnabled(false);
     } else {
         resendAction->setEnabled(true);
     }
-    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("redrive"), "Redrive Messages");
+    QAction *redriveAction = menu->addAction(IconUtils::GetIcon("redrive"), "Redrive Messages");
     resendAction->setToolTip("Redrive messages");
     if (_isDlq) {
         redriveAction->setEnabled(true);
     } else {
         redriveAction->setEnabled(false);
     }
-    menu.addSeparator();
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
+    menu->addSeparator();
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("dark", "delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         const auto messageId = _tableView->GetValue<QString>(index, 0);
         SQSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();

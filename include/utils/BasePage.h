@@ -51,10 +51,13 @@ public:
         return {};
     }
 
-signals:
+    signals:
+    
+
     void StatusUpdateRequested(const QString &text);
 
-public slots:
+public
+    slots:
     /**
      * @brief Notify the status bar that the auto update finished
      */

@@ -6,26 +6,27 @@
 #define AWSMOCK_QT_UI_LAMBDA_LIST_H
 
 // QT includes
-#include <QMenu>
-#include <QLabel>
-#include <QTableWidget>
 #include <QHBoxLayout>
+#include <QHeaderView>
+#include <QHeaderView>
 #include <QInputDialog>
+#include <QLabel>
+#include <QMenu>
 #include <QPushButton>
-#include <QHeaderView>
-#include <QHeaderView>
+#include <QTableWidget>
 
 // Awsmock includes
-#include <utils/BasePage.h>
-#include <utils/IconUtils.h>
+#include <components/ContextMenu.h>
+#include <components/PageableTable.h>
 #include <dto/sns/SNSListTopicResult.h>
-#include <modules/lambda/LambdaService.h>
+#include <modules/docker/DockerService.h>
 #include <modules/lambda/LambdaDetailsDialog.h>
 #include <modules/lambda/LambdaLogsDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
+#include <modules/lambda/LambdaService.h>
 #include <modules/lambda/LambdaUploadCodeDialog.h>
-#include <modules/docker/DockerService.h>
-#include <components/PageableTable.h>
+#include <utils/BasePage.h>
+#include <utils/IconUtils.h>
 
 /**
  * @brief Lambda list widget. The widget will be placed in the content pane.
