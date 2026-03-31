@@ -11,6 +11,7 @@ BasePage::BasePage(QWidget *parent) : QWidget(parent) {
 }
 
 void BasePage::StartAutoUpdate() {
+
     // Initial load
     LoadContent();
 

@@ -109,26 +109,31 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
     _tableView->UpdateSorting();
 }
 
-void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+void SNSTopicList::ShowContextMenu(const QPoint &pos) {
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Topic");
+    StopAutoUpdate();
+
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const long total = _tableView->GetValue<long>(index, 1) + _tableView->GetValue<long>(index, 2) + _tableView->GetValue<long>(index, 3);
+
+    QMenu *menu = new ContextMenu(this);
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Topic");
     editAction->setToolTip("Edit the topic details");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Topic");
+    QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Topic");
     purgeAction->setToolTip("Purge the topic");
+    purgeAction->setEnabled(total > 0);
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Topic");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Topic");
     deleteAction->setToolTip("Delete the topic");
 
     const auto topicArn = _tableView->GetValue<QString>(index, 7);
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _snsService->PurgeTopic(topicArn);
     } else if (selectedAction == deleteAction) {
         _snsService->DeleteTopic(topicArn);
@@ -136,4 +141,5 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) const {
         SNSTopicDetailsDialog dialog(topicArn);
         dialog.exec();
     }
+    StartAutoUpdate();
 }

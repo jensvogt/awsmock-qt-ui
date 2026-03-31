@@ -12,6 +12,7 @@
 #include <utils/IconUtils.h>
 #include <utils/EventBus.h>
 #include <utils/AwsUtils.h>
+#include <components/ContextMenu.h>
 #include <components/PageableTable.h>
 #include <modules/sqs/SQSService.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>

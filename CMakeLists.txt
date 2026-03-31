@@ -46,7 +46,8 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         src/components/PageableList.ui src/components/ReplaceWordDialog.cpp include/components/ReplaceWordDialog.h
         src/components/ReplaceWordDialog.ui src/components/ReplaceWidget.cpp include/components/ReplaceWidget.h
         src/components/ReplaceWidget.ui src/components/SearchField.cpp include/components/SearchField.h
-        src/components/SearchField.ui)
+        src/components/SearchField.ui
+        include/components/ContextMenu.h)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h

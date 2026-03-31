@@ -1,5 +1,8 @@
+#include <QStyleFactory>
 #include <ui_SQSMessageAddDialog.h>
 #include <modules/sqs/SQSQueueList.h>
+
+#include "components/ContextMenu.h"
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
 
@@ -119,38 +122,40 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
     _tableView->RestoreSelection();
 }
 
-void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
+void SQSQueueList::ShowContextMenu(const QPoint &pos) {
+
+    StopAutoUpdate();
+
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
-    const bool isDql = _tableView->GetValue<bool>(index, 9);
+    const long total = _tableView->GetValue<long>(index, 1) + _tableView->GetValue<long>(index, 2) + _tableView->GetValue<long>(index, 3);
+    const bool isDlq = _tableView->GetValue<bool>(index, 9);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
+    auto *menu = new ContextMenu(this);
 
-    QAction *sendAction = menu.addAction(IconUtils::GetIcon("send"), "Send a Message");
+    QAction *sendAction = menu->addAction(IconUtils::GetIcon("send"), "Send a Message");
     sendAction->setToolTip("Send a Message to the queue");
 
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue");
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the Queue details");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Queue");
+    QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Queue");
     purgeAction->setToolTip("Purge the Queue");
+    purgeAction->setEnabled(total > 0);
 
-    QAction *redriveAction = menu.addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
+    QAction *redriveAction = menu->addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages");
+    redriveAction->setEnabled(isDlq && total > 0);
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Queue");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Queue");
     deleteAction->setToolTip("Delete the Queue");
-
-    // Conditional logic
-    redriveAction->setEnabled(isDql);
 
     const auto queueUrl = _tableView->GetValue<QString>(index, 7);
     const auto queueArn = _tableView->GetValue<QString>(index, 8);
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == sendAction) {
         SQSMessageAddDialog dialog(queueUrl, queueArn);
@@ -163,4 +168,5 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) const {
         SQSQueueDetailsDialog dialog(queueArn);
         dialog.exec();
     }
+    StartAutoUpdate();
 }

@@ -158,25 +158,24 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) {
     // Cell index
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Object");
+    QMenu *menu = new ContextMenu();
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Object");
     editAction->setToolTip("Edit the S3 object");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *touchAction = menu.addAction(IconUtils::GetIcon("touch"), "Touch Object");
+    QAction *touchAction = menu->addAction(IconUtils::GetIcon("touch"), "Touch Object");
     touchAction->setToolTip("Touch the object");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Object");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Object");
     deleteAction->setToolTip("Delete the object");
 
-    //_s3Service->DeleteObject(_bucketName, key);
     const auto key = _tableView->GetValue<QString>(index, 0);
     const auto objectId = _tableView->GetValue<QString>(index, 5);
-    if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
+    if (const auto selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
         const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
         HandleBulkDelete(selectedProxyIndices);
     } else if (selectedAction == touchAction) {
