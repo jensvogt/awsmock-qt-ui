@@ -70,16 +70,12 @@ public:
      */
     void HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const;
 
-    signals:
-    
-
+signals:
     void ShowMessages(const QString &QueueArn, const QString &QueueUrl, bool isDql);
 
 private
-    slots:
-    
-
-    void ShowContextMenu(const QPoint &pos) const;
+slots:
+    void ShowContextMenu(const QPoint &pos);
 
 private:
     /**

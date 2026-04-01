@@ -15,7 +15,6 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
 
     // Toolbar back action
     const auto backButton = new QPushButton(IconUtils::GetIcon("back"), "");
-    backButton->setIconSize(QSize(16, 16));
     backButton->setToolTip("Go back to the topic list");
     connect(backButton, &QPushButton::clicked, []() {
         emit EventBus::instance().RouteChanged("SNS");
@@ -26,7 +25,6 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
 
     // Toolbar add action
     const auto addButton = new QPushButton(IconUtils::GetIcon("add"), "");
-    addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new topic");
     connect(addButton, &QPushButton::clicked, [this]() {
         SNSMessageAddDialog dialog(_topicArn);
@@ -35,7 +33,6 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
 
     // Toolbar add action
     const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("purge"), "");
-    purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all messages");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _snsService->PurgeMessages(_topicArn);
@@ -43,7 +40,6 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
 
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "");
-    refreshButton->setIconSize(QSize(16, 16));
     refreshButton->setToolTip("Refresh the queue list");
     connect(refreshButton, &QPushButton::clicked, [this]() {
         LoadContent();
@@ -117,16 +113,16 @@ void SNSMessageList::HandleReloadMessageSignal() const {
 void SNSMessageList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Message");
+    QMenu *menu = new ContextMenu(this);
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Message");
     editAction->setToolTip("Edit the message");
 
-    menu.addSeparator();
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Message");
+    menu->addSeparator();
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
-    if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
+    if (const auto selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         const auto messageId = _tableView->GetValue<QString>(index, 0);
         SNSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();

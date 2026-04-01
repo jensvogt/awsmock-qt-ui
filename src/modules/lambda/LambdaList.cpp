@@ -120,53 +120,53 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     const auto version = _tableView->GetValue<QString>(index, 1);
     const auto containerId = _tableView->GetValue<QString>(index, 9);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Lambda");
+    QMenu *menu = new ContextMenu();
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Lambda");
     editAction->setToolTip("Edit the lambda details.");
 
-    QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the lambda logs");
+    QAction *logsAction = menu->addAction(IconUtils::GetIcon("logs"), "Show the lambda logs");
     logsAction->setToolTip("Show the lambda logs");
     if (arn.isEmpty()) {
         logsAction->setDisabled(true);
     }
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *enableAction = menu.addAction(IconUtils::GetIcon("enabled"), "Enable Lambda");
+    QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable Lambda");
     enableAction->setToolTip("Enable the lambda.");
 
-    QAction *disableAction = menu.addAction(IconUtils::GetIcon("disabled"), "Disable Lambda");
+    QAction *disableAction = menu->addAction(IconUtils::GetIcon("disabled"), "Disable Lambda");
     disableAction->setToolTip("Disable the lambda.");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Lambda");
+    QAction *startAction = menu->addAction(IconUtils::GetIcon("start"), "Start Lambda");
     startAction->setToolTip("Start the lambda");
 
-    QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Lambda");
+    QAction *stopAction = menu->addAction(IconUtils::GetIcon("stop"), "Stop Lambda");
     stopAction->setToolTip("Stop the lambda");
 
-    QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
+    QAction *restartAction = menu->addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
     restartAction->setToolTip("Restart the lambda");
 
-    QAction *killAction = menu.addAction(IconUtils::GetIcon("kill"), "Kill Lambda");
+    QAction *killAction = menu->addAction(IconUtils::GetIcon("kill"), "Kill Lambda");
     killAction->setToolTip("Kill the lambda docker container");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
+    QAction *rebuildAction = menu->addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
     rebuildAction->setToolTip("Rebuild the lambda by creating a new image and container.");
 
-    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("upload"), "Upload Lambda Code");
+    QAction *uploadAction = menu->addAction(IconUtils::GetIcon("upload"), "Upload Lambda Code");
     uploadAction->setToolTip("Upload new lambda code");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
     deleteAction->setToolTip("Delete the lambda function");
 
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         LambdaDetailsDialog dialog(arn);
         dialog.exec();
     } else if (selectedAction == logsAction) {

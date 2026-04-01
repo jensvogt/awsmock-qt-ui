@@ -20,7 +20,7 @@ struct SQSQueueCounter {
 
     long size;
 
-    bool isDlq{};
+    bool isDlq = false;
 
     QDateTime created;
 

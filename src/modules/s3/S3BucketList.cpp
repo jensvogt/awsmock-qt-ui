@@ -108,24 +108,27 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
 void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
+    const long total = _tableView->GetValue<long>(index, 1);
+
+    QMenu *menu = new ContextMenu();
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
     editAction->setToolTip("Edit the bucket details");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Bucket");
+    QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Bucket");
     purgeAction->setToolTip("Purge the bucket");
+    purgeAction->setEnabled(total > 0);
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Bucket");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Bucket");
     deleteAction->setToolTip("Delete the Bucket");
 
     const auto bucketName = _tableView->GetValue<QString>(index, 0);
     const auto bucketArn = _tableView->GetValue<QString>(index, 5);
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos));
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos));
         selectedAction == purgeAction) {
         _s3Service->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {

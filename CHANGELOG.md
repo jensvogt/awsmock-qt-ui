@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.31](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.30...v1.11.31) (2026-03-31)
+
+
+### Bug Fixes
+
+* Dynamodb Pageable list view ([9444595](https://github.com/jensvogt/awsmock-qt-ui/commit/94445954440d741bc53157c9f110a78fdb871e58))
+* Dynamodb Pageable list view ([9bab308](https://github.com/jensvogt/awsmock-qt-ui/commit/9bab308ee7fa6d83668f4314b512fad168267498))
+* fix context menu ([38bbc1d](https://github.com/jensvogt/awsmock-qt-ui/commit/38bbc1d231972c150565797d1dc8be38fa7d01db))
+* fix context menu ([2395842](https://github.com/jensvogt/awsmock-qt-ui/commit/23958426a03e4822c31e03de51b443087853db62))
+
 ## [1.11.30](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.29...v1.11.30) (2026-03-28)
 
 

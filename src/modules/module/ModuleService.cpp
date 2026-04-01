@@ -205,18 +205,19 @@ void ModuleService::SetLogLevel(const QString &logLevel) {
     QElapsedTimer timer;
     timer.start();
 
-    _restManager.get(GetBaseUrl(),
-                     {
-                         {"x-awsmock-target", "module"},
-                         {"x-awsmock-action", "set-loglevel"},
-                         {"content-type", "application/json"}
-                     },
-                     [this,timer](const bool success, const QByteArray &, int, const QString &error) {
-                         if (!success) {
-                             logError << error;
-                         }
-                         emit EventBus::instance().TimerSignal("SetLogLevel", timer.elapsed());
-                     });
+    _restManager.post(GetBaseUrl(),
+                      logLevel.toUtf8(),
+                      {
+                          {"x-awsmock-target", "module"},
+                          {"x-awsmock-action", "set-log-level"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("SetLogLevel", timer.elapsed());
+                      });
 }
 
 void ModuleService::GetLogLevel() {

@@ -114,52 +114,53 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     const auto name = _tableView->GetValue<QString>(index, 0);
+    const auto enabled = _tableView->GetValue<bool>(index, 2);
     const auto containerId = _tableView->GetValue<QString>(index, 9);
 
-    QMenu menu;
-    menu.setToolTipsVisible(true);
-    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Application");
+    QMenu *menu = new ContextMenu();
+
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
 
-    QAction *logsAction = menu.addAction(IconUtils::GetIcon("logs"), "Show the application logs");
+    QAction *logsAction = menu->addAction(IconUtils::GetIcon("logs"), "Show the application logs");
     logsAction->setToolTip("Show the application logs");
-    if (containerId.isEmpty()) {
-        logsAction->setDisabled(true);
-    }
+    //logsAction->setEnabled(enabled);
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *enableAction = menu.addAction(IconUtils::GetIcon("enabled"), "Enable Application");
+    QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable Application");
     enableAction->setToolTip("Enable the application.");
+    // enableAction->setEnabled(!enabled);
 
-    QAction *disableAction = menu.addAction(IconUtils::GetIcon("disabled"), "Disable Application");
+    QAction *disableAction = menu->addAction(IconUtils::GetIcon("disabled"), "Disable Application");
     disableAction->setToolTip("Disable the application.");
+    //disableAction->setEnabled(enabled);
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *startAction = menu.addAction(IconUtils::GetIcon("start"), "Start Application");
+    QAction *startAction = menu->addAction(IconUtils::GetIcon("start"), "Start Application");
     startAction->setToolTip("Start the application");
 
-    QAction *stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop Application");
+    QAction *stopAction = menu->addAction(IconUtils::GetIcon("stop"), "Stop Application");
     stopAction->setToolTip("Stop the application");
 
-    QAction *restartAction = menu.addAction(IconUtils::GetIcon("restart"), "Restart Application");
+    QAction *restartAction = menu->addAction(IconUtils::GetIcon("restart"), "Restart Application");
     restartAction->setToolTip("Restart the application");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *rebuildAction = menu.addAction(IconUtils::GetIcon("rebuild"), "Rebuild Application");
+    QAction *rebuildAction = menu->addAction(IconUtils::GetIcon("rebuild"), "Rebuild Application");
     rebuildAction->setToolTip("Rebuild the application by creating a new image and container.");
 
-    QAction *uploadAction = menu.addAction(IconUtils::GetIcon("upload"), "Upload Application Code");
+    QAction *uploadAction = menu->addAction(IconUtils::GetIcon("upload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
 
-    menu.addSeparator();
+    menu->addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Application");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Application");
     deleteAction->setToolTip("Delete the application");
 
-    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos));
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos));
         selectedAction == editAction) {
         ApplicationEditDialog dialog(name, this);
         dialog.exec();
