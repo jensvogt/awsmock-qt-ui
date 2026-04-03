@@ -104,7 +104,7 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
     for (auto r = 0, c = 0; r < listInstancesResponse.lambdaInstanceCounters.count(); r++, c = 0) {
         _ui->instanceTable->insertRow(r);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).instanceId);
-        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).containerId);
+        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).containerId.mid(0, 12));
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).hostname);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).privatePort);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).publicPort);

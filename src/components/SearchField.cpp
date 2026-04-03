@@ -44,13 +44,16 @@ namespace Awsmock::Components {
         // Search type combo
         const QStringList searchTypes = GetSearchTypeNames();
         _ui->searchTypeBox->addItems(searchTypes);
+        _ui->searchTypeBox->setToolTip("Search type");
         connect(_ui->searchTypeBox, &QComboBox::currentTextChanged, this, [this](const QString &text) {
             _searchType = text;
+            emit SigSearchTypeChanged(SearchTypeFromString(_searchType));
         });
 
         // CLose label
         _ui->closeButton->setText(nullptr);
-        _ui->closeButton->setIcon(IconUtils::GetIcon("close"));
+        _ui->closeButton->setToolTip("Close the search widget");
+        _ui->closeButton->setIcon(IconUtils::GetIcon("clear"));
         connect(_ui->closeButton, &QPushButton::clicked, this, [this]() {
             emit SigClose();
         });

@@ -99,6 +99,11 @@ namespace Awsmock::Components {
          */
         void SigClose();
 
+        /**
+         * @brief Signaled when the search type has been changed
+         */
+        void SigSearchTypeChanged(const SearchType &searchType);
+
     private:
         /**
          * @brief UI components

@@ -39,6 +39,8 @@ namespace Awsmock::Components {
          */
         void SetText(const QString &text);
 
+        void Search(const QString &searchText, const SearchType &searchType, bool forward);
+
         /**
          * @brief Search for the next occurrence of the search text
          *

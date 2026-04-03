@@ -107,47 +107,29 @@ namespace Awsmock::Components {
         _cursor = QTextCursor(_document);
     }
 
-    void PlainTextEditor::SearchNext(const QString &searchText, const SearchType &searchType) {
-        constexpr QTextDocument::FindFlags flags;
+    void PlainTextEditor::Search(const QString &searchText, const SearchType &searchType, const bool forward) {
+
+        const QTextDocument::FindFlags flags = forward ? QTextDocument::FindFlags{} : QTextDocument::FindBackward;
         bool found = false;
 
         if (searchType == REGEXP) {
-            const QRegularExpression regex(searchText);
-            found = _plainTextEdit->find(regex, flags);
+            found = _plainTextEdit->find(QRegularExpression(searchText), flags);
         } else {
-            QString pattern;
-            switch (searchType) {
-                case CONTAINS:
-                    pattern = searchText;
-                    break;
-                case STARTS_WITH:
-                    pattern = "\\b" + QRegularExpression::escape(searchText);
-                    break;
-                case ENDS_WITH:
-                    pattern = QRegularExpression::escape(searchText) + "\\b";
-                    break;
-                default:
-                    pattern = searchText;
-                    break;
-            }
-            found = _plainTextEdit->find(QRegularExpression(pattern), flags);
+            found = _plainTextEdit->find(QRegularExpression(GetPattern(searchText, searchType)), flags);
         }
 
         if (found) {
-            _replaceWidget->SetCursor(_currentCursor++, _count);
+            forward ? _currentCursor++ : _currentCursor--;
+            _replaceWidget->SetCursor(_currentCursor, _count);
             return;
         }
-        // if (_plainTextEdit->find(searchText)) {
-        //     _replaceWidget->SetCursor(_currentCursor++, _count);
-        //     return;
-        // }
 
-        // Wrap: restart from beginning
+        // Wrap
         _cursor = _plainTextEdit->textCursor();
-        _cursor.movePosition(QTextCursor::Start);
+        _cursor.movePosition(forward ? QTextCursor::Start : QTextCursor::End);
         _plainTextEdit->setTextCursor(_cursor);
 
-        // Try once more after wrap
+        // Retry after wrap
         if (searchType == REGEXP) {
             _plainTextEdit->find(QRegularExpression(searchText), flags);
         } else {
@@ -155,16 +137,12 @@ namespace Awsmock::Components {
         }
     }
 
-    void PlainTextEditor::SearchPrevious(const QString &searchText, const SearchType &searchType) {
-        if (_plainTextEdit->find(searchText, QTextDocument::FindBackward)) {
-            _replaceWidget->SetCursor(_currentCursor--, _count);
-            return;
-        }
+    void PlainTextEditor::SearchNext(const QString &searchText, const SearchType &searchType) {
+        Search(searchText, searchType, true);
+    }
 
-        // Wrap: restart from beginning
-        _cursor = _plainTextEdit->textCursor();
-        _cursor.movePosition(QTextCursor::End);
-        _plainTextEdit->setTextCursor(_cursor);
+    void PlainTextEditor::SearchPrevious(const QString &searchText, const SearchType &searchType) {
+        Search(searchText, searchType, false);
     }
 
     QString PlainTextEditor::GetPattern(const QString &searchText, const SearchType &searchType) {
