@@ -24,15 +24,7 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
-        _moduleService->GetInfrastructure({}, BOTH);
-    });
-
-    // Pretty print
-    _ui->prettyPrintButton->setText(nullptr);
-    _ui->prettyPrintButton->setIcon(IconUtils::GetIcon("pretty"));
-    _ui->prettyPrintButton->setChecked(_ui->plainTextEditor->GetPrettyPrint());
-    connect(_ui->prettyPrintButton, &QPushButton::toggled, this, [this](const bool checked) {
-        _ui->plainTextEditor->SetPrettyPrint(checked);
+        _moduleService->GetInfrastructure(_ui->selectModules->GetModules(), _ui->selectModules->GetExportType(), _ui->selectModules->GetPrettyPrint());
     });
 
     // Save locally
@@ -46,16 +38,24 @@ ShowInfrastructure::ShowInfrastructure(QWidget *parent) : BaseDialog(parent), _u
     connect(_ui->saveButton, &QPushButton::clicked, this, &ShowInfrastructure::SaveData);
 
     // Correct way to chain 4 widgets
-    setTabOrder(_ui->plainTextEditor, _ui->prettyPrintButton);
-    setTabOrder(_ui->prettyPrintButton, _ui->refreshButton);
+    setTabOrder(_ui->plainTextEditor, nullptr);
     setTabOrder(_ui->refreshButton, _ui->searchFileButton);
     setTabOrder(_ui->searchFileButton, _ui->saveButton);
     setTabOrder(_ui->saveButton, _ui->refreshButton);
 
-    _ui->plainTextEditor->setFocus();
+    _ui->plainTextEditor->hide();
 
     // Get the infrastructure JSON from the server
-    _moduleService->GetInfrastructure({}, BOTH);
+    connect(_ui->selectModules, &SelectModules::ModulesSelectSignal, this, [this](const QStringList &modules, const ExportType &exportType, const bool prettyPrint) {
+        _moduleService->GetInfrastructure(modules, exportType, prettyPrint);
+    });
+    connect(_ui->selectModules, &SelectModules::PrettyPrintChangedSignal, this, [this](const bool checked) {
+        _ui->plainTextEditor->SetPrettyPrint(checked);
+        _moduleService->GetInfrastructure(_ui->selectModules->GetModules(), _ui->selectModules->GetExportType(), checked);
+    });
+    connect(_ui->selectModules, &SelectModules::ExportTypeChangedSignal, this, [this](const ExportType &exportType) {
+        _moduleService->GetInfrastructure(_ui->selectModules->GetModules(), exportType, _ui->selectModules->GetPrettyPrint());
+    });
 }
 
 ShowInfrastructure::~ShowInfrastructure() {
@@ -63,10 +63,10 @@ ShowInfrastructure::~ShowInfrastructure() {
 }
 
 void ShowInfrastructure::HandleGetInfrastructure(const QString &infrastructureJson) const {
+    _ui->plainTextEditor->Clear();
     _ui->plainTextEditor->SetText(infrastructureJson);
-    if (_ui->prettyPrintButton->isChecked()) {
-        _ui->plainTextEditor->SetPrettyPrint(true);
-    }
+    _ui->plainTextEditor->SetPrettyPrint(_ui->selectModules->GetPrettyPrint());
+    _ui->plainTextEditor->setHidden(false);
     _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 

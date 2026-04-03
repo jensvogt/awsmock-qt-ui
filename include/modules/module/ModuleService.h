@@ -44,6 +44,13 @@ static std::map<ExportType, QString> ExportTypeNames{
     return INFRA_STRUCTURE;
 }
 
+[[maybe_unused]] static ExportType ExportTypeFromIndex(const int index) {
+    if (index < 0 || index >= static_cast<int>(BOTH) + 1) {
+        throw logError << "Invalid enum index: " << index;
+    }
+    return static_cast<ExportType>(index);
+}
+
 class ModuleService final : public BaseService {
     Q_OBJECT
 
@@ -94,7 +101,7 @@ public:
     /**
      * @brief Get infrastructure JSON from server
      */
-    void GetInfrastructure(const QStringList &modules, const ExportType &exportType);
+    void GetInfrastructure(const QStringList &modules, const ExportType &exportType, bool prettyPrint);
 
     /**
      * @brief Send a ping to the server

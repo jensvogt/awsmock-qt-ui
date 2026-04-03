@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1395</width>
-    <height>769</height>
+    <width>1414</width>
+    <height>1167</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,28 +34,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="prettyPrintButton">
-       <property name="toolTip">
-        <string>Pretty print JSON file</string>
-       </property>
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="refreshButton">
@@ -100,6 +78,16 @@
     </layout>
    </item>
    <item>
+    <widget class="SelectModules" name="selectModules" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="Awsmock::Components::PlainTextEditor" name="plainTextEditor" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -139,13 +127,18 @@
    <header location="global">components/PlainTextEditor.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>SelectModules</class>
+   <extends>QWidget</extends>
+   <header location="global">components/SelectModules.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>saveButton</tabstop>
   <tabstop>importButton</tabstop>
   <tabstop>searchFileButton</tabstop>
   <tabstop>refreshButton</tabstop>
-  <tabstop>prettyPrintButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

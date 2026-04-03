@@ -53,11 +53,11 @@ namespace Awsmock::Components {
         connect(_searchWidget, &SearchField::SigClose, this, [this]() {
             _searchWidget->setHidden(true);
         });
-        connect(_searchWidget, &SearchField::SigSearchForward, this, [this](const QString &searchText) {
-            SearchNext(searchText);
+        connect(_searchWidget, &SearchField::SigSearchForward, this, [this](const QString &searchText, const SearchType &searchType) {
+            SearchNext(searchText, searchType);
         });
-        connect(_searchWidget, &SearchField::SigSearchBackward, this, [this](const QString &searchText) {
-            SearchPrevious(searchText);
+        connect(_searchWidget, &SearchField::SigSearchBackward, this, [this](const QString &searchText, const SearchType &searchType) {
+            SearchPrevious(searchText, searchType);
         });
 
         // Setup plain text edit
@@ -107,19 +107,55 @@ namespace Awsmock::Components {
         _cursor = QTextCursor(_document);
     }
 
-    void PlainTextEditor::SearchNext(const QString &searchText) {
-        if (_plainTextEdit->find(searchText)) {
+    void PlainTextEditor::SearchNext(const QString &searchText, const SearchType &searchType) {
+        constexpr QTextDocument::FindFlags flags;
+        bool found = false;
+
+        if (searchType == REGEXP) {
+            const QRegularExpression regex(searchText);
+            found = _plainTextEdit->find(regex, flags);
+        } else {
+            QString pattern;
+            switch (searchType) {
+                case CONTAINS:
+                    pattern = searchText;
+                    break;
+                case STARTS_WITH:
+                    pattern = "\\b" + QRegularExpression::escape(searchText);
+                    break;
+                case ENDS_WITH:
+                    pattern = QRegularExpression::escape(searchText) + "\\b";
+                    break;
+                default:
+                    pattern = searchText;
+                    break;
+            }
+            found = _plainTextEdit->find(QRegularExpression(pattern), flags);
+        }
+
+        if (found) {
             _replaceWidget->SetCursor(_currentCursor++, _count);
             return;
         }
+        // if (_plainTextEdit->find(searchText)) {
+        //     _replaceWidget->SetCursor(_currentCursor++, _count);
+        //     return;
+        // }
 
         // Wrap: restart from beginning
         _cursor = _plainTextEdit->textCursor();
         _cursor.movePosition(QTextCursor::Start);
         _plainTextEdit->setTextCursor(_cursor);
+
+        // Try once more after wrap
+        if (searchType == REGEXP) {
+            _plainTextEdit->find(QRegularExpression(searchText), flags);
+        } else {
+            _plainTextEdit->find(QRegularExpression(GetPattern(searchText, searchType)), flags);
+        }
     }
 
-    void PlainTextEditor::SearchPrevious(const QString &searchText) {
+    void PlainTextEditor::SearchPrevious(const QString &searchText, const SearchType &searchType) {
         if (_plainTextEdit->find(searchText, QTextDocument::FindBackward)) {
             _replaceWidget->SetCursor(_currentCursor--, _count);
             return;
@@ -129,6 +165,19 @@ namespace Awsmock::Components {
         _cursor = _plainTextEdit->textCursor();
         _cursor.movePosition(QTextCursor::End);
         _plainTextEdit->setTextCursor(_cursor);
+    }
+
+    QString PlainTextEditor::GetPattern(const QString &searchText, const SearchType &searchType) {
+        switch (searchType) {
+            case CONTAINS:
+                return QRegularExpression::escape(searchText);
+            case STARTS_WITH:
+                return "\\b" + QRegularExpression::escape(searchText);
+            case ENDS_WITH:
+                return QRegularExpression::escape(searchText) + "\\b";
+            default:
+                return QRegularExpression::escape(searchText);
+        }
     }
 
     void PlainTextEditor::Replace(const QString &searchString, const QString &replaceText) {

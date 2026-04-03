@@ -248,7 +248,7 @@ void MainWindow::ExportInfrastructure() {
         const QStringList modules = dialog.GetModules();
         const ExportType exportType = dialog.GetExportType();
 
-        _moduleService->GetInfrastructure(modules, exportType);
+        _moduleService->GetInfrastructure(modules, exportType, true);
         connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, [filePath](const QString &infrastructure) {
             WriteInfrastructureExport(filePath, infrastructure);
         });
