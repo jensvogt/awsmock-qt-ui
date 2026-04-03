@@ -39,9 +39,9 @@ LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget
     _ui->lambdaResultTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
+    _ui->lambdaResultTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->lambdaResultTable->setColumnHidden(5, true);
 
     // Connect double-click
@@ -71,7 +71,7 @@ void LambdaResultListDialog::UpdateResultTable(const LambdaListResultsResponse &
     for (auto r = 0; r < listResultsResponse.lambdaLogCounters.count(); r++) {
         _ui->lambdaResultTable->insertRow(r);
         SetColumn(_ui->lambdaResultTable, r, 0, listResultsResponse.lambdaLogCounters.at(r).lambdaName);
-        SetColumn(_ui->lambdaResultTable, r, 1, listResultsResponse.lambdaLogCounters.at(r).containerId);
+        SetColumn(_ui->lambdaResultTable, r, 1, listResultsResponse.lambdaLogCounters.at(r).containerId.mid(0, 12));
         SetColumn(_ui->lambdaResultTable, r, 2, listResultsResponse.lambdaLogCounters.at(r).lambdaStatus);
         SetColumn(_ui->lambdaResultTable, r, 3, listResultsResponse.lambdaLogCounters.at(r).timestamp);
         SetColumn(_ui->lambdaResultTable, r, 4, listResultsResponse.lambdaLogCounters.at(r).duration);
