@@ -37,15 +37,13 @@ public:
 
     void LoadAvailableModules(const ListModuleNamesResponse &response) const;
 
-    void SetupListButtons();
-
     void HandleBrowseButton();
 
     void WriteInfrastructureFile(const QString &infrastructure) const;
 
-    QString GetFilePath();
+    QString GetFilePath() const;
 
-    QStringList GetModules();
+    QStringList GetModules() const;
 
     ExportType GetExportType() const;
 

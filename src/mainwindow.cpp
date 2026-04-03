@@ -242,18 +242,27 @@ void MainWindow::ImportInfrastructureResponse() {
 
 void MainWindow::ExportInfrastructure() {
 
-    if (ModuleExportDialog dialog; dialog.exec() == QDialog::Accepted) {
+    auto dialog = new ModuleExportDialog(this);
+    connect(dialog, &ModuleExportDialog::accepted, this, [dialog, this]() {
 
-        QString filePath = dialog.GetFilePath();
-        const QStringList modules = dialog.GetModules();
-        const ExportType exportType = dialog.GetExportType();
+        QString filePath = dialog->GetFilePath();
+        const QStringList modules = dialog->GetModules();
+        const ExportType exportType = dialog->GetExportType();
+
+        disconnect(_moduleService, &ModuleService::GetInfrastructureSignal, nullptr, nullptr);
+        connect(_moduleService, &ModuleService::GetInfrastructureSignal, this,
+                [filePath](const QString &infrastructure) {
+                    WriteInfrastructureExport(filePath, infrastructure);
+                });
 
         _moduleService->GetInfrastructure(modules, exportType, true);
-        connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, [filePath](const QString &infrastructure) {
-            WriteInfrastructureExport(filePath, infrastructure);
-        });
-        Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
-    }
+
+        Configuration::instance().SetValue<QString>(
+            "ui.default-directory.ExportInfrastructure",
+            QFileInfo(filePath).absolutePath());
+    });
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->open();
 }
 
 void MainWindow::WriteInfrastructureExport(const QString &filename, const QString &exportResponse) {

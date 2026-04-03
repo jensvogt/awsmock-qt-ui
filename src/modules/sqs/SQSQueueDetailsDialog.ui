@@ -75,7 +75,10 @@
     <item row="5" column="1">
      <widget class="QLineEdit" name="maxMessageSizeEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -87,7 +90,11 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QLineEdit" name="visibilityEdit"/>
+     <widget class="QLineEdit" name="visibilityEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="2" column="1">
      <widget class="QLabel" name="delayLabel">
@@ -99,7 +106,10 @@
     <item row="9" column="0">
      <widget class="QLineEdit" name="dlqMaxReceiveEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -113,7 +123,10 @@
     <item row="7" column="1">
      <widget class="QLineEdit" name="availableEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -141,7 +154,7 @@
     <item row="3" column="2">
      <widget class="QLineEdit" name="messageCountEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -165,7 +178,7 @@
     <item row="5" column="2">
      <widget class="QLineEdit" name="messageSizeEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -175,7 +188,10 @@
     <item row="7" column="0">
      <widget class="QLineEdit" name="dlqArnEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -189,7 +205,7 @@
     <item row="5" column="0">
      <widget class="QLineEdit" name="queueUrlEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -199,7 +215,7 @@
     <item row="3" column="0">
      <widget class="QLineEdit" name="queueArnEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -261,28 +277,37 @@
     <item row="9" column="1">
      <widget class="QLineEdit" name="invisibleEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item row="11" column="0">
      <widget class="QLineEdit" name="ownerEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item row="11" column="1">
      <widget class="QLineEdit" name="delayedEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QLineEdit" name="queueNameEdit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="readOnly">
        <bool>true</bool>

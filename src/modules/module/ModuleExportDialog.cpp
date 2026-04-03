@@ -85,11 +85,11 @@ void ModuleExportDialog::HandleAccept() {
     accept();
 }
 
-QString ModuleExportDialog::GetFilePath() {
+QString ModuleExportDialog::GetFilePath() const {
     return _exportFilePath;
 }
 
-QStringList ModuleExportDialog::GetModules() {
+QStringList ModuleExportDialog::GetModules() const {
     return _selectedModules;
 }
 
