@@ -21,6 +21,40 @@ namespace Awsmock::Components {
 
     QT_END_NAMESPACE
 
+    enum SearchType {
+        CONTAINS,
+        STARTS_WITH,
+        ENDS_WITH,
+        REGEXP
+    };
+
+    static std::map<SearchType, QString> SearchTypeNames{
+        {CONTAINS, "contains"},
+        {STARTS_WITH, "startsWith"},
+        {ENDS_WITH, "endWith"},
+        {REGEXP, "regular expression"}
+    };
+
+    [[maybe_unused]] static QString SearchTypeToString(const SearchType &searchType) {
+        return SearchTypeNames[searchType];
+    }
+
+    [[maybe_unused]] static SearchType SearchTypeFromString(const QString &searchType) {
+        for (auto &[fst, snd]: SearchTypeNames) {
+            if (snd == searchType) {
+                return fst;
+            }
+        }
+        return CONTAINS;
+    }
+
+    static QStringList GetSearchTypeNames() {
+        QStringList keyStates;
+        for (auto &snd: SearchTypeNames | std::views::values) {
+            keyStates << snd;
+        }
+        return keyStates;
+    }
 
     class SearchField : public QWidget {
         Q_OBJECT
@@ -48,15 +82,17 @@ namespace Awsmock::Components {
          * @brief Signaled when the search text should be searched in the forward direction
          *
          * @param searchText changed text
+         * @param searchType search type
          */
-        void SigSearchForward(const QString &searchText);
+        void SigSearchForward(const QString &searchText, const SearchType &searchType);
 
         /**
          * @brief Signaled when the search text should be searched in the backward direction
          *
          * @param searchText changed text
+         * @param searchType search type
          */
-        void SigSearchBackward(const QString &searchText);
+        void SigSearchBackward(const QString &searchText, const SearchType &searchType);
 
         /**
          * @brief Signaled when the search has been box closed

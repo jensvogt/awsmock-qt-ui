@@ -22,7 +22,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->messageAttributeTable->setHorizontalHeaderLabels(messageAttributeHeaders);
     _ui->messageAttributeTable->setSortingEnabled(true);
     _ui->messageAttributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+    _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->messageAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
     // System attributes table
@@ -34,7 +34,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->systemAttributeTable->setSortingEnabled(true);
     _ui->systemAttributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->systemAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    _ui->systemAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    _ui->systemAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
     // Set body tab
     _ui->tabWidget->setCurrentIndex(0);

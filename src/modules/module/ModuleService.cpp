@@ -156,7 +156,7 @@ void ModuleService::GetServerConfig() {
                      });
 }
 
-void ModuleService::GetInfrastructure(const QStringList &modules, const ExportType &exportType) {
+void ModuleService::GetInfrastructure(const QStringList &modules, const ExportType &exportType, const bool prettyPrint) {
     QElapsedTimer timer;
     timer.start();
 
@@ -166,9 +166,8 @@ void ModuleService::GetInfrastructure(const QStringList &modules, const ExportTy
     }
 
     QJsonObject jRequest;
-    jRequest["includeObjects"] = false;
-    jRequest["prettyPrint"] = true;
     jRequest["exportType"] = ExportTypeToString(exportType);
+    jRequest["prettyPrint"] = prettyPrint;
     jRequest["modules"] = array;
 
     _restManager.get(GetBaseUrl(),

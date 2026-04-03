@@ -46,8 +46,8 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         src/components/PageableList.ui src/components/ReplaceWordDialog.cpp include/components/ReplaceWordDialog.h
         src/components/ReplaceWordDialog.ui src/components/ReplaceWidget.cpp include/components/ReplaceWidget.h
         src/components/ReplaceWidget.ui src/components/SearchField.cpp include/components/SearchField.h
-        src/components/SearchField.ui
-        include/components/ContextMenu.h)
+        src/components/SearchField.ui include/components/ContextMenu.h include/components/SelectModules.h
+        src/components/SelectModules.cpp src/components/SelectModules.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -120,7 +120,8 @@ set(DYNAMODB_SOURCES src/modules/dynamodb/DynamoDbExportTableDialog.cpp src/modu
         include/dto/dynamodb/DynamoDbExportItemsResponse.h)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
         src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
-        src/modules/module/ModuleExportDialog.ui)
+        src/modules/module/ModuleExportDialog.ui
+)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h

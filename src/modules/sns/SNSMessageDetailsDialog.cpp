@@ -4,7 +4,7 @@
 #include "utils/DateTimeUtils.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
- // Setup UI
+    // Setup UI
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SNSMessageDetailsDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SNSMessageDetailsDialog::HandleReject);
@@ -29,7 +29,7 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     //    _ui->attributeTable->setHorizontalHeaderLabels(messageAttributeHeaders);
     _ui->attributeTable->setSortingEnabled(true);
     _ui->attributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _ui->attributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+    _ui->attributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->attributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
     // Set body tab
@@ -67,7 +67,7 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     }
 }
 
-void SNSMessageDetailsDialog::on_prettyPushButton_toggled(bool checked) const {
+void SNSMessageDetailsDialog::on_prettyPushButton_toggled(const bool checked) const {
     if (checked) {
         const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
         const QJsonDocument jDoc = QJsonDocument::fromJson(body);

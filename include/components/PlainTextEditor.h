@@ -11,8 +11,7 @@
 // Awsmock includes
 #include <utils/StringUtils.h>
 #include <components/ReplaceWidget.h>
-
-#include "SearchField.h"
+#include <components/SearchField.h>
 
 namespace Awsmock::Components {
 
@@ -44,18 +43,41 @@ namespace Awsmock::Components {
          * @brief Search for the next occurrence of the search text
          *
          * @param searchText text to search for
+         * @param searchType type of search
          */
-        void SearchNext(const QString &searchText = nullptr);
+        void SearchNext(const QString &searchText = nullptr, const SearchType &searchType = CONTAINS);
 
         /**
          * @brief Search for the previous occurrence of the search text
          *
          * @param searchText text to search for
+         * @param searchType type of search
          */
-        void SearchPrevious(const QString &searchText);
+        void SearchPrevious(const QString &searchText = nullptr, const SearchType &searchType = CONTAINS);
 
+        /**
+         * @brief Get search pattern
+         *
+         * @param searchText search text
+         * @param searchType search type
+         * @return
+         */
+        static QString GetPattern(const QString &searchText, const SearchType &searchType);
+
+        /**
+         * @brief Replace next occurrence of searchString by replacement
+         *
+         * @param searchString search string
+         * @param replaceText replacement
+         */
         void Replace(const QString &searchString, const QString &replaceText);
 
+        /**
+         * @brief Replace all occurrences of searchString by replacement
+         *
+         * @param searchString search string
+         * @param replaceText replacement
+         */
         void ReplaceAll(const QString &searchString, const QString &replaceText);
 
         /**
@@ -65,6 +87,13 @@ namespace Awsmock::Components {
          */
         [[nodiscard]] QString GetText() const {
             return _plainTextEdit->toPlainText().toUtf8();
+        }
+
+        /**
+         * @brief Clear the text area
+         */
+        void Clear() const {
+            _plainTextEdit->clear();
         }
 
         /**
