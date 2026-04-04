@@ -46,37 +46,17 @@
      <property name="topMargin">
       <number>0</number>
      </property>
+     <item row="7" column="0">
+      <widget class="QLabel" name="sortKeyLabel">
+       <property name="text">
+        <string>Sort Key:</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QLineEdit" name="regionEdit">
        <property name="readOnly">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLineEdit" name="tablenameEdit"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="userLabel">
-       <property name="text">
-        <string>User:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="createdLabel">
-       <property name="text">
-        <string>Created:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="modifiedEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -87,29 +67,77 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="0">
+      <widget class="QLabel" name="tableNameLabel">
+       <property name="text">
+        <string>Table:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="partitionKeyLabel">
+       <property name="text">
+        <string>Partition Key:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="tablenameEdit"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLineEdit" name="partitionKeyEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLineEdit" name="sortKeyEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="createdLabel">
+       <property name="text">
+        <string>Created:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
       <widget class="QLineEdit" name="createdEdit">
        <property name="enabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="tableNameLabel">
+     <item row="0" column="1">
+      <widget class="QLabel" name="userLabel">
        <property name="text">
-        <string>Tablename:</string>
+        <string>User:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="userEdit"/>
+     </item>
+     <item row="4" column="1">
       <widget class="QLabel" name="modifiedLabel">
        <property name="text">
         <string>Modified:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QLineEdit" name="userEdit"/>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="modifiedEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
