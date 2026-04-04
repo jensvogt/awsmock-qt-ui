@@ -41,6 +41,8 @@ void DynamoDbItemDialog::UpdateItem(const DynamoDbGetItemResponse &response) con
     _ui->regionEdit->setText(response.region);
     _ui->tablenameEdit->setText(response.tableName);
     _ui->userEdit->setText(response.user);
+    _ui->partitionKeyEdit->setText(response.partitionKey);
+    _ui->sortKeyEdit->setText(response.sortKey);
     _ui->createdEdit->setText(response.created.toString());
     _ui->modifiedEdit->setText(response.modified.toString());
     _ui->attributeEdit->SetText(response.attributes);
