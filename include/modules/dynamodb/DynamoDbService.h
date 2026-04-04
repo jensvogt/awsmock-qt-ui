@@ -12,12 +12,14 @@
 #include <utils/RestManager.h>
 #include <utils/BaseService.h>
 #include <utils/EventBus.h>
+#include <utils/Logging.h>
 #include <dto/dynamodb/DynamoDbListTableResponse.h>
 #include <dto/dynamodb/DynamoDbCreateTableRequest.h>
 #include <dto/dynamodb/DynamoDbCreateTableResponse.h>
 #include <dto/dynamodb/DynamoDbDescribeTableResponse.h>
 #include <dto/dynamodb/DynamoDbListItemResponse.h>
 #include <dto/dynamodb/DynamoDbExportItemsResponse.h>
+#include <dto/dynamodb/DynamoDbGetItemResponse.h>
 
 class DynamoDbService final : public BaseService {
     Q_OBJECT
@@ -49,6 +51,11 @@ public:
      */
     void DescribeTable(const QString &tableName);
 
+    /**
+     * @brief export the table items
+     *
+     * @param tableName name of the table
+     */
     void ExportItems(const QString &tableName);
 
     /**
@@ -65,11 +72,10 @@ public:
      * @param prefix
      * @param pageSize
      * @param pageIndex
-     * @param prefix
-     * @param pageSize
-     * @param pageIndex
+     * @param sortColumn
+     * @param sortDirection
      */
-    void ListItems(const QString &tableName, const QString &prefix, long pageSize, long pageIndex);
+    void ListItems(const QString &tableName, const QString &prefix, long pageSize, long pageIndex, const QString &sortColumn, int sortDirection);
 
     /**
      * @brief Purge a table
@@ -82,6 +88,15 @@ public:
      * @brief Sends a recalculate item counter request
      */
     void ResetItemCounters();
+
+    /**
+     * @brief Get an item
+     *
+     * @param tableName name of the table
+     * @param partitionKey partition key
+     * @param sortKey sort key
+     */
+    void GetItem(const QString &tableName, const QString &partitionKey, const QString &sortKey);
 
 signals:
     /**
@@ -123,6 +138,13 @@ signals:
      * @param exportitemsResponse list of table items
      */
     void ExportItemsSignal(const QString &exportitemsResponse);
+
+    /**
+     * @brief Signaled when an item is available
+     *
+     * @param getItemResponse item response
+     */
+    void GetItemSignal(const DynamoDbGetItemResponse &getItemResponse);
 
 private:
     /**

@@ -1,6 +1,9 @@
 #include <modules/dynamodb/DynamoDbItemList.h>
 
 #include "components/PageableList.h"
+#include "components/PageableTable.h"
+#include "modules/dynamodb/DynamoDbItemDialog.h"
+#include "utils/StringUtils.h"
 
 DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : BasePage(parent) {
 
@@ -58,26 +61,33 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(refreshButton);
 
-    // Item
-    _itemView = new PageableList(this);
-    _itemView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _itemView->setStyleSheet(R"(QListView::item {border-bottom: 1px solid #5c5c5c;})");
+    // Item table
+    const QStringList headers = QStringList() = {tr("Partition Key"), tr("Sort Key"), tr("Size"), tr("Created"), tr("Modified"), tr("TableName")};
+    _itemView = new PageableTable(this);
+    _itemView->SetHeaderNames(headers);
+    _itemView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _itemView->SetHiddenColumns({5});
+    _itemView->SetSorting(1, "sortKey", -1);
+    _itemView->SetSearchFieldPlaceholder("Partition key");
 
-    //Connect double-click
-    connect(_itemView, &PageableList::DoubleClicked, this, [this](const QModelIndex &index) {
+    // Connect paging changes
+    connect(_itemView, &PageableTable::ReloadTable, this, &DynamoDbItemList::LoadContent);
 
-        // Extract ARN and URL
-        const QString itemValue = _itemView->GetValue<QString>(index);
+    // Connect double-click
+    connect(_itemView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
+
+        // Extract partition key and sort key
+        const QString partitionKey = _itemView->GetValue<QString>(index, 0);
+        const QString sortKey = _itemView->GetValue<QString>(index, 1);
+        const QString tableName = _itemView->GetValue<QString>(index, 5);
 
         // Open edit dialog
-        //DynamoDbEditItemDialog dialog(itemName);
-        //dialog.exec();
-
-
+        DynamoDbItemDialog dialog(tableName, partitionKey, sortKey);
+        dialog.exec();
     });
 
     // Add context menu
-    connect(_itemView, &PageableList::ContextMenuRequested, this, &DynamoDbItemList::ShowContextMenu);
+    connect(_itemView, &PageableTable::ContextMenuRequested, this, &DynamoDbItemList::ShowContextMenu);
 
     const auto mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(toolBar, 0); // fixed height
@@ -90,17 +100,21 @@ DynamoDbItemList::~DynamoDbItemList() {
 
 void DynamoDbItemList::LoadContent() {
     _tableName = GetArgument<QString>("tableName");
-    _dynamoDbService->ListItems(_tableName, _itemView->GetPrefix(), 1000, 0);
+    _dynamoDbService->ListItems(_tableName, _itemView->GetPrefix(), _itemView->GetPageSize(), _itemView->GetPageIndex(), _itemView->GetSortAttribute(), _itemView->GetSortDirection());
     _titleLabel->setText("DynamoDB Item List: " + _tableName);
 }
 
 void DynamoDbItemList::HandleListItemSignal(const DynamoDbListItemResponse &listItemResponse) const {
     _itemView->Clear();
-    _itemView->SetTotalSize(listItemResponse.count);
-    for (auto r = 0; r < listItemResponse.items.count(); r++) {
-        _itemView->Append(new QStandardItem(listItemResponse.items.at(r)));
+    _itemView->SetTotalSize(listItemResponse.total);
+    for (auto row = 0, c = 0; row < listItemResponse.items.count(); row++, c = 0) {
+        _itemView->SetColumn(row, c++, listItemResponse.items.at(row).partitionKey);
+        _itemView->SetColumn(row, c++, listItemResponse.items.at(row).sortKey);
+        _itemView->SetColumn(row, c++, StringUtils::FormatSizeColumn(listItemResponse.items.at(row).size, 1), Qt::AlignRight | Qt::AlignVCenter);
+        _itemView->SetColumn(row, c++, listItemResponse.items.at(row).created);
+        _itemView->SetColumn(row, c++, listItemResponse.items.at(row).modified);
+        _itemView->SetHiddenColumn(row, c++, listItemResponse.items.at(row).tableName);
     }
-    //_itemView->
 }
 
 void DynamoDbItemList::ShowContextMenu(const QPoint &pos) const {
@@ -109,7 +123,7 @@ void DynamoDbItemList::ShowContextMenu(const QPoint &pos) const {
     const QModelIndex index = _itemView->GetIndexFromPosition(pos);
 
     // Get container
-    const auto itemName = _itemView->GetValue<QString>(index);
+    //const auto itemName = _itemView->GetValue<QString>(index);
     //const auto itemArn = _itemView->GetValue<QString>(index, 5);
 
     QMenu menu;

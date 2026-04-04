@@ -9,30 +9,27 @@
 #include <QJsonDocument>
 
 // AwsMock includes
+#include <utils/Logging.h>
 #include <dto/dynamodb/DynamoDbTableCounter.h>
-
-struct Item {
-    QString type;
-    QString value;
-};
+#include <dto/dynamodb/DynamoDbItem.h>
 
 struct DynamoDbListItemResponse {
 
     QString tableName;
 
-    long count{};
+    long total{};
 
     long scannedCount{};
 
-    QList<QString> items;
+    QList<DynamoDbItem> items;
 
     void FromJson(const QJsonDocument &jsonDoc) {
-        tableName = jsonDoc["TableName"].toString();
-        count = jsonDoc["Count"].toInt();
-        scannedCount = jsonDoc["ScannedCount"].toInt();
+        total = jsonDoc["total"].toInt();
 
-        for (QJsonArray jArray = jsonDoc["Items"].toArray(); const auto &element: jArray) {
-            items.append(JsonUtils::WriteJsonToString(element.toObject()));
+        for (QJsonArray jArray = jsonDoc["itemCounters"].toArray(); const auto &element: jArray) {
+            DynamoDbItem item;
+            item.FromJson(element.toObject());
+            items.append(item);
         }
     }
 };

@@ -201,12 +201,50 @@ public:
      */
     void SetColumn(int row, int column, const long &value) const;
 
-    void SetColumn(int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) const;
+    /**
+     * @brief Sets a boolean column with icons
+     *
+     * @param row table row
+     * @param column table column
+     * @param value column value
+     * @param enabledIcon icon to how when value = true
+     * @param disabledIcon icon to how when value = false
+     */
+    void SetColumn(int row, int column, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) const;
 
-    void SetHiddenColumn(int row, int col, const QString &value) const;
+    /**
+     * @brief Sets a placeholder text for the search field
+     *
+     * @param placeholder search field placeholder text
+     */
+    void SetSearchFieldPlaceholder(const QString &placeholder);
 
-    void SetHiddenColumn(int row, int col, bool value) const;
+    /**
+     * @brief Sets a hidden string column
+     *
+     * @param row table row
+     * @param column table column
+     * @param value column value
+     */
+    void SetHiddenColumn(int row, int column, const QString &value) const;
 
+    /**
+     * @brief Sets a hidden boolean column
+     *
+     * @param row table row
+     * @param column table column
+     * @param value column value
+     */
+    void SetHiddenColumn(int row, int column, bool value) const;
+
+    /**
+     * @brief Return the value of a column, depending on the data type
+     *
+     * @tparam T data type
+     * @param index row index
+     * @param column column index
+     * @return value
+     */
     template<class T>
     T GetValue(const QModelIndex &index, const int column) {
         const auto *item = _dataModel->item(index.row(), column);
@@ -223,25 +261,7 @@ public:
         } else if constexpr (std::is_same_v<T, QString>) {
             return sValue;
         } else if constexpr (std::is_same_v<T, bool>) {
-            return item->data().toBool();
-        } else {
-            return {};
-        }
-    }
-
-    template<class T>
-    T GetValue(const int row, const int column) {
-        QString sValue = _dataModel->item(row, column)->text();
-        if constexpr (std::is_same_v<T, int>) {
-            return static_cast<T>(sValue.toInt());
-        } else if constexpr (std::is_same_v<T, long>) {
-            return static_cast<T>(sValue.toInt());
-        } else if constexpr (std::is_same_v<T, double>) {
-            return static_cast<T>(sValue.toDouble());
-        } else if constexpr (std::is_same_v<T, QString>) {
-            return static_cast<T>(sValue);
-        } else if constexpr (std::is_same_v<T, bool>) {
-            return static_cast<T>(_dataModel->item(row, column)->checkState());
+            return item->data(Qt::UserRole).toBool();
         } else {
             return {};
         }
@@ -263,8 +283,18 @@ public:
      */
     [[nodiscard]] QPoint GetGlobalPosition(const QPoint &tablePosition) const;
 
+    /**
+     * @brief Remove a row from the table
+     *
+     * @param index row index
+     */
     void RemoveRow(const QModelIndex &index) const;
 
+    /**
+     * @brief Returns a list of selected row indexes.
+     *
+     * @return list of selected rows
+     */
     [[nodiscard]] QModelIndexList GetSelectedRows() const;
 
     /**
@@ -314,7 +344,7 @@ public:
         QHash<QString, int> result;
         for (const auto &id: ids) {
             for (int j = 0; j < _dataModel->rowCount(); j++) {
-                if (GetValue<QString>(j, 0) == id) {
+                if (QModelIndex index = _dataModel->index(j, 0); GetValue<QString>(index, 0) == id) {
                     result.insert(id, j);
                 }
             }
@@ -426,6 +456,11 @@ private:
      * @brief Selected row
      */
     QSet<QString> _savedIds;
+
+    /**
+     * @brief Search field prefix
+     */
+    QString _searchFieldPlaceholder = "Prefix";
 };
 
 #endif // AWSMOCK_QT_UI_PAGEABLE_TABLE_H

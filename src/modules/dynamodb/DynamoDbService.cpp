@@ -1,9 +1,6 @@
 
 #include <modules/dynamodb/DynamoDbService.h>
 
-#include "dto/dynamodb/DynamoDbExportItemsResponse.h"
-#include "utils/Logging.h"
-
 void DynamoDbService::CreateTable(const DynamoDbCreateTableRequest &request) {
     QElapsedTimer timer;
     timer.start();
@@ -128,19 +125,19 @@ void DynamoDbService::DeleteTable(const QString &tableName) {
                       });
 }
 
-void DynamoDbService::ListItems(const QString &tableName, const QString &prefix, const long pageSize, const long pageIndex) {
+void DynamoDbService::ListItems(const QString &tableName, const QString &prefix, const long pageSize, const long pageIndex, const QString &sortColumn, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
 
     QJsonObject jSorting;
-    jSorting["sortDirection"] = 1;
-    jSorting["column"] = "";
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortColumn;
 
     QJsonArray jSortingArray;
     jSortingArray.append(jSorting);
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["TableName"] = tableName;
+    jRequest["tableName"] = tableName;
     jRequest["prefix"] = prefix;
     jRequest["pageSize"] = static_cast<qlonglong>(pageSize);
     jRequest["pageIndex"] = static_cast<qlonglong>(pageIndex);
@@ -151,12 +148,13 @@ void DynamoDbService::ListItems(const QString &tableName, const QString &prefix,
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "dynamodb"},
-                          {"x-awsmock-action", "scan"},
+                          {"x-awsmock-action", "list-item-counters"},
                           {"content-type", "application/json"}
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  //std::cout << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString();
                                   DynamoDbListItemResponse dynamodbResponse;
                                   dynamodbResponse.FromJson(jsonDoc);
                                   emit ListItemsSignal(dynamodbResponse);
@@ -216,6 +214,40 @@ void DynamoDbService::PurgeTable(const QString &tableName) {
                                   DynamoDbListItemResponse dynamodbResponse;
                                   dynamodbResponse.FromJson(jsonDoc);
                                   emit ListItemsSignal(dynamodbResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListTables", timer.elapsed());
+                      });
+}
+
+void DynamoDbService::GetItem(const QString &tableName, const QString &partitionKey, const QString &sortKey) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["tableName"] = tableName;
+    jRequest["partitionKey"] = partitionKey;
+    jRequest["sortKey"] = sortKey;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "dynamodb"},
+                          {"x-awsmock-action", "get-item-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  //std::cout << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString();
+                                  DynamoDbGetItemResponse dynamodbResponse;
+                                  dynamodbResponse.FromJson(jsonDoc);
+                                  emit GetItemSignal(dynamodbResponse);
                               } else {
                                   logWarning << "Response is not an object!";
                               }

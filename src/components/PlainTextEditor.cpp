@@ -107,6 +107,10 @@ namespace Awsmock::Components {
         _cursor = QTextCursor(_document);
     }
 
+    void PlainTextEditor::SetReadOnly(const bool readOnly) const {
+        _plainTextEdit->setReadOnly(readOnly);
+    }
+
     void PlainTextEditor::Search(const QString &searchText, const SearchType &searchType, const bool forward) {
 
         const QTextDocument::FindFlags flags = forward ? QTextDocument::FindFlags{} : QTextDocument::FindBackward;

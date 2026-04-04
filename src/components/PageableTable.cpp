@@ -14,7 +14,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     _ui->setupUi(this);
 
     // Prefix edit
-    _ui->prefixEdit->setPlaceholderText("Prefix");
+    _ui->prefixEdit->setPlaceholderText(_searchFieldPlaceholder);
     _ui->prefixEdit->setEnabled(true);
     connect(_ui->prefixEdit, &QLineEdit::textChanged, this, [this]() {
         _ui->prefixClearButton->setDisabled(false);
@@ -124,6 +124,11 @@ PageableTable::~PageableTable() {
     delete _ui;
 }
 
+void PageableTable::SetSearchFieldPlaceholder(const QString &placeholder) {
+    _searchFieldPlaceholder = placeholder;
+    _ui->prefixEdit->setPlaceholderText(placeholder);
+}
+
 void PageableTable::CalculatePageStatus() {
     long start = _pageIndex * _pageSize;
     if (start >= _totalSize) {
@@ -181,9 +186,10 @@ void PageableTable::SetColumn(const int row, const int column, const long &value
     _dataModel->setData(index, static_cast<qlonglong>(value), Qt::DisplayRole);
 }
 
-void PageableTable::SetColumn(const int row, const int col, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) const {
-    const QModelIndex index = _dataModel->index(row, col);
- // Set the icon (Decoration)
+void PageableTable::SetColumn(const int row, const int column, const bool value, const QIcon &enabledIcon, const QIcon &disabledIcon) const {
+    const QModelIndex index = _dataModel->index(row, column);
+
+    // Set the icon (Decoration)
     _dataModel->setData(index, value ? enabledIcon : disabledIcon, Qt::DecorationRole);
 
     // Set the underlying value (UserRole) for sorting or logic
@@ -192,25 +198,21 @@ void PageableTable::SetColumn(const int row, const int col, const bool value, co
     // Ensure text is clear
     _dataModel->setData(index, "", Qt::DisplayRole);
 
-    /*auto *iconItem = new QStandardItem();
-    iconItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    iconItem->setData(value);
-    iconItem->setText("");
-    iconItem->setIcon(value ? enabledIcon : disabledIcon);
-    _dataModel->setItem(row, col, iconItem);*/
+    // Set checked state
+    //_dataModel->setData(index, value ? Qt::Checked : Qt::Unchecked, Qt::CheckStateRole);
 }
 
-void PageableTable::SetHiddenColumn(const int row, const int col, const QString &value) const {
+void PageableTable::SetHiddenColumn(const int row, const int column, const QString &value) const {
     const auto item = new QStandardItem(value);
     item->setData(value, Qt::EditRole);
-    _dataModel->setItem(row, col, item);
+    _dataModel->setItem(row, column, item);
 }
 
-void PageableTable::SetHiddenColumn(const int row, const int col, const bool value) const {
+void PageableTable::SetHiddenColumn(const int row, const int column, const bool value) const {
     const auto checkItem = new QStandardItem();
     checkItem->setCheckState(value ? Qt::Checked : Qt::Unchecked);
     checkItem->setFlags(checkItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-    _dataModel->setItem(row, col, checkItem);
+    _dataModel->setItem(row, column, checkItem);
 }
 
 void PageableTable::SetStatus(const QString &message) const {
