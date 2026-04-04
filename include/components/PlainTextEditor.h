@@ -39,6 +39,13 @@ namespace Awsmock::Components {
          */
         void SetText(const QString &text);
 
+        /**
+         *@brief Search for a string in the editor
+         *
+         * @param searchText search text
+         * @param searchType search type
+         * @param forward forward backward flag
+         */
         void Search(const QString &searchText, const SearchType &searchType, bool forward);
 
         /**
@@ -97,6 +104,13 @@ namespace Awsmock::Components {
         void Clear() const {
             _plainTextEdit->clear();
         }
+
+        /**
+         * @brief Clear the text area
+         *
+         * @param readOnly read only flag
+         */
+        void SetReadOnly(bool readOnly) const;
 
         /**
          * @brief Sets the pretty print flag and reformats the plain text window

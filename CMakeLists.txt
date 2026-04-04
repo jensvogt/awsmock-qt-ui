@@ -117,7 +117,9 @@ set(DYNAMODB_SOURCES src/modules/dynamodb/DynamoDbExportTableDialog.cpp src/modu
         src/modules/dynamodb/DynamoDbEditTableDialog.ui include/dto/dynamodb/DynamoDbDescribeTableResponse.h
         src/modules/dynamodb/DynamoDbItemList.cpp include/modules/dynamodb/DynamoDbItemList.h
         include/dto/dynamodb/DynamoDbListItemResponse.h include/dto/dynamodb/DynamoDbItem.h
-        include/dto/dynamodb/DynamoDbExportItemsResponse.h)
+        include/dto/dynamodb/DynamoDbExportItemsResponse.h src/modules/dynamodb/DynamoDbItemDialog.cpp
+        src/modules/dynamodb/DynamoDbItemDialog.ui include/modules/dynamodb/DynamoDbItemDialog.h
+        include/dto/dynamodb/DynamoDbGetItemResponse.h)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
         src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
         src/modules/module/ModuleExportDialog.ui

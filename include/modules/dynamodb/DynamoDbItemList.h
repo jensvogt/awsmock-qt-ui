@@ -4,31 +4,16 @@
 // Qt includes
 #include <QLabel>
 #include <QMenu>
-#include <QVBoxLayout>
-#include <QTableWidget>
-#include <QListWidget>
-#include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QLineEdit>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QToolBar>
+#include <QHBoxLayout>
 #include <QPushButton>
-#include <QInputDialog>
-#include <QFormLayout>
-#include <QTreeWidget>
-#include <QTimer>
 
 // AwsMock includes
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/DateTimeUtils.h>
 #include <utils/PrefixFilterModel.h>
-//#include <dto/dynamodb/DynamoDbListItemResponse.h>
 #include <modules/dynamodb/DynamoDbService.h>
-
-#include "components/PageableList.h"
+#include <components/PageableTable.h>
 
 class DynamoDbItemList : public BasePage {
     Q_OBJECT
@@ -99,27 +84,12 @@ private:
     /**
      * @brief Item list view
      */
-    PageableList *_itemView;
-
-    /**
-     * @brief Topic prefix search
-     */
-    //QString _prefixValue = "";
+    PageableTable *_itemView;
 
     /**
      * @brief REST service handler
      */
     DynamoDbService *_dynamoDbService;
-
-    /**
-     *  @brief Item data model
-     */
-    //QStandardItemModel *_dataModel;
-
-    /**
-     * @brief Data proxy model
-     */
-    //PrefixFilterProxyModel *_proxyModel{};
 
     /**
      * @brief Sort column index
@@ -134,9 +104,9 @@ private:
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 
     /**
-     * @brief Prefix clear button
+     * @brief Save latest list
      */
-    //QPushButton *_prefixClear;
+    DynamoDbListItemResponse _internal;
 };
 
 #endif // AWSMOCK_QT_UI_DYNAMODB_ITEM_LIST_H

@@ -1,10 +1,12 @@
 #ifndef AWSMOCK_QT_UI_SEND_MESSAGE_REQUEST_H
 #define AWSMOCK_QT_UI_SEND_MESSAGE_REQUEST_H
 
+// Qt includes
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 
+// Awsmock includes
 #include <dto/sqs/SQSMessageAttribute.h>
 
 struct SQSSendMessageRequest {

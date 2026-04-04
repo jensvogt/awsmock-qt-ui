@@ -26,8 +26,8 @@ void SQSService::ListQueues(const QString &prefix, const long pageSize, const lo
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  //JsonUtils::WriteJsonString(jsonDoc.object());
                                   SQSQueueListResponse sqsResponse;
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueuesSignal(sqsResponse);

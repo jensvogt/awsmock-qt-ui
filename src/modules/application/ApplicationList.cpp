@@ -124,17 +124,17 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     QAction *logsAction = menu->addAction(IconUtils::GetIcon("logs"), "Show the application logs");
     logsAction->setToolTip("Show the application logs");
-    //logsAction->setEnabled(enabled);
+    logsAction->setEnabled(enabled);
 
     menu->addSeparator();
 
     QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable Application");
     enableAction->setToolTip("Enable the application.");
-    // enableAction->setEnabled(!enabled);
+    enableAction->setEnabled(!enabled);
 
     QAction *disableAction = menu->addAction(IconUtils::GetIcon("disabled"), "Disable Application");
     disableAction->setToolTip("Disable the application.");
-    //disableAction->setEnabled(enabled);
+    disableAction->setEnabled(enabled);
 
     menu->addSeparator();
 
