@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.33](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.32...v1.11.33) (2026-04-04)
+
+
+### Bug Fixes
+
+* plain text editor backward search ([6dc610c](https://github.com/jensvogt/awsmock-qt-ui/commit/6dc610ce09b91c710572b4d3c0b4eae50b9451b4))
+* plain text editor dynamodb items ([bfe05ec](https://github.com/jensvogt/awsmock-qt-ui/commit/bfe05ecc301f65b2a35c0d9175c122dec037b562))
+* plain text editor dynamodb items ([7256185](https://github.com/jensvogt/awsmock-qt-ui/commit/7256185f9cbc28f3e6a125a529b820c8b5fb7dec))
+
 ## [1.11.32](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.31...v1.11.32) (2026-04-03)
 
 
