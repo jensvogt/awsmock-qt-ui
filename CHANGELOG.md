@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.34](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.33...v1.11.34) (2026-04-11)
+
+
+### Bug Fixes
+
+* add CRTL+Enter for details ([93bf58c](https://github.com/jensvogt/awsmock-qt-ui/commit/93bf58ce15c2989a52fd9d4fa8d4efd38bddc9b9))
+* add CRTL+Enter for details ([7cb5f03](https://github.com/jensvogt/awsmock-qt-ui/commit/7cb5f03b39997452ada44c228978474ef6d613ce))
+
 ## [1.11.33](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.32...v1.11.33) (2026-04-04)
 
 
