@@ -75,6 +75,13 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SNSMessageList::LoadContent);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto messageId = _tableView->GetValue<QString>(index, 0);
+        SNSMessageDetailsDialog dialog(messageId, this);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);

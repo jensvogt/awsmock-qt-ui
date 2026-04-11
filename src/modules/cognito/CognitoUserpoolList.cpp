@@ -44,46 +44,53 @@ CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) 
     toolBar->addWidget(addButton);
 
     // Setup table
-    _table = new PageableTable(this);
-    _table->SetHeaderNames({"Name", "ID", "Users", "Created", "Modified"});
-    _table->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
-    _table->SetSortColumn(0, "name");
-    _table->SetSortDirection(1);
+    _tableView = new PageableTable(this);
+    _tableView->SetHeaderNames({"Name", "ID", "Users", "Created", "Modified"});
+    _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
+    _tableView->SetSortColumn(0, "name");
+    _tableView->SetSortDirection(1);
 
     // Add context menu
-    connect(_table, &PageableTable::ContextMenuRequested, this, &CognitoUserpoolList::ShowContextMenu);
+    connect(_tableView, &PageableTable::ContextMenuRequested, this, &CognitoUserpoolList::ShowContextMenu);
+
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto tableName = _tableView->GetValue<QString>(index, 0);
+        CognitoAddUserpoolDialog dialog;
+        dialog.exec();
+    });
 
     // Add all to the layout
     _layout->setContentsMargins(0, 0, 0, 0);
     _layout->addLayout(toolBar, 0);
-    _layout->addWidget(_table);
+    _layout->addWidget(_tableView);
 }
 
 CognitoUserpoolList::~CognitoUserpoolList() = default;
 
 void CognitoUserpoolList::LoadContent() {
-    _cognitoService->ListUserpools("", _table->GetPageSize(), _table->GetPageIndex(), _table->GetSortAttribute(), _table->GetSortDirection());
+    _cognitoService->ListUserpools("", _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void CognitoUserpoolList::HandleUserpoolList(const CognitoUserpoolListResponse &response) const {
-    _table->Clear();
-    _table->SetTotalSize(response.total);
+    _tableView->Clear();
+    _tableView->SetTotalSize(response.total);
     for (auto r = 0, c = 0; r < response.userpools.count(); r++, c = 0) {
-        _table->SetColumn(r, c++, response.userpools.at(r).name);
-        _table->SetColumn(r, c++, response.userpools.at(r).id);
-        _table->SetColumn(r, c++, response.userpools.at(r).userCount);
-        _table->SetColumn(r, c++, response.userpools.at(r).created);
-        _table->SetColumn(r, c++, response.userpools.at(r).modified);
+        _tableView->SetColumn(r, c++, response.userpools.at(r).name);
+        _tableView->SetColumn(r, c++, response.userpools.at(r).id);
+        _tableView->SetColumn(r, c++, response.userpools.at(r).userCount);
+        _tableView->SetColumn(r, c++, response.userpools.at(r).created);
+        _tableView->SetColumn(r, c++, response.userpools.at(r).modified);
     }
 }
 
 void CognitoUserpoolList::ShowContextMenu(const QPoint &pos) const {
 
     // Cell index
-    const QModelIndex index = _table->GetIndexFromPosition(pos);
+    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     // Get container
-    const QString userPoolId = _table->GetValue<QString>(index, 1);
+    const auto userPoolId = _tableView->GetValue<QString>(index, 1);
 
     QMenu menu;
     menu.setToolTipsVisible(true);
@@ -95,7 +102,7 @@ void CognitoUserpoolList::ShowContextMenu(const QPoint &pos) const {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete User Pool");
     deleteAction->setToolTip("Delete the user pool");
 
-    if (const QAction *selectedAction = menu.exec(_table->GetGlobalPosition(pos)); selectedAction == editAction) {
+    if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         CognitoAddUserpoolDialog dialog;
         dialog.exec();
     } else if (selectedAction == deleteAction) {

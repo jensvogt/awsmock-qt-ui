@@ -63,7 +63,7 @@ private:
     /**
      * @brief table
      */
-    PageableTable *_table{};
+    PageableTable *_tableView{};
 
     /**
      * @brief REST service

@@ -77,6 +77,13 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &ApplicationList::ShowContextMenu);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto name = _tableView->GetValue<QString>(index, 0);
+        ApplicationEditDialog dialog(name, this);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
