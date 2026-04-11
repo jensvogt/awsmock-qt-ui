@@ -55,7 +55,7 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
         // Get container
-        const QString parameterName = _tableView->GetValue<QString>(index, 0);
+        const auto parameterName = _tableView->GetValue<QString>(index, 0);
 
         // Open details dialog
         SSMParameterEditDialog dialog(parameterName, this);
@@ -67,6 +67,13 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
 
     // Add context menu
     connect(_tableView, &PageableTable::ReloadTable, this, &SSMParameterList::LoadContent);
+
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto parameterName = _tableView->GetValue<QString>(index, 0);
+        SSMParameterEditDialog dialog(parameterName, this);
+        dialog.exec();
+    });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
@@ -106,7 +113,7 @@ void SSMParameterList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Parameter");
     deleteAction->setToolTip("Delete the parameter");
 
-    const QString parameterName = _tableView->GetValue<QString>(index, 0);
+    const auto parameterName = _tableView->GetValue<QString>(index, 0);
     if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
         _ssmService->DeleteParameter(parameterName);
     } else if (selectedAction == editAction) {

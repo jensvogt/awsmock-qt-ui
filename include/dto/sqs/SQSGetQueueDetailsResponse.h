@@ -50,7 +50,7 @@ struct SQSGetQueueDetailsResponse {
         visibilityTimeout = jsonDoc["visibilityTimeout"].toInteger();
         size = jsonDoc["size"].toInteger();
         delay = jsonDoc["delay"].toInteger();
-        owner = jsonDoc["delay"].toString();
+        owner = jsonDoc["owner"].toString();
         available = jsonDoc["available"].toInteger();
         invisible = jsonDoc["invisible"].toInteger();
         delayed = jsonDoc["delayed"].toInteger();

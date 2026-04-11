@@ -65,16 +65,20 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
-
-        // Extract Key ID
-        const QString keyId = _tableView->GetValue<QString>(index, 0);
-
+        const auto keyId = _tableView->GetValue<QString>(index, 0);
         KMSKeyDialog dialog(keyId, this);
         dialog.exec();
     });
 
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &KMSKeyList::ShowContextMenu);
+
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto keyId = _tableView->GetValue<QString>(index, 0);
+        KMSKeyDialog dialog(keyId, this);
+        dialog.exec();
+    });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
@@ -110,8 +114,8 @@ void KMSKeyList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     // Get container
-    const QString keyId = _tableView->GetValue<QString>(index, 0);
-    const QString keyArn = _tableView->GetValue<QString>(index, 6);
+    const auto keyId = _tableView->GetValue<QString>(index, 0);
+    const auto keyArn = _tableView->GetValue<QString>(index, 6);
 
     QMenu menu;
     menu.setToolTipsVisible(true);

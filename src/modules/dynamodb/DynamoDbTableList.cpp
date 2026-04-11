@@ -88,6 +88,13 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &DynamoDbTableList::ShowContextMenu);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto tableName = _tableView->GetValue<QString>(index, 0);
+        DynamoDbEditTableDialog dialog(tableName);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);

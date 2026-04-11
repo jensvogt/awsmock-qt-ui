@@ -88,6 +88,13 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &S3ObjectList::LoadContent);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto objectId = _tableView->GetValue<QString>(index, 5);
+        S3ObjectEditDialog dialog(objectId, this);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);

@@ -18,11 +18,15 @@ ModuleExportDialog::ModuleExportDialog(QWidget *parent) : BaseDialog(parent), _u
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ModuleExportDialog::HandleReject);
 
     // Setup filename
-    _ui->filenameEdit->setText(tr(nullptr));
+    _ui->filenameEdit->setText(Configuration::instance().GetValue<QString>("ui.default-file.ExportInfrastructure"));
     _ui->browseButton->setText(nullptr);
     _ui->browseButton->setIcon(IconUtils::GetIcon("browse"));
     connect(_ui->browseButton, &QPushButton::clicked, this, &ModuleExportDialog::HandleBrowseButton);
 
+    // Defaults
+    _exportFilePath = Configuration::instance().GetValue<QString>("ui.default-file.ExportInfrastructure");
+
+    // Initial load
     ModuleExportDialog::LoadContent();
 }
 
@@ -53,6 +57,7 @@ void ModuleExportDialog::HandleBrowseButton() {
     if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         _exportFilePath = filePath.toUtf8();
         _ui->filenameEdit->setText(filePath);
+        Configuration::instance().SetValue<QString>("ui.default-file.ExportInfrastructure", _exportFilePath);
     }
 }
 

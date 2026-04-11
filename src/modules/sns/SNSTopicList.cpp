@@ -79,6 +79,13 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SNSTopicList::LoadContent);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto topicArn = _tableView->GetValue<QString>(index, 7);
+        SNSTopicDetailsDialog dialog(topicArn);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);

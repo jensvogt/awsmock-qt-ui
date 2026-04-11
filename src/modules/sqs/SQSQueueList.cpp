@@ -24,8 +24,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setToolTip("Add a new queue");
     connect(addButton, &QPushButton::clicked, [this]() {
         bool ok;
-        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok)
-            ; ok && !text.isEmpty()) {
+        if (const QString text = QInputDialog::getText(nullptr, "Queue Name", "Queue name:", QLineEdit::Normal, "", &ok); ok && !text.isEmpty()) {
             _sqsService->AddQueue(text);
         }
     });
@@ -52,7 +51,6 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
         LoadContent();
     });
 
-    //toolBar->addWidget(backButton);
     toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
@@ -87,6 +85,13 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
 
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
+
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto queueArn = _tableView->GetValue<QString>(index, 8);
+        SQSQueueDetailsDialog dialog(queueArn);
+        dialog.exec();
+    });
 
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);

@@ -233,6 +233,7 @@ void MainWindow::ImportInfrastructure() const {
 
         _moduleService->ImportInfrastructure(jsonData);
         Configuration::instance().SetValue<QString>("ui.default-directory.ImportInfrastructure", QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-file.ImportInfrastructure", filePath);
     }
 }
 
