@@ -118,6 +118,14 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     // Defaults
     _ui->pageStatusLabel->setText(QString("%1 - %2/%3").arg(0).arg(_pageSize).arg(_totalSize));
     SetLastUpdate();
+
+    // Shortcuts
+    auto *detailsAction = new QAction(this);
+    detailsAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Return));
+    detailsAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->tableView->addAction(detailsAction);
+    connect(detailsAction, &QAction::triggered, this, &PageableTable::ShowDetails);
+
 }
 
 PageableTable::~PageableTable() {
@@ -278,4 +286,14 @@ void PageableTable::RestoreSelection() {
         }
     }
     _savedIds.clear();
+}
+
+void PageableTable::ShowDetails() {
+
+    if (QModelIndexList selection = _ui->tableView->selectionModel()->selectedRows(); !selection.isEmpty()) {
+        // Map proxy index → source index
+        const QModelIndex proxyIndex = selection.first();
+        const QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
+        emit ShowDetailsSignal(sourceIndex);
+    }
 }

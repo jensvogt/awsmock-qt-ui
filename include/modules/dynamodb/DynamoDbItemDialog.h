@@ -25,7 +25,7 @@ class DynamoDbItemDialog : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit DynamoDbItemDialog(const QString &tableName, const QString &partitionKey, const QString &sortKey, QWidget *parent = nullptr);
+    explicit DynamoDbItemDialog(QString tableName, QString partitionKey, QString sortKey, QWidget *parent = nullptr);
 
     ~DynamoDbItemDialog() override;
 

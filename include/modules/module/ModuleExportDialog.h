@@ -65,12 +65,12 @@ private:
     /**
      * @brief Data model
      */
-    QStandardItemModel *_leftDataModel;
+    QStandardItemModel *_leftDataModel{};
 
     /**
      * @brief Data model
      */
-    QStandardItemModel *_rightDataModel;
+    QStandardItemModel *_rightDataModel{};
 
     /**
      * @brief Export filename
@@ -102,7 +102,7 @@ private:
      */
     static QStringList _excluded;
 
-    QButtonGroup *_exportTypeGroup;
+    QButtonGroup *_exportTypeGroup{};
 };
 
 

@@ -3,10 +3,12 @@
 //
 
 #include <modules/dynamodb/DynamoDbItemDialog.h>
+
+#include <utility>
 #include "ui_DynamoDbItemDialog.h"
 
-DynamoDbItemDialog::DynamoDbItemDialog(const QString &tableName, const QString &partitionKey, const QString &sortKey, QWidget *parent) : BaseDialog(parent), _ui(new Ui::DynamoDbItemDialog),
-                                                                                                                                         _tableName((tableName)), _partitionKey(partitionKey), _sortKey(sortKey) {
+DynamoDbItemDialog::DynamoDbItemDialog(QString tableName, QString partitionKey, QString sortKey, QWidget *parent) : BaseDialog(parent), _ui(new Ui::DynamoDbItemDialog),
+                                                                                                                    _tableName(std::move((tableName))), _partitionKey(std::move(partitionKey)), _sortKey(std::move(sortKey)) {
 
     // Service
     _dynamoDbService = new DynamoDbService();

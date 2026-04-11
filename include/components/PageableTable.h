@@ -93,6 +93,8 @@ public:
 
     void RestoreSelection();
 
+    void ShowDetails();
+
     /**
      * @brief Sets the total size
      *
@@ -378,6 +380,13 @@ signals:
      * @brief Signals the parent to reload the table
      */
     void ReloadTable();
+
+    /**
+     * @brief Signals the parent to reload the table
+     *
+     * @param index selected row index
+     */
+    void ShowDetailsSignal(const QModelIndex &index);
 
 private:
     /**

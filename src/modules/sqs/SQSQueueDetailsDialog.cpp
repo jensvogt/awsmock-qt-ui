@@ -3,11 +3,13 @@
 
 SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SQSQueueDetailsDialog), _queueArn(queueArn) {
 
+    // Create REST service
+    _sqsService = new SQSService();
+
+    // Setup UI
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &SQSQueueDetailsDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &SQSQueueDetailsDialog::HandleReject);
-
-    _sqsService = new SQSService();
 
     // Connect service
     _sqsService->GetQueueDetails(queueArn);
@@ -49,12 +51,16 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
     _ui->retentionPeriodEdit->setText(QString::number(response.retentionPeriod));
     _ui->messageCountEdit->setText(QString::number(response.messageCount));
     _ui->messageSizeEdit->setText(StringUtils::FormatSizeColumn(response.size, 1));
+    _ui->ownerEdit->setText(response.owner);
     _ui->createdEdit->setText(response.created.toString());
     _ui->modifiedEdit->setText(response.modified.toString());
 
     connect(_ui->delayEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
     connect(_ui->retentionPeriodEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
     connect(_ui->visibilityEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
+    connect(_ui->dlqArnEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
+    connect(_ui->dlqMaxReceiveEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
+    connect(_ui->ownerEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
 }
 
 void SQSQueueDetailsDialog::HandleAccept() {
@@ -64,6 +70,9 @@ void SQSQueueDetailsDialog::HandleAccept() {
         updateQueueRequest.delay = _ui->delayEdit->text().toLong();
         updateQueueRequest.retentionPeriod = _ui->retentionPeriodEdit->text().toLong();
         updateQueueRequest.visibilityTimeout = _ui->visibilityEdit->text().toLong();
+        updateQueueRequest.deadLetterQueueArn = _ui->dlqArnEdit->text();
+        updateQueueRequest.maxRetries = _ui->dlqMaxReceiveEdit->text().toLong();
+        updateQueueRequest.owner = _ui->ownerEdit->text();
         _sqsService->UpdateQueue(updateQueueRequest);
     }
     accept();
