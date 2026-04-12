@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.35](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.34...v1.11.35) (2026-04-12)
+
+
+### Bug Fixes
+
+* content type for SQS/SNS messages ([b953d85](https://github.com/jensvogt/awsmock-qt-ui/commit/b953d85d372206aeb0fc41cf09d6beb2b91899d4))
+* content type for SQS/SNS messages ([e055da7](https://github.com/jensvogt/awsmock-qt-ui/commit/e055da7d3be147b3955a35da7124a7ecc6e6bd77))
+
 ## [1.11.34](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.33...v1.11.34) (2026-04-11)
 
 
