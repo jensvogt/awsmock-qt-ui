@@ -64,8 +64,10 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     _ui->queueEdit->setText(response.queueName);
     _ui->messageIdEdit->setText(response.messageId);
     _ui->receiptHandleEdit->setText(response.receiptHandle);
-    _ui->md5BodyEdit->setText(response.md5Body);
-    _ui->md5AttributesEdit->setText(response.md5Attributes);
+    _ui->md5BodyEdit->setText(response.md5OfBody);
+    _ui->md5AttributesEdit->setText(response.md5OfMessageAttributes);
+    _ui->md5SystemAttributesEdit->setText(response.md5OfSystemAttributes);
+    _ui->contentTypeEdit->setText(response.contentType);
     _ui->createdEdit->setText(response.created.toString());
     _ui->modifiedEdit->setText(response.modified.toString());
 

@@ -452,7 +452,8 @@ void SQSService::GetSqsMessageDetails(const QString &messageId) {
                           {"x-awsmock-action", "get-message-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          //std::cerr << response.toStdString() << std::endl;
                           if (success) {
                               // The API returns an JSON object
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);

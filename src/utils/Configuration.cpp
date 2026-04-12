@@ -11,7 +11,7 @@ void Configuration::SetFilePath(const QString &filePath) {
 void Configuration::ReadConfigurationFile(const QString &filePath) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open config file:" << file.errorString();
+        logError << "Failed to open config file:" << file.errorString();
         return;
     }
 
@@ -21,12 +21,12 @@ void Configuration::ReadConfigurationFile(const QString &filePath) {
     QJsonParseError parseError;
     const QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
     if (parseError.error != QJsonParseError::NoError) {
-        qWarning() << "JSON parse error:" << parseError.errorString();
+        logError << "JSON parse error:" << parseError.errorString();
         return;
     }
 
     if (!doc.isObject()) {
-        qWarning() << "Invalid JSON format: root is not an object";
+        logError << "Invalid JSON format: root is not an object";
         return;
     }
 

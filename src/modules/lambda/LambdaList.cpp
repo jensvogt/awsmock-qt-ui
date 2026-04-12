@@ -82,8 +82,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto arn = _tableView->GetValue<QString>(index, 10);
-        const auto name = _tableView->GetValue<QString>(index, 0);
-        LambdaUploadCodeDialog dialog(name, arn);
+        LambdaDetailsDialog dialog(arn);
         dialog.exec();
     });
 
