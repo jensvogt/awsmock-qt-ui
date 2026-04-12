@@ -8,7 +8,7 @@
 PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::PageableTable) {
 
     // Set default page size
-    _pageSize = Configuration::instance().GetValue<int>("ui.page-size");
+    _pageSize = Configuration::instance().GetValue<int>("ui.page-size", 1000);
 
     // Setup component
     _ui->setupUi(this);

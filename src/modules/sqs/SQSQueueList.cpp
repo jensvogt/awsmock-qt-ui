@@ -133,7 +133,6 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
 
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
     const long total = _tableView->GetValue<long>(index, 1) + _tableView->GetValue<long>(index, 2) + _tableView->GetValue<long>(index, 3);
-    const bool isDlq = _tableView->GetValue<bool>(index, 9);
 
     auto *menu = new ContextMenu(this);
 
@@ -150,8 +149,8 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     purgeAction->setEnabled(total > 0);
 
     QAction *redriveAction = menu->addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
-    redriveAction->setToolTip("Redrive all messages");
-    redriveAction->setEnabled(isDlq && total > 0);
+    redriveAction->setToolTip("Redrive all messages. If the selected queue is a DLQ, it will perform an redrive, otherwise it will set all messages to status 'INITIAL'.");
+    redriveAction->setEnabled(total > 0);
 
     menu->addSeparator();
 
