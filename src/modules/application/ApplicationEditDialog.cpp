@@ -7,13 +7,11 @@
 #include <modules/application/ApplicationEditDialog.h>
 #include "ui_ApplicationEditDialog.h"
 
-ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent),
-                                                                                     _ui(new Ui::ApplicationEditDialog) {
+ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent), _ui(new Ui::ApplicationEditDialog) {
     _applicationService = new ApplicationService();
 
     _applicationService->GetApplication(name);
-    connect(_applicationService, &ApplicationService::GetApplicationDetailsSignal, this,
-            &ApplicationEditDialog::UpdateApplication);
+    connect(_applicationService, &ApplicationService::GetApplicationDetailsSignal, this, &ApplicationEditDialog::UpdateApplication);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationEditDialog::HandleAccept);

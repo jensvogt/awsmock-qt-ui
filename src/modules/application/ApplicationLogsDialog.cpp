@@ -7,7 +7,6 @@
 #include <modules/application/ApplicationLogsDialog.h>
 #include "ui_ApplicationLogsDialog.h"
 
-
 ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, const QString &containerId, QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationLogsDialog), _containerId(containerId) {
     const long limit = Configuration::instance().GetValue<long>("ui.application-log-limit", 1000);
 #ifdef _WIN32
