@@ -2,8 +2,8 @@
 <Package>
     <DisplayName>AwsMockQtUI</DisplayName>
     <Description>AwsMock UI</Description>
-    <Version>1.11.31</Version>
-    <ReleaseDate>2026-04-11 16:15:44</ReleaseDate>
+    <Version>1.11.33</Version>
+    <ReleaseDate>2026-04-13 10:29:23</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
 </Package>

@@ -349,12 +349,14 @@ void ApplicationService::UploadApplicationCode(const QString &applicationName, c
     jRequest["applicationCode"] = applicationCode;
     const QJsonDocument requestDoc(jRequest);
 
+    QString contentLength = QString::number(applicationCode.length());
     _restManager.post(GetBaseUrl(),
                       requestDoc.toJson(),
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "upload-application"},
-                          {"content-type", "application/json"}
+                          {"content-type", "application/json"},
+                          {"content-length", contentLength}
                       },
                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {

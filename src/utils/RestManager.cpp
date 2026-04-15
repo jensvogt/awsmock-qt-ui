@@ -57,7 +57,6 @@ static std::function<void()> makeRequest(
     };
 }
 
-
 // ----------- public wrappers -----------
 
 std::function<void()> RestManager::post(const QUrl &url,

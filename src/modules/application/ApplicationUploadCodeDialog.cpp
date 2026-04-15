@@ -95,6 +95,7 @@ void ApplicationUploadCodeDialog::HandleAccept() {
     request.version = ui->versionEdit->text();
     request.applicationCode = binaryData.toBase64();
     request.archive = _fileInfo.fileName();
+    request.contentLength = static_cast<long>(file.size());
     _applicationService->UploadApplication(request);
 
     accept();

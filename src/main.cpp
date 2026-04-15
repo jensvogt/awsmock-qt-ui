@@ -20,11 +20,12 @@
 
 // Qt includes
 #include <QApplication>
-#include <QLocale>
-#include <QTranslator>
-#include <QStyleFactory>
 #include <QCommandLineParser>
+#include <QLocale>
+#include <QNetworkProxy>
 #include <QScreen>
+#include <QStyleFactory>
+#include <QTranslator>
 
 // AwsMock includes
 #include <utils/Configuration.h>
@@ -35,6 +36,11 @@
 #define INITIAL_HEIGHT 1200
 
 int main(int argc, char *argv[]) {
+#ifdef Q_OS_WIN
+    //QNetworkProxyFactory::setUseSystemConfiguration(false);
+    QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+#endif
+
     QApplication app(argc, argv);
 
     // Install the redirection

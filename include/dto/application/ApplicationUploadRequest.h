@@ -16,6 +16,9 @@ struct ApplicationUploadRequest {
 
     QString archive;
 
+    long contentLength;
+
+    [[nodiscard]]
     QString ToJson() const {
 
         QJsonObject jRequest;
