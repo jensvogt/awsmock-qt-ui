@@ -60,6 +60,8 @@ private:
 
     void ShowDefaultAttributeContextMenu(const QPoint &pos) const;
 
+    void UpdateDqlArn(const QString &dqlArn);
+
     /**
      * @brief Update the lambda trigger tab
      *

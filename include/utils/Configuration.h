@@ -1,6 +1,10 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+// C++ includes
+#include <string>
+#include <iostream>
+
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -39,6 +43,9 @@ public:
     template<class T>
     T GetValue(const QString &path) {
         const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
+        if (v.isNull()) {
+            std::cerr << "Configuration path not found: " << path.toStdString() << ", file: " << _filePath.toStdString() << std::endl;
+        }
         if constexpr (std::is_same_v<T, int>) {
             return static_cast<T>(v.toInt());
         } else if constexpr (std::is_same_v<T, long>) {
@@ -61,6 +68,9 @@ public:
     template<class T>
     T GetValue(const QString &path, T defaultValue) {
         const QJsonValue v = JsonUtils::JsonValueByPath(_configurationRoot, path);
+        if (v.isNull()) {
+            std::cerr << "Configuration path not found: " << path.toStdString() << ", file: " << _filePath.toStdString() << std::endl;
+        }
         if constexpr (std::is_same_v<T, int>) {
             return v.isDouble() ? static_cast<T>(v.toInt()) : defaultValue;
         } else if constexpr (std::is_same_v<T, long>) {

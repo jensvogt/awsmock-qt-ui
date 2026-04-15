@@ -109,7 +109,7 @@
        <bool>true</bool>
       </property>
       <property name="readOnly">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -191,7 +191,7 @@
        <bool>true</bool>
       </property>
       <property name="readOnly">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -290,7 +290,7 @@
        <bool>true</bool>
       </property>
       <property name="readOnly">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -507,6 +507,32 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>queueNameEdit</tabstop>
+  <tabstop>queueArnEdit</tabstop>
+  <tabstop>queueUrlEdit</tabstop>
+  <tabstop>dlqArnEdit</tabstop>
+  <tabstop>dlqMaxReceiveEdit</tabstop>
+  <tabstop>ownerEdit</tabstop>
+  <tabstop>visibilityEdit</tabstop>
+  <tabstop>delayEdit</tabstop>
+  <tabstop>maxMessageSizeEdit</tabstop>
+  <tabstop>availableEdit</tabstop>
+  <tabstop>invisibleEdit</tabstop>
+  <tabstop>delayedEdit</tabstop>
+  <tabstop>retentionPeriodEdit</tabstop>
+  <tabstop>messageCountEdit</tabstop>
+  <tabstop>messageSizeEdit</tabstop>
+  <tabstop>createdEdit</tabstop>
+  <tabstop>modifiedEdit</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>attributesTable</tabstop>
+  <tabstop>attributeRefreshButton</tabstop>
+  <tabstop>lambdaRefreshButton</tabstop>
+  <tabstop>lambdaTable</tabstop>
+  <tabstop>addDefaultAttributeButton</tabstop>
+  <tabstop>defaultAttributeTable</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

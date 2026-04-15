@@ -61,6 +61,13 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SecretList::ShowContextMenu);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto secretId = _tableView->GetValue<QString>(index, 1);
+        SecretsDetailsDialog dialog(secretId, this);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
@@ -93,7 +100,7 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
     const QModelIndex index = _tableView->GetIndexFromPosition(pos);
 
     // Get container
-    const QString secretId = _tableView->GetValue<QString>(index, 1);
+    const auto secretId = _tableView->GetValue<QString>(index, 1);
 
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Secret");

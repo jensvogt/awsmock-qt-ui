@@ -53,9 +53,13 @@ struct SQSGetMessageDetailsResponse {
 
     QString body;
 
-    QString md5Body;
+    QString md5OfBody;
 
-    QString md5Attributes;
+    QString md5OfMessageAttributes;
+
+    QString md5OfSystemAttributes;
+
+    QString contentType;
 
     QDateTime created;
 
@@ -66,31 +70,33 @@ struct SQSGetMessageDetailsResponse {
     QList<SQSAttribute> attributes;
 
     void FromJson(QJsonObject jsonObject) {
-        region = jsonObject["Region"].toString();
-        queueName = jsonObject["QueueName"].toString();
-        id = jsonObject["Id"].toString();
-        messageId = jsonObject["MessageId"].toString();
-        receiptHandle = jsonObject["ReceiptHandle"].toString();
-        body = jsonObject["Body"].toString();
-        md5Body = jsonObject["MD5OfBody"].toString();
-        md5Attributes = jsonObject["MD5OfMessageAttributes"].toString();
-        created = QDateTime::fromString(jsonObject["Created"].toString(), Qt::ISODate);
-        modified = QDateTime::fromString(jsonObject["Modified"].toString(), Qt::ISODate);
+        region = jsonObject["region"].toString();
+        queueName = jsonObject["queueName"].toString();
+        id = jsonObject["id"].toString();
+        messageId = jsonObject["messageId"].toString();
+        receiptHandle = jsonObject["receiptHandle"].toString();
+        body = jsonObject["body"].toString();
+        md5OfBody = jsonObject["md5OfBody"].toString();
+        md5OfMessageAttributes = jsonObject["md5OfMessageAttributes"].toString();
+        md5OfSystemAttributes = jsonObject["md5OfSystemAttributes"].toString();
+        contentType = jsonObject["contentType"].toString();
+        created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
+        modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
 
         // Message attributes
-        for (const QString &key: jsonObject["MessageAttributes"].toObject().keys()) {
+        for (const QString &key: jsonObject["messageAttributes"].toObject().keys()) {
 
             SQSMessageAttribute messageAttribute;
-            messageAttribute.FromJson(key, jsonObject["MessageAttributes"].toObject().value(key).toObject());
+            messageAttribute.FromJson(key, jsonObject["messageAttributes"].toObject().value(key).toObject());
             messageAttributes.append(messageAttribute);
         }
 
         // System attributes
-        for (const QString &key: jsonObject["Attributes"].toObject().keys()) {
+        for (const QString &key: jsonObject["attributes"].toObject().keys()) {
 
             SQSAttribute attribute;
             attribute.key = key;
-            attribute.value = jsonObject["Attributes"].toObject().value(key).toString();
+            attribute.value = jsonObject["attributes"].toObject().value(key).toString();
             attributes.append(attribute);
         }
     }

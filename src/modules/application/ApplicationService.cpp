@@ -45,7 +45,6 @@ void ApplicationService::UploadApplication(const ApplicationUploadRequest &reque
     QElapsedTimer timer;
     timer.start();
 
-    QString tmp = GetBaseUrl().toString();
     _restManager.post(GetBaseUrl(),
                       request.ToJson().toUtf8(),
                       {

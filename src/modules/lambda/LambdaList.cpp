@@ -79,6 +79,13 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &LambdaList::ShowContextMenu);
 
+    // Add details shortcut
+    connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
+        const auto arn = _tableView->GetValue<QString>(index, 10);
+        LambdaDetailsDialog dialog(arn);
+        dialog.exec();
+    });
+
     // Set up the layout for the individual content pages
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);

@@ -36,6 +36,12 @@
       "ImportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
       "FTPUploadDialog": "C:\\home\\vogje01\\work\\libri\\Libri.ONE\\PIM\\tests"
     },
+    "default-file": {
+      "ApplicationUploadCodeDialog": "",
+      "ExportInfrastructure": "01_init.json",
+      "ImportInfrastructure": "01_init.json",
+      "FTPUploadDialog": ""
+    },
     "default-locale": "DE",
     "locales": [
       "US",
