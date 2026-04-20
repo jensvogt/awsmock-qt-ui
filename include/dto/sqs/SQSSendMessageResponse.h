@@ -20,7 +20,7 @@ struct SQSSendMessageResponse {
 
     QString sequenceNumber;
 
-    QMap<QString, MessageAttribute> messageAttributes;
+    QMap<QString, SQSMessageAttribute> messageAttributes;
 
     void FromJson(const QJsonDocument &jsonDoc) {
         region = jsonDoc["Region"].toString();

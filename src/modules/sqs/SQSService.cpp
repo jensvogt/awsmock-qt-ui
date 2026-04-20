@@ -258,7 +258,7 @@ void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QStri
                       });
 }
 
-void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const SQSMessageAttribute &attribute) {
+void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const MessageAttribute &attribute) {
     QElapsedTimer timer;
     timer.start();
 

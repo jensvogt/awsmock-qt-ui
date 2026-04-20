@@ -1,9 +1,7 @@
 #include <modules/sns/SNSTopicDetailsDialog.h>
-
-#include <utility>
 #include "ui_SNSTopicDetailsDialog.h"
 
-SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::SNSTopicDetailsDialog), topicArn(std::move(topicArn)) {
+SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::SNSTopicDetailsDialog), _topicArn(std::move(topicArn)) {
 
     // Setup UI
     _ui->setupUi(this);
@@ -16,6 +14,7 @@ SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) 
     connect(_snsService, &SNSService::ListTopicAttributesSignal, this, &SNSTopicDetailsDialog::UpdateTopicAttributes);
     connect(_snsService, &SNSService::ListTopicTagsSignal, this, &SNSTopicDetailsDialog::UpdateTopicTags);
     connect(_snsService, &SNSService::ListTopicSubscriptionsSignal, this, &SNSTopicDetailsDialog::UpdateTopicSubscriptions);
+    connect(_snsService, &SNSService::ListTopicDefaultAttributesSignal, this, &SNSTopicDetailsDialog::UpdateDefaultAttributes);
 
     // Tab widget
     connect(_ui->tabWidget, &QTabWidget::currentChanged, this, &SNSTopicDetailsDialog::CurrentTabChanged);
@@ -25,6 +24,7 @@ SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) 
     SetupAttributesTable();
     SetupTagsTable();
     SetupSubscriptionsTable();
+    SetupDefaultAttributesTab();
 
     // Load initial content
     SNSTopicDetailsDialog::LoadContent();
@@ -35,8 +35,8 @@ SNSTopicDetailsDialog::~SNSTopicDetailsDialog() {
 }
 
 void SNSTopicDetailsDialog::LoadContent() {
-    _snsService->GetTopicDetails(topicArn);
-    _snsService->ListTopicAttributes(topicArn);
+    _snsService->GetTopicDetails(_topicArn);
+    _snsService->ListTopicAttributes(_topicArn);
 }
 
 void SNSTopicDetailsDialog::HandleAccept() {
@@ -89,13 +89,13 @@ void SNSTopicDetailsDialog::UpdateTopicTags(const ListTopicTagsResponse &respons
 void SNSTopicDetailsDialog::CurrentTabChanged(const int index) const {
     switch (index) {
         case 0:
-            _snsService->ListTopicAttributes(topicArn);
+            _snsService->ListTopicAttributes(_topicArn);
             break;
         case 1:
-            _snsService->ListTopicTags(topicArn);
+            _snsService->ListTopicTags(_topicArn);
             break;
         case 2:
-            _snsService->ListTopicSubscriptions(topicArn);
+            _snsService->ListTopicSubscriptions(_topicArn);
             break;
         default:
             qCritical() << "Unknown index: " << index;
@@ -127,7 +127,7 @@ void SNSTopicDetailsDialog::SetupAttributesTable() {
     _ui->attributeRefreshButton->setText(nullptr);
     _ui->attributeRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->attributeRefreshButton, &QPushButton::clicked, this, [this]() {
-        _snsService->ListTopicAttributes(topicArn);
+        _snsService->ListTopicAttributes(_topicArn);
     });
 }
 
@@ -158,7 +158,7 @@ void SNSTopicDetailsDialog::SetupTagsTable() {
     _ui->tagRefreshButton->setText(nullptr);
     _ui->tagRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->tagRefreshButton, &QPushButton::clicked, this, [this]() {
-        _snsService->ListTopicTags(topicArn);
+        _snsService->ListTopicTags(_topicArn);
     });
 }
 
@@ -191,7 +191,7 @@ void SNSTopicDetailsDialog::SetupSubscriptionsTable() {
     _ui->subscriptionRefreshButton->setText(nullptr);
     _ui->subscriptionRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->subscriptionRefreshButton, &QPushButton::clicked, this, [this]() {
-        _snsService->ListTopicSubscriptions(topicArn);
+        _snsService->ListTopicSubscriptions(_topicArn);
     });
 }
 
@@ -212,4 +212,112 @@ void SNSTopicDetailsDialog::UpdateTopicSubscriptions(const ListTopicSubscription
     _ui->subscriptionTable->setSortingEnabled(true);
     _ui->subscriptionTable->sortByColumn(_subscriptionsSortColumn, _subscriptionsSortOrder);
     _ui->subscriptionTable->selectRow(selectedRow);
+}
+
+void SNSTopicDetailsDialog::SetupDefaultAttributesTab() {
+    //
+    //    // connect(_snsService, &SNSService::ReloadTopicDefaultAttributesSignal, this, [this]() {
+    //    //    // _snsService->ListQueueDefaultAttributes(_topicArn, "");
+    //    // });
+
+    // Add button
+    _ui->addDefaultAttributeButton->setText(nullptr);
+    _ui->addDefaultAttributeButton->setIcon(IconUtils::GetIcon("add"));
+    _ui->addDefaultAttributeButton->setToolTip(tr("Add default message attributes"));
+    connect(_ui->addDefaultAttributeButton, &QPushButton::clicked, [this]() {
+        // if (SNSTopicDetailsDialog dialog; dialog.exec() == Accepted) {
+        //     const QString key = dialog.GetKey();
+        //     SQSMessageAttribute attribute;
+        //     attribute.name = key;
+        //     attribute.dataType = "String";
+        //     attribute.stringValue = dialog.GetValue();
+        //     _snsService->AddQueueDefaultAttributes(_queueArn, key, attribute);
+        // }
+    });
+
+    _defaultAttributesModel = new QStandardItemModel();
+    _ui->defaultAttributeTable->setModel(_defaultAttributesModel);
+
+    // Table
+    const QStringList headers = QStringList() = {tr("Key"), tr("Data Type"), tr("Value")};
+    _defaultAttributesModel->setHorizontalHeaderLabels(headers);
+
+    _ui->defaultAttributeTable->setShowGrid(true);
+    _ui->defaultAttributeTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->defaultAttributeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->defaultAttributeTable->setSortingEnabled(true);
+    _ui->defaultAttributeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _ui->defaultAttributeTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
+    // Context menu
+    _ui->defaultAttributeTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->defaultAttributeTable, &QTableWidget::customContextMenuRequested, this, &SNSTopicDetailsDialog::ShowDefaultAttributeContextMenu);
+
+    // Context menu
+    _ui->defaultAttributeTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->defaultAttributeTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString key = _defaultAttributesModel->item(index.row(), 0)->text();
+        const QString dataType = _defaultAttributesModel->item(index.row(), 1)->text();
+        QString value = _defaultAttributesModel->item(index.row(), 2)->text();
+        // if (SNSQueueDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
+        //     value = dialog.GetValue();
+        //     _snsService->UpdateQueueDefaultAttributes(_queueArn, key, value, dataType);
+        // }
+    });
+
+    // Get the default attribute list
+    _snsService->ListQueueDefaultAttributes(_topicArn, "");
+}
+
+void SNSTopicDetailsDialog::UpdateDefaultAttributes(const SNSListQueueDefaultAttributesResponse &response) const {
+
+    _defaultAttributesModel->removeRows(0, _defaultAttributesModel->rowCount());
+    _ui->defaultAttributeTable->setSortingEnabled(false); // stop sorting
+    int r = 0, c = 0;
+    for (const auto &key: response.defaultAttributesCounters.keys()) {
+        SNSMessageAttribute defaultAttribute = response.defaultAttributesCounters[key];
+        SetColumn(_defaultAttributesModel, r, c++, key);
+        SetColumn(_defaultAttributesModel, r, c++, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
+        SetColumn(_defaultAttributesModel, r, c, response.defaultAttributesCounters[key].stringValue);
+        r++;
+        c = 0;
+    }
+    _ui->defaultAttributeTable->setSortingEnabled(true);
+    _defaultAttributesModel->sort(_defaultAttributeSortColumn, _defaultAttributeSortOrder);
+}
+
+void SNSTopicDetailsDialog::ShowDefaultAttributeContextMenu(const QPoint &pos) const {
+
+    const QModelIndex index = _ui->defaultAttributeTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    const int row = index.row();
+
+    QMenu menu;
+    menu.setToolTipsVisible(true);
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Default Attribute");
+    editAction->setToolTip("Edit the queue default attribute");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Default Attribute");
+    deleteAction->setToolTip("Delete the queue default attribute");
+
+    if (const QAction *selectedAction = menu.exec(_ui->defaultAttributeTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        const QString key = _defaultAttributesModel->item(row, 0)->text();
+        const QString dataType = _defaultAttributesModel->item(row, 1)->text();
+        QString value = _defaultAttributesModel->item(row, 2)->text();
+        // if (SQSQueueDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
+        //     value = dialog.GetValue();
+        //     _sqsService->UpdateQueueDefaultAttributes(_queueArn, key, value, dataType);
+        // }
+    } else if (selectedAction == deleteAction) {
+        const QString key = _defaultAttributesModel->item(row, 0)->text();
+        //_snsService->DeleteQueueDefaultAttributes(_topicArn, key);
+        _defaultAttributesModel->removeRow(row);
+    }
 }

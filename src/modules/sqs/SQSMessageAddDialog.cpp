@@ -52,6 +52,7 @@ SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 
+    // Setup request
     SetupRequest();
 }
 
@@ -73,7 +74,7 @@ void SQSMessageAddDialog::HandleAccept() {
     const int rows = _ui->tableWidget->rowCount();
 
     for (int r = 0; r < rows; ++r) {
-        MessageAttribute messageAttribute;
+        SQSMessageAttribute messageAttribute;
         messageAttribute.dataType = STRING;
 
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
@@ -90,7 +91,7 @@ void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &
 }
 
 void SQSMessageAddDialog::HandleReject() {
-    accept();
+    reject();
 }
 
 void SQSMessageAddDialog::HandleBrowseButton() const {
