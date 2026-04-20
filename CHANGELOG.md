@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.36](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.35...v1.11.36) (2026-04-20)
+
+
+### Bug Fixes
+
+* baseURL adding button ([5459c43](https://github.com/jensvogt/awsmock-qt-ui/commit/5459c43e63e505351adf8ded3bdd304b4258822c))
+* baseURL adding button ([7d6ff7f](https://github.com/jensvogt/awsmock-qt-ui/commit/7d6ff7f7efb9ddf797b2909a18972d91567cf026))
+* fix context menu ([aec2c56](https://github.com/jensvogt/awsmock-qt-ui/commit/aec2c56fac0d6cd45a839f3aba0e66e3af6a72c2))
+* fix context menu ([9a162a4](https://github.com/jensvogt/awsmock-qt-ui/commit/9a162a4bb29c0058d90fd80e85e269329337c8bf))
+
 ## [1.11.35](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.34...v1.11.35) (2026-04-12)
 
 
