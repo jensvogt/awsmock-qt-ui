@@ -138,15 +138,15 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     auto *menu = new ContextMenu(this);
 
     QAction *sendAction = menu->addAction(IconUtils::GetIcon("send"), "Send a Message");
-    sendAction->setToolTip("Send a Message to the queue");
+    sendAction->setToolTip("Send a message to the queue.");
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Queue");
-    editAction->setToolTip("Edit the Queue details");
+    editAction->setToolTip("Edit the queue details.");
 
     menu->addSeparator();
 
     QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Queue");
-    purgeAction->setToolTip("Purge the Queue");
+    purgeAction->setToolTip("Purge the queue.");
     purgeAction->setEnabled(total > 0);
 
     QAction *redriveAction = menu->addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
@@ -156,7 +156,7 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     menu->addSeparator();
 
     QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Queue");
-    deleteAction->setToolTip("Delete the Queue");
+    deleteAction->setToolTip("Delete the queue.");
 
     const auto queueUrl = _tableView->GetValue<QString>(index, 7);
     const auto queueArn = _tableView->GetValue<QString>(index, 8);

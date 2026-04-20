@@ -353,6 +353,48 @@ void SNSService::GetTopicDetails(const QString &topicArn) {
                       });
 }
 
+void SNSService::ListQueueDefaultAttributes(const QString &topicArn, const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "name";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["topicArn"] = topicArn;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = -1;
+    jRequest["pageIndex"] = -1;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-default-message-attribute-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  SNSListQueueDefaultAttributesResponse snsResponse;
+                                  snsResponse.FromJson(jsonDoc);
+                                  emit ListTopicDefaultAttributesSignal(snsResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                      });
+}
+
 void SNSService::DeleteTopic(const QString &topicArn) {
     QElapsedTimer timer;
     timer.start();
@@ -387,7 +429,7 @@ void SNSService::SendMessage(const SNSSendMessageRequest &request) {
     QJsonObject jAttributes;
     for (const auto &[key,value]: request.messageAttributes) {
         QJsonObject jAttribute;
-        jAttribute["DataType"] = value.dataType;
+        jAttribute["DataType"] = MessageAttributeDataTypeToString(value.dataType);
         jAttribute["StringValue"] = value.stringValue;
         jAttributes[key] = jAttribute;
     }

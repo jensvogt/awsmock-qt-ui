@@ -119,7 +119,7 @@ public:
      * @param key attribute key
      * @param attribute
      */
-    void AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const SQSMessageAttribute &attribute);
+    void AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const MessageAttribute &attribute);
 
     void UpdateQueueDefaultAttributes(const QString &queueArn, const QString &key, const QString &value, const QString &dataType);
 

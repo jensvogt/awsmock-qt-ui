@@ -15,11 +15,12 @@
 #include <QLineEdit>
 
 // AwsMock includes
-#include <utils/BaseDialog.h>
-#include <utils/IconUtils.h>
 #include <dto/sns/SNSSendMessageRequest.h>
 #include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 #include <modules/sns/SNSService.h>
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -33,11 +34,11 @@ class SNSMessageAddDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit SNSMessageAddDialog(const QString &topicArn, QWidget *parent = nullptr);
+    explicit SNSMessageAddDialog(QString topicArn, QWidget *parent = nullptr);
 
     ~SNSMessageAddDialog() override;
 
-    void HandleAccept() const;
+    void HandleAccept();
 
     void HandleSendMessageSignal(const SNSSendMessageResponse &response);
 
@@ -48,6 +49,8 @@ public:
     void HandlePrettyButton(bool checked) const;
 
     void HandleAddAttributeButton() const;
+
+    void SetupRequest();
 
     void LoadContent() override {
     }
@@ -67,6 +70,11 @@ private:
      * @brief Queue URL
      */
     QString _topicArn;
+
+    /**
+     * @brief SNS message request
+     */
+    SNSSendMessageRequest _request;
 };
 
 

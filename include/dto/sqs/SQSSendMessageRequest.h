@@ -20,7 +20,7 @@ struct SQSSendMessageRequest {
 
     long delaySeconds{};
 
-    std::map<QString, MessageAttribute> messageAttributes;
+    std::map<QString, SQSMessageAttribute> messageAttributes;
 
     void FromJson(const QJsonDocument &jsonDoc) {
         region = jsonDoc["Region"].toString();
