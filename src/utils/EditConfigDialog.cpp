@@ -1,6 +1,4 @@
 
-#include <QFileDialog>
-#include <QMessageBox>
 #include <utils/EditConfigDialog.h>
 #include "ui_EditConfigDialog.h"
 
@@ -10,26 +8,32 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &EditConfigDialog::HandleReject);
 
     // Server setting
-    QStringList baseUrls;
-    for (auto jsonArray = Configuration::instance().GetValue<QJsonArray>("server.base-urls", {}); const QJsonValue &url: jsonArray) {
-        baseUrls.append(url.toString());
-    }
     const auto selectedBaseUrl = Configuration::instance().GetValue<QString>("server.base-url", {});
-    _ui->baseUrlComboBox->addItems(baseUrls);
+    _ui->baseUrlComboBox->addItems(GetBaseUrlList());
     _ui->baseUrlComboBox->setCurrentText(selectedBaseUrl);
-    connect(_ui->baseUrlComboBox, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+    connect(_ui->baseUrlComboBox, &QComboBox::currentTextChanged, this, [](const QString &text) {
         Configuration::instance().SetValue("server.base-url", text);
     });
 
-    QStringList websocketUrls;
-    for (auto jsonArray = Configuration::instance().GetValue<QJsonArray>("server.websocket-urls", {}); const QJsonValue &url: jsonArray) {
-        websocketUrls.append(url.toString());
-    }
     const auto selectedWebsocketUrl = Configuration::instance().GetValue<QString>("server.websocket-url", {});
-    _ui->websocketUrlCombo->addItems(websocketUrls);
+    _ui->websocketUrlCombo->addItems(GetWebSocketUrlList());
     _ui->websocketUrlCombo->setCurrentText(selectedBaseUrl);
-    connect(_ui->websocketUrlCombo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+    connect(_ui->websocketUrlCombo, &QComboBox::currentTextChanged, this, [](const QString &text) {
         Configuration::instance().SetValue("server.websocket-url", text);
+    });
+    connect(_ui->baseUrlAddButton, &QPushButton::clicked, this, [this] {
+        if (ConfigAddUrlDialog addDialog; addDialog.exec() == Accepted) {
+            const QString url = "http://" + addDialog.GetHostname() + ":" + QString::number(addDialog.GetPort());
+            Configuration::instance().SetValue("server.base-urls[]", url);
+            _ui->baseUrlComboBox->addItem(url);
+        }
+    });
+    connect(_ui->loggingUrlAddButton, &QPushButton::clicked, this, [this] {
+        if (ConfigAddUrlDialog addDialog; addDialog.exec() == Accepted) {
+            const QString url = "ws://" + addDialog.GetHostname() + ":" + QString::number(addDialog.GetPort());
+            Configuration::instance().SetValue("server.websocket-urls[]", url);
+            _ui->websocketUrlCombo->addItem(url);
+        }
     });
 
     // FTP settings
@@ -170,4 +174,20 @@ bool EditConfigDialog::IsDirectoryReady(const QString &path) {
     const bool canWrite = checkInfo.isWritable();
 
     return (canRead && canWrite);
+}
+
+QStringList EditConfigDialog::GetBaseUrlList() {
+    QStringList websocketUrls;
+    for (auto jsonArray = Configuration::instance().GetValue<QJsonArray>("server.base-urls", {}); const auto &url: jsonArray) {
+        websocketUrls.append(url.toString());
+    }
+    return websocketUrls;
+}
+
+QStringList EditConfigDialog::GetWebSocketUrlList() {
+    QStringList websocketUrls;
+    for (auto jsonArray = Configuration::instance().GetValue<QJsonArray>("server.websocket-urls", {}); const auto &url: jsonArray) {
+        websocketUrls.append(url.toString());
+    }
+    return websocketUrls;
 }

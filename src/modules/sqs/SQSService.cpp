@@ -37,6 +37,7 @@ void SQSService::ListQueues(const QString &prefix, const long pageSize, const lo
                           } else {
                               logError << error;
                           }
+                          logInfo << "SQS queue list updated [" << timer.elapsed() << "]";
                           emit EventBus::instance().TimerSignal("ListQueues", timer.elapsed());
                       });
 }

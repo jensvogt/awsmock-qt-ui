@@ -1,7 +1,6 @@
 #include <utils/RestManager.h>
 
-RestManager::RestManager(QObject *parent)
-    : QObject(parent) {
+RestManager::RestManager(QObject *parent) : QObject(parent) {
 }
 
 RestManager::~RestManager() = default;
@@ -15,7 +14,11 @@ static std::function<void()> makeRequest(
     const QUrl &url,
     const QByteArray &body,
     const QMap<QString, QString> &headers,
-    std::function<void(bool, QByteArray, int, QString)> callback) {
+    const std::function<void(bool, QByteArray, int, QString)> &callback) {
+
+    auto timer = std::make_shared<QElapsedTimer>();
+    timer->start();
+
     QNetworkRequest req(url);
     for (auto it = headers.begin(); it != headers.end(); ++it)
         req.setRawHeader(it.key().toUtf8(), it.value().toUtf8());
@@ -41,12 +44,11 @@ static std::function<void()> makeRequest(
             Q_ASSERT(false);
     }
 
-    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback]() {
+    QObject::connect(reply, &QNetworkReply::finished, [reply, callback, timer, url]() {
         const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         const QByteArray data = reply->readAll();
         const QString error = reply->errorString();
         const bool success = reply->error() == QNetworkReply::NoError;
-
         reply->deleteLater();
         callback(success, data, status, error);
     });

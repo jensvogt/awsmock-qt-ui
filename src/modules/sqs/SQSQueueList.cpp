@@ -125,6 +125,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
     }
     _tableView->UpdateSorting();
     _tableView->RestoreSelection();
+    logInfo << "SQS queue list updated";
 }
 
 void SQSQueueList::ShowContextMenu(const QPoint &pos) {
