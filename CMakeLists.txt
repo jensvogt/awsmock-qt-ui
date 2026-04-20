@@ -132,7 +132,8 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         include/utils/TableUtils.h src/utils/IconUtils.cpp include/utils/IconUtils.h include/utils/EventBus.h
         src/utils/BaseDialog.cpp include/utils/BaseDialog.h src/utils/BasePage.cpp include/utils/BasePage.h
         include/utils/NonEmptyValidator.h src/utils/IconUtils.cpp src/utils/ServerLogWidget.cpp
-        include/utils/ServerLogWidget.h src/utils/ServerLogWidget.ui)
+        include/utils/ServerLogWidget.h src/utils/ServerLogWidget.ui src/utils/ConfigAddUrlDialog.cpp
+        include/utils/ConfigAddUrlDialog.h src/utils/ConfigAddUrlDialog.ui)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
         ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
         ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES}

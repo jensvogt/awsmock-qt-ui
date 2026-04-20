@@ -9,6 +9,7 @@
 #include <QLocale>
 #include <QString>
 
+// Awsmock includes
 #include "Configuration.h"
 
 class DateTimeUtils {

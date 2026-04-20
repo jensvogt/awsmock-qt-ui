@@ -2,16 +2,19 @@
 // Created by vogje01 on 11/17/25.
 //
 
-#ifndef AWSMOCK_QT_UI_EDITCONFIGDIALOG_H
-#define AWSMOCK_QT_UI_EDITCONFIGDIALOG_H
+#ifndef AWSMOCK_QT_UI_EDIT_CONFIG_DIALOG_H
+#define AWSMOCK_QT_UI_EDIT_CONFIG_DIALOG_H
 
 // Qt includes
 #include <QDialog>
+#include <QFileDialog>
 #include <QList>
+#include <QMessageBox>
 
 // AwsMock includes
-#include <utils/IconUtils.h>
+#include <utils/ConfigAddUrlDialog.h>
 #include <utils/Configuration.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -57,6 +60,20 @@ private:
     static bool IsDirectoryReady(const QString &path);
 
     /**
+     * @brief Get the list of base URLs
+     *
+     * @return string list of base URLs.
+     */
+    static QStringList GetBaseUrlList();
+
+    /**
+     * @brief Get the list of websocket URLs
+     *
+     * @return string list of websocket URLs.
+     */
+    static QStringList GetWebSocketUrlList();
+
+    /**
      * @brief UI components
      */
     Ui::EditConfigDialog *_ui;
@@ -68,4 +85,4 @@ private:
 };
 
 
-#endif //AWSMOCK_QT_UI_EDITCONFIGDIALOG_H
+#endif // AWSMOCK_QT_UI_EDIT_CONFIG_DIALOG_H

@@ -36,10 +36,6 @@
 #define INITIAL_HEIGHT 1200
 
 int main(int argc, char *argv[]) {
-#ifdef Q_OS_WIN
-    //QNetworkProxyFactory::setUseSystemConfiguration(false);
-    QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
-#endif
 
     QApplication app(argc, argv);
 
@@ -81,7 +77,7 @@ int main(int argc, char *argv[]) {
 
     // Set style
     const int fontSize = Configuration::instance().GetValue<int>("ui.font-size", 10);
-    app.setStyle(Configuration::instance().GetValue<QString>("ui.style", ""));
+    qApp->setStyle(Configuration::instance().GetValue<QString>("ui.style", ""));
     if (Configuration::instance().GetValue<QString>("ui.style-type", "") == "Dark") {
         qApp->setStyle(QStyleFactory::create(Configuration::instance().GetValue<QString>("ui.style", "")));
         if (QFile f(":/styles/styles/dark.qss"); f.open(QFile::ReadOnly)) {

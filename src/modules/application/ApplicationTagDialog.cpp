@@ -28,7 +28,6 @@ ApplicationTagDialog::~ApplicationTagDialog() {
     delete _ui;
 }
 
-
 void ApplicationTagDialog::HandleAccept() {
     accept();
 }

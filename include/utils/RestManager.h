@@ -1,6 +1,7 @@
 #ifndef REST_MANAGER_H
 #define REST_MANAGER_H
 
+// Qt includes
 #include <QMap>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -11,6 +12,12 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <functional>
+#include <QElapsedTimer>
+#include <QHostInfo>
+#include <QNetworkProxy>
+
+// Awsmock includes
+#include <utils/Logging.h>
 
 class RestManager final : public QObject {
     Q_OBJECT
