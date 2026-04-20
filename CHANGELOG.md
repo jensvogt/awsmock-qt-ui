@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.37](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.36...v1.11.37) (2026-04-20)
+
+
+### Bug Fixes
+
+* add SNS default message attributes ([ad00d31](https://github.com/jensvogt/awsmock-qt-ui/commit/ad00d314bf5b686f87bfd8242c7afb477d7b15bd))
+* add SNS default message attributes ([3de9801](https://github.com/jensvogt/awsmock-qt-ui/commit/3de98010dbe6b399446870bf57b29157055b5454))
+
 ## [1.11.36](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.35...v1.11.36) (2026-04-20)
 
 
