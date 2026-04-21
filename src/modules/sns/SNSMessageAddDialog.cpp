@@ -162,7 +162,8 @@ void SNSMessageAddDialog::SetupRequest() {
             const int row = _ui->tableWidget->rowCount();
             _ui->tableWidget->insertRow(row);
             SetColumn(_ui->tableWidget, row, 0, key);
-            SetColumn(_ui->tableWidget, row, 1, response.defaultAttributesCounters[key].stringValue);
+            SetColumn(_ui->tableWidget, row, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
+            SetColumn(_ui->tableWidget, row, 2, response.defaultAttributesCounters[key].stringValue);
         }
     });
 }

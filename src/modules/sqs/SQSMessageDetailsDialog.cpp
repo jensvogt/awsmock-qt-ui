@@ -38,6 +38,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Set body tab
     _ui->tabWidget->setCurrentIndex(0);
+
     // Pretty print button
     _ui->prettyButton->setCheckable(true);
     _ui->prettyButton->setChecked(_ui->bodyTextWidget->GetPrettyPrint());
