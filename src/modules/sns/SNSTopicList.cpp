@@ -157,8 +157,9 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _snsService->PurgeTopic(topicArn);
     } else if (selectedAction == sendAction) {
-        SNSMessageAddDialog dialog(topicArn);
-        dialog.exec();
+        if (SNSMessageAddDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
+            _tableView->SetMessageLabel("Message sent, id: " + dialog.getMessageId());
+        }
     } else if (selectedAction == deleteAction) {
         _snsService->DeleteTopic(topicArn);
     } else if (selectedAction == editAction) {

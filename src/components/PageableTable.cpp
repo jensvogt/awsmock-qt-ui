@@ -2,6 +2,7 @@
 // Created by vogje01 on 2/15/26.
 //
 
+#include <QTimer>
 #include <components/PageableTable.h>
 #include "ui_PageableTable.h"
 
@@ -286,6 +287,17 @@ void PageableTable::RestoreSelection() {
         }
     }
     _savedIds.clear();
+}
+
+void PageableTable::SetMessageLabel(const QString &message) const {
+    _ui->messageLabel->setAlignment(Qt::AlignCenter);
+
+    QTimer::singleShot(3000, this, [this]() {
+        _ui->messageLabel->setText(nullptr);
+    });
+    _ui->messageLabel->show();
+    _ui->messageLabel->raise();
+    _ui->messageLabel->setText(message);
 }
 
 void PageableTable::ShowDetails() {

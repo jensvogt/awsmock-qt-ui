@@ -50,6 +50,10 @@ public:
 
     void SetupRequest();
 
+    QString GetMessageId() {
+        return _messageId;
+    }
+
     void LoadContent() override {
     };
 
@@ -78,6 +82,11 @@ private:
      * @brief QSQ message request
      */
     SQSSendMessageRequest _request;
+
+    /**
+     * @brief Message ID
+     */
+    QString _messageId;
 };
 
 

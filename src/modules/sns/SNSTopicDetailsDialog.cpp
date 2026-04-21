@@ -1,5 +1,6 @@
 #include <modules/sns/SNSTopicDetailsDialog.h>
 #include "ui_SNSTopicDetailsDialog.h"
+#include "modules/sns/SNSTopicDefaultAttributeDialog.h"
 
 SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::SNSTopicDetailsDialog), _topicArn(std::move(topicArn)) {
 
@@ -215,24 +216,24 @@ void SNSTopicDetailsDialog::UpdateTopicSubscriptions(const ListTopicSubscription
 }
 
 void SNSTopicDetailsDialog::SetupDefaultAttributesTab() {
-    //
-    //    // connect(_snsService, &SNSService::ReloadTopicDefaultAttributesSignal, this, [this]() {
-    //    //    // _snsService->ListQueueDefaultAttributes(_topicArn, "");
-    //    // });
+
+    connect(_snsService, &SNSService::ReloadTopicDefaultAttributesSignal, this, [this]() {
+        _snsService->ListQueueDefaultAttributes(_topicArn, "");
+    });
 
     // Add button
     _ui->addDefaultAttributeButton->setText(nullptr);
     _ui->addDefaultAttributeButton->setIcon(IconUtils::GetIcon("add"));
     _ui->addDefaultAttributeButton->setToolTip(tr("Add default message attributes"));
     connect(_ui->addDefaultAttributeButton, &QPushButton::clicked, [this]() {
-        // if (SNSTopicDetailsDialog dialog; dialog.exec() == Accepted) {
-        //     const QString key = dialog.GetKey();
-        //     SQSMessageAttribute attribute;
-        //     attribute.name = key;
-        //     attribute.dataType = "String";
-        //     attribute.stringValue = dialog.GetValue();
-        //     _snsService->AddQueueDefaultAttributes(_queueArn, key, attribute);
-        // }
+        if (SNSTopicDefaultAttributeDialog dialog; dialog.exec() == Accepted) {
+            const QString key = dialog.GetKey();
+            MessageAttribute attribute;
+            attribute.name = key;
+            attribute.dataType = "String";
+            attribute.stringValue = dialog.GetValue();
+            _snsService->AddTopicDefaultAttributes(_topicArn, key, attribute);
+        }
     });
 
     _defaultAttributesModel = new QStandardItemModel();
@@ -311,13 +312,13 @@ void SNSTopicDetailsDialog::ShowDefaultAttributeContextMenu(const QPoint &pos) c
         const QString key = _defaultAttributesModel->item(row, 0)->text();
         const QString dataType = _defaultAttributesModel->item(row, 1)->text();
         QString value = _defaultAttributesModel->item(row, 2)->text();
-        // if (SQSQueueDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
-        //     value = dialog.GetValue();
-        //     _sqsService->UpdateQueueDefaultAttributes(_queueArn, key, value, dataType);
-        // }
+        if (SNSTopicDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
+            value = dialog.GetValue();
+            _snsService->UpdateTopicDefaultAttributes(_topicArn, key, value, dataType);
+        }
     } else if (selectedAction == deleteAction) {
         const QString key = _defaultAttributesModel->item(row, 0)->text();
-        //_snsService->DeleteQueueDefaultAttributes(_topicArn, key);
+        _snsService->DeleteTopicDefaultAttributes(_topicArn, key);
         _defaultAttributesModel->removeRow(row);
     }
 }

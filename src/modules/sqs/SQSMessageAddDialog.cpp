@@ -86,7 +86,8 @@ void SQSMessageAddDialog::HandleAccept() {
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
-    QMessageBox::information(nullptr, "Info", "Message send to queue: '" + AwsUtils::ArnToName(_queueArn) + "' with messageId: '" + response.messageId + "'");
+    _messageId = response.messageId;
+    logDebug << "Message send, id: " << _messageId;
     accept();
 }
 
