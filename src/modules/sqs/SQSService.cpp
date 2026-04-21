@@ -434,7 +434,7 @@ void SQSService::ResetMessageCounters() {
                           if (!success) {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetQueueDetails", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ResetMessageCounters", timer.elapsed());
                       });
 }
 

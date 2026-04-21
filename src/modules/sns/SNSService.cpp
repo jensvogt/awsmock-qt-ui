@@ -353,6 +353,25 @@ void SNSService::GetTopicDetails(const QString &topicArn) {
                       });
 }
 
+void SNSService::ResetMessageCounters() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "reload-all-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ResetMessageCounters", timer.elapsed());
+                      });
+}
+
 void SNSService::ListQueueDefaultAttributes(const QString &topicArn, const QString &prefix) {
     QElapsedTimer timer;
     timer.start();

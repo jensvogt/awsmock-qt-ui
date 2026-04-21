@@ -126,6 +126,8 @@ public:
      */
     void GetTopicDetails(const QString &topicArn);
 
+    void ResetMessageCounters();
+
     /**
      * @brief Get the default topic message attributes.
      *

@@ -12,13 +12,13 @@ struct SQSQueueCounter {
 
     QString queueUrl;
 
-    long available;
+    long available{};
 
-    long invisible;
+    long invisible{};
 
-    long delayed;
+    long delayed{};
 
-    long size;
+    long size{};
 
     bool isDlq = false;
 
