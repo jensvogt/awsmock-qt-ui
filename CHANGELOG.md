@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.38](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.37...v1.11.38) (2026-04-21)
+
+
+### Bug Fixes
+
+* fix SNS counter updates ([c0357d6](https://github.com/jensvogt/awsmock-qt-ui/commit/c0357d610e01e26bae91ca4dde05020687ce04ee))
+
 ## [1.11.37](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.36...v1.11.37) (2026-04-20)
 
 
