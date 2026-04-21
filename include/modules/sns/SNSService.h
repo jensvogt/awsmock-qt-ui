@@ -1,20 +1,10 @@
-#ifndef SNS_SERVICE_H
-#define SNS_SERVICE_H
+#ifndef AWSMOCK_QT_UI_SNS_SERVICE_H
+#define AWSMOCK_QT_UI_SNS_SERVICE_H
 
 // Qt includes
-
-#include <QElapsedTimer>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QMessageBox>
-#include <QObject>
-#include <QUrlQuery>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
 
-// AwsMOck include
+// Awsmock include
 #include <dto/sns/SNSGetMessageDetailsResponse.h>
 #include <dto/sns/SNSGetTopicDetailsResponse.h>
 #include <dto/sns/SNSListMessagesResult.h>
@@ -25,10 +15,8 @@
 #include <dto/sns/SNSListTopicTagsResponse.h>
 #include <dto/sns/SNSSendMessageRequest.h>
 #include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <utils/BaseService.h>
-#include <utils/Configuration.h>
-#include <utils/EventBus.h>
-#include <utils/Logging.h>
 #include <utils/RestManager.h>
 
 class SNSService : public BaseService {
@@ -105,10 +93,6 @@ public:
      * @param pageIndex
      * @param sortAttribute
      * @param sortDirection
-     * @param pageSize
-     * @param pageIndex
-     * @param sortAttribute
-     * @param sortDirection
      */
     void ListMessages(const QString &topicArn, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
@@ -126,6 +110,9 @@ public:
      */
     void GetTopicDetails(const QString &topicArn);
 
+    /**
+     * @brief Reset the message counter
+     */
     void ResetMessageCounters();
 
     /**
@@ -135,6 +122,33 @@ public:
      * @param prefix name prefix
      */
     void ListQueueDefaultAttributes(const QString &topicArn, const QString &prefix);
+
+    /**
+     * @brief Add a default message attribute
+     *
+     * @param topicArn topic ARN
+     * @param key key
+     * @param attribute message attribute
+     */
+    void AddTopicDefaultAttributes(const QString &topicArn, const QString &key, const MessageAttribute &attribute);
+
+    /**
+     * @brief Update a default message attribute
+     *
+     * @param topicArn topic ARN
+     * @param key key
+     * @param value attribute value
+     * @param dataType data type
+     */
+    void UpdateTopicDefaultAttributes(const QString &topicArn, const QString &key, const QString &value, const QString &dataType);
+
+    /**
+     * @brief Delete a default message attribute
+     *
+     * @param topicArn topic ARN
+     * @param key key
+     */
+    void DeleteTopicDefaultAttributes(const QString &topicArn, const QString &key);
 
     /**
      * @brief Get message details response
@@ -234,6 +248,11 @@ signals:
      */
     void ListTopicDefaultAttributesSignal(const SNSListQueueDefaultAttributesResponse &listQueueDefaultAttributesResponse);
 
+    /**
+     * @brief Signaled when new default attributes should be reloaded
+     */
+    void ReloadTopicDefaultAttributesSignal();
+
 private:
     /**
      * @brief HTTP REST manager
@@ -247,4 +266,4 @@ private:
 };
 
 
-#endif // SNS_SERVICE_H
+#endif // AWSMOCK_QT_UI_SNS_SERVICE_H

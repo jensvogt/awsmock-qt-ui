@@ -87,7 +87,8 @@ void SNSMessageAddDialog::HandleAccept() {
 }
 
 void SNSMessageAddDialog::HandleSendMessageSignal(const SNSSendMessageResponse &response) {
-    QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
+    _messageId = response.messageId;
+    logDebug << "Message send with messageId: " << _messageId;
     accept();
 }
 

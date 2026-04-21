@@ -281,7 +281,7 @@ void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QStrin
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("AddQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -309,7 +309,7 @@ void SQSService::UpdateQueueDefaultAttributes(const QString &queueArn, const QSt
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UpdateQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -329,13 +329,13 @@ void SQSService::DeleteQueueDefaultAttributes(const QString &queueArn, const QSt
                           {"x-awsmock-action", "delete-default-message-attribute-counter"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadQueueDefaultAttributesSignal();
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteQueueDefaultAttributes", timer.elapsed());
                       });
 }
 

@@ -40,9 +40,9 @@ public:
 
     void HandleAccept();
 
-    void HandleSendMessageSignal(const SNSSendMessageResponse &response);
-
     void HandleReject();
+
+    void HandleSendMessageSignal(const SNSSendMessageResponse &response);
 
     void HandleBrowseButton() const;
 
@@ -52,6 +52,10 @@ public:
 
     void SetupRequest();
 
+    QString getMessageId() {
+        return _messageId;
+    }
+    
     void LoadContent() override {
     }
 
@@ -75,6 +79,11 @@ private:
      * @brief SNS message request
      */
     SNSSendMessageRequest _request;
+
+    /**
+     * @brief Message ID of the message being sent
+     */
+    QString _messageId;
 };
 
 

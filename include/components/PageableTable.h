@@ -240,6 +240,13 @@ public:
     void SetHiddenColumn(int row, int column, bool value) const;
 
     /**
+     * @brief Set message label
+     *
+     * @param message message to display
+     */
+    void SetMessageLabel(const QString &message) const;
+
+    /**
      * @brief Return the value of a column, depending on the data type
      *
      * @tparam T data type

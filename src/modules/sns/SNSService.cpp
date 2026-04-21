@@ -414,6 +414,87 @@ void SNSService::ListQueueDefaultAttributes(const QString &topicArn, const QStri
                       });
 }
 
+void SNSService::AddTopicDefaultAttributes(const QString &topicArn, const QString &key, const MessageAttribute &attribute) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["topicArn"] = topicArn;
+    jRequest["name"] = key;
+    jRequest["messageAttribute"] = attribute.ToJsonObject();
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "add-default-message-attribute-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              emit ReloadTopicDefaultAttributesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("AddTopicDefaultAttributes", timer.elapsed());
+                      });
+}
+
+void SNSService::UpdateTopicDefaultAttributes(const QString &topicArn, const QString &key, const QString &value, const QString &dataType) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["topicArn"] = topicArn;
+    jRequest["name"] = key;
+    jRequest["value"] = value;
+    jRequest["dataType"] = dataType;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "update-default-message-attribute-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadTopicDefaultAttributesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("UpdateTopicDefaultAttributes", timer.elapsed());
+                      });
+}
+
+void SNSService::DeleteTopicDefaultAttributes(const QString &topicArn, const QString &key) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["topicArn"] = topicArn;
+    jRequest["name"] = key;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "delete-default-message-attribute-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadTopicDefaultAttributesSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteTopicDefaultAttributes", timer.elapsed());
+                      });
+}
+
 void SNSService::DeleteTopic(const QString &topicArn) {
     QElapsedTimer timer;
     timer.start();

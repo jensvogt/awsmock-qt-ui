@@ -68,7 +68,8 @@ set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSM
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp
         src/modules/sns/SNSTopicDetailsDialog.ui include/modules/sns/SNSTopicDetailsDialog.h
         src/modules/sns/SNSTopicList.cpp include/modules/sns/SNSTopicList.h
-        include/dto/sns/SNSListQueueDefaultAttribtesResponse.h)
+        include/dto/sns/SNSListQueueDefaultAttribtesResponse.h src/modules/sns/SNSTopicDefaultAttributeDialog.ui
+        src/modules/sns/SNSTopicDefaultAttributeDialog.cpp include/modules/sns/SNSTopicDefaultAttributeDialog.h)
 set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
         include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
         include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h

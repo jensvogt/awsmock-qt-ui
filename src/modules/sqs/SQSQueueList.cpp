@@ -163,8 +163,9 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == sendAction) {
-        SQSMessageAddDialog dialog(queueUrl, queueArn);
-        dialog.exec();
+        if (SQSMessageAddDialog dialog(queueUrl, queueArn); dialog.exec() == QDialog::Accepted) {
+            _tableView->SetMessageLabel("Message sent, id: " + dialog.GetMessageId());
+        }
     } else if (selectedAction == redriveAction) {
         _sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {
