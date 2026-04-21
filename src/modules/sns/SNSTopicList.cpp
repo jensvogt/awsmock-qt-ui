@@ -40,6 +40,14 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
         _snsService->PurgeAllTopics();
     });
 
+    // Toolbar reset counter action
+    auto *resetCounterButton = new QPushButton(IconUtils::GetIcon("reset-counter"), "", this);
+    resetCounterButton->setToolTip("Refresh the queue message counters");
+    connect(resetCounterButton, &QPushButton::clicked, [this]() {
+        _snsService->ResetMessageCounters();
+        LoadContent();
+    });
+
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
@@ -52,6 +60,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(resetCounterButton);
     toolBar->addWidget(refreshButton);
 
     // Table
