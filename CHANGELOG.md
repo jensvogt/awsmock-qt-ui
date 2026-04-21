@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.39](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.38...v1.11.39) (2026-04-21)
+
+
+### Bug Fixes
+
+* fix SNS sent message ([1cd2344](https://github.com/jensvogt/awsmock-qt-ui/commit/1cd2344d3d65745a11264ab48d451c813eb0753e))
+
 ## [1.11.38](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.37...v1.11.38) (2026-04-21)
 
 
