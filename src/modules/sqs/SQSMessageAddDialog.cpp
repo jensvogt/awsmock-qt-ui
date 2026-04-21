@@ -37,7 +37,7 @@ SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString 
     connect(_ui->addAttributeButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleAddAttributeButton);
 
     // Attribute table
-    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
+    const QStringList headers = QStringList() = {tr("Key"), tr("Data Type"), tr("Value")};
 
     _ui->tableWidget->setColumnCount(static_cast<int>(headers.count()));
     _ui->tableWidget->setShowGrid(true);
@@ -158,7 +158,8 @@ void SQSMessageAddDialog::SetupRequest() {
             const int row = _ui->tableWidget->rowCount();
             _ui->tableWidget->insertRow(row);
             SetColumn(_ui->tableWidget, row, 0, key);
-            SetColumn(_ui->tableWidget, row, 1, response.defaultAttributesCounters[key].stringValue);
+            SetColumn(_ui->tableWidget, row, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
+            SetColumn(_ui->tableWidget, row, 2, response.defaultAttributesCounters[key].stringValue);
         }
     });
 }
