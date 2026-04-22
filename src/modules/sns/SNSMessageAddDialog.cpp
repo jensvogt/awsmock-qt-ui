@@ -151,7 +151,7 @@ void SNSMessageAddDialog::HandleAddAttributeButton() const {
 }
 
 void SNSMessageAddDialog::SetupRequest() {
-    _snsService->ListQueueDefaultAttributes(_topicArn, "");
+    _snsService->ListTopicDefaultAttributes(_topicArn, "");
     connect(_snsService, &SNSService::ListTopicDefaultAttributesSignal, this, [this](const SNSListQueueDefaultAttributesResponse &response) {
         for (const auto &key: response.defaultAttributesCounters.keys()) {
 

@@ -372,7 +372,7 @@ void SNSService::ResetMessageCounters() {
                       });
 }
 
-void SNSService::ListQueueDefaultAttributes(const QString &topicArn, const QString &prefix) {
+void SNSService::ListTopicDefaultAttributes(const QString &topicArn, const QString &prefix) {
     QElapsedTimer timer;
     timer.start();
 
