@@ -121,7 +121,7 @@ public:
      * @param topicArn AWS topic ARN
      * @param prefix name prefix
      */
-    void ListQueueDefaultAttributes(const QString &topicArn, const QString &prefix);
+    void ListTopicDefaultAttributes(const QString &topicArn, const QString &prefix);
 
     /**
      * @brief Add a default message attribute

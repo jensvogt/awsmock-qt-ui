@@ -218,7 +218,7 @@ void SNSTopicDetailsDialog::UpdateTopicSubscriptions(const ListTopicSubscription
 void SNSTopicDetailsDialog::SetupDefaultAttributesTab() {
 
     connect(_snsService, &SNSService::ReloadTopicDefaultAttributesSignal, this, [this]() {
-        _snsService->ListQueueDefaultAttributes(_topicArn, "");
+        _snsService->ListTopicDefaultAttributes(_topicArn, "");
     });
 
     // Add button
@@ -262,14 +262,14 @@ void SNSTopicDetailsDialog::SetupDefaultAttributesTab() {
         const QString key = _defaultAttributesModel->item(index.row(), 0)->text();
         const QString dataType = _defaultAttributesModel->item(index.row(), 1)->text();
         QString value = _defaultAttributesModel->item(index.row(), 2)->text();
-        // if (SNSQueueDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
-        //     value = dialog.GetValue();
-        //     _snsService->UpdateQueueDefaultAttributes(_queueArn, key, value, dataType);
-        // }
+        if (SNSTopicDefaultAttributeDialog dialog(key, value); dialog.exec() == Accepted) {
+            value = dialog.GetValue();
+            _snsService->UpdateTopicDefaultAttributes(_topicArn, key, value, dataType);
+        }
     });
 
     // Get the default attribute list
-    _snsService->ListQueueDefaultAttributes(_topicArn, "");
+    _snsService->ListTopicDefaultAttributes(_topicArn, "");
 }
 
 void SNSTopicDetailsDialog::UpdateDefaultAttributes(const SNSListQueueDefaultAttributesResponse &response) const {

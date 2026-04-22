@@ -127,6 +127,8 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     _ui->tableView->addAction(detailsAction);
     connect(detailsAction, &QAction::triggered, this, &PageableTable::ShowDetails);
 
+    // Reset message box
+    _ui->messageLabel->setText(nullptr);
 }
 
 PageableTable::~PageableTable() {
