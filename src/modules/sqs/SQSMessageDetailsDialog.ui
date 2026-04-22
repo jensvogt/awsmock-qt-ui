@@ -22,24 +22,51 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="2,0">
-     <item row="6" column="1">
-      <widget class="QLabel" name="md5SystemAttributesLabel">
+     <item row="0" column="0">
+      <widget class="QLabel" name="regionLabel">
        <property name="text">
-        <string>MD5 System Attributes</string>
+        <string>Region:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="md5AttributesLabel">
+     <item row="8" column="1">
+      <widget class="QLabel" name="modifiedLabel">
        <property name="text">
-        <string>MD5 Attributes:</string>
+        <string>Modified:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="messageIdLabel">
+     <item row="6" column="0">
+      <widget class="QLabel" name="md5BodyLabel">
        <property name="text">
-        <string>Message ID:</string>
+        <string>MD5 Body</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0" colspan="2">
+      <widget class="QTextEdit" name="receiptHandleEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>2</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="queueLabel">
+       <property name="text">
+        <string>Queue:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QLabel" name="receiptHandleLabel">
+       <property name="text">
+        <string>ReceiptHandle:</string>
        </property>
       </widget>
      </item>
@@ -53,13 +80,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="modifiedLabel">
-       <property name="text">
-        <string>Modified:</string>
-       </property>
-      </widget>
-     </item>
      <item row="7" column="0">
       <widget class="QLineEdit" name="md5BodyEdit">
        <property name="enabled">
@@ -70,71 +90,17 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="modifiedEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="queueLabel">
+     <item row="4" column="0">
+      <widget class="QLabel" name="messageIdLabel">
        <property name="text">
-        <string>Queue:</string>
+        <string>Message ID:</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="md5SystemAttributesEdit"/>
-     </item>
-     <item row="16" column="0" colspan="2">
-      <widget class="QTextEdit" name="receiptHandleEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>2</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="0">
-      <widget class="QLabel" name="receiptHandleLabel">
+     <item row="8" column="0">
+      <widget class="QLabel" name="contentTypeLabel">
        <property name="text">
-        <string>ReceiptHandle:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="regionLabel">
-       <property name="text">
-        <string>Region:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="md5BodyLabel">
-       <property name="text">
-        <string>MD5 Body</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="createdLabel">
-       <property name="text">
-        <string>Created:</string>
+        <string>Content Type:</string>
        </property>
       </widget>
      </item>
@@ -148,7 +114,34 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="9" column="0">
+      <widget class="QLineEdit" name="contentTypeEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="regionEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0">
+      <widget class="QLineEdit" name="modifiedEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="createdLabel">
+       <property name="text">
+        <string>Created:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
       <widget class="QLineEdit" name="createdEdit">
        <property name="enabled">
         <bool>false</bool>
@@ -158,7 +151,14 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="0" column="1">
+      <widget class="QLabel" name="md5AttributesLabel">
+       <property name="text">
+        <string>MD5 Attributes:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
       <widget class="QLineEdit" name="md5AttributesEdit">
        <property name="enabled">
         <bool>true</bool>
@@ -168,15 +168,25 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="contentTypeLabel">
+     <item row="2" column="1">
+      <widget class="QLabel" name="md5SystemAttributesLabel">
        <property name="text">
-        <string>Content Type:</string>
+        <string>MD5 System Attributes</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="0">
-      <widget class="QLineEdit" name="contentTypeEdit"/>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="md5SystemAttributesEdit"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="retriesLabel">
+       <property name="text">
+        <string>Rertries:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="retriesEdit"/>
      </item>
     </layout>
    </item>

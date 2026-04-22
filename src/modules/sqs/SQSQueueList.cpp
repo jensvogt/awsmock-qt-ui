@@ -3,6 +3,7 @@
 #include <modules/sqs/SQSQueueList.h>
 
 #include "components/ContextMenu.h"
+#include "components/Toast.h"
 
 SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(parent) {
 
@@ -164,7 +165,7 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
         _sqsService->PurgeQueue(queueUrl);
     } else if (selectedAction == sendAction) {
         if (SQSMessageAddDialog dialog(queueUrl, queueArn); dialog.exec() == QDialog::Accepted) {
-            _tableView->SetMessageLabel("Message sent, id: " + dialog.GetMessageId());
+            new Awsmock::Components::ToastOverlay("Message sent! ID: " + dialog.GetMessageId(), _tableView);
         }
     } else if (selectedAction == redriveAction) {
         _sqsService->RedriveQueue(queueArn);

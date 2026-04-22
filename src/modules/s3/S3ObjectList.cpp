@@ -31,8 +31,9 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     addButton->setIconSize(QSize(16, 16));
     addButton->setToolTip("Add a new object");
     connect(addButton, &QPushButton::clicked, [this]() {
-        S3ObjectAddDialog dialog(_bucketDetailsResponse);
-        dialog.exec();
+        if (S3ObjectAddDialog dialog(_bucketDetailsResponse.bucketName, _bucketDetailsResponse.bucketArn, _bucketDetailsResponse.defaultMetadata); dialog.exec() == QDialog::Accepted) {
+            new Awsmock::Components::ToastOverlay("Object uploaded! Bucket: " + _bucketDetailsResponse.bucketName + ", Key: " + dialog.GetS3ObjectKey(), this);
+        }
     });
 
     // Toolbar purge action

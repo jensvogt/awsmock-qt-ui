@@ -1,7 +1,5 @@
 #include <modules/sns/SNSTopicList.h>
 
-#include "modules/sns/SNSMessageAddDialog.h"
-
 SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -158,7 +156,7 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
         _snsService->PurgeTopic(topicArn);
     } else if (selectedAction == sendAction) {
         if (SNSMessageAddDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
-            _tableView->SetMessageLabel("Message sent, id: " + dialog.getMessageId());
+            new Awsmock::Components::ToastOverlay("Message sent! ID: " + dialog.GetMessageId(), _tableView);
         }
     } else if (selectedAction == deleteAction) {
         _snsService->DeleteTopic(topicArn);

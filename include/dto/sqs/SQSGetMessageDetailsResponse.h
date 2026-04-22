@@ -63,6 +63,8 @@ struct SQSGetMessageDetailsResponse {
 
     QString contentType;
 
+    int retries{};
+
     QDateTime created;
 
     QDateTime modified;
@@ -82,6 +84,7 @@ struct SQSGetMessageDetailsResponse {
         md5OfMessageAttributes = jsonObject["md5OfMessageAttributes"].toString();
         md5OfSystemAttributes = jsonObject["md5OfSystemAttributes"].toString();
         contentType = jsonObject["contentType"].toString();
+        retries = jsonObject["retries"].toInt();
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
 
