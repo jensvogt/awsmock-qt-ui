@@ -83,11 +83,12 @@ void SQSMessageAddDialog::HandleAccept() {
         _request.messageAttributes[key->text()] = messageAttribute;
     }
     _sqsService->SendMessage(_request);
+    logDebug << "Message send, bodySize: " << _request.body.size();
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
     _messageId = response.messageId;
-    logDebug << "Message send, id: " << _messageId;
+    logDebug << "Message send finished, messageId: " << _messageId;
     accept();
 }
 
@@ -113,6 +114,7 @@ void SQSMessageAddDialog::HandleBrowseButton() const {
         // Set the body
         _ui->plainTextEdit->SetText(QString::fromUtf8(jsonData));
         Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        logDebug << "Finished read file, path: " << filePath;
     }
 }
 
@@ -131,8 +133,7 @@ void SQSMessageAddDialog::HandleAddAttributeButton() const {
     form.addRow("Value:", valueEdit);
 
     // Buttons
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                               Qt::Horizontal, &dialog);
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
     form.addRow(&buttonBox);
 
     connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -143,6 +144,7 @@ void SQSMessageAddDialog::HandleAddAttributeButton() const {
         _ui->tableWidget->insertRow(row);
         SetColumn(_ui->tableWidget, row, 0, keyEdit->text());
         SetColumn(_ui->tableWidget, row, 1, valueEdit->text());
+        logDebug << "Message attribute added, attributeCount: " << _ui->tableWidget->rowCount();
     }
 }
 
@@ -160,6 +162,7 @@ void SQSMessageAddDialog::SetupRequest() {
             SetColumn(_ui->tableWidget, row, 0, key);
             SetColumn(_ui->tableWidget, row, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
             SetColumn(_ui->tableWidget, row, 2, response.defaultAttributesCounters[key].stringValue);
+            logDebug << "Finished request setup, attributeCount: " << _ui->tableWidget->rowCount();
         }
     });
 }

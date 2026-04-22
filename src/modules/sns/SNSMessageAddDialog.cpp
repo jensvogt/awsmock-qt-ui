@@ -5,8 +5,6 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_SNSMessageAddDialog.h" resolved
 
 #include <modules/sns/SNSMessageAddDialog.h>
-
-#include <utility>
 #include "ui_SNSMessageAddDialog.h"
 
 SNSMessageAddDialog::SNSMessageAddDialog(QString topicArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SNSMessageAddDialog), _topicArn(std::move(topicArn)) {
@@ -79,16 +77,17 @@ void SNSMessageAddDialog::HandleAccept() {
         messageAttribute.dataType = STRING;
 
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
-        const QTableWidgetItem *value = _ui->tableWidget->item(r, 1);
+        const QTableWidgetItem *value = _ui->tableWidget->item(r, 2);
         messageAttribute.stringValue = value->text().toUtf8();
         _request.messageAttributes[key->text()] = messageAttribute;
     }
     _snsService->SendMessage(_request);
+    logDebug << "Message send, bodySize: " << _request.body.size();
 }
 
 void SNSMessageAddDialog::HandleSendMessageSignal(const SNSSendMessageResponse &response) {
     _messageId = response.messageId;
-    logDebug << "Message send with messageId: " << _messageId;
+    logDebug << "Message send finished, messageId: " << _messageId;
     accept();
 }
 
@@ -114,6 +113,7 @@ void SNSMessageAddDialog::HandleBrowseButton() const {
         // Set the body
         _ui->bodyEditor->SetText(QString::fromUtf8(jsonData));
         Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        logDebug << "Finished read file, path: " << filePath;
     }
 }
 
@@ -147,6 +147,7 @@ void SNSMessageAddDialog::HandleAddAttributeButton() const {
         _ui->tableWidget->insertRow(row);
         SetColumn(_ui->tableWidget, row, 0, keyEdit->text());
         SetColumn(_ui->tableWidget, row, 1, valueEdit->text());
+        logDebug << "Message attribute added, attributeCount: " << _ui->tableWidget->rowCount();
     }
 }
 
@@ -164,6 +165,7 @@ void SNSMessageAddDialog::SetupRequest() {
             SetColumn(_ui->tableWidget, row, 0, key);
             SetColumn(_ui->tableWidget, row, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
             SetColumn(_ui->tableWidget, row, 2, response.defaultAttributesCounters[key].stringValue);
+            logDebug << "Finished request setup, attributeCount: " << _ui->tableWidget->rowCount();
         }
     });
 }
