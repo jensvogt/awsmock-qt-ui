@@ -69,6 +69,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     _ui->md5AttributesEdit->setText(response.md5OfMessageAttributes);
     _ui->md5SystemAttributesEdit->setText(response.md5OfSystemAttributes);
     _ui->contentTypeEdit->setText(response.contentType);
+    _ui->retriesEdit->setText(QString::number(response.retries));
     _ui->createdEdit->setText(response.created.toString());
     _ui->modifiedEdit->setText(response.modified.toString());
 

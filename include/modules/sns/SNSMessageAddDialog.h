@@ -52,10 +52,10 @@ public:
 
     void SetupRequest();
 
-    QString getMessageId() {
+    QString GetMessageId() {
         return _messageId;
     }
-    
+
     void LoadContent() override {
     }
 
