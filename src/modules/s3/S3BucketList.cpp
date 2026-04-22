@@ -27,6 +27,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
         bool ok;
         if (const QString bucketName = QInputDialog::getText(nullptr, "Bucket Name", "Bucket name:", QLineEdit::Normal, "", &ok); ok && !bucketName.isEmpty()) {
             _s3Service->AddBucket(bucketName);
+            new Awsmock::Components::ToastOverlay("Bucket created! Name: " + bucketName, _tableView);
         }
     });
 
@@ -119,6 +120,9 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
 
     QMenu *menu = new ContextMenu();
 
+    QAction *uploadAction = menu->addAction(IconUtils::GetIcon("upload"), "Upload Object");
+    uploadAction->setToolTip("Upload an object");
+
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
     editAction->setToolTip("Edit the bucket details");
 
@@ -140,6 +144,10 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
         _s3Service->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {
         _s3Service->DeleteBucket(bucketName);
+    } else if (selectedAction == uploadAction) {
+        if (S3ObjectAddDialog dialog(bucketName, bucketArn); dialog.exec() == QDialog::Accepted) {
+            new Awsmock::Components::ToastOverlay("Object uploaded! Bucket: " + bucketName + ", Key: " + dialog.GetS3ObjectKey(), _tableView);
+        }
     } else if (selectedAction == editAction) {
         S3BucketEditDialog dialog(bucketName);
         dialog.exec();

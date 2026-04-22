@@ -5,18 +5,21 @@
 #ifndef AWSMOCK_QT_UI_S3_OBJECT_ADD_DIALOG_H
 #define AWSMOCK_QT_UI_S3_OBJECT_ADD_DIALOG_H
 
+// Qt includes
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardItemModel>
 
-#include <utils/Configuration.h>
-#include <utils/IconUtils.h>
-#include <utils/BaseDialog.h>
+// Awsmock includes
+#include <components/Toast.h>
 #include <dto/s3/S3GetBucketDetailsResponse.h>
+#include <modules/s3/S3BucketMetadataDialog.h>
 #include <modules/s3/S3ObjectMetadataDialog.h>
 #include <modules/s3/S3Service.h>
-
+#include <utils/BaseDialog.h>
+#include <utils/Configuration.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -30,8 +33,19 @@ class S3ObjectAddDialog : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit S3ObjectAddDialog(const S3GetBucketDetailsResponse &bucket, QWidget *parent = nullptr);
+    /**
+     * @brief Constructor
+     *
+     * @param bucketName bucket name
+     * @param bucketArn bucket ARN
+     * @param defaultMetadata default metadata
+     * @param parent parent widget
+     */
+    explicit S3ObjectAddDialog(const QString &bucketName, const QString &bucketArn, QMap<QString, QString> defaultMetadata = {}, QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~S3ObjectAddDialog() override;
 
     void BrowseSourceFile();
@@ -67,7 +81,12 @@ private:
     /**
      * @brief S3 bucket to upload
      */
-    S3GetBucketDetailsResponse _bucket;
+    QString _bucketName;
+
+    /**
+     * @brief S3 bucket ARN
+     */
+    QString _bucketArn;
 
     /**
      *  @brief Table data model

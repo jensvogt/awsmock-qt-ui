@@ -6,9 +6,9 @@
 
 #include <modules/s3/S3ObjectAddDialog.h>
 #include "ui_S3ObjectAddDialog.h"
-#include "modules/s3/S3BucketMetadataDialog.h"
 
-S3ObjectAddDialog::S3ObjectAddDialog(const S3GetBucketDetailsResponse &bucket, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3ObjectAddDialog), _bucket(bucket) {
+S3ObjectAddDialog::S3ObjectAddDialog(const QString &bucketName, const QString &bucketArn, QMap<QString, QString> defaultMetadata, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3ObjectAddDialog),
+                                                                                                                                                     _bucketName(bucketName), _bucketArn(bucketArn), _metadata(defaultMetadata) {
     // S3 REST service
     _s3Service = new S3Service();
 
@@ -64,14 +64,11 @@ S3ObjectAddDialog::S3ObjectAddDialog(const S3GetBucketDetailsResponse &bucket, Q
 
     // Fill in metadata table
     int r = 0;
-    for (const auto &key: bucket.defaultMetadata.keys()) {
+    for (const auto &key: _metadata.keys()) {
         SetColumn(_dataModel, r, 0, key);
-        SetColumn(_dataModel, r, 1, bucket.defaultMetadata[key]);
+        SetColumn(_dataModel, r, 1, defaultMetadata[key]);
         r++;
     }
-
-    // Copy metadata
-    _metadata = _bucket.defaultMetadata;
 }
 
 S3ObjectAddDialog::~S3ObjectAddDialog() {
@@ -108,8 +105,8 @@ void S3ObjectAddDialog::HandleAccept() {
     const QByteArray binaryData = file.readAll();
     file.close();
 
-    _s3Service->UploadObject(_bucket.bucketName, _bucket.bucketArn, _ui->s3KeyEdit->text(), binaryData, _metadata);
-
+    _s3Service->UploadObject(_bucketName, _bucketArn, _ui->s3KeyEdit->text(), binaryData, _metadata);
+    _s3Key = _ui->s3KeyEdit->text();
     accept();
 }
 

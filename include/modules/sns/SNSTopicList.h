@@ -2,32 +2,34 @@
 #define AWSMOCK_QT_UI_SNS_QUEUE_LIST_H
 
 // Qt includes
-#include <QLabel>
-#include <QMenu>
-#include <QVBoxLayout>
-#include <QTableWidget>
-#include <QListWidget>
-#include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QLineEdit>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QToolBar>
-#include <QPushButton>
-#include <QInputDialog>
 #include <QFormLayout>
-#include <QTreeWidget>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QMenu>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QTableWidgetItem>
 #include <QTimer>
+#include <QToolBar>
+#include <QTreeWidget>
+#include <QVBoxLayout>
 
 // Awsmock includes
+#include <components/ContextMenu.h>
+#include <components/PageableTable.h>
+#include <components/Toast.h>
+#include <modules/sns/SNSMessageAddDialog.h>
+#include <modules/sns/SNSService.h>
+#include <modules/sns/SNSTopicDetailsDialog.h>
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/StringUtils.h>
-#include <components/ContextMenu.h>
-#include <components/PageableTable.h>
-#include <modules/sns/SNSService.h>
-#include <modules/sns/SNSTopicDetailsDialog.h>
 
 /**
  * @brief Helper widget for the content area.

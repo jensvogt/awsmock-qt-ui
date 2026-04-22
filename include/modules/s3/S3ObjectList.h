@@ -12,6 +12,7 @@
 
 #include <components/ContextMenu.h>
 #include <components/PageableTable.h>
+#include <components/Toast.h>
 #include <dto/s3/S3ListObjectResponse.h>
 #include <modules/s3/S3ObjectAddDialog.h>
 #include <modules/s3/S3ObjectEditDialog.h>

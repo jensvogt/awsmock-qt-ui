@@ -4,8 +4,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // Connect infrastructure signals
     _moduleService = new ModuleService();
-    connect(_moduleService, &ModuleService::ImportResponseSignal, this, &ImportInfrastructureResponse);
-    connect(_moduleService, &ModuleService::CleanResponseSignal, this, &CleanInfrastructureResponse);
+    connect(_moduleService, &ModuleService::ImportResponseSignal, this, &MainWindow::ImportInfrastructureResponse);
+    connect(_moduleService, &ModuleService::CleanResponseSignal, this, &MainWindow::CleanInfrastructureResponse);
 
     // Start pinging server
     StartServerPing();
@@ -238,7 +238,7 @@ void MainWindow::ImportInfrastructure() const {
 }
 
 void MainWindow::ImportInfrastructureResponse() {
-    QMessageBox::information(nullptr, "Information", "Infrastructure imported");
+    new Awsmock::Components::ToastOverlay("Infrastructure imported!", this);
 }
 
 void MainWindow::ExportInfrastructure() {
@@ -252,15 +252,12 @@ void MainWindow::ExportInfrastructure() {
 
         disconnect(_moduleService, &ModuleService::GetInfrastructureSignal, nullptr, nullptr);
         connect(_moduleService, &ModuleService::GetInfrastructureSignal, this,
-                [filePath](const QString &infrastructure) {
+                [this, filePath](const QString &infrastructure) {
                     WriteInfrastructureExport(filePath, infrastructure);
                 });
 
         _moduleService->GetInfrastructure(modules, exportType, true);
-
-        Configuration::instance().SetValue<QString>(
-            "ui.default-directory.ExportInfrastructure",
-            QFileInfo(filePath).absolutePath());
+        Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());
     });
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->open();
@@ -276,7 +273,7 @@ void MainWindow::WriteInfrastructureExport(const QString &filename, const QStrin
     // Write formatted (pretty-printed) JSON
     file.write(StringUtils::ConvertToIndentedJson(exportResponse).toUtf8());
     file.close();
-    QMessageBox::information(nullptr, "Information", "Infrastructure saved to file: " + file.fileName());
+    new Awsmock::Components::ToastOverlay("Infrastructure saved! File: " + file.fileName(), this);
 }
 
 void MainWindow::CleanInfrastructure() const {
@@ -284,7 +281,7 @@ void MainWindow::CleanInfrastructure() const {
 }
 
 void MainWindow::CleanInfrastructureResponse() {
-    QMessageBox::information(nullptr, "Information", "Infrastructure cleaned");
+    new Awsmock::Components::ToastOverlay("Infrastructure cleaned!", this);
 }
 
 void MainWindow::ShowInfrastructureDialog() {

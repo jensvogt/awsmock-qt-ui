@@ -47,7 +47,8 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         src/components/ReplaceWordDialog.ui src/components/ReplaceWidget.cpp include/components/ReplaceWidget.h
         src/components/ReplaceWidget.ui src/components/SearchField.cpp include/components/SearchField.h
         src/components/SearchField.ui include/components/ContextMenu.h include/components/SelectModules.h
-        src/components/SelectModules.cpp src/components/SelectModules.ui)
+        src/components/SelectModules.cpp src/components/SelectModules.ui
+        include/components/Toast.h)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -267,6 +268,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/lambda/LambdaListArnsResponse.h
         include/components/PlainTextEditor.h
         src/components/PlainTextEditor.cpp
+        include/components/Toast.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
