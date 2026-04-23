@@ -12,10 +12,10 @@ struct Value {
 
     QDateTime timestamp;
 
-    double value;
+    double value{};
 };
 
-typedef std::map<QString, std::vector<Value>> ValueMap;
+typedef QMap<QString, QVector<Value> > ValueMap;
 
 struct DashboardCounter {
 
@@ -23,13 +23,13 @@ struct DashboardCounter {
 
     ValueMap valueMap;
 
-    void FromJson(const QJsonObject& jsonObject) {
+    void FromJson(const QJsonObject &jsonObject) {
 
         // Message attributes
-        for(const QString &key : jsonObject.keys()) {
+        for (const QString &key: jsonObject.keys()) {
             QJsonArray valueArray = jsonObject.value(key).toArray();
-            std::vector <Value> values;
-            for (const auto &value : valueArray) {
+            QVector<Value> values;
+            for (const auto &value: valueArray) {
                 Value v;
                 v.timestamp = QDateTime::fromString(value[0].toString(), Qt::ISODate);
                 v.value = value[1].toDouble();

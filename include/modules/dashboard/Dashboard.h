@@ -23,6 +23,8 @@
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/CrossHairChartView.h>
 
+#include "components/QCustomPlot.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -41,14 +43,22 @@ public:
 
     void Initialize();
 
-    ChartConfig CreateChart(ChartConfig &chartConfig);
-
-private:
     void LoadContent() override;
 
     void ClearContent() override;
 
-    static void CounterArrived(const DashboardCounter &dashboardCounters);
+private:
+    void CounterArrived(const DashboardCounter &dashboardCounters);
+
+    void AddCrossHair(QCustomPlot *customPlot);
+
+    static QCPGraph *findNearestGraphPoint(const QCustomPlot *plot, double x, double y, double &outX, double &outY, QString &outName);
+
+    static void SetLegend(QCustomPlot *customPlot);
+
+    static void AddZoom(QCustomPlot *customPlot);
+
+    static void AddRange(QCustomPlot *customPlot);
 
     /**
      * @brief UI components
@@ -73,7 +83,12 @@ private:
     /**
      * @brief Charts configuration map
      */
-    QMap<QString, ChartConfig> _chartConfigs;
+    QVector<ChartConfig> _chartConfigs;
+
+    /**
+     * @brief Color palette
+     */
+    const static QList<QColor> _palette;
 };
 
 
