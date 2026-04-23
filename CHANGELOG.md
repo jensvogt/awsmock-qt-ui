@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.44](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.43...v1.11.44) (2026-04-23)
+
+
+### Bug Fixes
+
+* toast messages ([4ed850e](https://github.com/jensvogt/awsmock-qt-ui/commit/4ed850e8af54fe8fbcbbb4772b967944cbac736e))
+
 ## [1.11.43](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.42...v1.11.43) (2026-04-22)
 
 
