@@ -5,25 +5,29 @@
 #ifndef AWSMOCK_QT_UI_DASHBOARD_H
 #define AWSMOCK_QT_UI_DASHBOARD_H
 
-#include <QWidget>
+// C++ includes
+#include <cfloat>
+
+// Qt includes
 #include <QBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include <QtCharts/QDateTimeAxis>
-#include <QtCharts/QValueAxis>
+#include <QWidget>
 #include <QtCharts/QChartView>
+#include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QLineSeries>
+#include <QtCharts/QValueAxis>
 
-#include <utils/BasePage.h>
-#include <utils/IconUtils.h>
-#include <utils/Configuration.h>
-#include <utils/EditConfigDialog.h>
+// Awsmock includes
+#include <components/QCustomPlot.h>
 #include <modules/dashboard/ChartConfig.h>
-#include <modules/dashboard/DashboardService.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/CrossHairChartView.h>
-
-#include "components/QCustomPlot.h"
+#include <modules/dashboard/DashboardService.h>
+#include <utils/BasePage.h>
+#include <utils/Configuration.h>
+#include <utils/EditConfigDialog.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
