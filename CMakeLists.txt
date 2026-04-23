@@ -36,7 +36,7 @@ else ()
 endif ()
 
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets PrintSupport)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTPFileTree.cpp
@@ -47,8 +47,9 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         src/components/ReplaceWordDialog.ui src/components/ReplaceWidget.cpp include/components/ReplaceWidget.h
         src/components/ReplaceWidget.ui src/components/SearchField.cpp include/components/SearchField.h
         src/components/SearchField.ui include/components/ContextMenu.h include/components/SelectModules.h
-        src/components/SelectModules.cpp src/components/SelectModules.ui
-        include/components/Toast.h)
+        src/components/SelectModules.cpp src/components/SelectModules.ui include/components/Toast.h
+        include/components/QCustomPlot.h src/components/QCustomPlot.cpp include/components/PlainTextEditor.h
+        src/components/PlainTextEditor.cpp include/components/Toast.h)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -266,9 +267,6 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/modules/sqs/SQSQueueDefaultAttributeDialog.h
         src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
         include/dto/lambda/LambdaListArnsResponse.h
-        include/components/PlainTextEditor.h
-        src/components/PlainTextEditor.cpp
-        include/components/Toast.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
@@ -277,9 +275,9 @@ qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICO
 target_include_directories(awsmock-qt-ui PRIVATE ./include)
 if (WIN32)
     target_link_directories(awsmock-qt-ui PRIVATE ${CMAKE_SOURCE_DIR}/extern/lib)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport)
 else ()
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES
