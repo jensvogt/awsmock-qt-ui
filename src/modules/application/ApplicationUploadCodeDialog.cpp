@@ -76,6 +76,7 @@ void ApplicationUploadCodeDialog::HandleBrowse() {
         ui->versionEdit->setText(version);
         _fileInfo = QFileInfo(filePath);
         Configuration::instance().SetValue<QString>("ui.default-directory.ApplicationUploadCodeDialog", _fileInfo.absolutePath());
+        logInfo << "Upload file selected: " << filePath;
     }
 }
 
@@ -89,14 +90,19 @@ void ApplicationUploadCodeDialog::HandleAccept() {
     const QByteArray binaryData = file.readAll();
     file.close();
 
+    // Convert to base64
+    const QString base64File = binaryData.toBase64();
+    logInfo << "File converted to base64: " << file.fileName() << ", size: " << base64File.size();
+
     ApplicationUploadRequest request;
     request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
     request.applicationName = ui->nameEdit->text();
     request.version = ui->versionEdit->text();
-    request.applicationCode = binaryData.toBase64();
+    request.applicationCode = base64File;
     request.archive = _fileInfo.fileName();
-    request.contentLength = static_cast<long>(file.size());
+    request.contentLength = static_cast<long>(base64File.size());
     _applicationService->UploadApplication(request);
+    logInfo << "File uploaded: " << file.fileName() << ", size: " << base64File.size();
 
     accept();
 }
