@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.46](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.45...v1.11.46) (2026-04-25)
+
+
+### Bug Fixes
+
+* S3 queue notifications ([bfac79f](https://github.com/jensvogt/awsmock-qt-ui/commit/bfac79f7c50a74a8ed5c3ae806df7986c236b522))
+
 ## [1.11.45](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.44...v1.11.45) (2026-04-23)
 
 
