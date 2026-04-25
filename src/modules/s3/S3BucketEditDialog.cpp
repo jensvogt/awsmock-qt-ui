@@ -230,13 +230,32 @@ void S3BucketEditDialog::SetupQueueNotifications() {
     _ui->queueNotificationAddButton->setText(nullptr);
     _ui->queueNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->queueNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
-        /*S3ObjectMetadataDialog metadataAdd(this, true);
-        metadataAdd.exec();
-        const int row = _queueNotificationDataModel->rowCount();
-        SetColumn(_queueNotificationDataModel, row, 0, metadataAdd.GetKey());
-        SetColumn(_queueNotificationDataModel, row, 1, metadataAdd.GetValue());*/
-        this->_changed = true;
+
+        if (S3QueueNotificationDialog queueNotificationDialog(this); queueNotificationDialog.exec() == Accepted) {
+            const QString queueArn = queueNotificationDialog.GetQueueArn();
+            const QStringList s3Events = queueNotificationDialog.GetS3Event();
+            const QString id = StringUtils::GenerateRandomNumericString(12);
+
+            const int row = _queueNotificationDataModel->rowCount();
+            SetColumn(_queueNotificationDataModel, row, 0, id);
+            SetColumn(_queueNotificationDataModel, row, 1, queueArn);
+
+            S3QueueConfiguration configuration{};
+            configuration.queueArn = queueArn;
+            for (const auto &event: s3Events) {
+                configuration.events.append(S3NotificationEventFromString(event));
+            }
+            S3PutBucketNotificationConfigurationRequest request{};
+            request.bucket = _bucket;
+            request.queueConfigurations.append(configuration);
+            _s3Service->PutBucketNotificationConfiguration(request);
+            this->_changed = true;
+        }
     });
+
+    // Context menu
+    _ui->queueNotificationTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->queueNotificationTable, &QTableView::customContextMenuRequested, this, &S3BucketEditDialog::ShowQueueNotificationContextMenu);
 }
 
 void S3BucketEditDialog::SetupTopicNotifications() {
@@ -350,6 +369,39 @@ void S3BucketEditDialog::ShowLifecycleContextMenu(const QPoint &pos) {
         _changed = true;
     } else if (selectedAction == deleteAction) {
         _defaultMetadataDataModel->removeRow(index.row());
+        _changed = true;
+    }
+}
+
+void S3BucketEditDialog::ShowQueueNotificationContextMenu(const QPoint &pos) {
+
+    const QModelIndex index = _ui->queueNotificationTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    // Context menu
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Queue Notification");
+    editAction->setToolTip("Edit the bucket queue notification");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Queue Notification");
+    deleteAction->setToolTip("Delete the bucket queue notification");
+
+    // Get the metadata attributes
+    const QString id = _queueNotificationDataModel->item(index.row(), 0)->text();
+    const QString queueArn = _queueNotificationDataModel->item(index.row(), 1)->text();
+
+    // Context menu callbacks
+    if (const QAction *selectedAction = menu.exec(_ui->queueNotificationTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        // LifecycleRule lifecycleRule = _bucketGetResponse.lifecycleRules.at(index.row());
+        // S3BucketLifecycleDialog dialog(lifecycleRule, nullptr);
+        // dialog.exec();
+        // lifecycleRule = dialog.GetLifecycleRule();
+        // _lifecycleDataModel->item(index.row(), 1)->setText(lifecycleRule.status);
+        _changed = true;
+    } else if (selectedAction == deleteAction) {
+        _queueNotificationDataModel->removeRow(index.row());
         _changed = true;
     }
 }

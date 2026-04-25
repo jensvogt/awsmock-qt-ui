@@ -49,7 +49,8 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         src/components/SearchField.ui include/components/ContextMenu.h include/components/SelectModules.h
         src/components/SelectModules.cpp src/components/SelectModules.ui include/components/Toast.h
         include/components/QCustomPlot.h src/components/QCustomPlot.cpp include/components/PlainTextEditor.h
-        src/components/PlainTextEditor.cpp include/components/Toast.h)
+        src/components/PlainTextEditor.cpp include/components/Toast.h include/components/SelectLists.h
+        src/components/SelectLists.cpp src/components/SelectLists.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -79,7 +80,9 @@ set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h
         src/modules/s3/S3BucketLambdaNotificationDialog.cpp include/modules/s3/S3BucketLambdaNotificationDialog.h
         src/modules/s3/S3BucketLambdaNotificationDialog.ui include/dto/s3/S3PutBucketNotificationRequest.h
         include/dto/s3/S3TopicConfiguration.h include/dto/s3/S3QueueConfiguration.h include/dto/s3/S3FilterRule.h
-        include/dto/s3/S3NotificationEventType.h include/dto/s3/S3PutBucketNotificationConfigurationRequest.h)
+        include/dto/s3/S3NotificationEventType.h include/dto/s3/S3PutBucketNotificationConfigurationRequest.h
+        src/modules/s3/S3QueueNotificationDialog.cpp include/modules/s3/S3QueueNotificationDialog.h
+        src/modules/s3/S3QueueNotificationDialog.ui)
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
@@ -100,12 +103,25 @@ set(APPLICATION_SOURCES src/modules/application/ApplicationList.cpp include/modu
         src/modules/application/ApplicationDependencyDialog.cpp src/modules/application/ApplicationDependencyDialog.ui
         include/modules/application/ApplicationDependencyDialog.h src/modules/application/ApplicationLogsDialog.cpp
         src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h)
+set(LAMBDA_SOURCES include/modules/lambda/LambdaList.h include/modules/lambda/LambdaService.h
+        include/dto/lambda/LambdaCounter.h src/modules/lambda/LambdaList.cpp src/modules/lambda/LambdaService.cpp
+        src/modules/lambda/LambdaDetailsDialog.cpp include/modules/lambda/LambdaDetailsDialog.h
+        src/modules/lambda/LambdaDetailsDialog.ui include/dto/lambda/LambdaGetResponse.h
+        src/modules/lambda/LambdaEnvironmentDetailDialog.cpp include/modules/lambda/LambdaEnvironmentDetailDialog.h
+        src/modules/lambda/LambdaEnvironmentDetailDialog.ui src/modules/lambda/LambdaLogsDialog.cpp
+        include/modules/lambda/LambdaLogsDialog.h src/modules/lambda/LambdaLogsDialog.ui
+        include/dto/lambda/LambdaListResultsResponse.h include/dto/lambda/LambdaResultCounter.h
+        src/modules/lambda/LambdaResultListDialog.cpp include/modules/lambda/LambdaResultListDialog.h
+        src/modules/lambda/LambdaResultListDialog.ui include/dto/lambda/LambdaGetResultResponse.h)
 set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
         src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
         include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp
         src/modules/cognito/CognitoAddUserpoolDialog.cpp include/modules/cognito/CognitoAddUserpoolDialog.h
         src/modules/cognito/CognitoAddUserpoolDialog.ui include/dto/cognito/CognitoAddUserpoolRequest.h
-        include/dto/cognito/CognitoAddUserpoolResponse.h include/dto/cognito/CognitoDeleteUserpoolRequest.h)
+        include/dto/cognito/CognitoAddUserpoolResponse.h include/dto/cognito/CognitoDeleteUserpoolRequest.h
+        include/modules/lambda/LambdaUploadCodeDialog.h src/modules/lambda/LambdaUploadCodeDialog.cpp
+        src/modules/lambda/LambdaUploadCodeDialog.ui include/dto/lambda/LambdaUploadRequest.h
+        include/dto/lambda/LambdaUpdateRequest.h include/dto/lambda/LambdaListArnsResponse.h)
 set(DYNAMODB_SOURCES src/modules/dynamodb/DynamoDbExportTableDialog.cpp src/modules/dynamodb/DynamoDbExportTableDialog.ui
         include/modules/dynamodb/DynamoDbExportTableDialog.h include/modules/dynamodb/DynamoDbTableList.h
         include/modules/dynamodb/DynamoDbService.h include/dto/dynamodb/DynamoDbListTableResponse.h
@@ -140,36 +156,15 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         include/utils/ConfigAddUrlDialog.h src/utils/ConfigAddUrlDialog.ui)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
         ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
-        ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES}
+        ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES} ${LAMBDA_SOURCES}
         src/modules/docker/DockerLogClient.cpp
         include/modules/docker/DockerLogClient.h
-        include/modules/lambda/LambdaList.h
-        include/modules/lambda/LambdaService.h
-        include/dto/lambda/LambdaCounter.h
-        src/modules/lambda/LambdaList.cpp
-        src/modules/lambda/LambdaService.cpp
-        src/modules/lambda/LambdaDetailsDialog.cpp
-        include/modules/lambda/LambdaDetailsDialog.h
-        src/modules/lambda/LambdaDetailsDialog.ui
-        include/dto/lambda/LambdaGetResponse.h
         include/Version.h
         include/dto/lambda/LambdaListEnvironmentResponse.h
         cmake/version.h.in
-        src/modules/lambda/LambdaEnvironmentDetailDialog.cpp
-        include/modules/lambda/LambdaEnvironmentDetailDialog.h
-        src/modules/lambda/LambdaEnvironmentDetailDialog.ui
         src/modules/s3/S3ObjectMetadataDialog.cpp
         include/modules/s3/S3ObjectMetadataDialog.h
         src/modules/s3/S3ObjectMetadataDialog.ui
-        src/modules/lambda/LambdaLogsDialog.cpp
-        include/modules/lambda/LambdaLogsDialog.h
-        src/modules/lambda/LambdaLogsDialog.ui
-        include/dto/lambda/LambdaListResultsResponse.h
-        include/dto/lambda/LambdaResultCounter.h
-        src/modules/lambda/LambdaResultListDialog.cpp
-        include/modules/lambda/LambdaResultListDialog.h
-        src/modules/lambda/LambdaResultListDialog.ui
-        include/dto/lambda/LambdaGetResultResponse.h
         src/modules/docker/DockerStatsDialog.cpp
         src/modules/docker/DockerService.cpp
         include/modules/docker/DockerService.h
@@ -194,11 +189,6 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/s3/S3ObjectUploadRequest.h
         include/modules/secretsmanager/SecretList.h
         src/modules/secretsmanager/SecretsList.cpp
-        include/modules/lambda/LambdaUploadCodeDialog.h
-        src/modules/lambda/LambdaUploadCodeDialog.cpp
-        src/modules/lambda/LambdaUploadCodeDialog.ui
-        include/dto/lambda/LambdaUploadRequest.h
-        include/dto/lambda/LambdaUpdateRequest.h
         src/modules/sns/SNSMessageAddDialog.cpp
         src/modules/sns/SNSMessageAddDialog.ui
         include/modules/sns/SNSMessageAddDialog.h
@@ -266,7 +256,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
         include/modules/sqs/SQSQueueDefaultAttributeDialog.h
         src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
-        include/dto/lambda/LambdaListArnsResponse.h
+        include/utils/ChunkUploader.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)

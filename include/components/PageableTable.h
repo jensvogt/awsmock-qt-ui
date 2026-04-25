@@ -8,6 +8,7 @@
 // Qt includes
 #include <QHeaderView>
 #include <QStandardItemModel>
+#include <QTimer>
 
 // Awsmock includes
 #include <utils/IconUtils.h>

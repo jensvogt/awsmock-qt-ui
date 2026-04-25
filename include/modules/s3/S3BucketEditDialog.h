@@ -6,20 +6,22 @@
 #define AWSMOCK_QT_UI_S3_BUCKET_EDIT_DIALOG_H
 
 // Qt includes
-#include <QMenu>
 #include <QDialog>
-#include <QTableView>
+#include <QMenu>
 #include <QStandardItemModel>
+#include <QTableView>
+#include <QDialogButtonBox>
 
 // AwsMock includes
-#include <utils/IconUtils.h>
-#include <utils/BaseDialog.h>
-#include <utils/DateTimeUtils.h>
-#include <modules/s3/S3Service.h>
-#include <modules/s3/S3ObjectMetadataDialog.h>
+#include <modules/s3/S3BucketLambdaNotificationDialog.h>
 #include <modules/s3/S3BucketLifecycleDialog.h>
 #include <modules/s3/S3BucketMetadataDialog.h>
-#include <modules/s3/S3BucketLambdaNotificationDialog.h>
+#include <modules/s3/S3ObjectMetadataDialog.h>
+#include <modules/s3/S3QueueNotificationDialog.h>
+#include <modules/s3/S3Service.h>
+#include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,6 +54,8 @@ public:
     void SetupLifecycles();
 
     void ShowLifecycleContextMenu(const QPoint &pos);
+
+    void ShowQueueNotificationContextMenu(const QPoint &pos);
 
     void LoadContent() override {
     };

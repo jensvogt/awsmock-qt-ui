@@ -42,6 +42,36 @@ void SQSService::ListQueues(const QString &prefix, const long pageSize, const lo
                       });
 }
 
+void SQSService::ListQueueArns() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "list-queue-arns"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  QList<QString> arns;
+                                  for (const auto &arn: jsonDoc["QueueArn"].toArray()) {
+                                      arns.append(arn.toString());
+                                  }
+                                  emit ListQueueArnsSignal(arns);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          logInfo << "SQS queue list updated [" << timer.elapsed() << "]";
+                          emit EventBus::instance().TimerSignal("ListQueueArns", timer.elapsed());
+                      });
+}
+
 void SQSService::PurgeQueue(const QString &queueUrl) {
     QElapsedTimer timer;
     timer.start();

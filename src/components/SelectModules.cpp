@@ -4,7 +4,6 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_SelectModules.h" resolved
 
-#include <QGroupBox>
 #include <components/SelectModules.h>
 #include "ui_SelectModules.h"
 
