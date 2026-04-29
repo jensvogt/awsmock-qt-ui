@@ -183,6 +183,8 @@ public:
      */
     void GetSubscription(const QString &topicArn, const QString &subscriptionArn);
 
+    void DeleteTopicSubscription(const QString &topicArn, const QString &subscriptionArn);
+
     /**
      * @brief Delete SNS message
      *
@@ -226,6 +228,11 @@ signals:
      * @param listTopicSubscriptionResponse list topic subscriptions response
      */
     void ListTopicSubscriptionsSignal(const ListTopicSubscriptionsResponse &listTopicSubscriptionResponse);
+
+    /**
+     * @brief Signaled, when topic subscription add arrived.
+     */
+    void AddTopicSubscriptionSignal();
 
     /**
      * @brief Signaled when a message list is available

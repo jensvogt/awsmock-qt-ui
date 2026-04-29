@@ -92,12 +92,37 @@ private:
      */
     void SetupSubscriptionsTable();
 
+    /**
+     * @brief Updates a subscription
+     *
+     * @param response update subscription response
+     */
     void UpdateTopicSubscriptions(const ListTopicSubscriptionsResponse &response) const;
 
+    /**
+     * @brief Show subscription table context menu
+     *
+     * @param pos mouse position
+     */
+    void ShowSubscriptionContextMenu(const QPoint &pos) const;
+
+    /**
+     * @brief Setup default attributes table
+     */
     void SetupDefaultAttributesTab();
 
+    /**
+     * @brief Updates a default attribute
+     *
+     * @param response update default attribute response
+     */
     void UpdateDefaultAttributes(const SNSListQueueDefaultAttributesResponse &response) const;
 
+    /**
+     * @brief Show default attribute table context menu
+     *
+     * @param pos mouse position
+     */
     void ShowDefaultAttributeContextMenu(const QPoint &pos) const;
 
     /**

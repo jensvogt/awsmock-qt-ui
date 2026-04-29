@@ -580,8 +580,10 @@ void SNSService::AddSubscription(const QString &topicArn, const SNSTopicSubscrip
                           {"x-awsmock-action", "add-subscription-counter"},
                           {"content-type", "application/json"}
                       },
-                      [timer](const bool success, const QByteArray &, int, const QString &error) {
-                          if (!success) {
+                      [this,timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit AddTopicSubscriptionSignal();
+                          } else {
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("AddSubscription", timer.elapsed());
@@ -615,6 +617,30 @@ void SNSService::GetSubscription(const QString &topicArn, const QString &subscri
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("GetSubscription", timer.elapsed());
+                      });
+}
+
+void SNSService::DeleteTopicSubscription(const QString &topicArn, const QString &subscriptionArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["topicArn"] = topicArn;
+    jRequest["subscriptionArn"] = subscriptionArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "delete-subscription-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("AddSubscription", timer.elapsed());
                       });
 }
 
