@@ -1,5 +1,95 @@
 # Changelog
 
+## [1.11.47](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.46...v1.11.47) (2026-04-29)
+
+
+### Bug Fixes
+
+* sns subscription add ([ed82728](https://github.com/jensvogt/awsmock-qt-ui/commit/ed8272828fc2c792a6ad34221da6dd91e700b686))
+
+## [1.11.46](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.45...v1.11.46) (2026-04-25)
+
+
+### Bug Fixes
+
+* S3 queue notifications ([bfac79f](https://github.com/jensvogt/awsmock-qt-ui/commit/bfac79f7c50a74a8ed5c3ae806df7986c236b522))
+
+## [1.11.45](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.44...v1.11.45) (2026-04-23)
+
+
+### Bug Fixes
+
+* toast messages ([2b90336](https://github.com/jensvogt/awsmock-qt-ui/commit/2b9033676a9cb71c07de20620ff3d3980a1f079d))
+
+## [1.11.44](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.43...v1.11.44) (2026-04-23)
+
+
+### Bug Fixes
+
+* toast messages ([4ed850e](https://github.com/jensvogt/awsmock-qt-ui/commit/4ed850e8af54fe8fbcbbb4772b967944cbac736e))
+
+## [1.11.43](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.42...v1.11.43) (2026-04-22)
+
+
+### Bug Fixes
+
+* toast messages ([b3e8108](https://github.com/jensvogt/awsmock-qt-ui/commit/b3e810849079b0a6857c11944f5a1798178eb1e6))
+* toast messages ([847e24d](https://github.com/jensvogt/awsmock-qt-ui/commit/847e24d4a3d7e9ac747c47d2e430b58287df9c0a))
+
+## [1.11.42](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.41...v1.11.42) (2026-04-22)
+
+
+### Bug Fixes
+
+* fix SNS message size ([c373d56](https://github.com/jensvogt/awsmock-qt-ui/commit/c373d56dcd245b42c129e5f352935f5c59545c6b))
+* fix SNS sent message ([6531be6](https://github.com/jensvogt/awsmock-qt-ui/commit/6531be619f6dd16b2854fe38bfcded8efce8805e))
+
+## [1.11.41](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.40...v1.11.41) (2026-04-21)
+
+
+### Bug Fixes
+
+* fix SNS sent message ([afc10d0](https://github.com/jensvogt/awsmock-qt-ui/commit/afc10d036f5834c9cda95fc406481e53b5160632))
+
+## [1.11.40](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.39...v1.11.40) (2026-04-21)
+
+
+### Bug Fixes
+
+* fix SNS sent message ([1ebe783](https://github.com/jensvogt/awsmock-qt-ui/commit/1ebe783185e74b9851dff62a675b9a4c5380ef1a))
+
+## [1.11.39](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.38...v1.11.39) (2026-04-21)
+
+
+### Bug Fixes
+
+* fix SNS sent message ([1cd2344](https://github.com/jensvogt/awsmock-qt-ui/commit/1cd2344d3d65745a11264ab48d451c813eb0753e))
+
+## [1.11.38](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.37...v1.11.38) (2026-04-21)
+
+
+### Bug Fixes
+
+* fix SNS counter updates ([c0357d6](https://github.com/jensvogt/awsmock-qt-ui/commit/c0357d610e01e26bae91ca4dde05020687ce04ee))
+
+## [1.11.37](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.36...v1.11.37) (2026-04-20)
+
+
+### Bug Fixes
+
+* add SNS default message attributes ([ad00d31](https://github.com/jensvogt/awsmock-qt-ui/commit/ad00d314bf5b686f87bfd8242c7afb477d7b15bd))
+* add SNS default message attributes ([3de9801](https://github.com/jensvogt/awsmock-qt-ui/commit/3de98010dbe6b399446870bf57b29157055b5454))
+
+## [1.11.36](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.35...v1.11.36) (2026-04-20)
+
+
+### Bug Fixes
+
+* baseURL adding button ([5459c43](https://github.com/jensvogt/awsmock-qt-ui/commit/5459c43e63e505351adf8ded3bdd304b4258822c))
+* baseURL adding button ([7d6ff7f](https://github.com/jensvogt/awsmock-qt-ui/commit/7d6ff7f7efb9ddf797b2909a18972d91567cf026))
+* fix context menu ([aec2c56](https://github.com/jensvogt/awsmock-qt-ui/commit/aec2c56fac0d6cd45a839f3aba0e66e3af6a72c2))
+* fix context menu ([9a162a4](https://github.com/jensvogt/awsmock-qt-ui/commit/9a162a4bb29c0058d90fd80e85e269329337c8bf))
+
 ## [1.11.35](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.34...v1.11.35) (2026-04-12)
 
 

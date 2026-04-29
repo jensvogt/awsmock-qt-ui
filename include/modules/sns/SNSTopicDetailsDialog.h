@@ -1,6 +1,9 @@
 #ifndef SNS_TOPIC_DETAILS_DIALOG_H
 #define SNS_TOPIC_DETAILS_DIALOG_H
 
+// C++ includes
+#include <utility>
+
 // Qt includes
 #include <QDialog>
 
@@ -11,6 +14,8 @@
 #include <utils/DateTimeUtils.h>
 #include <utils/StringUtils.h>
 #include <modules/sns/SNSService.h>
+#include <modules/sqs/SQSService.h>
+#include <components/ContextMenu.h>
 
 namespace Ui {
     class SNSTopicDetailsDialog;
@@ -89,6 +94,12 @@ private:
 
     void UpdateTopicSubscriptions(const ListTopicSubscriptionsResponse &response) const;
 
+    void SetupDefaultAttributesTab();
+
+    void UpdateDefaultAttributes(const SNSListQueueDefaultAttributesResponse &response) const;
+
+    void ShowDefaultAttributeContextMenu(const QPoint &pos) const;
+
     /**
      * @brief UI components
      */
@@ -97,7 +108,7 @@ private:
     /**
      * @brief Topic AWS ARN
      */
-    QString topicArn;
+    QString _topicArn;
 
     /**
      * @brief SNS REST service
@@ -168,6 +179,23 @@ private:
      * @brief Sort order subscriptions
      */
     Qt::SortOrder _subscriptionsSortOrder = Qt::AscendingOrder;
+
+    /**
+     * @brief Default attributes table model
+     */
+    QStandardItemModel *_defaultAttributesModel{};
+
+    /**
+     * @brief Default attribute sort column index
+     *
+     * @par Default sort column is 'key', index=0
+     */
+    int _defaultAttributeSortColumn = 0;
+
+    /**
+     * @brief Default attribute sort order
+     */
+    Qt::SortOrder _defaultAttributeSortOrder = Qt::DescendingOrder;
 };
 
 #endif // SNS_TOPIC_DETAILS_DIALOG_H

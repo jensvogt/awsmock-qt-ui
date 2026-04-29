@@ -8,7 +8,8 @@
 
 #include <utils/JsonUtils.h>
 
-struct SQSMessageAttribute {
+struct MessageAttribute {
+
     QString name;
 
     QString stringValue;
@@ -17,13 +18,14 @@ struct SQSMessageAttribute {
 
     QString dataType;
 
-    void FromJson(const QString &name, QJsonObject jsonObject) {
-        this->name = name;
+    void FromJson(const QString &attributeName, QJsonObject jsonObject) {
+        name = attributeName;
         dataType = jsonObject["DataType"].toString();
         stringValue = jsonObject["StringValue"].toString();
         stringListValue = jsonObject["StringListValue"].toString();
     }
 
+    [[nodiscard]]
     QJsonObject ToJsonObject() const {
         QJsonObject attribute;
         attribute.insert("Name", name);
@@ -61,11 +63,13 @@ struct SQSGetMessageDetailsResponse {
 
     QString contentType;
 
+    int retries{};
+
     QDateTime created;
 
     QDateTime modified;
 
-    QList<SQSMessageAttribute> messageAttributes;
+    QList<MessageAttribute> messageAttributes;
 
     QList<SQSAttribute> attributes;
 
@@ -80,13 +84,14 @@ struct SQSGetMessageDetailsResponse {
         md5OfMessageAttributes = jsonObject["md5OfMessageAttributes"].toString();
         md5OfSystemAttributes = jsonObject["md5OfSystemAttributes"].toString();
         contentType = jsonObject["contentType"].toString();
+        retries = jsonObject["retries"].toInt();
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
 
         // Message attributes
         for (const QString &key: jsonObject["messageAttributes"].toObject().keys()) {
 
-            SQSMessageAttribute messageAttribute;
+            MessageAttribute messageAttribute;
             messageAttribute.FromJson(key, jsonObject["messageAttributes"].toObject().value(key).toObject());
             messageAttributes.append(messageAttribute);
         }

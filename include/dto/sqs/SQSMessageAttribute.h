@@ -6,7 +6,7 @@
 
 #include <dto/sqs/SQSMessageAttributeDataType.h>
 
-struct MessageAttribute final {
+struct SQSMessageAttribute final {
     /**
      * Message attribute string value
      */

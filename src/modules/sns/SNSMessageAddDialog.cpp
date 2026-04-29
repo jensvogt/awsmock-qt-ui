@@ -7,7 +7,7 @@
 #include <modules/sns/SNSMessageAddDialog.h>
 #include "ui_SNSMessageAddDialog.h"
 
-SNSMessageAddDialog::SNSMessageAddDialog(const QString &topicArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SNSMessageAddDialog), _topicArn(std::move(topicArn)) {
+SNSMessageAddDialog::SNSMessageAddDialog(QString topicArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::SNSMessageAddDialog), _topicArn(std::move(topicArn)) {
 
     // Connect service events
     _snsService = new SNSService();
@@ -34,7 +34,7 @@ SNSMessageAddDialog::SNSMessageAddDialog(const QString &topicArn, QWidget *paren
     connect(_ui->addAttributeButton, &QPushButton::clicked, this, &SNSMessageAddDialog::HandleAddAttributeButton);
 
     // Attribute table
-    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
+    const QStringList headers = QStringList() = {tr("Key"), tr("Data Type"), tr("Value")};
 
     _ui->tableWidget->setColumnCount(static_cast<int>(headers.count()));
     _ui->tableWidget->setShowGrid(true);
@@ -48,21 +48,27 @@ SNSMessageAddDialog::SNSMessageAddDialog(const QString &topicArn, QWidget *paren
 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
+
+    // Set pretty print
+    _ui->bodyEditor->SetPrettyPrint(_ui->prettyButton->isChecked());
+
+    // Setup request
+    SetupRequest();
 }
 
 SNSMessageAddDialog::~SNSMessageAddDialog() {
     delete _ui;
 }
 
-void SNSMessageAddDialog::HandleAccept() const {
-    if (_ui->bodyEdit->toPlainText().isEmpty()) {
+void SNSMessageAddDialog::HandleAccept() {
+    if (_ui->bodyEditor->GetText().isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "Body can't be empty!");
         return;
     }
 
-    SNSSendMessageRequest request;
-    request.topicArn = _topicArn;
-    request.body = _ui->bodyEdit->toPlainText().toUtf8();
+    _request.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
+    _request.topicArn = _topicArn;
+    _request.body = _ui->bodyEditor->GetText().toUtf8();
 
     const int rows = _ui->tableWidget->rowCount();
 
@@ -71,20 +77,22 @@ void SNSMessageAddDialog::HandleAccept() const {
         messageAttribute.dataType = STRING;
 
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
-        const QTableWidgetItem *value = _ui->tableWidget->item(r, 1);
+        const QTableWidgetItem *value = _ui->tableWidget->item(r, 2);
         messageAttribute.stringValue = value->text().toUtf8();
-        request.messageAttributes[key->text()] = messageAttribute;
+        _request.messageAttributes[key->text()] = messageAttribute;
     }
-    _snsService->SendMessage(request);
+    _snsService->SendMessage(_request);
+    logDebug << "Message send, bodySize: " << _request.body.size();
 }
 
 void SNSMessageAddDialog::HandleSendMessageSignal(const SNSSendMessageResponse &response) {
-    QMessageBox::information(nullptr, "Info", "Message send with messageId: " + response.messageId);
+    _messageId = response.messageId;
+    logDebug << "Message send finished, messageId: " << _messageId;
     accept();
 }
 
 void SNSMessageAddDialog::HandleReject() {
-    accept();
+    reject();
 }
 
 void SNSMessageAddDialog::HandleBrowseButton() const {
@@ -103,23 +111,14 @@ void SNSMessageAddDialog::HandleBrowseButton() const {
         file.close();
 
         // Set the body
-        _ui->bodyEdit->setText(QString::fromUtf8(jsonData));
+        _ui->bodyEditor->SetText(QString::fromUtf8(jsonData));
         Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        logDebug << "Finished read file, path: " << filePath;
     }
 }
 
 void SNSMessageAddDialog::HandlePrettyButton(const bool checked) const {
-    if (checked) {
-        const QByteArray body = _ui->bodyEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyEdit->clear();
-        _ui->bodyEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
-    } else {
-        const QByteArray body = _ui->bodyEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyEdit->clear();
-        _ui->bodyEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
-    }
+    _ui->bodyEditor->SetPrettyPrint(checked);
 }
 
 void SNSMessageAddDialog::HandleAddAttributeButton() const {
@@ -137,8 +136,7 @@ void SNSMessageAddDialog::HandleAddAttributeButton() const {
     form.addRow("Value:", valueEdit);
 
     // Buttons
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                               Qt::Horizontal, &dialog);
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
     form.addRow(&buttonBox);
 
     connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -149,5 +147,25 @@ void SNSMessageAddDialog::HandleAddAttributeButton() const {
         _ui->tableWidget->insertRow(row);
         SetColumn(_ui->tableWidget, row, 0, keyEdit->text());
         SetColumn(_ui->tableWidget, row, 1, valueEdit->text());
+        logDebug << "Message attribute added, attributeCount: " << _ui->tableWidget->rowCount();
     }
+}
+
+void SNSMessageAddDialog::SetupRequest() {
+    _snsService->ListTopicDefaultAttributes(_topicArn, "");
+    connect(_snsService, &SNSService::ListTopicDefaultAttributesSignal, this, [this](const SNSListQueueDefaultAttributesResponse &response) {
+        for (const auto &key: response.defaultAttributesCounters.keys()) {
+
+            // Add ro request
+            _request.messageAttributes[key] = response.defaultAttributesCounters[key];
+
+            // Add to message attribute list
+            const int row = _ui->tableWidget->rowCount();
+            _ui->tableWidget->insertRow(row);
+            SetColumn(_ui->tableWidget, row, 0, key);
+            SetColumn(_ui->tableWidget, row, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
+            SetColumn(_ui->tableWidget, row, 2, response.defaultAttributesCounters[key].stringValue);
+            logDebug << "Finished request setup, attributeCount: " << _ui->tableWidget->rowCount();
+        }
+    });
 }

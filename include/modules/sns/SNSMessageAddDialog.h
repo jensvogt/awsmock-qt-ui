@@ -15,11 +15,12 @@
 #include <QLineEdit>
 
 // AwsMock includes
-#include <utils/BaseDialog.h>
-#include <utils/IconUtils.h>
 #include <dto/sns/SNSSendMessageRequest.h>
 #include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 #include <modules/sns/SNSService.h>
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -33,21 +34,27 @@ class SNSMessageAddDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit SNSMessageAddDialog(const QString &topicArn, QWidget *parent = nullptr);
+    explicit SNSMessageAddDialog(QString topicArn, QWidget *parent = nullptr);
 
     ~SNSMessageAddDialog() override;
 
-    void HandleAccept() const;
-
-    void HandleSendMessageSignal(const SNSSendMessageResponse &response);
+    void HandleAccept();
 
     void HandleReject();
+
+    void HandleSendMessageSignal(const SNSSendMessageResponse &response);
 
     void HandleBrowseButton() const;
 
     void HandlePrettyButton(bool checked) const;
 
     void HandleAddAttributeButton() const;
+
+    void SetupRequest();
+
+    QString GetMessageId() {
+        return _messageId;
+    }
 
     void LoadContent() override {
     }
@@ -67,6 +74,16 @@ private:
      * @brief Queue URL
      */
     QString _topicArn;
+
+    /**
+     * @brief SNS message request
+     */
+    SNSSendMessageRequest _request;
+
+    /**
+     * @brief Message ID of the message being sent
+     */
+    QString _messageId;
 };
 
 

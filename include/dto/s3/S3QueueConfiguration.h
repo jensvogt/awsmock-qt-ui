@@ -7,12 +7,13 @@
 
 // Awsmock includes
 #include <dto/s3/S3FilterRule.h>
+#include <dto/s3/S3NotificationEventType.h>
 
 struct S3QueueConfiguration {
 
     /**
-    * ID, optional, if empty, a random ID will be generated
-    */
+     * ID, optional, if empty, a random ID will be generated
+     */
     QString id;
 
     /**

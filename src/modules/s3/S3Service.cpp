@@ -132,6 +132,24 @@ void S3Service::UpdateBucket(const QString &bucketName, QMap<QString, QString> &
                       });
 }
 
+void S3Service::ResetObjectCounters() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "ReloadAllCounters"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ResetObjectCounters", timer.elapsed());
+                      });
+}
 
 void S3Service::DeleteBucket(const QString &bucketName) {
     QElapsedTimer timer;

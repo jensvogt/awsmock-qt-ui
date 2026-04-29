@@ -16,13 +16,13 @@ struct SNSMessageCounter {
 
     QString messageStatus;
 
-    long size;
+    long size{};
 
-    QDateTime created;
+    QDateTime created{};
 
-    QDateTime modified;
+    QDateTime modified{};
 
-    QDateTime lastSend;
+    QDateTime lastSend{};
 
     void FromJson(const QJsonObject &jsonObject) {
         topicArn = jsonObject["_topicArn"].toString();

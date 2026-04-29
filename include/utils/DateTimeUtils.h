@@ -9,6 +9,7 @@
 #include <QLocale>
 #include <QString>
 
+// Awsmock includes
 #include "Configuration.h"
 
 class DateTimeUtils {
@@ -71,6 +72,12 @@ public:
             }
         }
         return "Unknown locale";
+    }
+
+    static QDateTime GetLastMidnight() {
+        QDateTime startOfDay = QDateTime::currentDateTime();
+        startOfDay.setTime(QTime(0, 0, 0));
+        return startOfDay;
     }
 };
 #endif //AWSMOCK_QT_UI_DATE_TIME_UTILS_H

@@ -126,6 +126,8 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     _ui->tableView->addAction(detailsAction);
     connect(detailsAction, &QAction::triggered, this, &PageableTable::ShowDetails);
 
+    // Reset message box
+    _ui->messageLabel->setText(nullptr);
 }
 
 PageableTable::~PageableTable() {
@@ -286,6 +288,17 @@ void PageableTable::RestoreSelection() {
         }
     }
     _savedIds.clear();
+}
+
+void PageableTable::SetMessageLabel(const QString &message) const {
+    _ui->messageLabel->setAlignment(Qt::AlignCenter);
+
+    QTimer::singleShot(3000, this, [this]() {
+        _ui->messageLabel->setText(nullptr);
+    });
+    _ui->messageLabel->show();
+    _ui->messageLabel->raise();
+    _ui->messageLabel->setText(message);
 }
 
 void PageableTable::ShowDetails() {

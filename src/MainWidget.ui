@@ -31,8 +31,8 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
-        <height>16777215</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="baseSize">
@@ -50,58 +50,6 @@
       <property name="handleWidth">
        <number>4</number>
       </property>
-      <widget class="QListView" name="navigationListView">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>-1</width>
-         <height>-1</height>
-        </size>
-       </property>
-       <property name="viewMode">
-        <enum>QListView::ViewMode::ListMode</enum>
-       </property>
-      </widget>
-      <widget class="QWidget" name="widget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_2">

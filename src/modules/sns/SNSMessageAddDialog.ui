@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="bodyTab">
       <attribute name="title">
@@ -59,7 +59,14 @@
         </layout>
        </item>
        <item>
-        <widget class="QTextEdit" name="bodyEdit"/>
+        <widget class="Awsmock::Components::PlainTextEditor" name="bodyEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -117,6 +124,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Awsmock::Components::PlainTextEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">components/PlainTextEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

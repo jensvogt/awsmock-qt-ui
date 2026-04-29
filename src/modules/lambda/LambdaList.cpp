@@ -1,5 +1,7 @@
 #include <modules/lambda/LambdaList.h>
 
+#include "components/Toast.h"
+
 LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -174,8 +176,10 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
     deleteAction->setToolTip("Delete the lambda function");
 
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
-        LambdaDetailsDialog dialog(arn);
-        dialog.exec();
+        if (LambdaDetailsDialog dialog(arn); dialog.exec() == QFileDialog::Accept) {
+            LoadContent();
+            new Awsmock::Components::ToastOverlay("Lambda updated! Name: " + name, this);
+        }
     } else if (selectedAction == logsAction) {
         auto *dialog = new LambdaResultListDialog(arn);
         dialog->setModal(false);
@@ -187,42 +191,51 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
             return;
         }
         _containerService->StartContainer(containerId);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda started! Name: " + name, this);
     } else if (selectedAction == enableAction) {
-        if (containerId.isEmpty()) {
-            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
-            return;
-        }
         _lambdaService->UpdateLambda(arn, true);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda enabled! Name: " + name, this);
     } else if (selectedAction == disableAction) {
-        if (containerId.isEmpty()) {
-            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
-            return;
-        }
         _lambdaService->UpdateLambda(arn, false);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda disabled! Name: " + name, this);
     } else if (selectedAction == stopAction) {
         if (containerId.isEmpty()) {
             QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
             return;
         }
         _containerService->StopContainer(containerId);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda stopped! Name: " + name, this);
     } else if (selectedAction == restartAction) {
         if (containerId.isEmpty()) {
             QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
             return;
         }
         _containerService->RestartContainer(containerId);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda restarted! Name: " + name, this);
     } else if (selectedAction == killAction) {
         if (containerId.isEmpty()) {
             QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
             return;
         }
         _containerService->KillContainer(containerId);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda killed! Name: " + name, this);
     } else if (selectedAction == rebuildAction) {
         _lambdaService->RebuildLambda(name, version);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda container rebuild! Name: " + name, this);
     } else if (selectedAction == uploadAction) {
-        LambdaUploadCodeDialog dialog(name, arn);
-        dialog.exec();
+        if (LambdaUploadCodeDialog dialog(name, arn); dialog.exec() == QFileDialog::Accept) {
+            new Awsmock::Components::ToastOverlay("Lambda code uploaded! Name: " + name, this);
+        }
     } else if (selectedAction == deleteAction) {
         _lambdaService->DeleteLambda(name);
+        LoadContent();
+        new Awsmock::Components::ToastOverlay("Lambda deleted! Name: " + name, this);
     }
 }

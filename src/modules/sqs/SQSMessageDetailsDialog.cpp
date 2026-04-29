@@ -38,6 +38,7 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
 
     // Set body tab
     _ui->tabWidget->setCurrentIndex(0);
+
     // Pretty print button
     _ui->prettyButton->setCheckable(true);
     _ui->prettyButton->setChecked(_ui->bodyTextWidget->GetPrettyPrint());
@@ -68,6 +69,7 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
     _ui->md5AttributesEdit->setText(response.md5OfMessageAttributes);
     _ui->md5SystemAttributesEdit->setText(response.md5OfSystemAttributes);
     _ui->contentTypeEdit->setText(response.contentType);
+    _ui->retriesEdit->setText(QString::number(response.retries));
     _ui->createdEdit->setText(response.created.toString());
     _ui->modifiedEdit->setText(response.modified.toString());
 

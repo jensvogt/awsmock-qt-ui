@@ -93,11 +93,11 @@ private:
 
     void DockerStats();
 
-    static void ImportInfrastructureResponse();
+    void ImportInfrastructureResponse();
 
-    static void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
+    void WriteInfrastructureExport(const QString &filename, const QString &exportResponse);
 
-    static void CleanInfrastructureResponse();
+    void CleanInfrastructureResponse();
 
     static void ShowInfrastructureDialog();
 

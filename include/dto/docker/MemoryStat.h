@@ -13,12 +13,12 @@ struct MemoryStat {
     /**
      * Memory usage
      */
-    long limit{};
+    qint64 limit{};
 
     /**
      * Online CPUs
      */
-    long usage{};
+    qint64 usage{};
 
     void FromJson(const QJsonObject &jsonObject) {
 

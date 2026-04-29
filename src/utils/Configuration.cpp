@@ -1,7 +1,6 @@
 
 #include <utils/Configuration.h>
-
-#include "utils/Logging.h"
+#include <utils/Logging.h>
 
 void Configuration::SetFilePath(const QString &filePath) {
     _filePath = filePath;

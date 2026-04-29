@@ -32,6 +32,10 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidge
 
     // Setup status bar
     SetupStatusbar();
+
+    // Set splitter position
+    _ui->horizontalSplitter->setStretchFactor(0, 0); // left — don't stretch
+    _ui->horizontalSplitter->setStretchFactor(1, 4); // right — take all space
 }
 
 MainWidget::~MainWidget() {
@@ -44,12 +48,13 @@ MainWidget::~MainWidget() {
 
 void MainWidget::SetupNavPane() {
     // Create the Navigation Pane (QListWidget)
-    _ui->navigationListView->setGridSize(QSize(0, 20));
+    _navList = new QListView(this);
+    _navList->setGridSize(QSize(0, 20));
 
     // Data model
-    _navDataModel = new QStandardItemModel(_ui->navigationListView);
-    _ui->navigationListView->setModel(_navDataModel);
-    _ui->navigationListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _navDataModel = new QStandardItemModel(_navList);
+    _navList->setModel(_navDataModel);
+    _navList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _navDataModel->appendRow(new QStandardItem("Dashboard"));
     _navDataModel->appendRow(new QStandardItem("SQS"));
     _navDataModel->appendRow(new QStandardItem("SNS"));
@@ -63,11 +68,12 @@ void MainWidget::SetupNavPane() {
     _navDataModel->appendRow(new QStandardItem("KMS"));
 
     // Set current index
-    _ui->navigationListView->setCurrentIndex(_ui->navigationListView->model()->index(0, 0));
-    connect(_ui->navigationListView, &QListView::clicked, [this](const QModelIndex &index) {
+    _navList->setCurrentIndex(_navList->model()->index(0, 0));
+    connect(_navList, &QListView::clicked, [this](const QModelIndex &index) {
         const QString name = _navDataModel->item(index.row())->text();
         MainRouter::instance().SetRoute(name);
     });
+    _ui->horizontalSplitter->addWidget(_navList);
 }
 
 void MainWidget::SetupContentPane() {

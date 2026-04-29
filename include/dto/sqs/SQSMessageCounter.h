@@ -27,9 +27,9 @@ struct SQSMessageCounter {
 
     long retries{};
 
-    QDateTime created;
+    QDateTime created{};
 
-    QDateTime modified;
+    QDateTime modified{};
 
     void FromJson(const QJsonObject &jsonObject) {
         region = jsonObject["region"].toString();

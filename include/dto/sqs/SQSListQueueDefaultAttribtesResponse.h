@@ -12,12 +12,12 @@
 struct SQSListQueueDefaultAttributesResponse {
     long total{};
 
-    QMap<QString, MessageAttribute> defaultAttributesCounters;
+    QMap<QString, SQSMessageAttribute> defaultAttributesCounters;
 
     void FromJson(const QJsonDocument &jsonDoc) {
 
         for (QJsonObject jObject = jsonDoc["attributeCounters"].toObject(); const auto &key: jObject.keys()) {
-            MessageAttribute defaultAttribute;
+            SQSMessageAttribute defaultAttribute;
             defaultAttribute.FromJson(jObject[key].toObject());
             defaultAttributesCounters[key] = defaultAttribute;
         }

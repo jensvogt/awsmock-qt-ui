@@ -119,7 +119,7 @@ public:
             BasePage *basePage = _routes[pageName];
             basePage->SetArguments(arguments);
             basePage->ClearContent();
-            basePage->LoadContent();
+            //basePage->LoadContent();
 
             // Set content
             _contentPane->addWidget(basePage);

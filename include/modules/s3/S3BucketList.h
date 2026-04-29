@@ -1,6 +1,7 @@
 #ifndef AWSMOCK_QT_UI_S3_BUCKET_LIST_H
 #define AWSMOCK_QT_UI_S3_BUCKET_LIST_H
 
+// Qt includes
 #include <QFormLayout>
 #include <QHeaderView>
 #include <QInputDialog>
@@ -19,14 +20,16 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
+// Awsmock includes
 #include <components/ContextMenu.h>
 #include <components/PageableTable.h>
+#include <components/Toast.h>
 #include <dto/s3/S3ListBucketResult.h>
 #include <modules/s3/S3BucketEditDialog.h>
+#include <modules/s3/S3ObjectAddDialog.h>
 #include <modules/s3/S3Service.h>
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
-
 
 class S3BucketList final : public BasePage {
     Q_OBJECT

@@ -137,6 +137,9 @@ private:
      */
     Qt::SortOrder _tagsSortOrder = Qt::DescendingOrder;
 
+    /**
+     * @brief Default attributes table model
+     */
     QStandardItemModel *_defaultAttributesModel{};
 };
 

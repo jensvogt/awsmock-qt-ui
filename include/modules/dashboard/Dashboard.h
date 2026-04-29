@@ -5,23 +5,29 @@
 #ifndef AWSMOCK_QT_UI_DASHBOARD_H
 #define AWSMOCK_QT_UI_DASHBOARD_H
 
-#include <QWidget>
+// C++ includes
+#include <cfloat>
+
+// Qt includes
 #include <QBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include <QtCharts/QDateTimeAxis>
-#include <QtCharts/QValueAxis>
+#include <QWidget>
 #include <QtCharts/QChartView>
+#include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QLineSeries>
+#include <QtCharts/QValueAxis>
 
-#include <utils/BasePage.h>
-#include <utils/IconUtils.h>
-#include <utils/Configuration.h>
-#include <utils/EditConfigDialog.h>
+// Awsmock includes
+#include <components/QCustomPlot.h>
 #include <modules/dashboard/ChartConfig.h>
-#include <modules/dashboard/DashboardService.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/CrossHairChartView.h>
+#include <modules/dashboard/DashboardService.h>
+#include <utils/BasePage.h>
+#include <utils/Configuration.h>
+#include <utils/EditConfigDialog.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -41,14 +47,22 @@ public:
 
     void Initialize();
 
-    ChartConfig CreateChart(ChartConfig &chartConfig);
-
-private:
     void LoadContent() override;
 
     void ClearContent() override;
 
-    static void CounterArrived(const DashboardCounter &dashboardCounters);
+private:
+    void CounterArrived(const DashboardCounter &dashboardCounters);
+
+    void AddCrossHair(QCustomPlot *customPlot);
+
+    static QCPGraph *findNearestGraphPoint(const QCustomPlot *plot, double x, double y, double &outX, double &outY, QString &outName);
+
+    static void SetLegend(QCustomPlot *customPlot);
+
+    static void AddZoom(QCustomPlot *customPlot);
+
+    static void AddRange(QCustomPlot *customPlot);
 
     /**
      * @brief UI components
@@ -73,7 +87,12 @@ private:
     /**
      * @brief Charts configuration map
      */
-    QMap<QString, ChartConfig> _chartConfigs;
+    QVector<ChartConfig> _chartConfigs;
+
+    /**
+     * @brief Color palette
+     */
+    const static QList<QColor> _palette;
 };
 
 

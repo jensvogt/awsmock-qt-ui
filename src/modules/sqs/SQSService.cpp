@@ -37,7 +37,38 @@ void SQSService::ListQueues(const QString &prefix, const long pageSize, const lo
                           } else {
                               logError << error;
                           }
+                          logInfo << "SQS queue list updated [" << timer.elapsed() << "]";
                           emit EventBus::instance().TimerSignal("ListQueues", timer.elapsed());
+                      });
+}
+
+void SQSService::ListQueueArns() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "list-queue-arns"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  QList<QString> arns;
+                                  for (const auto &arn: jsonDoc["QueueArn"].toArray()) {
+                                      arns.append(arn.toString());
+                                  }
+                                  emit ListQueueArnsSignal(arns);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          logInfo << "SQS queue list updated [" << timer.elapsed() << "]";
+                          emit EventBus::instance().TimerSignal("ListQueueArns", timer.elapsed());
                       });
 }
 
@@ -257,7 +288,7 @@ void SQSService::ListQueueDefaultAttributes(const QString &queueArn, const QStri
                       });
 }
 
-void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const SQSMessageAttribute &attribute) {
+void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const MessageAttribute &attribute) {
     QElapsedTimer timer;
     timer.start();
 
@@ -280,7 +311,7 @@ void SQSService::AddQueueDefaultAttributes(const QString &queueArn, const QStrin
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("AddQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -308,7 +339,7 @@ void SQSService::UpdateQueueDefaultAttributes(const QString &queueArn, const QSt
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UpdateQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -328,13 +359,13 @@ void SQSService::DeleteQueueDefaultAttributes(const QString &queueArn, const QSt
                           {"x-awsmock-action", "delete-default-message-attribute-counter"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadQueueDefaultAttributesSignal();
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("ListQueueDefaultAttributes", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteQueueDefaultAttributes", timer.elapsed());
                       });
 }
 
@@ -433,7 +464,7 @@ void SQSService::ResetMessageCounters() {
                           if (!success) {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetQueueDetails", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ResetMessageCounters", timer.elapsed());
                       });
 }
 

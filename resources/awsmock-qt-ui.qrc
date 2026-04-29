@@ -129,4 +129,7 @@
     <qresource prefix="/styles">
         <file>styles/dark.qss</file>
     </qresource>
+    <qresource prefix="/help">
+        <file>docs/application/Dockerfile.md</file>
+    </qresource>
 </RCC>

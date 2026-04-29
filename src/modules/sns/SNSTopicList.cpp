@@ -38,6 +38,14 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
         _snsService->PurgeAllTopics();
     });
 
+    // Toolbar reset counter action
+    auto *resetCounterButton = new QPushButton(IconUtils::GetIcon("reset-counter"), "", this);
+    resetCounterButton->setToolTip("Refresh the queue message counters");
+    connect(resetCounterButton, &QPushButton::clicked, [this]() {
+        _snsService->ResetMessageCounters();
+        LoadContent();
+    });
+
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
@@ -50,6 +58,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(resetCounterButton);
     toolBar->addWidget(refreshButton);
 
     // Table
@@ -125,23 +134,30 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
 
     QMenu *menu = new ContextMenu(this);
 
+    QAction *sendAction = menu->addAction(IconUtils::GetIcon("send"), "Send a Message");
+    sendAction->setToolTip("Send a message to the topic.");
+
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Topic");
-    editAction->setToolTip("Edit the topic details");
+    editAction->setToolTip("Edit the topic details.");
 
     menu->addSeparator();
 
     QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Topic");
-    purgeAction->setToolTip("Purge the topic");
+    purgeAction->setToolTip("Purge the topic.");
     purgeAction->setEnabled(total > 0);
 
     menu->addSeparator();
 
     QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Topic");
-    deleteAction->setToolTip("Delete the topic");
+    deleteAction->setToolTip("Delete the topic.");
 
     const auto topicArn = _tableView->GetValue<QString>(index, 7);
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _snsService->PurgeTopic(topicArn);
+    } else if (selectedAction == sendAction) {
+        if (SNSMessageAddDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
+            new Awsmock::Components::ToastOverlay("Message sent! ID: " + dialog.GetMessageId(), _tableView);
+        }
     } else if (selectedAction == deleteAction) {
         _snsService->DeleteTopic(topicArn);
     } else if (selectedAction == editAction) {

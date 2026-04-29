@@ -173,7 +173,7 @@ void SQSQueueDetailsDialog::SetupDefaultAttributesTab() {
     connect(_ui->addDefaultAttributeButton, &QPushButton::clicked, [this]() {
         if (SQSQueueDefaultAttributeDialog dialog; dialog.exec() == Accepted) {
             const QString key = dialog.GetKey();
-            SQSMessageAttribute attribute;
+            MessageAttribute attribute;
             attribute.name = key;
             attribute.dataType = "String";
             attribute.stringValue = dialog.GetValue();
@@ -222,7 +222,7 @@ void SQSQueueDetailsDialog::UpdateDefaultAttributes(const SQSListQueueDefaultAtt
     _ui->defaultAttributeTable->setSortingEnabled(false); // stop sorting
     int r = 0;
     for (const auto &key: response.defaultAttributesCounters.keys()) {
-        MessageAttribute defaultAttribute = response.defaultAttributesCounters[key];
+        SQSMessageAttribute defaultAttribute = response.defaultAttributesCounters[key];
         SetColumn(_defaultAttributesModel, r, 0, key);
         SetColumn(_defaultAttributesModel, r, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
         SetColumn(_defaultAttributesModel, r, 2, response.defaultAttributesCounters[key].stringValue);

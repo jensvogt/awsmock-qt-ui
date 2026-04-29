@@ -1,34 +1,25 @@
-#ifndef SNS_SERVICE_H
-#define SNS_SERVICE_H
+#ifndef AWSMOCK_QT_UI_SNS_SERVICE_H
+#define AWSMOCK_QT_UI_SNS_SERVICE_H
 
 // Qt includes
-
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QMessageBox>
-#include <QObject>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
-#include <QElapsedTimer>
-#include <QUrlQuery>
 
-// AwsMOck include
-#include <utils/Logging.h>
-#include <utils/Configuration.h>
-#include <utils/RestManager.h>
-#include <utils/EventBus.h>
-#include <utils/BaseService.h>
+// Awsmock include
 #include <dto/sns/SNSGetMessageDetailsResponse.h>
 #include <dto/sns/SNSGetTopicDetailsResponse.h>
 #include <dto/sns/SNSListMessagesResult.h>
-#include <dto/sns/SNSListTopicResult.h>
-#include <dto/sns/SNSSendMessageResponse.h>
-#include <dto/sns/SNSSendMessageRequest.h>
+#include <dto/sns/SNSListQueueDefaultAttribtesResponse.h>
 #include <dto/sns/SNSListTopicAttributesResponse.h>
-#include <dto/sns/SNSListTopicTagsResponse.h>
+#include <dto/sns/SNSListTopicResult.h>
 #include <dto/sns/SNSListTopicSubscriptionsResponse.h>
+#include <dto/sns/SNSListTopicTagsResponse.h>
+#include <dto/sns/SNSSendMessageRequest.h>
+#include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sqs/SQSGetMessageDetailsResponse.h>
+#include <utils/BaseService.h>
+#include <utils/RestManager.h>
+
+#include "dto/sns/SNSSubscriptionResponse.h"
 
 class SNSService : public BaseService {
     Q_OBJECT
@@ -104,10 +95,6 @@ public:
      * @param pageIndex
      * @param sortAttribute
      * @param sortDirection
-     * @param pageSize
-     * @param pageIndex
-     * @param sortAttribute
-     * @param sortDirection
      */
     void ListMessages(const QString &topicArn, const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
@@ -124,6 +111,46 @@ public:
      * @param topicArn topic ARN
      */
     void GetTopicDetails(const QString &topicArn);
+
+    /**
+     * @brief Reset the message counter
+     */
+    void ResetMessageCounters();
+
+    /**
+     * @brief Get the default topic message attributes.
+     *
+     * @param topicArn AWS topic ARN
+     * @param prefix name prefix
+     */
+    void ListTopicDefaultAttributes(const QString &topicArn, const QString &prefix);
+
+    /**
+     * @brief Add a default message attribute
+     *
+     * @param topicArn topic ARN
+     * @param key key
+     * @param attribute message attribute
+     */
+    void AddTopicDefaultAttributes(const QString &topicArn, const QString &key, const MessageAttribute &attribute);
+
+    /**
+     * @brief Update a default message attribute
+     *
+     * @param topicArn topic ARN
+     * @param key key
+     * @param value attribute value
+     * @param dataType data type
+     */
+    void UpdateTopicDefaultAttributes(const QString &topicArn, const QString &key, const QString &value, const QString &dataType);
+
+    /**
+     * @brief Delete a default message attribute
+     *
+     * @param topicArn topic ARN
+     * @param key key
+     */
+    void DeleteTopicDefaultAttributes(const QString &topicArn, const QString &key);
 
     /**
      * @brief Get message details response
@@ -145,6 +172,16 @@ public:
      * @param request send message request
      */
     void SendMessage(const SNSSendMessageRequest &request);
+
+    void AddSubscription(const QString &topicArn, const SNSTopicSubscription &topicSubscription);
+
+    /**
+     * @brief Returns the subscription details
+     *
+     * @param topicArn topic ARN
+     * @param subscriptionArn subscription id
+     */
+    void GetSubscription(const QString &topicArn, const QString &subscriptionArn);
 
     /**
      * @brief Delete SNS message
@@ -190,13 +227,50 @@ signals:
      */
     void ListTopicSubscriptionsSignal(const ListTopicSubscriptionsResponse &listTopicSubscriptionResponse);
 
+    /**
+     * @brief Signaled when a message list is available
+     *
+     * @param listMessagesResult list message response
+     */
     void ListMessagesSignal(const SNSListMessagesResult &listMessagesResult);
 
+    /**
+     * @brief Signaled when a message details arrived
+     *
+     * @param response message details response
+     */
     void GetMessageDetailsSignal(const SNSGetMessageDetailsResponse &response);
 
+    /**
+     * @brief Signaled when the message list should be reloaded
+     */
     void ReloadMessagesSignal();
 
+    /**
+     * @brief Signaled when a message is sent
+     *
+     * @param response send message response
+     */
     void SendMessagesSignal(const SNSSendMessageResponse &response);
+
+    /**
+     * @brief Signaled when a subscription arrived
+     *
+     * @param response subscription response
+     */
+    void GetSubscriptionSignal(const SNSSubscriptionResponse &response);
+
+    /**
+     * @brief Signaled when new default attributes arrived
+     *
+     * @param listQueueDefaultAttributesResponse default attribute list response
+     */
+    void ListTopicDefaultAttributesSignal(const SNSListQueueDefaultAttributesResponse &listQueueDefaultAttributesResponse);
+
+    /**
+     * @brief Signaled when new default attributes should be reloaded
+     */
+    void ReloadTopicDefaultAttributesSignal();
 
 private:
     /**
@@ -211,4 +285,4 @@ private:
 };
 
 
-#endif // SNS_SERVICE_H
+#endif // AWSMOCK_QT_UI_SNS_SERVICE_H

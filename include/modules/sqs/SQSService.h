@@ -48,6 +48,11 @@ public:
     void ListQueues(const QString &prefix, long pageSize, long pageIndex, const QString &sortColumn, int sortDirection);
 
     /**
+     * @brief List SQS Queues ARNs
+     */
+    void ListQueueArns();
+
+    /**
      * @brief Purge Queue
      *
      * @param queueUrl Queue URL
@@ -80,6 +85,9 @@ public:
      */
     void GetQueueDetails(const QString &queueArn);
 
+    /**
+     * @brief Rest all message counters
+     */
     void ResetMessageCounters();
 
     /**
@@ -119,7 +127,7 @@ public:
      * @param key attribute key
      * @param attribute
      */
-    void AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const SQSMessageAttribute &attribute);
+    void AddQueueDefaultAttributes(const QString &queueArn, const QString &key, const MessageAttribute &attribute);
 
     void UpdateQueueDefaultAttributes(const QString &queueArn, const QString &key, const QString &value, const QString &dataType);
 
@@ -177,6 +185,12 @@ public:
      */
     void ResendMessage(const QString &queueArn, const QString &messageId);
 
+    /**
+     * @brief Redrive message
+     *
+     * @param queueArn queue ARN
+     * @param messageId message ID
+     */
     void RedriveMessage(const QString &queueArn, const QString &messageId);
 
     /**
@@ -194,6 +208,13 @@ signals:
      * @param listQueueResponse list queue response
      */
     void ListQueuesSignal(const SQSQueueListResponse &listQueueResponse);
+
+    /**
+     * @brief Signal is send, when a list of queue ARNs arrived.
+     *
+     * @param arns string list queue ARNs
+     */
+    void ListQueueArnsSignal(const QList<QString> &arns);
 
     /**
      * @brief Signal is send, when a queue details message arrived.

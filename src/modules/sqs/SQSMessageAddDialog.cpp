@@ -37,7 +37,7 @@ SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString 
     connect(_ui->addAttributeButton, &QPushButton::clicked, this, &SQSMessageAddDialog::HandleAddAttributeButton);
 
     // Attribute table
-    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
+    const QStringList headers = QStringList() = {tr("Key"), tr("Data Type"), tr("Value")};
 
     _ui->tableWidget->setColumnCount(static_cast<int>(headers.count()));
     _ui->tableWidget->setShowGrid(true);
@@ -52,6 +52,7 @@ SQSMessageAddDialog::SQSMessageAddDialog(const QString &queueUrl, const QString 
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 
+    // Setup request
     SetupRequest();
 }
 
@@ -73,7 +74,7 @@ void SQSMessageAddDialog::HandleAccept() {
     const int rows = _ui->tableWidget->rowCount();
 
     for (int r = 0; r < rows; ++r) {
-        MessageAttribute messageAttribute;
+        SQSMessageAttribute messageAttribute;
         messageAttribute.dataType = STRING;
 
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
@@ -82,15 +83,17 @@ void SQSMessageAddDialog::HandleAccept() {
         _request.messageAttributes[key->text()] = messageAttribute;
     }
     _sqsService->SendMessage(_request);
+    logDebug << "Message send, bodySize: " << _request.body.size();
 }
 
 void SQSMessageAddDialog::HandleSendMessageSignal(const SQSSendMessageResponse &response) {
-    QMessageBox::information(nullptr, "Info", "Message send to queue: '" + AwsUtils::ArnToName(_queueArn) + "' with messageId: '" + response.messageId + "'");
+    _messageId = response.messageId;
+    logDebug << "Message send finished, messageId: " << _messageId;
     accept();
 }
 
 void SQSMessageAddDialog::HandleReject() {
-    accept();
+    reject();
 }
 
 void SQSMessageAddDialog::HandleBrowseButton() const {
@@ -111,6 +114,7 @@ void SQSMessageAddDialog::HandleBrowseButton() const {
         // Set the body
         _ui->plainTextEdit->SetText(QString::fromUtf8(jsonData));
         Configuration::instance().SetValue<QString>("ui.default-directory", QFileInfo(filePath).absolutePath());
+        logDebug << "Finished read file, path: " << filePath;
     }
 }
 
@@ -129,8 +133,7 @@ void SQSMessageAddDialog::HandleAddAttributeButton() const {
     form.addRow("Value:", valueEdit);
 
     // Buttons
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                               Qt::Horizontal, &dialog);
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
     form.addRow(&buttonBox);
 
     connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -141,6 +144,7 @@ void SQSMessageAddDialog::HandleAddAttributeButton() const {
         _ui->tableWidget->insertRow(row);
         SetColumn(_ui->tableWidget, row, 0, keyEdit->text());
         SetColumn(_ui->tableWidget, row, 1, valueEdit->text());
+        logDebug << "Message attribute added, attributeCount: " << _ui->tableWidget->rowCount();
     }
 }
 
@@ -156,7 +160,9 @@ void SQSMessageAddDialog::SetupRequest() {
             const int row = _ui->tableWidget->rowCount();
             _ui->tableWidget->insertRow(row);
             SetColumn(_ui->tableWidget, row, 0, key);
-            SetColumn(_ui->tableWidget, row, 1, response.defaultAttributesCounters[key].stringValue);
+            SetColumn(_ui->tableWidget, row, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
+            SetColumn(_ui->tableWidget, row, 2, response.defaultAttributesCounters[key].stringValue);
+            logDebug << "Finished request setup, attributeCount: " << _ui->tableWidget->rowCount();
         }
     });
 }

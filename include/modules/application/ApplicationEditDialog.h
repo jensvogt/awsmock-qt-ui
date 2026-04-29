@@ -47,6 +47,8 @@ private slots:
 private:
     void UpdateApplication(const ApplicationGetResponse &applicationGetResponse);
 
+    void SetupDockerfileTab();
+
     void SetupEnvironmentTab();
 
     void SetupTagsTab();

@@ -124,54 +124,63 @@ public:
     // Split path like "a.b[2].c" into elements
     static QStringList splitPath(const QString &path) {
         QStringList parts;
-        const QRegularExpression re(R"(\.?([^\.\[\]]+)(\[\d+\])?)");
+        static const QRegularExpression re(R"(\.?([a-zA-Z0-9_-]+)(\[\d*\])?)"); // \d* allows empty []
+
         QRegularExpressionMatchIterator i = re.globalMatch(path);
         while (i.hasNext()) {
-            QRegularExpressionMatch match = i.next();
+            const QRegularExpressionMatch match = i.next();
             QString part = match.captured(1);
-            if (QString index = match.captured(2); !index.isEmpty()) part += index;
+            if (const QString index = match.captured(2); !index.isEmpty())
+                part += index;
             parts.append(part);
         }
         return parts;
     }
 
     // Recursive helper
-    static void setByPath(QJsonObject &obj, const QStringList &pathParts, const QJsonValue &value) {
-        if (pathParts.isEmpty()) return;
+    static void setByPath(QJsonObject &obj, const QStringList &pathParts, const QJsonValue &value, const int depth = 0) {
+        if (depth >= pathParts.size()) return;
 
-        const QString &key = pathParts.first();
-        const QStringList remaining = pathParts.mid(1);
+        static const QRegularExpression re(R"(^([a-zA-Z0-9_-]+)\[(\d*)\]$)"); // \d* allows empty for append
 
-        // Match array index e.g. "b[2]"
-        const QRegularExpression re(R"(^([a-zA-Z0-9_]+)\[(\d+)\]$)");
+        const QString &key = pathParts[depth];
+        const bool isFinal = (depth == pathParts.size() - 1);
 
         if (const QRegularExpressionMatch match = re.match(key); match.hasMatch()) {
             const QString arrayKey = match.captured(1);
-            const int idx = match.captured(2).toInt();
+            const QString idxStr = match.captured(2);
 
-            QJsonArray arr = obj[arrayKey].toArray(); // copy
+            QJsonArray arr = obj[arrayKey].toArray();
 
-            // grow array if needed
+            // Empty brackets = append, otherwise use given index
+            const bool isAppend = idxStr.isEmpty();
+            const int idx = isAppend ? static_cast<int>(arr.size()) : idxStr.toInt();
+
+            // Sanity check
+            if (idx < 0 || idx > 10000) return;
+
+            // Grow array if needed
             while (arr.size() <= idx)
                 arr.append(QJsonValue());
 
-            if (remaining.isEmpty()) {
-                arr[idx] = value; // final assignment
+            if (isFinal) {
+                arr[idx] = value;
             } else {
-                QJsonObject nextObj = arr[idx].toObject(); // copy
-                setByPath(nextObj, remaining, value);
-                arr[idx] = nextObj; // assign modified object back
+                QJsonObject nextObj = arr[idx].toObject();
+                setByPath(nextObj, pathParts, value, depth + 1);
+                arr[idx] = nextObj;
             }
 
-            obj[arrayKey] = arr; // assign modified array back
+            obj[arrayKey] = arr;
+
         } else {
-            // plain object key
-            if (remaining.isEmpty()) {
-                obj[key] = value; // final assignment
+            // Plain object key
+            if (isFinal) {
+                obj[key] = value;
             } else {
-                QJsonObject child = obj[key].toObject(); // copy
-                setByPath(child, remaining, value);
-                obj[key] = child; // assign modified object back
+                QJsonObject child = obj[key].toObject();
+                setByPath(child, pathParts, value, depth + 1);
+                obj[key] = child;
             }
         }
     }

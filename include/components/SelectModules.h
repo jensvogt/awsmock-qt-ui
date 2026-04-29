@@ -7,12 +7,13 @@
 
 // QT includes
 #include <QButtonGroup>
-#include <QWidget>
+#include <QGroupBox>
 #include <QStandardItemModel>
+#include <QWidget>
 
 // Awsmock includes
-#include <utils/IconUtils.h>
 #include <modules/module/ModuleService.h>
+#include <utils/IconUtils.h>
 
 //namespace Awsmock::Components {
 
@@ -43,7 +44,7 @@ public:
 
 signals:
     /**
-     * @brief Signalled when the module selection changed
+     * @brief Signaled when the module selection changed
      *
      * @param modules module list
      * @param exportType export type
@@ -52,14 +53,14 @@ signals:
     void ModulesSelectSignal(const QStringList &modules, const ExportType &exportType, bool prettyPrint);
 
     /**
-     * @brief Signalled when the pretty print changed
+     * @brief Signaled when the pretty print changed
      *
      * @param prettyPrint pretty print state
      */
     void PrettyPrintChangedSignal(bool prettyPrint);
 
     /**
-     * @brief Signalled when the export type changed
+     * @brief Signaled when the export type changed
      *
      * @param exportType export type
      */
