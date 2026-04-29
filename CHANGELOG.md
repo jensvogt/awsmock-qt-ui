@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.48](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.47...v1.11.48) (2026-04-29)
+
+
+### Bug Fixes
+
+* content type for SQS/SNS messages ([14db1fe](https://github.com/jensvogt/awsmock-qt-ui/commit/14db1fe548ed4b083c700425c855eb09dd65ada1))
+* content type for SQS/SNS messages ([2c8d834](https://github.com/jensvogt/awsmock-qt-ui/commit/2c8d834d4f21161957f94beda6f4b00313fb3608))
+* SNS subscriptions add/delete ([93a31ba](https://github.com/jensvogt/awsmock-qt-ui/commit/93a31bab976045e906ae5e0bd7d934bbf2bb8237))
+
 ## [1.11.47](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.46...v1.11.47) (2026-04-29)
 
 
