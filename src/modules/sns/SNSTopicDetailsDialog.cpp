@@ -199,6 +199,9 @@ void SNSTopicDetailsDialog::SetupSubscriptionsTable() {
 
     // Context menu
     _ui->subscriptionTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->subscriptionTable, &QTableWidget::customContextMenuRequested, this, &SNSTopicDetailsDialog::ShowSubscriptionContextMenu);
+
+    // Doubleclick on selected row
     connect(_ui->subscriptionTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
         const QString subscriptionArn = _subscriptionsDataModel->item(index.row(), 4)->text();
         if (SNSSubscriptionDialog snsSubscriptionDialog(_topicArn, subscriptionArn); snsSubscriptionDialog.exec() == Accepted) {
@@ -338,5 +341,37 @@ void SNSTopicDetailsDialog::ShowDefaultAttributeContextMenu(const QPoint &pos) c
         const QString key = _defaultAttributesModel->item(row, 0)->text();
         _snsService->DeleteTopicDefaultAttributes(_topicArn, key);
         _defaultAttributesModel->removeRow(row);
+    }
+}
+
+void SNSTopicDetailsDialog::ShowSubscriptionContextMenu(const QPoint &pos) const {
+
+    const QModelIndex index = _ui->subscriptionTable->indexAt(pos);
+    QModelIndex sourceIndex = _subscriptionsProxyModel->mapToSource(index);
+    if (!sourceIndex.isValid()) {
+        return;
+    }
+
+    const int row = sourceIndex.row();
+    QMenu menu;
+    menu.setToolTipsVisible(true);
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Subscription");
+    editAction->setToolTip("Edit the subscription");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Subscription");
+    deleteAction->setToolTip("Delete the subscription");
+
+    if (const QAction *selectedAction = menu.exec(_ui->subscriptionTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        const QString _subscriptionArn = _subscriptionsDataModel->item(row, 4)->text();
+        if (SNSSubscriptionDialog dialog(_topicArn, _subscriptionArn); dialog.exec() == Accepted) {
+            _snsService->GetTopicDetails(_topicArn);
+        }
+    } else if (selectedAction == deleteAction) {
+        const QString endpoint = _subscriptionsDataModel->item(row, 1)->text();
+        const QString subscriptionArn = _subscriptionsDataModel->item(row, 4)->text();
+        _snsService->DeleteTopicSubscription(_topicArn, subscriptionArn);
+        _subscriptionsDataModel->removeRow(row);
     }
 }

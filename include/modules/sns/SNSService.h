@@ -183,6 +183,8 @@ public:
      */
     void GetSubscription(const QString &topicArn, const QString &subscriptionArn);
 
+    void DeleteTopicSubscription(const QString &topicArn, const QString &subscriptionArn);
+
     /**
      * @brief Delete SNS message
      *
