@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.47](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.46...v1.11.47) (2026-04-29)
+
+
+### Bug Fixes
+
+* sns subscription add ([ed82728](https://github.com/jensvogt/awsmock-qt-ui/commit/ed8272828fc2c792a6ad34221da6dd91e700b686))
+
 ## [1.11.46](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.45...v1.11.46) (2026-04-25)
 
 
