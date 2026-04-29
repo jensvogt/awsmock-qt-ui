@@ -193,7 +193,7 @@ void SNSTopicDetailsDialog::SetupSubscriptionsTable() {
     _ui->subscriptionAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->subscriptionAddButton, &QPushButton::clicked, this, [this]() {
         if (SNSSubscriptionDialog snsSubscriptionDialog(_topicArn); snsSubscriptionDialog.exec() == Accepted) {
-            logInfo << "SNS subscription dialog accepted";
+            _snsService->ListTopicSubscriptions(_topicArn);
         }
     });
 

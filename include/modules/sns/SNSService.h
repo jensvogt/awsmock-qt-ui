@@ -228,6 +228,11 @@ signals:
     void ListTopicSubscriptionsSignal(const ListTopicSubscriptionsResponse &listTopicSubscriptionResponse);
 
     /**
+     * @brief Signaled, when topic subscription add arrived.
+     */
+    void AddTopicSubscriptionSignal();
+
+    /**
      * @brief Signaled when a message list is available
      *
      * @param listMessagesResult list message response

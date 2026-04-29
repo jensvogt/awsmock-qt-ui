@@ -25,7 +25,7 @@ public:
         QJsonObject jRequest;
         jRequest["region"] = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
         jRequest["user"] = Configuration::instance().GetValue<QString>("aws.user", "none");
-        jRequest["requestId"] = QUuid::createUuid().toString();
+        jRequest["requestId"] = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
         return jRequest;
     }
 

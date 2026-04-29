@@ -93,8 +93,9 @@ void SNSSubscriptionDialog::HandleAccept() {
 
     // Add to topic
     _snsService->AddSubscription(_topicArn, subscription);
-
-    accept();
+    connect(_snsService, &SNSService::AddTopicSubscriptionSignal, this, [this]() {
+        accept();
+    });
 }
 
 void SNSSubscriptionDialog::HandleReject() {

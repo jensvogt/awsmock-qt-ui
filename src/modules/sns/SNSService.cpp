@@ -580,8 +580,10 @@ void SNSService::AddSubscription(const QString &topicArn, const SNSTopicSubscrip
                           {"x-awsmock-action", "add-subscription-counter"},
                           {"content-type", "application/json"}
                       },
-                      [timer](const bool success, const QByteArray &, int, const QString &error) {
-                          if (!success) {
+                      [this,timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit AddTopicSubscriptionSignal();
+                          } else {
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("AddSubscription", timer.elapsed());
