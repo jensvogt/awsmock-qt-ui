@@ -224,7 +224,7 @@ void SQSQueueDetailsDialog::UpdateDefaultAttributes(const SQSListQueueDefaultAtt
     for (const auto &key: response.defaultAttributesCounters.keys()) {
         MessageAttribute defaultAttribute = response.defaultAttributesCounters[key];
         SetColumn(_defaultAttributesModel, r, 0, key);
-        SetColumn(_defaultAttributesModel, r, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType).data());
+        SetColumn(_defaultAttributesModel, r, 1, MessageAttributeDataTypeToString(response.defaultAttributesCounters[key].dataType));
         SetColumn(_defaultAttributesModel, r, 2, response.defaultAttributesCounters[key].stringValue);
         r++;
     }

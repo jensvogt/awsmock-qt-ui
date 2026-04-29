@@ -387,7 +387,7 @@ void SNSService::SendMessage(const SNSSendMessageRequest &request) {
     QJsonObject jAttributes;
     for (const auto &[key,value]: request.messageAttributes) {
         QJsonObject jAttribute;
-        jAttribute["DataType"] = value.dataType;
+        jAttribute["DataType"] = MessageAttributeDataTypeToString(value.dataType);
         jAttribute["StringValue"] = value.stringValue;
         jAttributes[key] = jAttribute;
     }
