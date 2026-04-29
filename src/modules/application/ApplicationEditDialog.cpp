@@ -6,6 +6,7 @@
 
 #include <modules/application/ApplicationEditDialog.h>
 #include "ui_ApplicationEditDialog.h"
+#include "components/HelpDialog.h"
 
 ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent), _ui(new Ui::ApplicationEditDialog) {
     _applicationService = new ApplicationService();
@@ -97,7 +98,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
 
     // Connect version
     const QRegularExpression re("^\\d+\\.\\d+\\.\\d+$");
-    auto v = new QRegularExpressionValidator(re, this);
+    _ui->versionEdit->setValidator(new QRegularExpressionValidator(re, this));
     connect(_ui->versionEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         _application.version = text;
         _changed = true;
@@ -106,12 +107,16 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     // Setup environment tab
     SetupEnvironmentTab();
 
+    // Setup environment tab
+    SetupDockerfileTab();
+
     // Setup tags tab
     SetupTagsTab();
 
     // Setup dependency tab
     SetupDependenciesTab();
 
+    // Set default page
     _ui->tabWidget->setCurrentIndex(0);
 }
 
@@ -135,6 +140,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->containerNameEdit->setText(_application.containerName);
     _ui->statusEdit->setText(_application.status);
     _ui->enabledCheckBox->setChecked(_application.enabled);
+    _ui->dockerfileEdit->SetText(_application.dockerFile);
     _ui->descriptionEdit->setText(_application.description);
     _ui->lastStartedEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.lastStarted));
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.created));
@@ -177,6 +183,19 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     // Save container ID
     _containerId = applicationGetResponse.application.containerId;
     _ui->logsButton->setEnabled(true);
+}
+
+void ApplicationEditDialog::SetupDockerfileTab() {
+    _ui->dockerfileEdit->SetText(_application.dockerFile);
+    connect(_ui->dockerfileEdit, &Awsmock::Components::PlainTextEditor::TextChanged, this, [this](const QString &text) {
+        _application.dockerFile = text;
+    });
+    _ui->helpButton->setText(nullptr);
+    _ui->helpButton->setIcon(IconUtils::GetIcon("help"));
+    connect(_ui->helpButton, &QPushButton::clicked, this, [this]() {
+        Awsmock::Components::HelpDialog help("application/Dockerfile.md", this);
+        help.exec();
+    });
 }
 
 void ApplicationEditDialog::SetupEnvironmentTab() {

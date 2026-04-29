@@ -2,10 +2,7 @@
 // Created by vogje01 on 2/22/26.
 //
 
-#include <QMessageBox>
 #include <components/PlainTextEditor.h>
-
-#include "utils/StringUtils.h"
 
 namespace Awsmock::Components {
 
@@ -62,6 +59,9 @@ namespace Awsmock::Components {
 
         // Setup plain text edit
         _plainTextEdit = new QPlainTextEdit(this);
+        connect(_plainTextEdit, &QPlainTextEdit::textChanged, this, [this]() {
+            emit TextChanged(_plainTextEdit->toPlainText());
+        });
 
         // Add replace shortcut
         auto *replaceAction = new QAction(this);

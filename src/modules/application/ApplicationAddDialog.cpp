@@ -43,6 +43,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
     runtimeComboBox->addItem("Java 11", "JAVA11");
     runtimeComboBox->addItem("Java 17", "JAVA17");
     runtimeComboBox->addItem("Java 21", "JAVA21");
+    runtimeComboBox->addItem("Java 25", "JAVA25");
     runtimeComboBox->addItem("Python 3.9", "python3-9");
     runtimeComboBox->addItem("Python 3.10", "python3-10");
     runtimeComboBox->addItem("Python 3.11", "python3-11");
@@ -50,6 +51,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
     runtimeComboBox->addItem("Python 3.13", "python3-13");
     runtimeComboBox->addItem("Node JS 20", "nodejs-20");
     runtimeComboBox->addItem("Node JS 22", "nodejs-22");
+    runtimeComboBox->addItem("Node JS 24", "nodejs-24");
     runtimeComboBox->addItem("Go", "go");
     runtimeComboBox->setCurrentIndex(2);
 
@@ -57,6 +59,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
     privatePortLabel = new QLabel("PrivatePort:", this);
     privatePortEdit = new QLineEdit("8080", this);
     privatePortEdit->setPlaceholderText("Private Port");
+
     // Valid range: 1 to 65536
     const auto privatePortValidator = new QIntValidator(1, 65536, this);
     privatePortEdit->setValidator(privatePortValidator);
@@ -67,6 +70,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
     publicPortLabel = new QLabel("PublicPort:", this);
     publicPortEdit = new QLineEdit("8080", this);
     publicPortEdit->setPlaceholderText("Public Port");
+
     // Valid range: 1 to 65536
     const auto publicPortValidator = new QIntValidator(1, 65536, this);
     publicPortEdit->setValidator(publicPortValidator);
@@ -84,6 +88,7 @@ ApplicationAddDialog::ApplicationAddDialog(QWidget *parent) : QDialog(parent) {
     fileNameEdit = new QLineEdit(this);
     fileNameEdit->setDisabled(true);
     fileNameEdit->setPlaceholderText("File path");
+    
     // Valid range: 1 to 65536
     const QRegularExpression filenameRegex("\\b[A-Z0-9._+-]+\\b", QRegularExpression::CaseInsensitiveOption);
     const auto filenameValidator = new QRegularExpressionValidator(nameRegex, this);

@@ -39,6 +39,14 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
         //  _s3Service->PurgeAllBuckets();
     });
 
+    // Toolbar reset counter action
+    auto *resetCounterButton = new QPushButton(IconUtils::GetIcon("reset-counter"), "", this);
+    resetCounterButton->setToolTip("Refresh the bucket object counters");
+    connect(resetCounterButton, &QPushButton::clicked, [this]() {
+        _s3Service->ResetObjectCounters();
+        LoadContent();
+    });
+
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
@@ -51,6 +59,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(resetCounterButton);
     toolBar->addWidget(refreshButton);
 
     // Table

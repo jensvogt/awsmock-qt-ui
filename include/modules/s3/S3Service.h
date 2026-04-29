@@ -61,6 +61,8 @@ public:
      */
     void UpdateBucket(const QString &bucketName, QMap<QString, QString> &metadata, QVector<LifecycleRule> &lifecycleRules, const QString &versionStatus);
 
+    void ResetObjectCounters();
+
     /**
      * @brief delete the bucket
      *
