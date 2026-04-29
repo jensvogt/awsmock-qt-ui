@@ -9,12 +9,17 @@
 // AwsMock
 #include <utils/JsonUtils.h>
 
-struct SNSTopicSubscription final {
+struct SNSTopicSubscription {
 
     /**
      * Subscription ID
      */
     QString id{};
+
+    /**
+     * Subscription ID
+     */
+    QString region{};
 
     /**
      * Subscription endpoint
@@ -37,6 +42,7 @@ struct SNSTopicSubscription final {
     QString owner{};
 
     void FromJson(const QJsonDocument &jsonDoc) {
+        region = jsonDoc["region"].toString();
         id = jsonDoc["id"].toString();
         endpoint = jsonDoc["endpoint"].toString();
         protocol = jsonDoc["protocol"].toString();
@@ -45,6 +51,7 @@ struct SNSTopicSubscription final {
     }
 
     void FromJson(const QJsonObject &jsonObject) {
+        region = jsonObject["region"].toString();
         id = jsonObject["id"].toString();
         endpoint = jsonObject["endpoint"].toString();
         protocol = jsonObject["protocol"].toString();
@@ -53,14 +60,18 @@ struct SNSTopicSubscription final {
     }
 
     [[nodiscard]] QString ToJson() const {
+        return QJsonDocument(ToJsonObject()).toJson();
+    }
+
+    [[nodiscard]] QJsonObject ToJsonObject() const {
         QJsonObject jObject;
+        jObject["region"] = region;
         jObject["id"] = id;
         jObject["endpoint"] = endpoint;
         jObject["protocol"] = protocol;
         jObject["subscriptionArn"] = subscriptionArn;
         jObject["owner"] = owner;
-        const QJsonDocument jDoc(jObject);
-        return jDoc.toJson();
+        return jObject;
     }
 };
 

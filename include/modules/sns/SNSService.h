@@ -19,6 +19,8 @@
 #include <utils/BaseService.h>
 #include <utils/RestManager.h>
 
+#include "dto/sns/SNSSubscriptionResponse.h"
+
 class SNSService : public BaseService {
     Q_OBJECT
 
@@ -171,6 +173,16 @@ public:
      */
     void SendMessage(const SNSSendMessageRequest &request);
 
+    void AddSubscription(const QString &topicArn, const SNSTopicSubscription &topicSubscription);
+
+    /**
+     * @brief Returns the subscription details
+     *
+     * @param topicArn topic ARN
+     * @param subscriptionArn subscription id
+     */
+    void GetSubscription(const QString &topicArn, const QString &subscriptionArn);
+
     /**
      * @brief Delete SNS message
      *
@@ -240,6 +252,13 @@ signals:
      * @param response send message response
      */
     void SendMessagesSignal(const SNSSendMessageResponse &response);
+
+    /**
+     * @brief Signaled when a subscription arrived
+     *
+     * @param response subscription response
+     */
+    void GetSubscriptionSignal(const SNSSubscriptionResponse &response);
 
     /**
      * @brief Signaled when new default attributes arrived

@@ -1,5 +1,7 @@
 #include <modules/sns/SNSService.h>
 
+#include "dto/sns/SNSSubscriptionResponse.h"
+
 void SNSService::AddTopic(const QString &region, const QString &topicName) {
     QElapsedTimer timer;
     timer.start();
@@ -549,20 +551,77 @@ void SNSService::SendMessage(const SNSSendMessageRequest &request) {
                       },
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
-                              QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
                               SNSSendMessageResponse snsResponse;
                               snsResponse.FromJson(jsonDoc);
                               emit SendMessagesSignal(snsResponse);
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("SendMessage", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("SendMessage", timer.elapsed());
+                      });
+}
+
+void SNSService::AddSubscription(const QString &topicArn, const SNSTopicSubscription &topicSubscription) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["topicArn"] = topicArn;
+    jRequest["protocol"] = topicSubscription.protocol;
+    jRequest["endpoint"] = topicSubscription.endpoint;
+    jRequest["owner"] = topicSubscription.owner;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "add-subscription-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("AddSubscription", timer.elapsed());
+                      });
+}
+
+void SNSService::GetSubscription(const QString &topicArn, const QString &subscriptionArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["topicArn"] = topicArn;
+    jRequest["subscriptionArn"] = subscriptionArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "get-subscription-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array containing one object
+                              const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              SNSSubscriptionResponse snsResponse;
+                              snsResponse.FromJson(jsonDoc);
+                              emit GetSubscriptionSignal(snsResponse);
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("GetSubscription", timer.elapsed());
                       });
 }
 
 void SNSService::GetSnsMessageDetails(const QString &messageId) {
+    QElapsedTimer timer;
+    timer.start();
+
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["messageId"] = messageId;
     const QJsonDocument requestDoc(jRequest);
@@ -574,7 +633,7 @@ void SNSService::GetSnsMessageDetails(const QString &messageId) {
                           {"x-awsmock-action", "get-message-counters"},
                           {"content-type", "application/json"}
                       },
-                      [this](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array containing one object
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
@@ -584,6 +643,7 @@ void SNSService::GetSnsMessageDetails(const QString &messageId) {
                           } else {
                               logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("SendMessage", timer.elapsed());
                       });
 }
 

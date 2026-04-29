@@ -1,5 +1,6 @@
 #include <modules/sns/SNSTopicDetailsDialog.h>
 #include "ui_SNSTopicDetailsDialog.h"
+#include "modules/sns/SNSSubscriptionDialog.h"
 #include "modules/sns/SNSTopicDefaultAttributeDialog.h"
 
 SNSTopicDetailsDialog::SNSTopicDetailsDialog(QString topicArn, QWidget *parent) : ::BaseDialog(parent), _ui(new Ui::SNSTopicDetailsDialog), _topicArn(std::move(topicArn)) {
@@ -166,7 +167,7 @@ void SNSTopicDetailsDialog::SetupTagsTable() {
 void SNSTopicDetailsDialog::SetupSubscriptionsTable() {
 
     // Headers  
-    const QStringList subscriptionsHeaders = QStringList() = {tr("Id"), tr("Endpoint"), tr("Protocol"), tr("Owner")};
+    const QStringList subscriptionsHeaders = QStringList() = {tr("Id"), tr("Endpoint"), tr("Protocol"), tr("Owner"), tr("SubscriptionArn")};
     _subscriptionsDataModel = new QStandardItemModel(this);
     _subscriptionsDataModel->setHorizontalHeaderLabels(subscriptionsHeaders);
     _subscriptionsDataModel->setColumnCount(static_cast<int>(subscriptionsHeaders.count()));
@@ -184,10 +185,26 @@ void SNSTopicDetailsDialog::SetupSubscriptionsTable() {
     _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
     _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents); // name
     _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents); // name
+    _ui->subscriptionTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents); // name
+    _ui->subscriptionTable->hideColumn(4);
 
-    // Buttons
+    // Add button
     _ui->subscriptionAddButton->setText(nullptr);
     _ui->subscriptionAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->subscriptionAddButton, &QPushButton::clicked, this, [this]() {
+        if (SNSSubscriptionDialog snsSubscriptionDialog(_topicArn); snsSubscriptionDialog.exec() == Accepted) {
+            logInfo << "SNS subscription dialog accepted";
+        }
+    });
+
+    // Context menu
+    _ui->subscriptionTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->subscriptionTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString subscriptionArn = _subscriptionsDataModel->item(index.row(), 4)->text();
+        if (SNSSubscriptionDialog snsSubscriptionDialog(_topicArn, subscriptionArn); snsSubscriptionDialog.exec() == Accepted) {
+            _snsService->ListTopicSubscriptions(_topicArn);
+        }
+    });
 
     _ui->subscriptionRefreshButton->setText(nullptr);
     _ui->subscriptionRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
@@ -207,6 +224,7 @@ void SNSTopicDetailsDialog::UpdateTopicSubscriptions(const ListTopicSubscription
         SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).endpoint);
         SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).protocol);
         SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).owner);
+        SetColumn(_subscriptionsDataModel, r, c++, response.topicSubscriptions.at(r).subscriptionArn);
     }
 
     // Reset selection

@@ -39,6 +39,8 @@ struct Application {
 
     QString description;
 
+    QString dockerFile;
+
     bool enabled;
 
     QMap<QString, QString> environment;
@@ -70,6 +72,7 @@ struct Application {
         jsonObject["containerId"] = containerId;
         jsonObject["containerName"] = containerName;
         jsonObject["status"] = status;
+        jsonObject["dockerFile"] = dockerFile;
         jsonObject["description"] = description;
         jsonObject["enabled"] = enabled;
         jsonObject["lastStarted"] = lastStarted.toString(Qt::ISODate);
@@ -121,6 +124,7 @@ struct Application {
         containerId = jsonObject["containerId"].toString();
         containerName = jsonObject["containerName"].toString();
         status = jsonObject["status"].toString();
+        dockerFile = jsonObject["dockerFile"].toString();
         description = jsonObject["description"].toString();
         enabled = jsonObject["enabled"].toBool();
         lastStarted = QDateTime::fromString(jsonObject["lastStarted"].toString(), Qt::ISODate);

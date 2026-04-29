@@ -3,15 +3,17 @@
 #define AWSMOCK_QT_UI_PLAIN_TEXT_EDITOR_H
 
 // Qt includes
-#include <QString>
-#include <QWidget>
+#include <QMessageBox>
 #include <QPlainTextEdit>
+#include <QString>
 #include <QVBoxLayout>
+#include <QWidget>
 
 // Awsmock includes
-#include <utils/StringUtils.h>
 #include <components/ReplaceWidget.h>
 #include <components/SearchField.h>
+#include <utils/StringUtils.h>
+#include <utils/StringUtils.h>
 
 namespace Awsmock::Components {
 
@@ -25,6 +27,13 @@ namespace Awsmock::Components {
         Q_OBJECT
 
     public:
+        /**
+         * @brief Constructor
+         *
+         * @param prettyPrint pretty print flag
+         * @param contentType content type
+         * @param parent parent widget
+         */
         explicit PlainTextEditor(bool prettyPrint = true, const TextContentType &contentType = JSON, QWidget *parent = nullptr);
 
         /**
@@ -130,6 +139,14 @@ namespace Awsmock::Components {
         bool GetPrettyPrint() const {
             return _prettyPrint;
         }
+
+    signals:
+        /**
+         * @brief Signaled, when the text has been changed.
+         *
+         * @param text updated text
+         */
+        void TextChanged(const QString &text);
 
     private:
         /**

@@ -72,7 +72,9 @@ set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSM
         src/modules/sns/SNSTopicDetailsDialog.ui include/modules/sns/SNSTopicDetailsDialog.h
         src/modules/sns/SNSTopicList.cpp include/modules/sns/SNSTopicList.h
         include/dto/sns/SNSListQueueDefaultAttribtesResponse.h src/modules/sns/SNSTopicDefaultAttributeDialog.ui
-        src/modules/sns/SNSTopicDefaultAttributeDialog.cpp include/modules/sns/SNSTopicDefaultAttributeDialog.h)
+        src/modules/sns/SNSTopicDefaultAttributeDialog.cpp include/modules/sns/SNSTopicDefaultAttributeDialog.h
+        src/modules/sns/SNSSubscriptionDialog.cpp include/modules/sns/SNSSubscriptionDialog.h
+        src/modules/sns/SNSSubscriptionDialog.ui)
 set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
         include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
         include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h
@@ -257,6 +259,8 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/modules/sqs/SQSQueueDefaultAttributeDialog.h
         src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
         include/utils/ChunkUploader.h
+        include/components/HelpDialog.h
+        include/dto/sns/SNSSubscriptionResponse.h
 )
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
