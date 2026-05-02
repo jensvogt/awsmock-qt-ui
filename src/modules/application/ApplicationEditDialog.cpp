@@ -71,10 +71,10 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     const auto intValidator = new QIntValidator(1, 65535, this);
     _ui->privatePortEdit->setValidator(intValidator);
     connect(_ui->privatePortEdit, &QLineEdit::textEdited, this, [this](const QString &text) {
-        // if (const int port = text.toInt(); port < 0 || port > 65535) {
-        //     QMessageBox::critical(this, "Error", "Port number out of range");
-        //     return;
-        // }
+        if (const int port = text.toInt(); port < 0 || port > 65535) {
+            QMessageBox::critical(this, "Error", "Private port number out of range");
+            return;
+        }
         _application.privatePort = text.toInt();
         _changed = true;
     });
@@ -82,10 +82,10 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     // Connect Private/public ports
     _ui->publicPortEdit->setValidator(intValidator);
     connect(_ui->publicPortEdit, &QLineEdit::textEdited, this, [this](const QString &text) {
-        // if (const int port = text.toInt(); port < 0 || port > 65535) {
-        //     QMessageBox::critical(this, "Error", "Port number out of range");
-        //     return;
-        // }
+        if (const int port = text.toInt(); port < 0 || port > 65535) {
+            QMessageBox::critical(this, "Error", "Public port number out of range");
+            return;
+        }
         _application.publicPort = text.toInt();
         _changed = true;
     });
