@@ -12,6 +12,8 @@
 
 // Awsmock includes
 #include <modules/sqs/SQSService.h>
+#include <dto/s3/S3GetBucketDetailsResponse.h>
+#include <utils/BaseDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -21,7 +23,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class S3QueueNotificationDialog : public QDialog {
+class S3QueueNotificationDialog : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -31,6 +33,25 @@ public:
      * @param parent parent widget
      */
     explicit S3QueueNotificationDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief Constructor for editing an existing notification.
+     *
+     * @param notification notification
+     * @param parent parent widget
+     */
+    explicit S3QueueNotificationDialog(const QueueNotification &notification, QWidget *parent = nullptr);
+
+    /**
+     * @brief Common initialization
+     */
+    void Initialize();
+
+    /**
+     * @brief Load data content
+     */
+    void LoadContent() override {
+    }
 
     /**
      * @brief Destructor
@@ -74,7 +95,7 @@ private:
     /**
      * @brief SQS REST service
      */
-    SQSService *_sqsService;
+    SQSService *_sqsService{};
 
     /**
      * @brief Selected queue ARN
@@ -87,33 +108,38 @@ private:
     QStringList _selectedS3Event;
 
     /**
+     * @brief Filter data model
+     */
+    QStandardItemModel *_filterDataModel{};
+
+    /**
      * @brief List of possible S3 events
      */
     static inline const QList<QString> _s3Events = {
-        "s3:ObjectCreated:Put",
-        "s3:ObjectCreated:Post",
-        "s3:ObjectCreated:Copy",
-        "s3:ObjectCreated:CompleteMultipartUpload",
-        "s3:ObjectCreated:*",
-        "s3:ObjectRemoved:Delete",
-        "s3:ObjectRemoved:DeleteMarkerCreated",
-        "s3:ObjectRemoved:*",
-        "s3:ObjectRestore:Post",
-        "s3:ObjectRestore:Completed",
-        "s3:ObjectRestore:Delete",
-        "s3:Replication:OperationFailedReplication",
-        "s3:Replication:OperationMissedThreshold",
-        "s3:Replication:OperationReplicatedAfterThreshold",
-        "s3:Replication:OperationNotTracked",
-        "s3:LifecycleTransition",
-        "s3:LifecycleExpiration",
-        "s3:LifecycleExpiration:Delete",
-        "s3:LifecycleExpiration:DeleteMarkerCreated",
-        "s3:ObjectAcl:Put",
-        "s3:ObjectTagging:Put",
-        "s3:ObjectTagging:Delete",
-        "s3:ObjectAccessed:*",
-        "s3:ReducedRedundancyLostObject"
+        "ObjectCreated:Put",
+        "ObjectCreated:Post",
+        "ObjectCreated:Copy",
+        "ObjectCreated:CompleteMultipartUpload",
+        "ObjectCreated:*",
+        "ObjectRemoved:Delete",
+        "ObjectRemoved:DeleteMarkerCreated",
+        "ObjectRemoved:*",
+        "ObjectRestore:Post",
+        "ObjectRestore:Completed",
+        "ObjectRestore:Delete",
+        "Replication:OperationFailedReplication",
+        "Replication:OperationMissedThreshold",
+        "Replication:OperationReplicatedAfterThreshold",
+        "Replication:OperationNotTracked",
+        "LifecycleTransition",
+        "LifecycleExpiration",
+        "LifecycleExpiration:Delete",
+        "LifecycleExpiration:DeleteMarkerCreated",
+        "ObjectAcl:Put",
+        "ObjectTagging:Put",
+        "ObjectTagging:Delete",
+        "ObjectAccessed:*",
+        "ReducedRedundancyLostObject"
     };
 };
 

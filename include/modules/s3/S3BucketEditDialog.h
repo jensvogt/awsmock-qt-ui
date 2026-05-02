@@ -57,6 +57,8 @@ public:
 
     void ShowQueueNotificationContextMenu(const QPoint &pos);
 
+    void HandleQueueNotificationEdit(const QueueNotification *queueNotification);
+
     void LoadContent() override {
     };
 

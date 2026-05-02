@@ -131,5 +131,6 @@
     </qresource>
     <qresource prefix="/help">
         <file>docs/application/Dockerfile.md</file>
+        <file>docs/application/Environment.md</file>
     </qresource>
 </RCC>

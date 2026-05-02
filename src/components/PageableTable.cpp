@@ -115,6 +115,13 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
         emit DoubleClicked(_proxyModel->mapToSource(index));
     });
 
+    // Sorting header clicked
+    connect(_ui->tableView->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](const int logicalIndex, const Qt::SortOrder order) {
+        _sortColumn = logicalIndex;
+        _sortDirection = order == Qt::AscendingOrder ? 1 : -1;
+        _sortAttribute = _headerNames[logicalIndex];
+    });
+
     // Defaults
     _ui->pageStatusLabel->setText(QString("%1 - %2/%3").arg(0).arg(_pageSize).arg(_totalSize));
     SetLastUpdate();
