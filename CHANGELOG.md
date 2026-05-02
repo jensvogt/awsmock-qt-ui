@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.49](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.48...v1.11.49) (2026-05-02)
+
+
+### Bug Fixes
+
+* S3 queue notifications ([b68f656](https://github.com/jensvogt/awsmock-qt-ui/commit/b68f6568d4a9bf213299dd6c65a392ab71818df4))
+* S3 queue notifications ([be15202](https://github.com/jensvogt/awsmock-qt-ui/commit/be1520288a38824f428e1ec348f810d4acf2f0b6))
+* sns subscription add ([0f6f89c](https://github.com/jensvogt/awsmock-qt-ui/commit/0f6f89c6f93dead8fd8f2ad852116be419933b85))
+* sns subscription add ([9a668ac](https://github.com/jensvogt/awsmock-qt-ui/commit/9a668ac899dbb012b1c3af588e9102f4a678bd69))
+
 ## [1.11.48](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.47...v1.11.48) (2026-04-29)
 
 
