@@ -2,12 +2,32 @@
 // Created by jensv on 25/04/2026.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_S3QueueNotificationDialog.h" resolved
-
 #include <modules/s3/S3QueueNotificationDialog.h>
 #include "ui_S3QueueNotificationDialog.h"
 
 S3QueueNotificationDialog::S3QueueNotificationDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::S3QueueNotificationDialog) {
+
+    // Initialization
+    Initialize();
+}
+
+S3QueueNotificationDialog::S3QueueNotificationDialog(const QueueNotification &notification, QWidget *parent) : QDialog(parent), _ui(new Ui::S3QueueNotificationDialog) {
+
+    // Initialization
+    Initialize();
+
+    // Set ID
+    _ui->idEdit->setText(notification.id);
+
+    // Events
+    QStringList selectedEvents;
+    for (const auto &event: notification.events) {
+        selectedEvents.append(S3NotificationEventToString(event));
+    }
+    _ui->eventSelectLists->SetSelected(selectedEvents);
+}
+
+void S3QueueNotificationDialog::Initialize() {
 
     // SQS service
     _sqsService = new SQSService();
@@ -38,6 +58,26 @@ S3QueueNotificationDialog::S3QueueNotificationDialog(QWidget *parent) : QDialog(
     connect(_ui->eventSelectLists, &Awsmock::Components::SelectLists::SelectChangedSignal, this, [this](const QStringList &s3Events) {
         _selectedS3Event = s3Events;
     });
+
+    // Events
+    _ui->filterAddButton->setText(nullptr);
+    _ui->filterAddButton->setIcon(IconUtils::GetIcon("add"));
+
+    // Filter types
+    const QStringList headers = {"Type", "Value"};
+    _filterDataModel = new QStandardItemModel(this);
+    _filterDataModel->setHorizontalHeaderLabels(headers);
+    _filterDataModel->setColumnCount(static_cast<int>(headers.count()));
+    _ui->filterTableView->setModel(_filterDataModel);
+    _ui->filterTableView->setShowGrid(true);
+    _ui->filterTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->filterTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->filterTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->filterTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents); // name
+    _ui->filterTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch); //status
+
+    const QStringList filterTypeNames = {"Prefix", "Suffix"};
+    //_ui->filterTypeCombo->addItems(filterTypeNames);
 }
 
 S3QueueNotificationDialog::~S3QueueNotificationDialog() {

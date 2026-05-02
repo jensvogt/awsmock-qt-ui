@@ -37,6 +37,7 @@ endif ()
 
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets PrintSupport)
+find_package(md4c CONFIG REQUIRED)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTPFileTree.cpp
@@ -144,8 +145,7 @@ set(DYNAMODB_SOURCES src/modules/dynamodb/DynamoDbExportTableDialog.cpp src/modu
         include/dto/dynamodb/DynamoDbGetItemResponse.h)
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
         src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
-        src/modules/module/ModuleExportDialog.ui
-)
+        src/modules/module/ModuleExportDialog.ui)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h
@@ -269,9 +269,9 @@ qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICO
 target_include_directories(awsmock-qt-ui PRIVATE ./include)
 if (WIN32)
     target_link_directories(awsmock-qt-ui PRIVATE ${CMAKE_SOURCE_DIR}/extern/lib)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport md4c::md4c md4c::md4c-html)
 else ()
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport md4c::md4c md4c::md4c-html)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES

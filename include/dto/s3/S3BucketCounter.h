@@ -5,6 +5,11 @@
 #include <QDateTime>
 #include <QJsonObject>
 
+// Awsmock includes
+#include <dto/s3/S3LambdaConfiguration.h>
+#include <dto/s3/S3QueueConfiguration.h>
+#include <dto/s3/S3TopicConfiguration.h>
+
 struct S3BucketCounter {
     QString region;
 
@@ -14,9 +19,15 @@ struct S3BucketCounter {
 
     QString owner;
 
-    long objectCount;
+    long objectCount{};
 
-    long size;
+    long size{};
+
+    S3QueueConfiguration queueConfiguration;
+
+    S3TopicConfiguration topicConfiguration;
+
+    S3LambdaConfiguration lambdaConfiguration;
 
     QDateTime created;
 
@@ -29,6 +40,8 @@ struct S3BucketCounter {
         owner = jsonObject["owner"].toString();
         objectCount = jsonObject["keys"].toInteger();
         size = jsonObject["size"].toInteger();
+        queueConfiguration.FromJson(jsonObject["queueConfiguration"].toObject());
+        queueConfiguration.FromJson(jsonObject["queueConfiguration"].toObject());
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }

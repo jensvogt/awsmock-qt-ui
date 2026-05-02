@@ -97,7 +97,7 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
     });
 
     // Connect version
-    const QRegularExpression re("^\\d+\\.\\d+\\.\\d+$");
+    const QRegularExpression re(R"(^\d+\.\d+\.\d+$)");
     _ui->versionEdit->setValidator(new QRegularExpressionValidator(re, this));
     connect(_ui->versionEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         _application.version = text;
@@ -186,13 +186,17 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
 }
 
 void ApplicationEditDialog::SetupDockerfileTab() {
+
+    // Docker file editor
     _ui->dockerfileEdit->SetText(_application.dockerFile);
     connect(_ui->dockerfileEdit, &Awsmock::Components::PlainTextEditor::TextChanged, this, [this](const QString &text) {
         _application.dockerFile = text;
     });
-    _ui->helpButton->setText(nullptr);
-    _ui->helpButton->setIcon(IconUtils::GetIcon("help"));
-    connect(_ui->helpButton, &QPushButton::clicked, this, [this]() {
+
+    // Help icon
+    _ui->dockerFileHelpButton->setText(nullptr);
+    _ui->dockerFileHelpButton->setIcon(IconUtils::GetIcon("help"));
+    connect(_ui->dockerFileHelpButton, &QPushButton::clicked, this, [this]() {
         Awsmock::Components::HelpDialog help("application/Dockerfile.md", this);
         help.exec();
     });
@@ -255,6 +259,14 @@ void ApplicationEditDialog::SetupEnvironmentTab() {
             _application.environment[key] = dialog.GetValue();
             _changed = true;
         }
+    });
+
+    // Help icon
+    _ui->envHelpButton->setText(nullptr);
+    _ui->envHelpButton->setIcon(IconUtils::GetIcon("help"));
+    connect(_ui->envHelpButton, &QPushButton::clicked, this, [this]() {
+        Awsmock::Components::HelpDialog help("application/Environment.md", this);
+        help.exec();
     });
 }
 

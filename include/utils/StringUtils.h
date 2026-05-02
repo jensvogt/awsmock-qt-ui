@@ -78,9 +78,9 @@ public:
         return result;
     }
 
-    static QString FormatSizeColumn(const long value, const int precision) {
+    static QString FormatSizeColumn(const long value, const int precision = 1) {
         if (value < 1024) {
-            return QString::number(value, 'f', 0) + " b";
+            return QString::number(static_cast<double>(value), 'f', 0) + " b";
         }
         if (value < 1024 * 1024) {
             return QString::number(static_cast<double>(value) / 1024, 'f', precision) + " kb";

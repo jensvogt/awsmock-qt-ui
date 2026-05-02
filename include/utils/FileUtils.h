@@ -17,8 +17,7 @@ public:
     ~FileUtils();
 
     static QString ExtractVersionFromFileName(const QString &filename) {
-        //const QRegularExpression versionRegex(".*-(\\d+\\.\\d+\\.\\d+)-?[a-zA-Z0-9-]+?\\..*");
-        const QRegularExpression versionRegex("^.*-([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?\\.(tar\\.gz|jar|zip|tar)$");
+        const QRegularExpression versionRegex(R"(^.*-([0-9]+\.[0-9]+\.[0-9]+)(-SNAPSHOT(-aws)?)?\.(tar\.gz|jar|zip|tar|tgz)$)");
 
         if (const QRegularExpressionMatch match = versionRegex.match(filename); match.hasMatch()) {
             return match.captured(1);
