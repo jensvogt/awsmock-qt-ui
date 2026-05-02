@@ -6,7 +6,7 @@ include(cmake/UpdateXmlVersion.cmake)
 include(cmake/UpdateReleaseDate.cmake)
 
 # Define project with version
-project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES CXX)
+project(awsmock-qt-ui VERSION ${VERSION_STRING} LANGUAGES C CXX)
 
 message(STATUS "Configured version: ${PROJECT_VERSION}")
 
@@ -35,9 +35,8 @@ else ()
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif ()
 
-
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network Charts Svg WebSockets PrintSupport)
-find_package(md4c CONFIG REQUIRED)
+#find_package(md4c CONFIG REQUIRED)
 
 set(TS_FILES awsmock-qt-ui_en_150.ts)
 set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTPFileTree.cpp
@@ -155,7 +154,8 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         src/utils/BaseDialog.cpp include/utils/BaseDialog.h src/utils/BasePage.cpp include/utils/BasePage.h
         include/utils/NonEmptyValidator.h src/utils/IconUtils.cpp src/utils/ServerLogWidget.cpp
         include/utils/ServerLogWidget.h src/utils/ServerLogWidget.ui src/utils/ConfigAddUrlDialog.cpp
-        include/utils/ConfigAddUrlDialog.h src/utils/ConfigAddUrlDialog.ui)
+        include/utils/ConfigAddUrlDialog.h src/utils/ConfigAddUrlDialog.ui src/utils/md4c/entity.c
+        src/utils/md4c/md4c.c src/utils/md4c/md4c-html.c)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
         ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
         ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES} ${LAMBDA_SOURCES}
@@ -269,9 +269,9 @@ qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICO
 target_include_directories(awsmock-qt-ui PRIVATE ./include)
 if (WIN32)
     target_link_directories(awsmock-qt-ui PRIVATE ${CMAKE_SOURCE_DIR}/extern/lib)
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport md4c::md4c md4c::md4c-html)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt6::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport)
 else ()
-    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport md4c::md4c md4c::md4c-html)
+    target_link_libraries(awsmock-qt-ui PRIVATE Qt6::Widgets Qt6::Network Qt::Charts Qt6::Svg Qt6::WebSockets Qt6::PrintSupport)
 endif ()
 
 set_target_properties(awsmock-qt-ui PROPERTIES

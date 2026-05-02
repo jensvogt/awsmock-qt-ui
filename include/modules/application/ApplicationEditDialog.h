@@ -8,17 +8,17 @@
 #include <QDialog>
 #include <QMenu>
 
-#include <utils/IconUtils.h>
-#include <utils/BaseDialog.h>
-#include <utils/DateTimeUtils.h>
+#include <components/HelpDialog.h>
+#include <modules/application/ApplicationDependencyDialog.h>
+#include <modules/application/ApplicationEnvironmentDialog.h>
+#include <modules/application/ApplicationLogsDialog.h>
+#include <modules/application/ApplicationLogsDialog.h>
 #include <modules/application/ApplicationService.h>
 #include <modules/application/ApplicationTagDialog.h>
-#include <modules/application/ApplicationEnvironmentDialog.h>
-#include <modules/application/ApplicationDependencyDialog.h>
-#include <modules/application/ApplicationLogsDialog.h>
-
-#include "ApplicationLogsDialog.h"
-#include "utils/PrefixFilterModel.h"
+#include <utils/BaseDialog.h>
+#include <utils/DateTimeUtils.h>
+#include <utils/IconUtils.h>
+#include <utils/PrefixFilterModel.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -89,12 +89,12 @@ private:
     /**
      *  @brief Table data model
      */
-    QStandardItemModel *_envDataModel;
+    QStandardItemModel *_envDataModel{};
 
     /**
      * @brief Data proxy model
      */
-    PrefixFilterProxyModel *_envProxyModel;
+    PrefixFilterProxyModel *_envProxyModel{};
 
     /**
      * @brief Sort column index environment table

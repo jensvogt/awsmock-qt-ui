@@ -6,7 +6,6 @@
 
 #include <modules/application/ApplicationEditDialog.h>
 #include "ui_ApplicationEditDialog.h"
-#include "components/HelpDialog.h"
 
 ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *parent) : BaseDialog(parent), _ui(new Ui::ApplicationEditDialog) {
     _applicationService = new ApplicationService();

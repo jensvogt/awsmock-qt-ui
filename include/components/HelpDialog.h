@@ -9,9 +9,11 @@
 #include <QDialog>
 #include <qtextbrowser.h>
 #include <QVBoxLayout>
+#include <QPushButton>
+#include <QFile>
 
-// MD4C Includes (Ensure these are in your include path)
-#include "md4c-html.h"
+// Md4c includes
+#include <utils/md4c/md4c-html.h>
 
 namespace Awsmock::Components {
 
