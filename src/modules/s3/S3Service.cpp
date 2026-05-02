@@ -194,6 +194,7 @@ void S3Service::GetBucketDetails(const QString &bucketName) {
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                               S3GetBucketDetailsResponse bucketResponse;
                               bucketResponse.FromJson(jsonDoc);
                               emit GetBucketDetailsSignal(bucketResponse);

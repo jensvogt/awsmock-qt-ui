@@ -5,13 +5,13 @@
 #include <modules/s3/S3QueueNotificationDialog.h>
 #include "ui_S3QueueNotificationDialog.h"
 
-S3QueueNotificationDialog::S3QueueNotificationDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::S3QueueNotificationDialog) {
+S3QueueNotificationDialog::S3QueueNotificationDialog(QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3QueueNotificationDialog) {
 
     // Initialization
     Initialize();
 }
 
-S3QueueNotificationDialog::S3QueueNotificationDialog(const QueueNotification &notification, QWidget *parent) : QDialog(parent), _ui(new Ui::S3QueueNotificationDialog) {
+S3QueueNotificationDialog::S3QueueNotificationDialog(const QueueNotification &notification, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3QueueNotificationDialog) {
 
     // Initialization
     Initialize();
@@ -25,6 +25,13 @@ S3QueueNotificationDialog::S3QueueNotificationDialog(const QueueNotification &no
         selectedEvents.append(S3NotificationEventToString(event));
     }
     _ui->eventSelectLists->SetSelected(selectedEvents);
+
+    // Filters
+    for (auto it = notification.filterRules.begin(); it != notification.filterRules.cend(); ++it) {
+        const int row = _filterDataModel->rowCount();
+        SetColumn(_filterDataModel, row, 0, S3FilterNameToString(it->name));
+        SetColumn(_filterDataModel, row, 1, it->filterValue);
+    }
 }
 
 void S3QueueNotificationDialog::Initialize() {

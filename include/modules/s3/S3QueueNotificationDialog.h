@@ -13,6 +13,7 @@
 // Awsmock includes
 #include <modules/sqs/SQSService.h>
 #include <dto/s3/S3GetBucketDetailsResponse.h>
+#include <utils/BaseDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -22,7 +23,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class S3QueueNotificationDialog : public QDialog {
+class S3QueueNotificationDialog : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -45,6 +46,12 @@ public:
      * @brief Common initialization
      */
     void Initialize();
+
+    /**
+     * @brief Load data content
+     */
+    void LoadContent() override {
+    }
 
     /**
      * @brief Destructor

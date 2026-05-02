@@ -87,6 +87,7 @@ struct QueueNotification {
         for (const auto &filterRule: jsonObject["filterRules"].toArray()) {
             S3FilterRule rule;
             rule.FromJson(filterRule.toObject());
+            filterRules.append(rule);
         }
         for (const auto &event: jsonObject["events"].toArray()) {
             events.append(S3NotificationEventFromString(event.toString()));
