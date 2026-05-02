@@ -73,9 +73,6 @@ jobs:
           python -m aqt install-qt windows desktop $env:QT_VERSION win64_msvc2022_64 --outputdir $env:QT_DIR --modules qtimageformats qtcharts qtwebsockets qtnetworkauth
           python -m aqt install-tool windows desktop tools_ifw --outputdir $env:QT_DIR
 
-      - name: Install dependencies (Windows)
-        run: vcpkg install md4c
-
       - name: Configure CMake (Windows)
         shell: powershell
         run: |
@@ -155,10 +152,6 @@ jobs:
           ARCH="clang_64"
           python3 -m aqt install-qt mac desktop 6.10.1 $ARCH --outputdir "$HOME/Qt" --modules qtcharts qtimageformats qtwebsockets qtnetworkauth
 
-      - name: Install dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: brew install md4c
-
       - name: Configure (macOS)
         shell: bash
         run: |
@@ -211,7 +204,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake wget tar libfreetype6-dev libfontconfig1-dev libglib2.0-dev \
-            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev libmd4c-dev
+            ninja-build ruby ruby-dev libx11-dev libxext-dev libxrender-dev
           sudo gem install --no-document fpm
 
       - name: Get version
@@ -293,7 +286,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev libmd4c-dev
+          sudo apt install -y build-essential cmake ninja-build ruby ruby-dev
           sudo gem install --no-document fpm
 
       - name: Install Qt
