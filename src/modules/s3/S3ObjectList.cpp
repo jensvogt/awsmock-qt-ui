@@ -118,7 +118,9 @@ void S3ObjectList::LoadContent() {
 }
 
 void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjectResponse) const {
-    _tableView->Clear();
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listObjectResponse.total);
     for (auto r = 0, c = 0; r < listObjectResponse.objectCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).key);
@@ -128,7 +130,9 @@ void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjec
         _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listObjectResponse.objectCounters.at(r).oid);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void S3ObjectList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {

@@ -116,6 +116,8 @@ public:
 
     void ListLambdaArns();
 
+    void StartInstance(const QString &lambdaArn);
+
     /**
      * @brief Stop an lambdas
      *
@@ -157,12 +159,17 @@ public:
     //void ListLambdaNames();
 
     /**
-     * @brief Deletes new lambda
+     * @brief Deletes a lambda function
      *
      * @param name lambda name
      */
     void DeleteLambda(const QString &name);
 
+    /**
+     * @brief Delete lambda results
+     *
+     * @param lambdaArn lambda ARN
+     */
     void DeleteLambdaResults(const QString &lambdaArn);
 
 signals:
@@ -224,6 +231,11 @@ signals:
      * @param listArnsResponse list of lambda ARNs
      */
     void ListLambdaArnsSignal(const LambdaListArnsResponse &listArnsResponse);
+
+    /**
+     * @brief Reload lambdas details signal
+     */
+    void ReloadLambdaDetails();
 
 private:
     /**

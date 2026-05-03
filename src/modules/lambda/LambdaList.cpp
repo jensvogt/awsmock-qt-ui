@@ -101,7 +101,9 @@ void LambdaList::LoadContent() {
 }
 
 void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) const {
-
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listLambdaResponse.total);
     for (auto r = 0, c = 0; r < listLambdaResponse.lambdaCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).name);
@@ -116,7 +118,9 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
         _tableView->SetHiddenColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).containerId);
         _tableView->SetHiddenColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).arn);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void LambdaList::ShowContextMenu(const QPoint &pos) {

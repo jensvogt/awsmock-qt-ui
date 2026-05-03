@@ -110,7 +110,9 @@ void SNSTopicList::LoadContent() {
 }
 
 void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResult) const {
-    _tableView->Clear();
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listTopicResult.total);
     for (auto r = 0, c = 0; r < listTopicResult.topicCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).topicName);
@@ -122,7 +124,9 @@ void SNSTopicList::HandleListTopicSignal(const SNSListTopicResult &listTopicResu
         _tableView->SetColumn(r, c++, listTopicResult.topicCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listTopicResult.topicCounters.at(r).topicArn);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void SNSTopicList::ShowContextMenu(const QPoint &pos) {

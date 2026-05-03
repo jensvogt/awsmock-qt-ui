@@ -105,13 +105,14 @@ SQSQueueList::~SQSQueueList() {
 }
 
 void SQSQueueList::LoadContent() {
-    _tableView->SaveSelection();
-    _tableView->Clear();
     _sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
 }
 
 void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListResponse) const {
-    _tableView->SetTotalSize(queueListResponse.total);
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
+    _tableView->SetTotalSize(queueListResponse.queueCounters.size());
     for (auto r = 0, c = 0; r < queueListResponse.queueCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).queueName);
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).available);
@@ -124,6 +125,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
         _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).queueArn);
         _tableView->SetHiddenColumn(r, c++, queueListResponse.queueCounters.at(r).isDlq);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
     _tableView->RestoreSelection();
     logInfo << "SQS queue list updated";

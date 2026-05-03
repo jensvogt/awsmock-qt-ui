@@ -109,7 +109,9 @@ void S3BucketList::LoadContent() {
 }
 
 void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketResult) const {
-    _tableView->Clear();
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listBucketResult.total);
     for (auto r = 0, c = 0; r < listBucketResult.bucketCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).bucketName);
@@ -119,7 +121,9 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
         _tableView->SetColumn(r, c++, listBucketResult.bucketCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listBucketResult.bucketCounters.at(r).bucketArn);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void S3BucketList::ShowContextMenu(const QPoint &pos) const {

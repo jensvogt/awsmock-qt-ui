@@ -3,13 +3,17 @@
 //
 
 #include <modules/lambda/LambdaDetailsDialog.h>
-#include "ui_LambdaDetailsDialog.h"
 
-LambdaDetailsDialog::LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(lambdaArn) {
+#include <utility>
+#include "ui_LambdaDetailsDialog.h"
+#include "components/Toast.h"
+
+LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(std::move(lambdaArn)) {
     _lambdaService = new LambdaService();
 
     connect(_lambdaService, &LambdaService::GetLambdaDetailsSignal, this, &LambdaDetailsDialog::UpdateLambda);
     connect(_lambdaService, &LambdaService::LoadLambdaEnvironment, this, &LambdaDetailsDialog::LoadContent);
+    connect(_lambdaService, &LambdaService::ReloadLambdaDetails, this, &LambdaDetailsDialog::LoadContent);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaDetailsDialog::HandleAccept);
@@ -95,6 +99,10 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     // Instance refresh button
     _ui->instanceRefreshButton->setText(nullptr);
     _ui->instanceRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+
+    // Add tag context menu
+    _ui->instanceTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->instanceTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowInstanceContextMenu);
 }
 
 void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesResponse &listInstancesResponse) const {
@@ -109,7 +117,9 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).privatePort);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).publicPort);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).status);
-        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).lastInvocation);
+        if (listInstancesResponse.lambdaInstanceCounters.at(r).lastInvocation.has_value()) {
+            SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).lastInvocation.value());
+        }
     }
     _ui->instanceTable->setRowCount(static_cast<int>(listInstancesResponse.lambdaInstanceCounters.count()));
     _ui->instanceTable->setSortingEnabled(true);
@@ -174,15 +184,15 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     });
 }
 
-void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const {
+void LambdaDetailsDialog::UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listEnvironmentResponse) const {
     const int selectedRow = _ui->environmentTable->selectionModel()->currentIndex().row();
     _ui->environmentTable->setRowCount(0);
     _ui->environmentTable->setSortingEnabled(false);
     int r = 0, c = 0;
-    for (const auto &key: listInstancesResponse.environmentCounters.keys()) {
+    for (const auto &key: listEnvironmentResponse.environmentCounters.keys()) {
         _ui->environmentTable->insertRow(r);
         SetColumn(_ui->environmentTable, r, c++, key);
-        SetColumn(_ui->environmentTable, r, c, listInstancesResponse.environmentCounters[key]);
+        SetColumn(_ui->environmentTable, r, c, listEnvironmentResponse.environmentCounters[key]);
         r++;
         c = 0;
     }
@@ -220,6 +230,46 @@ void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
     } else if (selectedAction == deleteAction) {
         _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);
         _ui->environmentTable->removeRow(row);
+    }
+}
+
+void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
+
+    int row = 0;
+    QMenu menu;
+    QAction *startAction = nullptr, *killAction = nullptr;
+
+    // Cell index
+    if (const QModelIndex index = _ui->instanceTable->indexAt(pos); !index.isValid()) {
+
+        startAction = menu.addAction(IconUtils::GetIcon("start"), "Start a new Lambda Instance");
+        startAction->setToolTip("Start a new Lambda Instance");
+
+    } else {
+
+        killAction = menu.addAction(IconUtils::GetIcon("delete"), "Kill Lambda Instance");
+        killAction->setToolTip("Kill Lambda Instance");
+        row = index.row();
+    }
+
+
+    // menu.addSeparator();
+    //
+    // QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Environment Variable");
+    // deleteAction->setToolTip("Delete the environment variable");
+
+    if (const QAction *selectedAction = menu.exec(_ui->instanceTable->viewport()->mapToGlobal(pos)); selectedAction == killAction) {
+        const QString id = _ui->instanceTable->item(row, 0)->text();
+        // if (LambdaEnvironmentDetailDialog dialog(key, value); dialog.exec() == Accepted) {
+        //     SetColumn(_ui->instanceTable, row, 1, dialog.GetValue());
+        //     SetColumn(_ui->instanceTable, row, 1, dialog.GetValue());
+        //     _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
+        // }
+        logInfo << "Kill lambda instance, id: " << id;
+    } else if (selectedAction == startAction) {
+        _lambdaService->StartInstance(_lambdaArn);
+        new Awsmock::Components::ToastOverlay("Infrastructure imported!", GetParent());
+        logInfo << "Start lambda instance";
     }
 }
 
