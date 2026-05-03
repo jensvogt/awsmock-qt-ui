@@ -113,6 +113,9 @@ void SQSMessageList::LoadContent() {
 }
 
 void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const {
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listMessageResponse.total);
     for (auto r = 0, c = 0; r < listMessageResponse.messageCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).messageId);
@@ -125,7 +128,9 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
         _tableView->SetColumn(r, c++, listMessageResponse.messageCounters.at(r).queueArn);
         _tableView->SetColumn(r, c, listMessageResponse.messageCounters.at(r).receiptHandle);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void SQSMessageList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {

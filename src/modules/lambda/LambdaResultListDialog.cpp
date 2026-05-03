@@ -5,9 +5,11 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_LambdaResultListDialog.h" resolved
 
 #include <modules/lambda/LambdaResultListDialog.h>
+
+#include <utility>
 #include "ui_LambdaResultListDialog.h"
 
-LambdaResultListDialog::LambdaResultListDialog(const QString &lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaResultListDialog), _lambdaArn(lambdaArn) {
+LambdaResultListDialog::LambdaResultListDialog(QString lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaResultListDialog), _lambdaArn(std::move(lambdaArn)) {
 
     // Lambda REST service
     _lambdaService = new LambdaService();
@@ -88,5 +90,5 @@ void LambdaResultListDialog::HandleAccept() {
 }
 
 void LambdaResultListDialog::HandleReject() {
-    accept();
+    reject();
 }

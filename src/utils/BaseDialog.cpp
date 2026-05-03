@@ -1,6 +1,6 @@
 #include <utils/BaseDialog.h>
 
-BaseDialog::BaseDialog(QWidget *parent) : QDialog(parent), _autoUpdateTimer(nullptr) {
+BaseDialog::BaseDialog(QWidget *parent) : QDialog(parent), _parent(parent), _autoUpdateTimer(nullptr) {
 }
 
 void BaseDialog::StartAutoUpdate() {

@@ -5,8 +5,10 @@
 #ifndef AWSMOCK_QT_UI_LAMBDA_RESULT_LIST_DIALOG_H
 #define AWSMOCK_QT_UI_LAMBDA_RESULT_LIST_DIALOG_H
 
+// Qt includes
 #include <QDialog>
 
+// Awsmock includes
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 #include <modules/lambda/LambdaService.h>
@@ -24,16 +26,39 @@ class LambdaResultListDialog final : public BaseDialog {
     Q_OBJECT
 
 public:
-    explicit LambdaResultListDialog(const QString &lambdaArn, QWidget *parent = nullptr);
+    /**
+     * @brief Constructor
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param parent parent widget
+     */
+    explicit LambdaResultListDialog(QString lambdaArn, QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~LambdaResultListDialog() override;
 
+    /**
+     * @brief Handle lambda list
+     *
+     * @param listResultsResponse list lambda response
+     */
     void UpdateResultTable(const LambdaListResultsResponse &listResultsResponse) const;
 
+    /**
+     * @brief Handle OK button
+     */
     void HandleAccept();
 
+    /**
+     * @brief Handle CANCEL button
+     */
     void HandleReject();
 
+    /**
+     * @brief Load content callback
+     */
     void LoadContent() override {
     };
 

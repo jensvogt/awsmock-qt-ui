@@ -35,26 +35,71 @@ public:
      * @param lambdaArn lambda AWS ARN
      * @param parent parent widget
      */
-    explicit LambdaDetailsDialog(const QString &lambdaArn, QWidget *parent = nullptr);
+    explicit LambdaDetailsDialog(QString lambdaArn, QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~LambdaDetailsDialog() override;
 
+    /**
+     * @brief Update lambda dtails
+     *
+     * @param lambdaGetResponse lambda service response
+     */
     void UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const;
 
+    /**
+     * @brief Initialize instances tab
+     */
     void SetupInstancesTab() const;
 
+    /**
+     * @brief Update lambda instances
+     *
+     * @param listInstancesResponse lambda service response
+     */
     void UpdateLambdaInstances(const LambdaListInstancesResponse &listInstancesResponse) const;
 
+    /**
+     * @brief Initialize environment tab
+     */
     void SetupEnvironmentTab() const;
 
-    void UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listInstancesResponse) const;
+    /**
+     * @brief Initialize lambda environment tab
+     *
+     * @param listEnvironmentResponse lambda service response
+     */
+    void UpdateLambdaEnvironment(const LambdaListEnvironmentResponse &listEnvironmentResponse) const;
 
+    /**
+     * @brief Show the environment context menu
+     *
+     * @param pos position in table
+     */
     void ShowEnvironmentContextMenu(const QPoint &pos) const;
 
+    /**
+     * @brief Show the instance context menu
+     *
+     * @param pos position in table
+     */
+    void ShowInstanceContextMenu(const QPoint &pos) const;
+
+    /**
+     * @brief Handle OK button
+     */
     void HandleAccept();
 
+    /**
+     * @brief Handle CANCEL button
+     */
     void HandleReject();
 
+    /**
+     * @brief Load lamba details
+     */
     void LoadContent() override;
 
 private:

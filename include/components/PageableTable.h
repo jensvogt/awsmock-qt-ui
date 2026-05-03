@@ -440,6 +440,11 @@ private:
     long _totalSize{};
 
     /**
+     * @brief key column
+     */
+    int _keyColumn{};
+    
+    /**
      * @brief Column header names
      */
     QStringList _headerNames;
