@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.53](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.52...v1.11.53) (2026-05-04)
+
+
+### Bug Fixes
+
+* include md4c ([ea872c4](https://github.com/jensvogt/awsmock-qt-ui/commit/ea872c45e1faea32752c16e87697c5ba6b1aa2dd))
+* include md4c ([17af208](https://github.com/jensvogt/awsmock-qt-ui/commit/17af208315bdd245beadd05ced364825923ddaa8))
+
 ## [1.11.52](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.51...v1.11.52) (2026-05-02)
 
 
