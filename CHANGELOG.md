@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.55](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.54...v1.11.55) (2026-05-04)
+
+
+### Bug Fixes
+
+* resend SNS messages ([b26548d](https://github.com/jensvogt/awsmock-qt-ui/commit/b26548d0510def37f39c8512b402feaadf8438b6))
+
 ## [1.11.54](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.53...v1.11.54) (2026-05-04)
 
 
