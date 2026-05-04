@@ -583,6 +583,32 @@ void SNSService::ResendTopic(const QString &topicArn) {
                           } else {
                               logError << error;
                           }
+                          emit EventBus::instance().TimerSignal("ResendTopic", timer.elapsed());
+                      });
+}
+
+void SNSService::ResendMessage(const QString &topicArn, const QString &messageId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["topicArn"] = topicArn;
+    jRequest["messageId"] = messageId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "resend-message"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadMessagesSignal();
+                          } else {
+                              logError << error;
+                          }
                           emit EventBus::instance().TimerSignal("ResendMessage", timer.elapsed());
                       });
 }
