@@ -144,6 +144,9 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Topic");
     editAction->setToolTip("Edit the topic details.");
 
+    QAction *resendAction = menu->addAction(IconUtils::GetIcon("resend"), "Resend All Messages");
+    resendAction->setToolTip("Resend all messages in the topic.");
+
     menu->addSeparator();
 
     QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Topic");
@@ -160,10 +163,14 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
         _snsService->PurgeTopic(topicArn);
     } else if (selectedAction == sendAction) {
         if (SNSMessageAddDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
-            new Awsmock::Components::ToastOverlay("Message sent! ID: " + dialog.GetMessageId(), _tableView);
+            new Awsmock::Components::ToastOverlay("Message sent!\nMessageId: " + dialog.GetMessageId(), _tableView);
         }
+    } else if (selectedAction == resendAction) {
+        _snsService->ResendTopic(topicArn);
+        new Awsmock::Components::ToastOverlay("Messages resend initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == deleteAction) {
         _snsService->DeleteTopic(topicArn);
+        new Awsmock::Components::ToastOverlay("Topic deletion initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == editAction) {
         SNSTopicDetailsDialog dialog(topicArn);
         dialog.exec();
