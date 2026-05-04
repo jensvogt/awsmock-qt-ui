@@ -1,6 +1,8 @@
 
 #include <modules/sns/SNSMessageList.h>
 
+#include "components/Toast.h"
+
 SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service
@@ -129,7 +131,11 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) {
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Message");
     editAction->setToolTip("Edit the message");
 
+    QAction *resendAction = menu->addAction(IconUtils::GetIcon("resend"), "Resend Message");
+    resendAction->setToolTip("Resend the selected messages");
+
     menu->addSeparator();
+
     QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Message");
     deleteAction->setToolTip("Delete the message");
 
@@ -137,6 +143,10 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) {
         const auto messageId = _tableView->GetValue<QString>(index, 0);
         SNSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();
+    } else if (selectedAction == resendAction) {
+        const auto messageId = _tableView->GetValue<QString>(index, 0);
+        _snsService->ResendMessage(_topicArn, messageId);
+        new Awsmock::Components::ToastOverlay("Message resend.\nMessageId: " + messageId);
     } else if (selectedAction == deleteAction) {
         const auto messageId = _tableView->GetValue<QString>(index, 0);
         _snsService->DeleteMessage(_topicArn, messageId);

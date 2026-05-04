@@ -220,7 +220,7 @@ void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
             }
 
             // Set X range
-            customPlot->xAxis->setRange(s, QDateTime::currentDateTime().toUTC().toSecsSinceEpoch());
+            customPlot->xAxis->setRange(s, static_cast<double>(QDateTime::currentDateTime().toUTC().toSecsSinceEpoch()));
 
             // Auto scale Y axis
             customPlot->yAxis->rescale();
