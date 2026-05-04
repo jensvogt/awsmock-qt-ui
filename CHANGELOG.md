@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.56](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.55...v1.11.56) (2026-05-04)
+
+
+### Bug Fixes
+
+* purge SQS queues ([bb1f1ac](https://github.com/jensvogt/awsmock-qt-ui/commit/bb1f1ac9328c7c42b717431537b3a65c3adff14c))
+
 ## [1.11.55](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.54...v1.11.55) (2026-05-04)
 
 
