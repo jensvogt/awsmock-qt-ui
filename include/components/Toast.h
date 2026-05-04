@@ -18,7 +18,7 @@ namespace Awsmock::Components {
         Q_OBJECT
 
     public:
-        explicit ToastOverlay(const QString &message, QWidget *parent, const int durationMs = 3000) : QLabel(message, parent) {
+        explicit ToastOverlay(const QString &message, QWidget *parent = nullptr, const int durationMs = 3000) : QLabel(message, parent) {
 
             // Styling
             setStyleSheet(R"(

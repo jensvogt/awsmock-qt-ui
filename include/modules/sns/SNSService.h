@@ -173,6 +173,19 @@ public:
      */
     void SendMessage(const SNSSendMessageRequest &request);
 
+    /**
+     * @brief Resend all messages in the queue
+     *
+     * @param topicArn topic ARN
+     */
+    void ResendTopic(const QString &topicArn);
+
+    /**
+     * @brief Add a subscription to the topic
+     *
+     * @param topicArn topic ARN
+     * @param topicSubscription topic subscription
+     */
     void AddSubscription(const QString &topicArn, const SNSTopicSubscription &topicSubscription);
 
     /**
