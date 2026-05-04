@@ -1,6 +1,8 @@
 
 #include <modules/sqs/SQSMessageList.h>
 
+#include "components/Toast.h"
+
 SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Connect service events
@@ -38,6 +40,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     purgeAllButton->setToolTip("Purge all messages");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _sqsService->PurgeAllMessages(_queueUrl);
+        new Awsmock::Components::ToastOverlay("Purge queue initiated.\nChanges may take some time to propagate.", this);
     });
 
     // Toolbar refresh action
