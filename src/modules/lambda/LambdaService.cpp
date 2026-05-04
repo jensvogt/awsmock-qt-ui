@@ -115,9 +115,7 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetLambdaInstances", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetLambdaInstances", timer.elapsed());
                       });
 }
 
@@ -159,9 +157,7 @@ void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetLambdaEnvironment", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetLambdaEnvironment", timer.elapsed());
                       });
 }
 
@@ -188,9 +184,7 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("AddLambdaEnvironment", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("AddLambdaEnvironment", timer.elapsed());
                       });
 }
 
@@ -216,9 +210,7 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("RemoveLambdaEnvironment", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("RemoveLambdaEnvironment", timer.elapsed());
                       });
 }
 
@@ -249,9 +241,7 @@ void LambdaService::ListLambdaLogs(const QString &lambdaArn) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("ListLambdaLogs", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListLambdaLogs", timer.elapsed());
                       });
 }
 
@@ -282,9 +272,7 @@ void LambdaService::GetLambdaResult(const QString &oid) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetLambdaResult", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetLambdaResult", timer.elapsed());
                       });
 }
 
@@ -315,9 +303,7 @@ void LambdaService::GetLambdaResults(const QString &oid) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetLambdaResults", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetLambdaResults", timer.elapsed());
                       });
 }
 
@@ -451,6 +437,31 @@ void LambdaService::ListLambdaArns() {
                               logError << error;
                           }
                           emit EventBus::instance().DockerStatsTimerSignal("DeleteLambda", timer.elapsed());
+                      });
+}
+
+void LambdaService::StartInstance(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["functionArn"] = lambdaArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "start-lambda"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer, lambdaArn](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadLambdaDetails();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteLambdaResults", timer.elapsed());
                       });
 }
 

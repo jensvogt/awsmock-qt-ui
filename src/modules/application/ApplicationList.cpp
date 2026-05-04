@@ -101,7 +101,9 @@ void ApplicationList::LoadContent() {
 }
 
 void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse &listApplicationResponse) const {
-
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listApplicationResponse.total);
     for (auto r = 0, c = 0; r < listApplicationResponse.applicationCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).name);
@@ -115,7 +117,9 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
         _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).modified);
         _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).containerId);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {

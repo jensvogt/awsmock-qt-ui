@@ -82,6 +82,9 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
     // Set title
     setWindowTitle(QString("Application Logs: ") + applicationName);
 
+    // Set container ID
+    _ui->containerIdEdit->setText(containerId.first(12));
+
     // Start log capture
     _dockerLogClient->ConnectToDocker();
 }

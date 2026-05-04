@@ -21,6 +21,8 @@ public:
 
     virtual void LoadContent() = 0;
 
+    QWidget *GetParent() const { return _parent; }
+
 signals:
     void DialogStatusUpdateSignal(const QString &text);
 
@@ -31,8 +33,15 @@ public slots:
     }
 
 private:
-    QTimer *_autoUpdateTimer;
+    /**
+     * @brief Parent widget
+     */
+    QWidget *_parent;
 
+    /**
+     * @brief Auto update timer
+     */
+    QTimer *_autoUpdateTimer;
 };
 
 #endif // AWSMOCK_QT_UI_UTILS_BASE_DIALOG_H

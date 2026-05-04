@@ -19,7 +19,7 @@ struct LambdaInstanceCounter {
 
     int publicPort;
 
-    QDateTime lastInvocation;
+    std::optional<QDateTime> lastInvocation;
 
     void FromJson(const QJsonObject &jsonObject) {
         instanceId = jsonObject["instanceId"].toString();
@@ -29,7 +29,9 @@ struct LambdaInstanceCounter {
         duration = jsonObject["duration"].toInt();
         privatePort = jsonObject["privatePort"].toInt();
         publicPort = jsonObject["publicPort"].toInt();
-        lastInvocation = QDateTime::fromString(jsonObject["lastInvocation"].toString(), Qt::ISODate);
+        if (!jsonObject["lastInvocation"].isUndefined()) {
+            lastInvocation = QDateTime::fromString(jsonObject["lastInvocation"].toString(), Qt::ISODate);
+        }
     }
 };
 

@@ -98,7 +98,9 @@ void SNSMessageList::LoadContent() {
 }
 
 void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMessageResult) const {
-    _tableView->Clear();
+    _tableView->SaveSelection();
+    _tableView->setUpdatesEnabled(false);
+    _tableView->ClearContent();
     _tableView->SetTotalSize(listMessageResult.total);
     for (auto r = 0, c = 0; r < listMessageResult.messageCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listMessageResult.messageCounters.at(r).messageId);
@@ -110,7 +112,9 @@ void SNSMessageList::HandleListMessageSignal(const SNSListMessagesResult &listMe
         _tableView->SetColumn(r, c++, listMessageResult.messageCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listMessageResult.messageCounters.at(r).topicArn);
     }
+    _tableView->setUpdatesEnabled(true);
     _tableView->UpdateSorting();
+    _tableView->RestoreSelection();
 }
 
 void SNSMessageList::HandleReloadMessageSignal() const {
