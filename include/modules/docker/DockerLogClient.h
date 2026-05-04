@@ -5,11 +5,12 @@
 #ifndef AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H
 #define AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H
 
-#include <QObject>
-#include <QTcpSocket>
-#include <QLocalSocket>
+// Qt includes
 #include <QDebug>
+#include <QLocalSocket>
+#include <QObject>
 #include <QRegularExpression>
+#include <QTcpSocket>
 
 class DockerLogClient final : public QObject {
     Q_OBJECT
@@ -20,7 +21,7 @@ public:
         Tcp
     };
 
-    DockerLogClient(const QString &containerId, Mode mode, const QString &endpoint, long limit, QObject *parent);
+    DockerLogClient(QString containerId, Mode mode, QString endpoint, long limit, QObject *parent);
 
     void ConnectToDocker() const;
 

@@ -35,6 +35,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     purgeAllButton->setToolTip("Purge all queues");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _sqsService->PurgeAllQueues();
+        new Awsmock::Components::ToastOverlay("Purge all queues initiated.\nChanges may take some time to propagate.", this);
     });
 
     // Toolbar reset counter action
@@ -165,6 +166,7 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     const auto queueArn = _tableView->GetValue<QString>(index, 8);
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _sqsService->PurgeQueue(queueUrl);
+        new Awsmock::Components::ToastOverlay("Purge queue initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == sendAction) {
         if (SQSMessageAddDialog dialog(queueUrl, queueArn); dialog.exec() == QDialog::Accepted) {
             new Awsmock::Components::ToastOverlay("Message sent! ID: " + dialog.GetMessageId(), _tableView);

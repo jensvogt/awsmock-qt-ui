@@ -17,7 +17,7 @@ EditConfigDialog::EditConfigDialog(QWidget *parent) : QDialog(parent), _ui(new U
 
     const auto selectedWebsocketUrl = Configuration::instance().GetValue<QString>("server.websocket-url", {});
     _ui->websocketUrlCombo->addItems(GetWebSocketUrlList());
-    _ui->websocketUrlCombo->setCurrentText(selectedBaseUrl);
+    _ui->websocketUrlCombo->setCurrentText(selectedWebsocketUrl);
     connect(_ui->websocketUrlCombo, &QComboBox::currentTextChanged, this, [](const QString &text) {
         Configuration::instance().SetValue("server.websocket-url", text);
     });
