@@ -181,6 +181,14 @@ public:
     void ResendTopic(const QString &topicArn);
 
     /**
+     * @brief Resend a single SNS message
+     *
+     * @param topicArn topic ARN
+     * @param messageId SNS message ID
+     */
+    void ResendMessage(const QString &topicArn, const QString &messageId);
+
+    /**
      * @brief Add a subscription to the topic
      *
      * @param topicArn topic ARN
