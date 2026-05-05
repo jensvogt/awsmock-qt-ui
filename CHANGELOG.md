@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.58](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.57...v1.11.58) (2026-05-05)
+
+
+### Bug Fixes
+
+* details window for S3 objects ([223b37e](https://github.com/jensvogt/awsmock-qt-ui/commit/223b37ebbac7a7ad7b2d71a7100d6e1c00aba260))
+
 ## [1.11.57](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.56...v1.11.57) (2026-05-05)
 
 
