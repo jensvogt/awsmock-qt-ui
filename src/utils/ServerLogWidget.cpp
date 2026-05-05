@@ -50,9 +50,9 @@ ServerLogWidget::ServerLogWidget(QWidget *parent) : BaseDialog(parent), _ui(new 
     _ui->scrollButton->setText(nullptr);
     _ui->scrollButton->setIcon(IconUtils::GetIcon("purge"));
     _ui->scrollButton->setToolTip("Start/stop scrolling");
-    _ui->scrollButton->setChecked(_scrolling);
+    _ui->scrollButton->setChecked(_autoScroll);
     connect(_ui->scrollButton, &QPushButton::toggled, this, [this](const bool value) {
-        _scrolling = value;
+        _autoScroll = value;
     });
 
     // Clear button
@@ -129,7 +129,7 @@ void ServerLogWidget::OnMessageReceived(const QString &message) const {
     _serverLogDataModel->appendRow(item);
 
     // Auto-scroll to bottom
-    if (_scrolling) {
+    if (_autoScroll) {
         _ui->logList->scrollToBottom();
     }
 }

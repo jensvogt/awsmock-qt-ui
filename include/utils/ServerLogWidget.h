@@ -60,7 +60,7 @@ private:
     /**
      * @brief Scrolling flag
      */
-    bool _scrolling = true;
+    bool _autoScroll = true;
     /**
      *  @brief Log item data model
      */
