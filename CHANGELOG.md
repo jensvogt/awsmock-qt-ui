@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.59](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.58...v1.11.59) (2026-05-05)
+
+
+### Bug Fixes
+
+* auto scroll buttons ([58e98d7](https://github.com/jensvogt/awsmock-qt-ui/commit/58e98d74dd8a2f6a0d6bc6a6111b74bdfdc3ab10))
+* auto scroll buttons ([1554571](https://github.com/jensvogt/awsmock-qt-ui/commit/155457162e6876e23e341b94371497c7425d5e96))
+* images in S3 Object window ([8eff1d3](https://github.com/jensvogt/awsmock-qt-ui/commit/8eff1d3372542064a38938f573103640d22741e0))
+* resend SNS messages ([717c3c6](https://github.com/jensvogt/awsmock-qt-ui/commit/717c3c618a4e0811850ac590c334698c9409c7b3))
+
 ## [1.11.58](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.57...v1.11.58) (2026-05-05)
 
 
