@@ -77,6 +77,8 @@ namespace Awsmock::Components {
          */
         void ClearSearchField();
 
+        void showEvent(QShowEvent *event) override;
+
     signals :
         /**
          * @brief Signaled when the search text should be searched in the forward direction

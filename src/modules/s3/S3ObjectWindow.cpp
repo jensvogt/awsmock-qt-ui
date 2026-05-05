@@ -7,7 +7,7 @@
 #include <modules/s3/S3ObjectWindow.h>
 #include "ui_S3ObjectWindow.h"
 
-S3ObjectWindow::S3ObjectWindow(const QString &objectId, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3ObjectWindow), _objectId(objectId) {
+S3ObjectWindow::S3ObjectWindow(QString objectId, QWidget *parent) : BaseDialog(parent), _ui(new Ui::S3ObjectWindow), _objectId(std::move(objectId)) {
 
     // S3 service
     _s3Service = new S3Service;
@@ -30,27 +30,39 @@ S3ObjectWindow::S3ObjectWindow(const QString &objectId, QWidget *parent) : BaseD
     S3ObjectWindow::LoadContent();
 }
 
+S3ObjectWindow::~S3ObjectWindow() {
+    delete _s3Service;
+    delete _ui;
+}
+
 void S3ObjectWindow::LoadContent() {
     _s3Service->GetObjectDetails(_objectId);
 }
 
-void S3ObjectWindow::SetLastUpdate() const {
-    const QString message = "Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime());
-    _ui->statusLabel->setText(message);
-}
-
 void S3ObjectWindow::UpdateContent(const S3GetObjectDetailsResponse &response) const {
 
-    // Set test
-    _ui->textEditor->SetText(response.body);
+    if (response.contentType.startsWith("image")) {
+
+        // Set text
+        QPixmap pixmap;
+        pixmap.loadFromData(response.body);
+        _ui->stackedWidget->setCurrentIndex(1);
+        _ui->imageViewer->LoadImage(pixmap);
+
+    } else {
+
+        // Set text
+        _ui->stackedWidget->setCurrentIndex(0);
+        _ui->textEditor->SetText(response.body);
+    }
 
     // Status label
     SetLastUpdate();
 }
 
-S3ObjectWindow::~S3ObjectWindow() {
-    delete _s3Service;
-    delete _ui;
+void S3ObjectWindow::SetLastUpdate() const {
+    const QString message = "Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime());
+    _ui->statusLabel->setText(message);
 }
 
 void S3ObjectWindow::HandleAccept() {

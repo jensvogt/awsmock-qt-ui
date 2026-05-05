@@ -51,7 +51,8 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         include/components/QCustomPlot.h src/components/QCustomPlot.cpp include/components/PlainTextEditor.h
         src/components/PlainTextEditor.cpp include/components/Toast.h include/components/SelectLists.h
         src/components/SelectLists.cpp src/components/SelectLists.ui src/components/MonitoringChart.cpp
-        src/components/MonitoringChart.ui include/components/MonitoringChart.h)
+        src/components/MonitoringChart.ui include/components/MonitoringChart.h src/components/ImageViewer.cpp
+        include/components/ImageViewer.h src/components/ImageViewer.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h

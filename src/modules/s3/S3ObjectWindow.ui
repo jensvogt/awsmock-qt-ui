@@ -39,13 +39,50 @@
     </layout>
    </item>
    <item>
-    <widget class="Awsmock::Components::PlainTextEditor" name="textEditor" native="true">
+    <widget class="QStackedWidget" name="stackedWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="textViewerWidget">
+      <layout class="QVBoxLayout" name="textViewerLayout">
+       <property name="margin" stdset="0">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="Awsmock::Components::PlainTextEditor" name="textEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="imageViewerWidget">
+      <layout class="QVBoxLayout" name="textViewerLayout">
+       <property name="margin" stdset="0">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="Awsmock::Components::ImageViewer" name="imageViewer" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -96,6 +133,11 @@
    <extends>QWidget</extends>
    <header location="global">components/PlainTextEditor.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Awsmock::Components::ImageViewer</class>
+   <extends>QWidget</extends>
+   <header location="global">components/ImageViewer.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
