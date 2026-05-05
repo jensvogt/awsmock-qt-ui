@@ -92,6 +92,11 @@ private:
      * @brief Docker cogs client connection
      */
     QString _currentLogLevel = "INFO";
+
+    /**
+     * @brief Auto scroll flag
+     */
+    bool _autoScroll = true;
 };
 
 

@@ -48,8 +48,9 @@ ServerLogWidget::ServerLogWidget(QWidget *parent) : BaseDialog(parent), _ui(new 
 
     // Scroll button
     _ui->scrollButton->setText(nullptr);
-    _ui->scrollButton->setIcon(IconUtils::GetIcon("scroll"));
+    _ui->scrollButton->setIcon(IconUtils::GetIcon("purge"));
     _ui->scrollButton->setToolTip("Start/stop scrolling");
+    _ui->scrollButton->setChecked(_scrolling);
     connect(_ui->scrollButton, &QPushButton::toggled, this, [this](const bool value) {
         _scrolling = value;
     });
