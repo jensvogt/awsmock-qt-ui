@@ -39,6 +39,10 @@ private:
      */
     void UpdateMessageDetails(const SQSGetMessageDetailsResponse &response);
 
+    void SaveToFile() const;
+
+    static QString SelectFilename();
+
     /**
      * @brief UI components
      */

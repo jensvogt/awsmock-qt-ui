@@ -2,6 +2,7 @@
 #include <ui_SQSMessageWindow.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include "ui_SQSMessageDetailsDialog.h"
+#include "components/Toast.h"
 #include "modules/sqs/SQSMessageWindow.h"
 
 SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent),
@@ -57,6 +58,12 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
         _sqsService->GetSqsMessageDetails(_messageId);
     });
 
+    // Save button
+    _ui->saveButton->setText(nullptr);
+    _ui->saveButton->setIcon(IconUtils::GetIcon("save"));
+    _ui->saveButton->setToolTip("Save the message to a local file");
+    connect(_ui->saveButton, &QPushButton::clicked, this, &SQSMessageDetailsDialog::SaveToFile);
+
     // Extern window button
     _ui->windowButton->setText(nullptr);
     _ui->windowButton->setIcon(IconUtils::GetIcon("extern-window"));
@@ -111,4 +118,41 @@ void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsRes
         _ui->systemAttributeTable->setItem(r, 0, new QTableWidgetItem(response.attributes.at(r).key));
         _ui->systemAttributeTable->setItem(r, 1, new QTableWidgetItem(response.attributes.at(r).value));
     }
+}
+
+void SQSMessageDetailsDialog::SaveToFile() const {
+
+    if (const QString fileName = SelectFilename(); !fileName.isEmpty()) {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + fileName);
+        }
+        const QString message = _ui->bodyTextWidget->GetText();
+        const long count = file.write(message.toUtf8());
+        file.close();
+
+        // Message
+        new Awsmock::Components::ToastOverlay("Message saved.\nFilename: " + fileName);
+        logInfo << "SNS message saved to file: " << fileName << ", fileSize: " << count;
+    }
+}
+
+QString SQSMessageDetailsDialog::SelectFilename() {
+
+    // Create a QFileDialog set to select existing files
+    const auto filter = "JSON Files (*.json);All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.SNSSaveBodyToFile", "/usr/local/file.json");
+
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadWrite)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
+            return {};
+        }
+        file.close();
+        Configuration::instance().SetValue<QString>("ui.default-directory.SNSSaveBodyToFile", QFileInfo(filePath).absolutePath());
+        logDebug << "SNS message file path: " << filePath;
+        return filePath;
+    }
+    return {};
 }

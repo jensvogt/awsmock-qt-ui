@@ -148,6 +148,9 @@
           <number>6</number>
          </property>
          <item>
+          <widget class="QWidget" name="widget" native="true"/>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
@@ -171,6 +174,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="saveButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="windowButton">
            <property name="text">
             <string>PushButton</string>
@@ -180,7 +190,14 @@
         </layout>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="bodyPlainTextEdit"/>
+        <widget class="Awsmock::Components::PlainTextEditor" name="textEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -247,6 +264,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Awsmock::Components::PlainTextEditor</class>
+   <extends>QWidget</extends>
+   <header>components/PlainTextEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>regionEdit</tabstop>
   <tabstop>messageIdEdit</tabstop>
@@ -255,7 +280,6 @@
   <tabstop>createdEdit</tabstop>
   <tabstop>modifiedEdit</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>bodyPlainTextEdit</tabstop>
   <tabstop>attributeTable</tabstop>
  </tabstops>
  <resources/>
