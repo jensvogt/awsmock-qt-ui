@@ -90,7 +90,9 @@ set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h
         include/dto/s3/S3TopicConfiguration.h include/dto/s3/S3QueueConfiguration.h include/dto/s3/S3FilterRule.h
         include/dto/s3/S3NotificationEventType.h include/dto/s3/S3PutBucketNotificationConfigurationRequest.h
         src/modules/s3/S3QueueNotificationDialog.cpp include/modules/s3/S3QueueNotificationDialog.h
-        src/modules/s3/S3QueueNotificationDialog.ui)
+        src/modules/s3/S3QueueNotificationDialog.ui
+        include/modules/s3/S3ObjectWindow.h
+        src/modules/s3/S3ObjectWindow.cpp)
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp

@@ -6,23 +6,24 @@
 #define AWSMOCK_QT_UI_S3_OBJECT_EDIT_DIALOG_H
 
 // Qt includes
-#include <QPlainTextEdit>
-#include <QPixmap>
 #include <QEvent>
 #include <QMenu>
+#include <QPixmap>
+#include <QPlainTextEdit>
 #include <QScrollArea>
 #include <QShortcut>
-#include <QWheelEvent>
 #include <QtGlobal>
+#include <QWheelEvent>
 
 // AwsMock includes
-#include <utils/IconUtils.h>
+#include <modules/s3/S3ObjectMetadataDialog.h>
+#include <modules/s3/S3ObjectWindow.h>
+#include <modules/s3/S3Service.h>
 #include <utils/BaseDialog.h>
 #include <utils/DateTimeUtils.h>
+#include <utils/IconUtils.h>
 #include <utils/ImageUtils.h>
 #include <utils/StringUtils.h>
-#include <modules/s3/S3Service.h>
-#include <modules/s3/S3ObjectMetadataDialog.h>
 
 QT_BEGIN_NAMESPACE
 

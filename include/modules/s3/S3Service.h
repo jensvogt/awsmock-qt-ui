@@ -97,8 +97,6 @@ signals:
      *
      * @param bucketListResponse list of buckets
      */
-
-
     void ListBucketSignal(const S3ListBucketResult &bucketListResponse);
 
     /**

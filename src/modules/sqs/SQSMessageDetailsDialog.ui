@@ -247,6 +247,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="saveButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="windowButton">
            <property name="text">
             <string>PushButton</string>
