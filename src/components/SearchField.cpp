@@ -69,4 +69,9 @@ namespace Awsmock::Components {
         _ui->searchEdit->setText(nullptr);
         _searchText = nullptr;
     }
+
+    // In your dialog's showEvent override:
+    void SearchField::showEvent(QShowEvent *event) {
+        _ui->searchEdit->setFocus();
+    }
 }

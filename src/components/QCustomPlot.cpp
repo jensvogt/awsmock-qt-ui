@@ -25263,7 +25263,11 @@ void QCPColorMap::draw(QCPPainter *painter) {
                                       coordsToPixels(mMapData->keyRange().upper, mMapData->valueRange().upper)).normalized();
         localPainter->setClipRect(tightClipRect, Qt::IntersectClip);
     }
-    localPainter->drawImage(imageRect, mMapImage.mirrored(mirrorX, mirrorY));
+    Qt::Orientations orientations;
+    if (mirrorX) orientations |= Qt::Horizontal;
+    if (mirrorY) orientations |= Qt::Vertical;
+    localPainter->drawImage(imageRect, mMapImage.flipped(orientations));
+    //localPainter->drawImage(imageRect, mMapImage.mirrored(mirrorX, mirrorY));
     if (mTightBoundary)
         localPainter->setClipRegion(clipBackup);
     localPainter->setRenderHint(QPainter::SmoothPixmapTransform, smoothBackup);
@@ -28417,8 +28421,12 @@ void QCPItemPixmap::updateScaledPixmap(QRect finalRect, bool flipHorz, bool flip
             finalRect = getFinalRect(&flipHorz, &flipVert);
         if (mScaledPixmapInvalidated || finalRect.size() != mScaledPixmap.size() / devicePixelRatio) {
             mScaledPixmap = mPixmap.scaled(finalRect.size() * devicePixelRatio, mAspectRatioMode, mTransformationMode);
-            if (flipHorz || flipVert)
-                mScaledPixmap = QPixmap::fromImage(mScaledPixmap.toImage().mirrored(flipHorz, flipVert));
+            if (flipHorz || flipVert) {
+                Qt::Orientations orientations;
+                if (flipHorz) orientations |= Qt::Horizontal;
+                if (flipVert) orientations |= Qt::Vertical;
+                mScaledPixmap = QPixmap::fromImage(mScaledPixmap.toImage().flipped(orientations));
+            }
 #ifdef QCP_DEVICEPIXELRATIO_SUPPORTED
             mScaledPixmap.setDevicePixelRatio(devicePixelRatio);
 #endif
