@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.57](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.56...v1.11.57) (2026-05-05)
+
+
+### Bug Fixes
+
+* details window for SQS/SNS messages ([5ee38cd](https://github.com/jensvogt/awsmock-qt-ui/commit/5ee38cdc650f80f1c0af6d41414c4c11736e6b36))
+* details window for SQS/SNS messages ([df139e3](https://github.com/jensvogt/awsmock-qt-ui/commit/df139e3497a0c9f2282366e340de136cc0561fa2))
+
 ## [1.11.56](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.55...v1.11.56) (2026-05-04)
 
 
