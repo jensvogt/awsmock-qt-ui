@@ -1,7 +1,8 @@
 
+#include <QFileDialog>
 #include <modules/sns/SNSMessageDetailsDialog.h>
 #include "ui_SNSMessageDetailsDialog.h"
-#include "utils/DateTimeUtils.h"
+#include "components/Toast.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
     // Setup UI
@@ -39,6 +40,21 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->prettyPushButton->setText(nullptr);
     _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
     //connect(_ui->prettyPushButton, &QPushButton::toggled)
+
+    // Save button
+    _ui->saveButton->setText(nullptr);
+    _ui->saveButton->setIcon(IconUtils::GetIcon("save"));
+    _ui->saveButton->setToolTip("Save the message to a local file");
+    connect(_ui->saveButton, &QPushButton::clicked, this, &SNSMessageDetailsDialog::SaveToFile);
+
+    // Window button
+    _ui->windowButton->setText(nullptr);
+    _ui->windowButton->setIcon(IconUtils::GetIcon("extern-window"));
+    connect(_ui->windowButton, &QPushButton::clicked, this, [messageId]() {
+        if (SNSMessageWindow dialog(messageId); dialog.exec() == Accepted) {
+            logInfo << "Message window closed";
+        }
+    });
 }
 
 SNSMessageDetailsDialog::~SNSMessageDetailsDialog() {
@@ -54,7 +70,7 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(response.modified));
 
     // Body
-    _ui->bodyPlainTextEdit->setPlainText(response.message);
+    _ui->textEditor->SetText(response.message);
 
     // Attributes
     //_ui->attributeTable->setRowCount(0);
@@ -68,17 +84,44 @@ void SNSMessageDetailsDialog::UpdateMessageDetails(const SNSGetMessageDetailsRes
 }
 
 void SNSMessageDetailsDialog::on_prettyPushButton_toggled(const bool checked) const {
-    if (checked) {
-        const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyPlainTextEdit->clear();
-        _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Indented));
-    } else {
-        const QByteArray body = _ui->bodyPlainTextEdit->toPlainText().toUtf8();
-        const QJsonDocument jDoc = QJsonDocument::fromJson(body);
-        _ui->bodyPlainTextEdit->clear();
-        _ui->bodyPlainTextEdit->setPlainText(jDoc.toJson(QJsonDocument::Compact));
+    _ui->textEditor->SetPrettyPrint(checked);
+}
+
+void SNSMessageDetailsDialog::SaveToFile() const {
+
+    if (const QString fileName = SelectFilename(); !fileName.isEmpty()) {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + fileName);
+        }
+        const QString message = _ui->textEditor->GetText();
+        const long count = file.write(message.toUtf8());
+        file.close();
+
+        // Message
+        new Awsmock::Components::ToastOverlay("Message saved.\nFilename: " + fileName);
+        logInfo << "SNS message saved to file: " << fileName << ", fileSize: " << count;
     }
+}
+
+QString SNSMessageDetailsDialog::SelectFilename() {
+
+    // Create a QFileDialog set to select existing files
+    const auto filter = "JSON Files (*.json);All Files (*.*)";
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.SNSSaveBodyToFile", "/usr/local/file.json");
+
+    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadWrite)) {
+            QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);
+            return {};
+        }
+        file.close();
+        Configuration::instance().SetValue<QString>("ui.default-directory.SNSSaveBodyToFile", QFileInfo(filePath).absolutePath());
+        logDebug << "SNS message file path: " << filePath;
+        return filePath;
+    }
+    return {};
 }
 
 void SNSMessageDetailsDialog::HandleAccept() {

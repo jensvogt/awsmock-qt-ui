@@ -5,8 +5,10 @@
 
 #include <modules/docker/DockerLogClient.h>
 
-DockerLogClient::DockerLogClient(const QString &containerId, const Mode mode, const QString &endpoint, const long limit, QObject *parent)
-    : QObject(parent), m_containerId(containerId), m_endpoint(endpoint), m_mode(mode), _limit(limit) {
+#include <utility>
+
+DockerLogClient::DockerLogClient(QString containerId, const Mode mode, QString endpoint, const long limit, QObject *parent)
+    : QObject(parent), m_containerId(std::move(containerId)), m_endpoint(std::move(endpoint)), m_mode(mode), _limit(limit) {
     if (mode == Mode::Tcp) {
         m_tcpSocket = new QTcpSocket(this);
         connect(m_tcpSocket, &QTcpSocket::connected, this, &DockerLogClient::onConnected);

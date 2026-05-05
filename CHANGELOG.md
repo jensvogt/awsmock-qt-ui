@@ -1,5 +1,80 @@
 # Changelog
 
+## [1.11.58](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.57...v1.11.58) (2026-05-05)
+
+
+### Bug Fixes
+
+* details window for S3 objects ([223b37e](https://github.com/jensvogt/awsmock-qt-ui/commit/223b37ebbac7a7ad7b2d71a7100d6e1c00aba260))
+
+## [1.11.57](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.56...v1.11.57) (2026-05-05)
+
+
+### Bug Fixes
+
+* details window for SQS/SNS messages ([5ee38cd](https://github.com/jensvogt/awsmock-qt-ui/commit/5ee38cdc650f80f1c0af6d41414c4c11736e6b36))
+* details window for SQS/SNS messages ([df139e3](https://github.com/jensvogt/awsmock-qt-ui/commit/df139e3497a0c9f2282366e340de136cc0561fa2))
+
+## [1.11.56](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.55...v1.11.56) (2026-05-04)
+
+
+### Bug Fixes
+
+* purge SQS queues ([bb1f1ac](https://github.com/jensvogt/awsmock-qt-ui/commit/bb1f1ac9328c7c42b717431537b3a65c3adff14c))
+
+## [1.11.55](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.54...v1.11.55) (2026-05-04)
+
+
+### Bug Fixes
+
+* resend SNS messages ([b26548d](https://github.com/jensvogt/awsmock-qt-ui/commit/b26548d0510def37f39c8512b402feaadf8438b6))
+
+## [1.11.54](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.53...v1.11.54) (2026-05-04)
+
+
+### Bug Fixes
+
+* resend SNS messages ([7cb0476](https://github.com/jensvogt/awsmock-qt-ui/commit/7cb0476d26ec24dfc6f50d44a6efc7ffe7ab199c))
+
+## [1.11.53](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.52...v1.11.53) (2026-05-04)
+
+
+### Bug Fixes
+
+* include md4c ([ea872c4](https://github.com/jensvogt/awsmock-qt-ui/commit/ea872c45e1faea32752c16e87697c5ba6b1aa2dd))
+* include md4c ([17af208](https://github.com/jensvogt/awsmock-qt-ui/commit/17af208315bdd245beadd05ced364825923ddaa8))
+
+## [1.11.52](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.51...v1.11.52) (2026-05-02)
+
+
+### Bug Fixes
+
+* include md4c ([e04e5a1](https://github.com/jensvogt/awsmock-qt-ui/commit/e04e5a14c466d1ae7faae9bd6e09960931c746ef))
+
+## [1.11.51](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.50...v1.11.51) (2026-05-02)
+
+
+### Bug Fixes
+
+* include md4c ([fa39931](https://github.com/jensvogt/awsmock-qt-ui/commit/fa39931e4ff8f876ffa0e891e86efd41bcaad6d9))
+
+## [1.11.50](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.49...v1.11.50) (2026-05-02)
+
+
+### Bug Fixes
+
+* S3 queue notifications ([30d998a](https://github.com/jensvogt/awsmock-qt-ui/commit/30d998ab117499e68d93fd2f03080b13bde74e77))
+
+## [1.11.49](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.48...v1.11.49) (2026-05-02)
+
+
+### Bug Fixes
+
+* S3 queue notifications ([b68f656](https://github.com/jensvogt/awsmock-qt-ui/commit/b68f6568d4a9bf213299dd6c65a392ab71818df4))
+* S3 queue notifications ([be15202](https://github.com/jensvogt/awsmock-qt-ui/commit/be1520288a38824f428e1ec348f810d4acf2f0b6))
+* sns subscription add ([0f6f89c](https://github.com/jensvogt/awsmock-qt-ui/commit/0f6f89c6f93dead8fd8f2ad852116be419933b85))
+* sns subscription add ([9a668ac](https://github.com/jensvogt/awsmock-qt-ui/commit/9a668ac899dbb012b1c3af588e9102f4a678bd69))
+
 ## [1.11.48](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.47...v1.11.48) (2026-04-29)
 
 

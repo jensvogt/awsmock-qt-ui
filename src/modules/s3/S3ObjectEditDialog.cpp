@@ -95,6 +95,15 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     _ui->bodySaveButton->setToolTip("Save the data to a local file");
     connect(_ui->bodySaveButton, &QPushButton::clicked, this, &S3ObjectEditDialog::SaveToFile);
 
+    // Window button
+    _ui->windowButton->setText(nullptr);
+    _ui->windowButton->setIcon(IconUtils::GetIcon("extern-window"));
+    connect(_ui->windowButton, &QPushButton::clicked, this, [objectId]() {
+        if (S3ObjectWindow dialog(objectId); dialog.exec() == Accepted) {
+            logInfo << "Object window closed";
+        }
+    });
+
     // Metadata add button
     _ui->metadataAddButton->setText(nullptr);
     _ui->metadataAddButton->setIcon(IconUtils::GetIcon("add"));

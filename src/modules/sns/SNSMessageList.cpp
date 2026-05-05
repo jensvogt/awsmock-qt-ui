@@ -38,6 +38,7 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
     purgeAllButton->setToolTip("Purge all messages");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _snsService->PurgeMessages(_topicArn);
+        new Awsmock::Components::ToastOverlay("Purge topic initiated.\nChanges may take some time to propagate.", this);
     });
 
     // Toolbar refresh action

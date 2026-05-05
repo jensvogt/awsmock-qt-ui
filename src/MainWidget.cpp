@@ -36,6 +36,9 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), _ui(new Ui::MainWidge
     // Set splitter position
     _ui->horizontalSplitter->setStretchFactor(0, 0); // left — don't stretch
     _ui->horizontalSplitter->setStretchFactor(1, 4); // right — take all space
+
+    // Status label
+    _ui->statusLabel->setText("Initialized");
 }
 
 MainWidget::~MainWidget() {

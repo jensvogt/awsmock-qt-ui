@@ -36,6 +36,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     purgeAllButton->setToolTip("Purge all topics");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _snsService->PurgeAllTopics();
+        new Awsmock::Components::ToastOverlay("Purge all topics initiated.\nChanges may take some time to propagate.", this);
     });
 
     // Toolbar reset counter action
@@ -161,6 +162,7 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
     const auto topicArn = _tableView->GetValue<QString>(index, 7);
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _snsService->PurgeTopic(topicArn);
+        new Awsmock::Components::ToastOverlay("Purge topic initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == sendAction) {
         if (SNSMessageAddDialog dialog(topicArn); dialog.exec() == QDialog::Accepted) {
             new Awsmock::Components::ToastOverlay("Message sent!\nMessageId: " + dialog.GetMessageId(), _tableView);
