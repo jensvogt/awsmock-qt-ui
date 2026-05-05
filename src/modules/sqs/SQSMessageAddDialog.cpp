@@ -78,7 +78,7 @@ void SQSMessageAddDialog::HandleAccept() {
         messageAttribute.dataType = STRING;
 
         const QTableWidgetItem *key = _ui->tableWidget->item(r, 0);
-        const QTableWidgetItem *value = _ui->tableWidget->item(r, 1);
+        const QTableWidgetItem *value = _ui->tableWidget->item(r, 2);
         messageAttribute.stringValue = value->text().toUtf8();
         _request.messageAttributes[key->text()] = messageAttribute;
     }

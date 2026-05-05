@@ -169,7 +169,7 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
         new Awsmock::Components::ToastOverlay("Purge queue initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == sendAction) {
         if (SQSMessageAddDialog dialog(queueUrl, queueArn); dialog.exec() == QDialog::Accepted) {
-            new Awsmock::Components::ToastOverlay("Message sent! ID: " + dialog.GetMessageId(), _tableView);
+            new Awsmock::Components::ToastOverlay("Message sent!\nID: " + dialog.GetMessageId(), _tableView);
         }
     } else if (selectedAction == redriveAction) {
         _sqsService->RedriveQueue(queueArn);

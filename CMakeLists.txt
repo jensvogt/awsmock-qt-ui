@@ -66,7 +66,10 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         src/modules/sqs/SQSQueueDetailsDialog.cpp src/modules/sqs/SQSQueueDetailsDialog.ui
         include/modules/sqs/SQSQueueDetailsDialog.h src/modules/sqs/SQSService.cpp include/modules/sqs/SQSService.h
         src/modules/sqs/SQSQueueList.cpp include/modules/sqs/SQSQueueList.h src/modules/sqs/SQSMessageList.cpp
-        include/modules/sqs/SQSMessageList.h)
+        include/modules/sqs/SQSMessageList.h
+        src/modules/sqs/SQSMessageWindow.cpp
+        include/modules/sqs/SQSMessageWindow.h
+        src/modules/sqs/SQSMessageWindow.ui)
 set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp
@@ -75,7 +78,9 @@ set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSM
         include/dto/sns/SNSListQueueDefaultAttribtesResponse.h src/modules/sns/SNSTopicDefaultAttributeDialog.ui
         src/modules/sns/SNSTopicDefaultAttributeDialog.cpp include/modules/sns/SNSTopicDefaultAttributeDialog.h
         src/modules/sns/SNSSubscriptionDialog.cpp include/modules/sns/SNSSubscriptionDialog.h
-        src/modules/sns/SNSSubscriptionDialog.ui)
+        src/modules/sns/SNSSubscriptionDialog.ui
+        include/modules/sns/SNSMessageWindow.h
+        src/modules/sns/SNSMessageWindow.cpp)
 set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
         include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
         include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h

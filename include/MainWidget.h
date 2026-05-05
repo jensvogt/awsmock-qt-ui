@@ -89,7 +89,7 @@ private:
      */
     QStackedWidget *_contentPane{};
 
-    QListView *_navList;
+    QListView *_navList{};
 
     /**
      * @brief Server scrolling flag
