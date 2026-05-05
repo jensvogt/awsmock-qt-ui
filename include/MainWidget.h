@@ -89,6 +89,9 @@ private:
      */
     QStackedWidget *_contentPane{};
 
+    /**
+     * @brief Navigation list
+     */
     QListView *_navList{};
 
     /**

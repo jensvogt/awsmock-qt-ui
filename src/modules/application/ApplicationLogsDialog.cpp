@@ -23,6 +23,9 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationLogsDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationLogsDialog::HandleReject);
 
+    // Set title4
+    setWindowTitle(QString("Application Logs: ") + applicationName);
+
     // Status label
     _ui->statusLabel->setText("Status: Disconnected");
 
@@ -59,8 +62,9 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
         UpdateLogLevel();
 
         // Scroll to bottom
-        //QMetaObject::invokeMethod(_ui->logListView, "scrollToBottom", Qt::QueuedConnection);
-        _ui->logListView->scrollToBottom();
+        if (_autoScroll) {
+            _ui->logListView->scrollToBottom();
+        }
     });
 
     // Level combo
@@ -79,8 +83,14 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
         _model->clear();
     });
 
-    // Set title
-    setWindowTitle(QString("Application Logs: ") + applicationName);
+    // Scroll button
+    // _ui->serverScrollButton->setText(nullptr);
+    // _ui->serverScrollButton->setIcon(IconUtils::GetIcon("purge"));
+    // _ui->serverScrollButton->setToolTip("Start/stop scrolling");
+    // _ui->serverScrollButton->setChecked(_serverScrolling);
+    // connect(_ui->serverScrollButton, &QPushButton::toggled, this, [this](const bool value) {
+    //     _serverScrolling = value;
+    // });
 
     // Set container ID
     _ui->containerIdEdit->setText(containerId.first(12));
@@ -132,5 +142,7 @@ void ApplicationLogsDialog::UpdateLogLevel() const {
     }
 
     // Scroll to bottom
-    _ui->logListView->scrollToBottom();
+    if (_autoScroll) {
+        _ui->logListView->scrollToBottom();
+    }
 }
