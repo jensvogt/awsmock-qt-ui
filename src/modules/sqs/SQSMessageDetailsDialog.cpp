@@ -1,6 +1,8 @@
 
+#include <ui_SQSMessageWindow.h>
 #include <modules/sqs/SQSMessageDetailsDialog.h>
 #include "ui_SQSMessageDetailsDialog.h"
+#include "modules/sqs/SQSMessageWindow.h"
 
 SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent),
                                                                                               _ui(new Ui::SQSMessageDetailsDialog), _messageId(messageId) {
@@ -54,13 +56,27 @@ SQSMessageDetailsDialog::SQSMessageDetailsDialog(const QString &messageId, QWidg
     connect(_ui->prettyButton, &QPushButton::toggled, this, [this](const bool checked) {
         _sqsService->GetSqsMessageDetails(_messageId);
     });
+
+    // Extern window button
+    _ui->windowButton->setText(nullptr);
+    _ui->windowButton->setIcon(IconUtils::GetIcon("extern-window"));
+    connect(_ui->windowButton, &QPushButton::clicked, this, [this]() {
+        if (SQSMessageWindow dialog(_response.messageId); dialog.exec() == Accepted) {
+            logInfo << "Message window closed";
+        }
+    });
 }
 
 SQSMessageDetailsDialog::~SQSMessageDetailsDialog() {
     delete _ui;
 }
 
-void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsResponse &response) const {
+void SQSMessageDetailsDialog::UpdateMessageDetails(const SQSGetMessageDetailsResponse &response) {
+
+    // Local copy
+    _response = response;
+
+    // Fill in UI fields
     _ui->regionEdit->setText(response.region);
     _ui->queueEdit->setText(response.queueName);
     _ui->messageIdEdit->setText(response.messageId);

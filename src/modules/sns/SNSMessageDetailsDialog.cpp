@@ -1,6 +1,7 @@
 
 #include <modules/sns/SNSMessageDetailsDialog.h>
 #include "ui_SNSMessageDetailsDialog.h"
+#include "modules/sns/SNSMessageWindow.h"
 #include "utils/DateTimeUtils.h"
 
 SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidget *parent) : QDialog(parent), _ui(new Ui::SNSMessageDetailsDialog), _messageId(messageId) {
@@ -39,6 +40,15 @@ SNSMessageDetailsDialog::SNSMessageDetailsDialog(const QString &messageId, QWidg
     _ui->prettyPushButton->setText(nullptr);
     _ui->prettyPushButton->setIcon(IconUtils::GetIcon("dark", "pretty"));
     //connect(_ui->prettyPushButton, &QPushButton::toggled)
+
+    // Window button
+    _ui->windowButton->setText(nullptr);
+    _ui->windowButton->setIcon(IconUtils::GetIcon("extern-window"));
+    connect(_ui->windowButton, &QPushButton::clicked, this, [messageId]() {
+        if (SNSMessageWindow dialog(messageId); dialog.exec() == Accepted) {
+            logInfo << "Message window closed";
+        }
+    });
 }
 
 SNSMessageDetailsDialog::~SNSMessageDetailsDialog() {

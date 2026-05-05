@@ -199,7 +199,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="bodyTab">
       <property name="sizePolicy">
@@ -241,6 +241,13 @@
          </item>
          <item>
           <widget class="QPushButton" name="prettyButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="windowButton">
            <property name="text">
             <string>PushButton</string>
            </property>
