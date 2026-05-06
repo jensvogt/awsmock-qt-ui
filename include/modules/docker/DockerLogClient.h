@@ -46,6 +46,8 @@ private slots:
     static QStringList SanitizeString(const QString &input);
 
 private:
+    static QByteArray StripChunkedEncoding(const QByteArray &input);
+
     void SendRequest(long limit) const;
 
     QString m_containerId;
@@ -62,6 +64,11 @@ private:
      * @brief Maximal number of log lines
      */
     long _limit = 1000;
+
+    /**
+     * @brief Chunked flag
+     */
+    bool _chunked = false;
 };
 
 #endif //AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H
