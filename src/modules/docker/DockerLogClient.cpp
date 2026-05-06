@@ -72,31 +72,80 @@ void DockerLogClient::onReadyRead() {
         const int headerEnd = static_cast<int>(buffer.indexOf("\r\n\r\n"));
         if (headerEnd == -1) return;
 
+        // Check if chunked transfer encoding
+        QString headers = QString::fromLatin1(buffer.left(headerEnd));
+        _chunked = headers.contains("Transfer-Encoding: chunked", Qt::CaseInsensitive);
+
         buffer.remove(0, headerEnd + 4);
         headersParsed = true;
     }
 
-    // Step 2: Docker multiplexed stream
-    // Each frame: [stream][0][0][0][size1][size2][size3][size4][payload]
+    // Step 2: strip chunked encoding if needed
+    if (_chunked) {
+        buffer = StripChunkedEncoding(buffer);
+    }
+
+    // Step 3: Docker multiplexed stream
+    // Each frame: [stream(1)][0][0][0][size(4 big-endian)][payload]
     while (buffer.size() >= 8) {
-        uchar stream = buffer[0];
+
+        // Validate stream type (0=stdin, 1=stdout, 2=stderr)
+        if (const uchar stream = static_cast<uchar>(buffer[0]); stream > 2) {
+            // Out of sync — scan forward for a valid header
+            buffer.remove(0, 1);
+            continue;
+        }
+
         const quint32 size =
                 static_cast<quint8>(buffer[4]) << 24 |
                 static_cast<quint8>(buffer[5]) << 16 |
                 static_cast<quint8>(buffer[6]) << 8 |
                 static_cast<quint8>(buffer[7]);
 
-        QByteArray msg = buffer.mid(8, size);
+        // Wait until full frame is available
+        if (buffer.size() < static_cast<int>(8 + size)) break;
 
-        // Remove frame from buffer
+        QByteArray msg = buffer.mid(8, size);
         buffer.remove(0, 8 + size);
 
+        // Skip empty frames
+        if (msg.isEmpty()) continue;
+
         QString logMessage = QString::fromUtf8(msg);
-        static QRegularExpression ansi("\\x1B\\[[0-9;]*[mK]");
+
+        // Remove ANSI escape codes
+        static const QRegularExpression ansi("\x1B(?:[@-Z\\-_]|\\[[0-?]*[ -/]*[@-~])");
         logMessage.remove(ansi);
 
         emit LogReceived(SanitizeString(logMessage));
     }
+}
+
+QByteArray DockerLogClient::StripChunkedEncoding(const QByteArray &input) {
+    QByteArray result;
+    int i = 0;
+
+    while (i < input.size()) {
+        // Find end of chunk size line
+        const int lineEnd = input.indexOf("\r\n", i);
+        if (lineEnd == -1) break;
+
+        // Parse hex chunk size
+        bool ok = false;
+        const quint64 chunkSize = input.mid(i, lineEnd - i).trimmed().toULongLong(&ok, 16);
+        if (!ok) break;
+
+        // Terminal chunk
+        if (chunkSize == 0) break;
+
+        const int dataStart = lineEnd + 2;
+        if (dataStart + static_cast<int>(chunkSize) > input.size()) break;
+
+        result.append(input.mid(dataStart, chunkSize));
+        i = dataStart + chunkSize + 2; // skip trailing \r\n
+    }
+
+    return result.isEmpty() ? input : result;
 }
 
 void DockerLogClient::onErrorOccurred() {

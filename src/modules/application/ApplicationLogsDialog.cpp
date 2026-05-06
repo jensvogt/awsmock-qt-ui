@@ -84,16 +84,16 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
     });
 
     // Scroll button
-    // _ui->serverScrollButton->setText(nullptr);
-    // _ui->serverScrollButton->setIcon(IconUtils::GetIcon("purge"));
-    // _ui->serverScrollButton->setToolTip("Start/stop scrolling");
-    // _ui->serverScrollButton->setChecked(_serverScrolling);
-    // connect(_ui->serverScrollButton, &QPushButton::toggled, this, [this](const bool value) {
-    //     _serverScrolling = value;
-    // });
+    _ui->autoScrollButton->setText(nullptr);
+    _ui->autoScrollButton->setIcon(IconUtils::GetIcon("purge"));
+    _ui->autoScrollButton->setToolTip("Start/stop scrolling");
+    _ui->autoScrollButton->setChecked(_autoScroll);
+    connect(_ui->autoScrollButton, &QPushButton::toggled, this, [this](const bool value) {
+        _autoScroll = value;
+    });
 
     // Set container ID
-    _ui->containerIdEdit->setText(containerId.first(12));
+    _ui->containerIdEdit->setText(!containerId.isEmpty() ? containerId.first(12) : "-");
 
     // Start log capture
     _dockerLogClient->ConnectToDocker();
