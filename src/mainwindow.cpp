@@ -273,7 +273,7 @@ void MainWindow::WriteInfrastructureExport(const QString &filename, const QStrin
     // Write formatted (pretty-printed) JSON
     file.write(StringUtils::ConvertToIndentedJson(exportResponse).toUtf8());
     file.close();
-    new Awsmock::Components::ToastOverlay("Infrastructure saved! File: " + file.fileName(), this);
+    new Awsmock::Components::ToastOverlay("Infrastructure exported!\nFile: " + file.fileName(), this);
 }
 
 void MainWindow::CleanInfrastructure() const {

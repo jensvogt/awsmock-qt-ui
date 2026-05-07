@@ -135,7 +135,7 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     _ui->versionEdit->setText(_application.version);
     _ui->imageNameEdit->setText(_application.imageName);
     _ui->imageIdEdit->setText(_application.imageId);
-    _ui->containerIdEdit->setText(_application.containerId.first(12));
+    _ui->containerIdEdit->setText(!_application.containerId.isEmpty() ? _application.containerId.first(12) : "-");
     _ui->containerNameEdit->setText(_application.containerName);
     _ui->statusEdit->setText(_application.status);
     _ui->enabledCheckBox->setChecked(_application.enabled);
