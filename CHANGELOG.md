@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.60](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.59...v1.11.60) (2026-05-12)
+
+
+### Bug Fixes
+
+* auto scroll buttons ([74b08ef](https://github.com/jensvogt/awsmock-qt-ui/commit/74b08ef678024613008c68941aa04c761a32a81c))
+* fix log list filter ([ab944fa](https://github.com/jensvogt/awsmock-qt-ui/commit/ab944fa737417d194223c9f83dcfba37eb14103c))
+* fix log list filter ([e2a2485](https://github.com/jensvogt/awsmock-qt-ui/commit/e2a2485e207817c452c08efe8ac864d81176db38))
+
 ## [1.11.59](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.58...v1.11.59) (2026-05-05)
 
 
