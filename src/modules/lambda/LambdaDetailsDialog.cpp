@@ -14,6 +14,7 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
     connect(_lambdaService, &LambdaService::GetLambdaDetailsSignal, this, &LambdaDetailsDialog::UpdateLambda);
     connect(_lambdaService, &LambdaService::LoadLambdaEnvironment, this, &LambdaDetailsDialog::LoadContent);
     connect(_lambdaService, &LambdaService::ReloadLambdaDetails, this, &LambdaDetailsDialog::LoadContent);
+    connect(_lambdaService, &LambdaService::ReloadLambdaInstances, this, &LambdaDetailsDialog::LoadContent);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaDetailsDialog::HandleAccept);
@@ -47,6 +48,9 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
 
     // Load content
     LoadContent();
+
+    // Status
+    _ui->statusEdit->setText("Initialized");
 }
 
 LambdaDetailsDialog::~LambdaDetailsDialog() {
@@ -55,6 +59,7 @@ LambdaDetailsDialog::~LambdaDetailsDialog() {
 
 void LambdaDetailsDialog::LoadContent() {
     _lambdaService->GetLambda(_lambdaArn);
+    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
 void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const {
@@ -75,10 +80,13 @@ void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetRespons
     _ui->statusEdit->setText(lambdaGetResponse.state);
 }
 
-void LambdaDetailsDialog::SetupInstancesTab() const {
+void LambdaDetailsDialog::ReloadLambdaInstances() {
     // Send request
     _lambdaService->GetLambdaInstances(_lambdaArn);
     connect(_lambdaService, &LambdaService::ListLambdaInstancesSignal, this, &LambdaDetailsDialog::UpdateLambdaInstances);
+}
+
+void LambdaDetailsDialog::SetupInstancesTab() {
 
     // Table
     const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Private Port"), tr("Public Port"), tr("Status"), tr("Last Invocation")};
@@ -103,6 +111,9 @@ void LambdaDetailsDialog::SetupInstancesTab() const {
     // Add tag context menu
     _ui->instanceTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->instanceTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowInstanceContextMenu);
+
+    // Send request
+    ReloadLambdaInstances();
 }
 
 void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesResponse &listInstancesResponse) const {
@@ -259,17 +270,15 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
     // deleteAction->setToolTip("Delete the environment variable");
 
     if (const QAction *selectedAction = menu.exec(_ui->instanceTable->viewport()->mapToGlobal(pos)); selectedAction == killAction) {
-        const QString id = _ui->instanceTable->item(row, 0)->text();
-        // if (LambdaEnvironmentDetailDialog dialog(key, value); dialog.exec() == Accepted) {
-        //     SetColumn(_ui->instanceTable, row, 1, dialog.GetValue());
-        //     SetColumn(_ui->instanceTable, row, 1, dialog.GetValue());
-        //     _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
-        // }
-        logInfo << "Kill lambda instance, id: " << id;
+        const QString instanceId = _ui->instanceTable->item(row, 0)->text();
+        _lambdaService->StopInstance(_lambdaArn, instanceId);
+        _lambdaService->GetLambdaInstances(_lambdaArn);
+        logInfo << "Lambda instance stopped, instanceId: " << instanceId;
+        new Awsmock::Components::ToastOverlay("Lambda instance killed.\nInstanceId: " + instanceId);
     } else if (selectedAction == startAction) {
         _lambdaService->StartInstance(_lambdaArn);
-        new Awsmock::Components::ToastOverlay("Infrastructure imported!", GetParent());
-        logInfo << "Start lambda instance";
+        logInfo << "Lambda instance started, lambdaArn: " << _lambdaArn;
+        new Awsmock::Components::ToastOverlay("Lambda insrance started.\nLambdaArn: " + _lambdaArn);
     }
 }
 

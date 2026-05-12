@@ -50,9 +50,14 @@ public:
     void UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const;
 
     /**
+     * @brief Reload the lambda instances tab
+     */
+    void ReloadLambdaInstances();
+
+    /**
      * @brief Initialize instances tab
      */
-    void SetupInstancesTab() const;
+    void SetupInstancesTab();
 
     /**
      * @brief Update lambda instances

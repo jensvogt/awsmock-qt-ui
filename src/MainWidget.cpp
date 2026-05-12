@@ -2,8 +2,6 @@
 // Created by vogje01 on 2/6/26.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_MainWidget.h" resolved
-
 #include <MainWidget.h>
 #include "ui_MainWidget.h"
 
@@ -150,8 +148,11 @@ void MainWidget::SetupServerLogs() {
     _webSocket->open(QUrl(_websocketUrl));
 
     // Data model
-    _serverLogDataModel = new QStandardItemModel(_ui->serverLogList);
-    _ui->serverLogList->setModel(_serverLogDataModel);
+    _serverLogDataModel = new QStandardItemModel();
+    _serverProxyModel = new QSortFilterProxyModel(this);
+    _serverProxyModel->setSourceModel(_serverLogDataModel);
+    _serverProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    _ui->serverLogList->setModel(_serverProxyModel);
 
     // Scroll button
     _ui->serverScrollButton->setText(nullptr);
@@ -234,6 +235,40 @@ void MainWidget::SetupServerLogs() {
                 _webSocket->close();
             }
             _reconnectTimer->start();
+        }
+    });
+
+    // Connect server filter combo
+    const QStringList serverFilterTypes = {"Contains", "Prefix", "Postfix", "Regular Expression"};
+    _ui->serverFilterCombo->addItems(serverFilterTypes);
+    _ui->serverFilterCombo->setCurrentText(_currentServerFilter);
+    connect(_ui->serverFilterCombo, &QComboBox::currentTextChanged, this, [this](const QString &value) {
+        _currentServerFilter = value;
+    });
+
+    // Filter clear button
+    _ui->serverFilterClearButton->setText(nullptr);
+    _ui->serverFilterClearButton->setIcon(IconUtils::GetIcon("clear"));
+    connect(_ui->serverFilterClearButton, &QPushButton::clicked, this, [this]() {
+        _ui->serverFilterEdit->setText(nullptr);
+        _serverProxyModel->setFilterRegularExpression(QRegularExpression());
+    });
+
+    // Connect server filter changes
+    connect(_ui->serverFilterEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        QRegularExpression rx(text, QRegularExpression::CaseInsensitiveOption);
+        if (_currentServerFilter == "Contains") {
+            rx = QRegularExpression(".*" + text + ".*", QRegularExpression::CaseInsensitiveOption);
+        } else if (_currentServerFilter == "Prefix") {
+            rx = QRegularExpression("^" + text + ".*", QRegularExpression::CaseInsensitiveOption);
+        } else if (_currentServerFilter == "Postfix") {
+            rx = QRegularExpression(".*" + text + "$", QRegularExpression::CaseInsensitiveOption);
+        } else {
+            rx = QRegularExpression(text);
+        }
+        // Only apply valid patterns
+        if (rx.isValid()) {
+            _serverProxyModel->setFilterRegularExpression(rx);
         }
     });
 }

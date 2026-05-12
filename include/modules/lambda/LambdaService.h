@@ -49,20 +49,6 @@ public:
     void ListLambdas(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
-     * @brief Upload new lambda code
-     *
-     * @param request lambda upload request
-     */
-    //void UploadLambda(const LambdaUploadRequest &request);
-
-    /**
-     * @brief Creates new lambda
-     *
-     * @param request lambda create request
-     */
-    //void CreateLambda(const LambdaCreateRequest &request);
-
-    /**
      * @brief Gets a lambda
      *
      * @param lambdaArn lambda ARN
@@ -100,63 +86,78 @@ public:
      */
     void RemoveLambdaEnvironment(const QString &lambdaArn, const QString &key);
 
+    /**
+     * @brief List lambda execution logs
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
     void ListLambdaLogs(const QString &lambdaArn);
 
+    /**
+     * @brief Get the lambda execution logs
+     *
+     * @param oid lambda OID
+     */
     void GetLambdaResult(const QString &oid);
 
+    /**
+     * @brief Get a list of lambda results
+     *
+     * @param oid lambda oid
+     */
     void GetLambdaResults(const QString &oid);
 
+    /**
+     * @brief Update the lambda function code
+     *
+     * @param request lambda update code request
+     */
     void UploadLambdaCode(const LambdaUploadRequest &request);
 
+    /**
+     * @brief Update the lambda function
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param enabled enabled flag
+     */
     void UpdateLambda(const QString &lambdaArn, bool enabled);
 
+    /**
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param key environment variable key
+     * @param value environment variable value
+     */
     void UpdateLambdaEnvironment(const QString &lambdaArn, const QString &key, const QString &value);
 
+    /**
+     * @brief Rebuild lambda
+     *
+     * @param name lambda name
+     * @param version lambda version
+     */
     void RebuildLambda(const QString &name, const QString &version);
 
+    /**
+     * @brief Return a list of lambda ARNs
+     */
     void ListLambdaArns();
 
+    /**
+     * @brief Start a lambda instance
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
     void StartInstance(const QString &lambdaArn);
 
     /**
-     * @brief Stop an lambdas
+     * @brief Kill a lambda docker image
      *
-     * @param lambdaListResponse
-     * @param name lambda name
+     * @param lambdaArn dockewr container ID
+     * @param instanceId
+     * @param instanceId
      */
-    //void StartLambda(const QString &name);
-
-    /**
-     * @brief Start an lambdas
-     *
-     * @param name lambda name
-     */
-    //void StopLambda(const QString &name);
-
-    /**
-     * @brief Restart an lambdas
-     *
-     * @param name lambda name
-     */
-    //void RestartLambda(const QString &name);
-
-    /**
-     * @brief Restart all lambdas
-     */
-    //void RestartAllLambdas();
-
-    //void RebuildLambda(const QString &name);
-
-    /**
-     * @brief Reload the lambda code
-     *
-     * @param lambdaName lambda name
-     * @param version
-     * @param lambdaCode
-     */
-    //void UploadLambdaCode(const QString &lambdaName, const QString &version, const QString &lambdaCode);
-
-    //void ListLambdaNames();
+    void StopInstance(const QString &lambdaArn, const QString &instanceId);
 
     /**
      * @brief Deletes a lambda function
@@ -237,6 +238,11 @@ signals:
      */
     void ReloadLambdaDetails();
 
+    /**
+     * @brief Reload lambda instance list signal
+     */
+    void ReloadLambdaInstances();
+    
 private:
     /**
      * @brief HTTP REST manager
