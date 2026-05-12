@@ -17,12 +17,16 @@ SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *p
     connect(_sqsService, &SQSService::ListQueueAttributesSignal, this, &SQSQueueDetailsDialog::UpdateQueueAttributes);
     connect(_sqsService, &SQSService::ListQueueLambdaTriggersSignal, this, &SQSQueueDetailsDialog::UpdateQueueLambdaTriggers);
     connect(_sqsService, &SQSService::ListQueueDefaultAttributesSignal, this, &SQSQueueDetailsDialog::UpdateDefaultAttributes);
+    connect(_sqsService, &SQSService::ListQueueTagsSignal, this, &SQSQueueDetailsDialog::UpdateTags);
 
     // Setup attributes tab
     SetupAttributesTab();
 
     // Setup lambda triggers tab
     SetupLambdaTriggersTab();
+
+    // Setup tags tab
+    SetupTagsTab();
 
     // Setup default attributes tab
     SetupDefaultAttributesTab();
@@ -37,6 +41,7 @@ SQSQueueDetailsDialog::~SQSQueueDetailsDialog() {
 
 void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse &response) {
 
+    _queueUrl = response.queueUrl;
     _ui->queueNameEdit->setText(response.queueName);
     _ui->queueArnEdit->setText(response.queueArn);
     _ui->queueUrlEdit->setText(response.queueUrl);
@@ -49,7 +54,7 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
     _ui->invisibleEdit->setText(QString::number(response.invisible));
     _ui->delayedEdit->setText(QString::number(response.delayed));
     _ui->retentionPeriodEdit->setText(QString::number(response.retentionPeriod));
-    _ui->messageCountEdit->setText(QString::number(response.messageCount));
+    _ui->messageCountEdit->setText(QString::number(response.available));
     _ui->messageSizeEdit->setText(StringUtils::FormatSizeColumn(response.size, 1));
     _ui->ownerEdit->setText(response.owner);
     _ui->createdEdit->setText(response.created.toString());
@@ -61,6 +66,9 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
     connect(_ui->dlqArnEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
     connect(_ui->dlqMaxReceiveEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
     connect(_ui->ownerEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
+
+    // Get the default attribute list
+    _sqsService->ListQueueTags(_queueUrl, "");
 }
 
 void SQSQueueDetailsDialog::HandleAccept() {
@@ -264,4 +272,83 @@ void SQSQueueDetailsDialog::ShowDefaultAttributeContextMenu(const QPoint &pos) c
         _sqsService->DeleteQueueDefaultAttributes(_queueArn, key);
         _defaultAttributesModel->removeRow(row);
     }
+}
+
+void SQSQueueDetailsDialog::SetupTagsTab() {
+
+    connect(_sqsService, &SQSService::ReloadQueueTagsSignal, this, [this]() {
+        _sqsService->ListQueueTags(_queueUrl, "");
+    });
+
+    // Add button
+    _ui->tagsAddButton->setText(nullptr);
+    _ui->tagsAddButton->setIcon(IconUtils::GetIcon("add"));
+    _ui->tagsAddButton->setToolTip(tr("Add default attributes"));
+    connect(_ui->tagsAddButton, &QPushButton::clicked, [this]() {
+        if (SQSQueueTagsDialog dialog; dialog.exec() == Accepted) {
+            const QString key = dialog.GetKey();
+            const QString value = dialog.GetValue();
+            _sqsService->TagQueue(_queueUrl, key, value);
+        }
+    });
+
+    // Refresh button
+    _ui->tagsRefreshButton->setText(nullptr);
+    _ui->tagsRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    _ui->tagsRefreshButton->setToolTip(tr("Refresh the tags list"));
+    connect(_ui->tagsRefreshButton, &QPushButton::clicked, [this]() {
+        // if (SQSQueueDefaultAttributeDialog dialog; dialog.exec() == Accepted) {
+        //     const QString key = dialog.GetKey();
+        //     MessageAttribute attribute;
+        //     attribute.name = key;
+        //     attribute.dataType = "String";
+        //     attribute.stringValue = dialog.GetValue();
+        //     _sqsService->AddQueueDefaultAttributes(_queueArn, key, attribute);
+        // }
+        qDebug() << "refresh tags";
+    });
+
+    _tagsModel = new QStandardItemModel();
+    _ui->tagsTable->setModel(_tagsModel);
+
+    // Table
+    const QStringList headers = QStringList() = {tr("Key"), tr("Value")};
+    _tagsModel->setHorizontalHeaderLabels(headers);
+
+    _ui->tagsTable->setShowGrid(true);
+    _ui->tagsTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->tagsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->tagsTable->setSortingEnabled(true);
+    _ui->tagsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->tagsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->tagsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+    // Context menu
+    _ui->tagsTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    // connect(_ui->tagsTable, &QTableWidget::customContextMenuRequested, this, &SQSQueueDetailsDialog::ShowTagsContextMenu);
+
+    // Double click
+    connect(_ui->tagsTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        QString key = _tagsModel->item(index.row(), 0)->text();
+        QString value = _tagsModel->item(index.row(), 1)->text();
+        if (SQSQueueTagsDialog dialog(key, value); dialog.exec() == Accepted) {
+            key = dialog.GetKey();
+            value = dialog.GetValue();
+            _sqsService->TagQueue(_queueUrl, key, value);
+            
+        }
+    });
+}
+
+void SQSQueueDetailsDialog::UpdateTags(const SQSListQueueTagsResponse &response) const {
+    _tagsModel->removeRows(0, _tagsModel->rowCount());
+    _ui->tagsTable->setSortingEnabled(false);
+    int r = 0;
+    for (const auto &key: response.tags.keys()) {
+        SetColumn(_tagsModel, r, 0, key);
+        SetColumn(_tagsModel, r, 1, response.tags[key]);
+        r++;
+    }
+    _ui->tagsTable->setSortingEnabled(true);
+    _tagsModel->sort(_tagsSortColumn, _tagsSortOrder);
 }

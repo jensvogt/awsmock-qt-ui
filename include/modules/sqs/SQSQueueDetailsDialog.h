@@ -3,12 +3,15 @@
 
 #include <QMenu>
 
-#include <utils/IconUtils.h>
-#include <utils/BaseDialog.h>
-#include <utils/StringUtils.h>
-#include <modules/sqs/SQSService.h>
-#include <modules/sqs/SQSQueueDefaultAttributeDialog.h>
 #include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
+#include <dto/sqs/SQSListQueueTagsResponse.h>
+#include <dto/sqs/SQSUpdateTagsRequest.h>
+#include <modules/sqs/SQSQueueDefaultAttributeDialog.h>
+#include <modules/sqs/SQSQueueTagsDialog.h>
+#include <modules/sqs/SQSService.h>
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
+#include <utils/StringUtils.h>
 
 namespace Ui {
     class SQSQueueDetailsDialog;
@@ -60,7 +63,9 @@ private:
 
     void ShowDefaultAttributeContextMenu(const QPoint &pos) const;
 
-    void UpdateDqlArn(const QString &dqlArn);
+    void SetupTagsTab();
+
+    void UpdateTags(const SQSListQueueTagsResponse &response) const;
 
     /**
      * @brief Update the lambda trigger tab
@@ -78,6 +83,11 @@ private:
      * @brief Queue ARN
      */
     QString _queueArn;
+
+    /**
+     * @brief Queue URL
+     */
+    QString _queueUrl;
 
     /**
      * @brief SQS REST service
@@ -141,6 +151,11 @@ private:
      * @brief Default attributes table model
      */
     QStandardItemModel *_defaultAttributesModel{};
+
+    /**
+     * @brief Tags table model
+     */
+    QStandardItemModel *_tagsModel{};
 };
 
 #endif // AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H

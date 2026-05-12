@@ -321,12 +321,12 @@
     <rect>
      <x>10</x>
      <y>360</y>
-     <width>1331</width>
-     <height>341</height>
+     <width>1341</width>
+     <height>351</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="attributesTab">
     <attribute name="title">
@@ -448,6 +448,42 @@
     <attribute name="title">
      <string>Tags</string>
     </attribute>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="tagsAddButton">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="tagsRefreshButton">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QTableView" name="tagsTable"/>
+     </item>
+    </layout>
    </widget>
    <widget class="QWidget" name="defaultAttributeTab">
     <attribute name="title">
