@@ -335,6 +335,7 @@ void SQSQueueDetailsDialog::SetupTagsTab() {
             key = dialog.GetKey();
             value = dialog.GetValue();
             _sqsService->TagQueue(_queueUrl, key, value);
+            
         }
     });
 }
