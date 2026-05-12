@@ -70,7 +70,7 @@ private:
     QStandardItemModel *_navDataModel{};
 
     /**
-     * @brief Data proxy model
+     * @brief Server proxy model
      */
     QSortFilterProxyModel *_serverProxyModel{};
 
@@ -85,9 +85,9 @@ private:
     QStandardItemModel *_localLogDataModel{};
 
     /**
-     * @brief Current server filter value
+     * @brief Local proxy model
      */
-    QString _currentServerFilter = "Contains";
+    QSortFilterProxyModel *_localProxyModel{};
     
     /**
      * @brief Content pane

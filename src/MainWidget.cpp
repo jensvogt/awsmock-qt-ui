@@ -153,6 +153,7 @@ void MainWidget::SetupServerLogs() {
     _serverProxyModel->setSourceModel(_serverLogDataModel);
     _serverProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
     _ui->serverLogList->setModel(_serverProxyModel);
+    _ui->serverListFilterWidget->SetFilterProxyModel(_serverProxyModel);
 
     // Scroll button
     _ui->serverScrollButton->setText(nullptr);
@@ -237,46 +238,17 @@ void MainWidget::SetupServerLogs() {
             _reconnectTimer->start();
         }
     });
-
-    // Connect server filter combo
-    const QStringList serverFilterTypes = {"Contains", "Prefix", "Postfix", "Regular Expression"};
-    _ui->serverFilterCombo->addItems(serverFilterTypes);
-    _ui->serverFilterCombo->setCurrentText(_currentServerFilter);
-    connect(_ui->serverFilterCombo, &QComboBox::currentTextChanged, this, [this](const QString &value) {
-        _currentServerFilter = value;
-    });
-
-    // Filter clear button
-    _ui->serverFilterClearButton->setText(nullptr);
-    _ui->serverFilterClearButton->setIcon(IconUtils::GetIcon("clear"));
-    connect(_ui->serverFilterClearButton, &QPushButton::clicked, this, [this]() {
-        _ui->serverFilterEdit->setText(nullptr);
-        _serverProxyModel->setFilterRegularExpression(QRegularExpression());
-    });
-
-    // Connect server filter changes
-    connect(_ui->serverFilterEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
-        QRegularExpression rx(text, QRegularExpression::CaseInsensitiveOption);
-        if (_currentServerFilter == "Contains") {
-            rx = QRegularExpression(".*" + text + ".*", QRegularExpression::CaseInsensitiveOption);
-        } else if (_currentServerFilter == "Prefix") {
-            rx = QRegularExpression("^" + text + ".*", QRegularExpression::CaseInsensitiveOption);
-        } else if (_currentServerFilter == "Postfix") {
-            rx = QRegularExpression(".*" + text + "$", QRegularExpression::CaseInsensitiveOption);
-        } else {
-            rx = QRegularExpression(text);
-        }
-        // Only apply valid patterns
-        if (rx.isValid()) {
-            _serverProxyModel->setFilterRegularExpression(rx);
-        }
-    });
 }
 
 void MainWidget::SetupLocalLogs() {
+    
     // Data model
     _localLogDataModel = new QStandardItemModel(_ui->serverLogsTab);
-    _ui->localLogList->setModel(_localLogDataModel);
+    _localProxyModel = new QSortFilterProxyModel(this);
+    _localProxyModel->setSourceModel(_localLogDataModel);
+    _localProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    _ui->localLogList->setModel(_localProxyModel);
+    _ui->localListFilterWidget->SetFilterProxyModel(_localProxyModel);
 
     // Scroll button
     _ui->localScrollButton->setText(nullptr);

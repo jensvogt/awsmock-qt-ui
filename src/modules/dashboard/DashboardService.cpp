@@ -52,7 +52,6 @@ void DashboardService::GetMultiSeriesCounter(const Awsmock::Components::Monitori
                             DashboardCounter counter;
                             counter.FromJson(jsonDoc.object());
                             counter.chartConfig = config;
-                            logTrace << "GetMultiSeriesCounter succeeded, status: " << status << "response: " << response;
                             emit ReloadMonitoringSignal(counter);
                         } else {
                             logWarning << "Response is not an object!";
