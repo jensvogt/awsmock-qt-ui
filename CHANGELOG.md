@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.61](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.60...v1.11.61) (2026-05-12)
+
+
+### Bug Fixes
+
+* fix local log list filter ([91c7ad4](https://github.com/jensvogt/awsmock-qt-ui/commit/91c7ad4a3d1c7b4d506930f3d95d7c26a41fa36c))
+
 ## [1.11.60](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.59...v1.11.60) (2026-05-12)
 
 
