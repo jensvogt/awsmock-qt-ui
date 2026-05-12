@@ -20,6 +20,9 @@
 
 // Awsmock includes
 #include <components/QCustomPlot.h>
+#include <components/MonitoringChart.h>
+#include <components/MonitoringConfig.h>
+#include <components/MonitoringConfig.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/ChartConfig.h>
 #include <modules/dashboard/CrossHairChartView.h>
@@ -88,6 +91,8 @@ private:
      * @brief Charts configuration map
      */
     QVector<ChartConfig> _chartConfigs;
+    QVector<Awsmock::Components::MonitoringConfig> _monitoringConfigs;
+    QVector<Awsmock::Components::MonitoringChart *> _monitoringCharts;
 
     /**
      * @brief Color palette

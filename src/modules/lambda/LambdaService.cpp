@@ -465,6 +465,32 @@ void LambdaService::StartInstance(const QString &lambdaArn) {
                       });
 }
 
+void LambdaService::StopInstance(const QString &lambdaArn, const QString &instanceId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["functionArn"] = lambdaArn;
+    jRequest["instanceId"] = instanceId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "stop-instance"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadLambdaInstances();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("StopInstance", timer.elapsed());
+                      });
+}
+
 void LambdaService::DeleteLambda(const QString &name) {
     QElapsedTimer timer;
     timer.start();

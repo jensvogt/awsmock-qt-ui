@@ -72,7 +72,7 @@ private:
     /**
      * @brief Data proxy model
      */
-    PrefixFilterProxyModel *_proxyModel{};
+    QSortFilterProxyModel *_serverProxyModel{};
 
     /**
      *  @brief Log item data model
@@ -84,6 +84,11 @@ private:
      */
     QStandardItemModel *_localLogDataModel{};
 
+    /**
+     * @brief Current server filter value
+     */
+    QString _currentServerFilter = "Contains";
+    
     /**
      * @brief Content pane
      */

@@ -65,6 +65,27 @@ void S3Service::PurgeBucket(const QString &bucketName) {
                       });
 }
 
+void S3Service::PurgeAllBuckets() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "PurgeBucket"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, QByteArray, int, const QString &error) {
+                          if (success) {
+                              emit ReloadBucketListSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("PurgeBucket", timer.elapsed());
+                      });
+}
+
 void S3Service::AddBucket(const QString &bucketName) {
     QElapsedTimer timer;
     timer.start();

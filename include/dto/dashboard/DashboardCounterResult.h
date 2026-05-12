@@ -1,12 +1,15 @@
 #ifndef DASHBOARD_COUNTER_H
 #define DASHBOARD_COUNTER_H
 
+// Qt includes
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
 
+// Awsmock includes
 #include <modules/dashboard/ChartConfig.h>
+#include <components/MonitoringConfig.h>
 
 struct Value {
 
@@ -19,7 +22,7 @@ typedef QMap<QString, QVector<Value> > ValueMap;
 
 struct DashboardCounter {
 
-    ChartConfig chartConfig;
+    Awsmock::Components::MonitoringConfig chartConfig;
 
     ValueMap valueMap;
 

@@ -20,10 +20,6 @@ const QList<QColor> Dashboard::_palette = {
 
 Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), _ui(new Ui::Dashboard), _parent(parent) {
 
-    // Connect service
-    _dashboardService = new DashboardService();
-    connect(_dashboardService, &DashboardService::ReloadMonitoringSignal, this, &Dashboard::CounterArrived);
-
     // Setup UI components
     _ui->setupUi(this);
 
@@ -42,9 +38,9 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     Initialize();
 
     // Handle configuration changes, specially when the base URL changes
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &) {
         if (key == "server.base-url") {
-            _chartConfigs.clear();
+            _monitoringConfigs.clear();
             Initialize();
             LoadContent();
         }
@@ -57,358 +53,143 @@ Dashboard::~Dashboard() {
 
 void Dashboard::Initialize() {
 
-    ChartConfig config;
-    config.region = Configuration::instance().GetValue<QString>("aws.region", "eu-central-1");
-    config.title = "Total CPU";
-    config.name = "cpu_usage_total";
-    config.series = "cpu_type";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "% CPU";
-    config.yAxisFormat = "%.1f";
-    config.row = 0;
-    config.column = 0;
-    config.seriesNames = {"total", "system", "user"};
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Total CPU")
+        .setName("cpu_usage_total")
+        .setSeries("cpu_type")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("% CPU").setYAxisFormat("%.1f")
+        .setRow(0)
+        .setColumn(0)
+        .setSeriesNames({"total", "system", "user"})
+        .build());
 
-    config.title = "AwsMock CPU";
-    config.name = "cpu_usage_awsmock";
-    config.series = "cpu_type";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "% CPU";
-    config.yAxisFormat = "%.3f";
-    config.row = 0;
-    config.column = 1;
-    config.seriesNames = {"total", "system", "user"};
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("AwsMock CPU")
+        .setName("cpu_usage_awsmock")
+        .setSeries("cpu_type")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("% CPU")
+        .setYAxisFormat("%.3f")
+        .setRow(0)
+        .setColumn(1)
+        .setSeriesNames({"total", "system", "user"})
+        .build());
 
-    config.title = "Total Memory";
-    config.name = "memory_usage_total";
-    config.series = "mem_type";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "% Memory";
-    config.yAxisFormat = "%.1f";
-    config.row = 0;
-    config.column = 2;
-    config.seriesNames = {"total"};
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Total Memory")
+        .setName("memory_usage_total")
+        .setSeries("mem_type")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("% Memory")
+        .setYAxisFormat("%.1f")
+        .setRow(0)
+        .setColumn(2)
+        .setSeriesNames({"total"})
+        .build());
 
-    config.title = "AwsMock Memory";
-    config.name = "memory_usage_awsmock";
-    config.series = "mem_type";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "Memory [MB]";
-    config.yAxisFormat = "%d";
-    config.row = 1;
-    config.scale = 1024 * 1024;
-    config.column = 0;
-    config.seriesNames = {"real", "virtual"};
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("AwsMock Memory")
+        .setName("memory_usage_awsmock")
+        .setSeries("mem_type")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("% Memory [MB]")
+        .setYAxisFormat("%d")
+        .setRow(1)
+        .setColumn(0)
+        .setSeriesNames({"real", "virtual"})
+        .setScale(1024 * 1024)
+        .build());
 
-    config.title = "Total threads";
-    config.name = "total_threads";
-    config.series = "";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "Threads";
-    config.yAxisFormat = "%d";
-    config.row = 1;
-    config.column = 1;
-    config.seriesNames = {"total"};
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Total threads")
+        .setName("total_threads")
+        .setSeries("")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("Threads")
+        .setYAxisFormat("%d")
+        .setRow(1)
+        .setColumn(1)
+        .setSeriesNames({"total"})
+        .build());
 
-    config.title = "Gateway Response Time";
-    config.name = "gateway_http_timer";
-    config.series = "method";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "Time [ms]";
-    config.yAxisFormat = "%.1f";
-    config.row = 1;
-    config.column = 2;
-    config.limit = -1;
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Gateway Response Time")
+        .setName("gateway_http_timer")
+        .setSeries("method")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("Time [ms]")
+        .setYAxisFormat("%.1f")
+        .setRow(1)
+        .setColumn(2)
+        .setSeriesNames({"total"})
+        .build());
 
-    config.title = "Gateway Requests";
-    config.name = "gateway_http_counter";
-    config.series = "method";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "Requests/s";
-    config.yAxisFormat = "%.1f";
-    config.row = 2;
-    config.column = 0;
-    config.limit = -1;
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Gateway Requests")
+        .setName("gateway_http_counter")
+        .setSeries("method")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("Requests/s")
+        .setYAxisFormat("%.1f")
+        .setRow(2)
+        .setColumn(0)
+        .setSeriesNames({"total"})
+        .build());
 
-    config.title = "Docker CPU";
-    config.name = "docker_cpu_total_counter";
-    config.series = "container";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "% CPU";
-    config.yAxisFormat = "%.3f";
-    config.row = 2;
-    config.column = 1;
-    config.limit = 5;
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Docker CPU")
+        .setName("docker_cpu_total_counter")
+        .setSeries("container")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("% CPU")
+        .setYAxisFormat("%.3f")
+        .setRow(2)
+        .setColumn(1)
+        .setSeriesNames({"total"})
+        .build());
 
-    config.title = "Docker Memory";
-    config.name = "docker_memory_counter";
-    config.series = "container";
-    config.xAxisText = "Time";
-    config.xAxisFormat = "HH:mm";
-    config.yAxisText = "% Memory";
-    config.yAxisFormat = "%.1f";
-    config.row = 2;
-    config.column = 2;
-    config.limit = 5;
-    config.scale = -1;
-    _chartConfigs.emplace_back(config);
+    _monitoringConfigs.emplace_back(Awsmock::Components::MonitoringConfigBuilder()
+        .setRegion(Configuration::instance().GetValue<QString>("aws.region", "eu-central-1"))
+        .setTitle("Docker Memory")
+        .setName("docker_memory_counter")
+        .setSeries("container")
+        .setXAxisText("Time")
+        .setXAxisFormat("HH:mm")
+        .setYAxisText("% CPU")
+        .setYAxisFormat("%.1f")
+        .setRow(2)
+        .setColumn(2)
+        .setLimit(5)
+        .setSeriesNames({"total"})
+        .build());
 }
 
 void Dashboard::ClearContent() {
 }
 
 void Dashboard::LoadContent() {
-    const auto start = DateTimeUtils::GetLastMidnight();
-    const auto end = QDateTime::currentDateTime();
-
-    for (auto &config: _chartConfigs) {
-        config.start = start.toUTC();
-        config.end = end.toUTC();
-        _dashboardService->GetMultiSeriesCounter(config);
+    _monitoringCharts.clear();
+    for (auto &config: _monitoringConfigs) {
+        config.start = DateTimeUtils::GetLastMidnight().toUTC();
+        config.end = QDateTime::currentDateTime().toUTC();
+        _monitoringCharts.emplace_back(new Awsmock::Components::MonitoringChart(config, _ui->gridLayout));
     }
     logInfo << "Dashboard updated";
-}
-
-void Dashboard::CounterArrived(const DashboardCounter &dashboardCounters) {
-
-    const ChartConfig config = dashboardCounters.chartConfig;
-
-    // QCustomChart
-    if (const QLayoutItem *item = _ui->gridLayout->itemAtPosition(config.row, config.column)) {
-        if (auto *customPlot = qobject_cast<QCustomPlot *>(item->widget())) {
-            customPlot->clearGraphs();
-            int i = 0;
-            double s = FLT_MAX;
-            for (const auto &seria: dashboardCounters.valueMap.keys()) {
-
-                customPlot->addGraph();
-                QVector<QCPGraphData> graphData(dashboardCounters.valueMap[seria].size());
-                for (int j = 0; j < dashboardCounters.valueMap[seria].size(); ++j) {
-                    graphData[j].key = static_cast<double>(dashboardCounters.valueMap[seria][j].timestamp.toSecsSinceEpoch());
-                    graphData[j].value = config.scale > 0 ? dashboardCounters.valueMap[seria][j].value / config.scale : dashboardCounters.valueMap[seria][j].value;
-                    if (graphData[j].key < s) {
-                        s = graphData[j].key;
-                    }
-                }
-                customPlot->graph()->data()->set(graphData);
-                customPlot->graph()->setName(seria);
-                customPlot->graph()->setPen(QPen(_palette[i % _palette.size()], 2));
-                i++;
-            }
-
-            // Set X range
-            customPlot->xAxis->setRange(s, static_cast<double>(QDateTime::currentDateTime().toUTC().toSecsSinceEpoch()));
-
-            // Auto scale Y axis
-            customPlot->yAxis->rescale();
-            customPlot->yAxis->setRangeLower(0);
-            customPlot->xAxis->setLabel(config.xAxisText);
-            customPlot->yAxis->setLabel(config.yAxisText);
-
-            // Time axis ticker — 5min intervals
-            const QSharedPointer<QCPAxisTickerDateTime> ticker(new QCPAxisTickerDateTime);
-            ticker->setDateTimeFormat(config.xAxisFormat);
-            ticker->setTickStepStrategy(QCPAxisTicker::tssReadability);
-            customPlot->xAxis->setTicker(ticker);
-            customPlot->xAxis->setLabel("Time");
-
-            // Add a title using QCPTextElement
-            if (auto *existing = qobject_cast<QCPTextElement *>(customPlot->plotLayout()->element(0, 0))) {
-                existing->setText(config.title); // update existing
-            } else {
-                customPlot->plotLayout()->insertRow(0);
-                customPlot->plotLayout()->addElement(0, 0, new QCPTextElement(customPlot, config.title, QFont("sans", 12, QFont::Bold)));
-            }
-
-            // Redraw
-            customPlot->replot();
-
-            // Crosshair
-            if (!customPlot->property("crosshair_init").toBool()) {
-                AddCrossHair(customPlot);
-            }
-
-            AddZoom(customPlot);
-            AddRange(customPlot);
-        }
-    }
-}
-
-void Dashboard::AddCrossHair(QCustomPlot *customPlot) {
-    auto *tracer = new QCPItemTracer(customPlot);
-    tracer->setStyle(QCPItemTracer::tsCircle);
-    tracer->setPen(QPen(Qt::red));
-    tracer->setBrush(Qt::red);
-    tracer->setSize(7);
-    tracer->setVisible(false);
-
-    auto *hLine = new QCPItemLine(customPlot);
-    auto *vLine = new QCPItemLine(customPlot);
-
-    auto *label = new QCPItemText(customPlot);
-    label->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
-    label->setPadding(QMargins(5, 5, 5, 5));
-    label->setBrush(QColor(255, 255, 255, 220));
-    label->setPen(QPen(Qt::gray));
-    label->setVisible(false);
-    connect(customPlot, &QCustomPlot::mouseMove, this, [=](QMouseEvent *event) {
-        // Check if mouse is inside the actual plotting area
-        if (!customPlot->axisRect()->rect().contains(event->pos())) {
-            tracer->setVisible(false);
-            hLine->setVisible(false);
-            vLine->setVisible(false);
-            label->setVisible(false);
-            customPlot->replot(QCustomPlot::rpQueuedReplot);
-            return;
-        }
-
-        const double x = customPlot->xAxis->pixelToCoord(event->pos().x());
-        const double y = customPlot->yAxis->pixelToCoord(event->pos().y());
-
-        // ===== Find nearest data point =====
-        double nx = 0, ny = 0;
-        QString name;
-
-        if (QCPGraph *g = findNearestGraphPoint(customPlot, x, y, nx, ny, name); !g) return;
-
-        // ===== Snap crosshair to data =====
-        hLine->start->setCoords(customPlot->xAxis->range().lower, ny);
-        hLine->end->setCoords(customPlot->xAxis->range().upper, ny);
-
-        vLine->start->setCoords(nx, customPlot->yAxis->range().lower);
-        vLine->end->setCoords(nx, customPlot->yAxis->range().upper);
-
-        // ===== Move tracer =====
-        tracer->position->setCoords(nx, ny);
-        tracer->setVisible(true);
-
-        // ===== Tooltip =====
-        label->position->setCoords(nx, ny);
-        label->setTextAlignment(Qt::AlignLeft);
-        label->setText(QString("Seria: %1\nX: %2\nY: %3")
-            .arg(name)
-            .arg(QDateTime::fromSecsSinceEpoch(static_cast<qint64>(nx)).toLocalTime().toString("HH:mm:ss"))
-            .arg(ny, 0, 'f', 3));
-        label->setClipToAxisRect(false);
-        label->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
-        // 1. Determine Horizontal Alignment (Left or Right)
-        Qt::Alignment hAlign = Qt::AlignLeft;
-        if (nx > customPlot->xAxis->range().center()) {
-            // If we are in the right half of the plot, align text to the right
-            // of the point so it stays inside the left area.
-            hAlign = Qt::AlignRight;
-        }
-
-        // 2. Determine Vertical Alignment (Top or Bottom)
-        Qt::Alignment vAlign = Qt::AlignTop;
-        if (ny < customPlot->yAxis->range().center()) {
-            // If we are in the bottom half, place label above the point.
-            vAlign = Qt::AlignBottom;
-        }
-
-        // 3. Apply the combined alignment
-        label->setPositionAlignment(hAlign | vAlign);
-        label->setVisible(true);
-
-        customPlot->replot(QCustomPlot::rpQueuedReplot);
-
-        // Ensure lines are visible when we find a point
-        hLine->setVisible(true);
-        vLine->setVisible(true);
-        tracer->setVisible(true);
-        label->setVisible(true);
-    });
-}
-
-QCPGraph *Dashboard::findNearestGraphPoint(const QCustomPlot *plot, const double x, const double y, double &outX, double &outY, QString &outName) {
-    QCPGraph *bestGraph = nullptr;
-    double bestDist = std::numeric_limits<double>::max();
-
-    for (int i = 0; i < plot->graphCount(); ++i) {
-        QCPGraph *g = plot->graph(i);
-        if (!g || g->data()->isEmpty())
-            continue;
-
-        for (auto it = g->data()->constBegin(); it != g->data()->constEnd(); ++it) {
-
-            const double dx = it->key - x;
-            const double dy = it->value - y;
-
-            if (const double dist = dx * dx + dy * dy; dist < bestDist) {
-                bestDist = dist;
-                bestGraph = g;
-                outX = it->key;
-                outY = it->value;
-                outName = g->name();
-            }
-        }
-    }
-
-    return bestGraph;
-}
-
-void Dashboard::SetLegend(QCustomPlot *customPlot) {
-
-    if (!customPlot || !customPlot->legend) return;
-
-    auto *subLayout = new QCPLayoutGrid;
-    customPlot->plotLayout()->addElement(1, 0, subLayout);
-    for (int i = 0; i < customPlot->legend->itemCount(); ++i) {
-        subLayout->addElement(0, i, customPlot->legend->item(i));
-    }
-    subLayout->setMaximumSize(QSize(10, 20));
-    customPlot->legend->setVisible(true);
-
-    customPlot->replot();
-}
-
-void Dashboard::AddZoom(QCustomPlot *customPlot) {
-    // Enable zoom with mouse wheel
-    customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-
-    // Zoom only on x-axis (useful for time series)
-    customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
-    customPlot->axisRect()->setRangeDrag(Qt::Horizontal);
-
-    // Zoom both axes
-    customPlot->axisRect()->setRangeZoom(Qt::Horizontal | Qt::Vertical);
-    customPlot->axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
-}
-
-void Dashboard::AddRange(QCustomPlot *customPlot) {
-
-    // Left click + drag = rubber band zoom
-    customPlot->setSelectionRectMode(QCP::srmZoom);
-
-    // Right click = reset zoom
-    // connect(customPlot, &QCustomPlot::mousePress, this, [this, customPlot](QMouseEvent *e) {
-    //     if (e->button() == Qt::RightButton) {
-    //         customPlot->xAxis->setRange(customPlot->graph()->data.first().key, _data.last().key);
-    //         customPlot->yAxis->rescale();
-    //         customPlot->replot();
-    //     }
-    // });
 }

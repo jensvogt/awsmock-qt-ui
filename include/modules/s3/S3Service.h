@@ -44,6 +44,8 @@ public:
      */
     void PurgeBucket(const QString &bucketName);
 
+    void PurgeAllBuckets();
+
     /**
      * @brief Add a new bucket
      *

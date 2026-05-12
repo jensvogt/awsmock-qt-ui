@@ -66,6 +66,26 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
+              <widget class="QLabel" name="serverFilterLabel">
+               <property name="text">
+                <string>Filter: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="serverFilterEdit"/>
+             </item>
+             <item>
+              <widget class="QComboBox" name="serverFilterCombo"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="serverFilterClearButton">
+               <property name="text">
+                <string>serverFiilterClearPushButton</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
                 <enum>Qt::Orientation::Horizontal</enum>
