@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.62](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.61...v1.11.62) (2026-05-12)
+
+
+### Bug Fixes
+
+* fix SQS queue tagging ([9e0a613](https://github.com/jensvogt/awsmock-qt-ui/commit/9e0a6136f2165ccc27a0235998137adff293163f))
+* fix SQS queue tagging ([6c74fd4](https://github.com/jensvogt/awsmock-qt-ui/commit/6c74fd4c39025a91008f0ed790473fd433b74a0c))
+
 ## [1.11.61](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.60...v1.11.61) (2026-05-12)
 
 
