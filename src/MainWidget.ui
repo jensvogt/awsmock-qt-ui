@@ -66,22 +66,12 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QLabel" name="serverFilterLabel">
-               <property name="text">
-                <string>Filter: </string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="serverFilterEdit"/>
-             </item>
-             <item>
-              <widget class="QComboBox" name="serverFilterCombo"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="serverFilterClearButton">
-               <property name="text">
-                <string>serverFiilterClearPushButton</string>
+              <widget class="Awsmock::Components::ListFilterWidget" name="serverListFilterWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
               </widget>
              </item>
@@ -153,6 +143,16 @@
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="Awsmock::Components::ListFilterWidget" name="localListFilterWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
              <item>
               <spacer name="localLogHorizontalSpacer">
                <property name="orientation">
@@ -252,6 +252,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Awsmock::Components::ListFilterWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">components/ListFilterWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
