@@ -2,30 +2,31 @@
 #define AWSMOCK_QT_UI_SQS_SERVICE_H
 
 // Qt includes
+#include <QElapsedTimer>
 #include <QMessageBox>
 #include <QObject>
 #include <QTableWidget>
-#include <QElapsedTimer>
 
 // AwsMock include
-#include <utils/BasePage.h>
-#include <utils/Configuration.h>
-#include <utils/RestManager.h>
-#include <utils/EventBus.h>
-#include <utils/Logging.h>
-#include <utils/BaseService.h>
-#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
+#include <dto/sns/SNSSendMessageResponse.h>
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <dto/sqs/SQSGetQueueDetailsResponse.h>
-#include <dto/sqs/SQSQueueUpdateRequest.h>
-#include <dto/sqs/SQSListQueueResponse.h>
 #include <dto/sqs/SQSListMessagesResponse.h>
 #include <dto/sqs/SQSListQueueAttributesResponse.h>
-#include <dto/sqs/SQSListQueueLambdaTriggersResponse.h>
-#include <dto/sqs/SQSSendMessageResponse.h>
-#include <dto/sns/SNSSendMessageResponse.h>
 #include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
+#include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
+#include <dto/sqs/SQSListQueueLambdaTriggersResponse.h>
+#include <dto/sqs/SQSListQueueResponse.h>
+#include <dto/sqs/SQSListQueueTagsResponse.h>
+#include <dto/sqs/SQSQueueUpdateRequest.h>
 #include <dto/sqs/SQSSendMessageRequest.h>
+#include <dto/sqs/SQSSendMessageResponse.h>
+#include <utils/BasePage.h>
+#include <utils/BaseService.h>
+#include <utils/Configuration.h>
+#include <utils/EventBus.h>
+#include <utils/Logging.h>
+#include <utils/RestManager.h>
 
 class SQSService final : public BaseService {
     Q_OBJECT
@@ -201,6 +202,23 @@ public:
      */
     void DeleteMessage(const QString &queueUrl, const QString &receiptHandle);
 
+    /**
+     * @brief List all queue tags
+     *
+     * @param queueUrl queue URL
+     * @param prefix tags key prefix
+     */
+    void ListQueueTags(const QString &queueUrl, const QString &prefix);
+
+    /**
+     * @brief Add a queue tag
+     *
+     * @param queueUrl queue URL
+     * @param key tag name
+     * @param value tag value
+     */
+    void TagQueue(const QString &queueUrl, const QString &key, const QString &value);
+
 signals:
     /**
      * @brief Signal is send, when a list queue message arrived.
@@ -279,6 +297,16 @@ signals:
      * @param response message response
      */
     void SendMessagesSignal(const SQSSendMessageResponse &response);
+
+    /**
+     * @brief Sent when the tags list arrived
+     */
+    void ListQueueTagsSignal(const SQSListQueueTagsResponse &response);
+
+    /**
+     * @brief Sent when the tags list should be updated
+     */
+    void ReloadQueueTagsSignal();
 
 private:
     /**

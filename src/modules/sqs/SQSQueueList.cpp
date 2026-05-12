@@ -113,7 +113,7 @@ void SQSQueueList::HandleListQueueSignal(const SQSQueueListResponse &queueListRe
     _tableView->SaveSelection();
     _tableView->setUpdatesEnabled(false);
     _tableView->ClearContent();
-    _tableView->SetTotalSize(queueListResponse.queueCounters.size());
+    _tableView->SetTotalSize(queueListResponse.total);
     for (auto r = 0, c = 0; r < queueListResponse.queueCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).queueName);
         _tableView->SetColumn(r, c++, queueListResponse.queueCounters.at(r).available);

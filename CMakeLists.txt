@@ -69,10 +69,11 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         src/modules/sqs/SQSQueueDetailsDialog.cpp src/modules/sqs/SQSQueueDetailsDialog.ui
         include/modules/sqs/SQSQueueDetailsDialog.h src/modules/sqs/SQSService.cpp include/modules/sqs/SQSService.h
         src/modules/sqs/SQSQueueList.cpp include/modules/sqs/SQSQueueList.h src/modules/sqs/SQSMessageList.cpp
-        include/modules/sqs/SQSMessageList.h
-        src/modules/sqs/SQSMessageWindow.cpp
-        include/modules/sqs/SQSMessageWindow.h
-        src/modules/sqs/SQSMessageWindow.ui)
+        include/modules/sqs/SQSMessageList.h src/modules/sqs/SQSMessageWindow.cpp include/modules/sqs/SQSMessageWindow.h
+        src/modules/sqs/SQSMessageWindow.ui src/modules/sqs/SQSQueueTagsDialog.cpp src/modules/sqs/SQSQueueTagsDialog.ui
+        include/modules/sqs/SQSQueueTagsDialog.h
+        include/dto/sqs/SQSListQueueTagsResponse.h
+        include/dto/sqs/SQSUpdateTagsRequest.h)
 set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp
