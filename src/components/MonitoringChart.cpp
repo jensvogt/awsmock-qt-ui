@@ -5,6 +5,8 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_MonitoringChart.h" resolved
 
 #include <components/MonitoringChart.h>
+
+#include <utility>
 #include "ui_MonitoringChart.h"
 #include "utils/IconUtils.h"
 
@@ -23,7 +25,7 @@ namespace Awsmock::Components {
         QColor(23, 190, 207), // cyan
     };
 
-    MonitoringChart::MonitoringChart(const MonitoringConfig &config, QGridLayout *layout, QWidget *parent) : BasePage(parent), _ui(new Ui::MonitoringChart), _config(config), _layout(layout) {
+    MonitoringChart::MonitoringChart(MonitoringConfig config, QGridLayout *layout, QWidget *parent) : BasePage(parent), _ui(new Ui::MonitoringChart), _config(std::move(config)), _layout(layout) {
 
         // Stup dashboard service
         _dashboardService = new DashboardService();
@@ -56,7 +58,6 @@ namespace Awsmock::Components {
     void MonitoringChart::Update(const DashboardCounter &dashboardCounters) {
 
         // QCustomChart
-        //        if (const QLayoutItem *item = _layout->itemAtPosition(_config.row, _config.column)) {
         if (auto *customPlot = qobject_cast<QCustomPlot *>(_ui->monitoringGraph)) {
             customPlot->clearGraphs();
             int i = 0;
@@ -113,7 +114,6 @@ namespace Awsmock::Components {
             AddZoom(customPlot);
             AddRange(customPlot);
             _layout->addWidget(this, _config.row, _config.column);
-            //}
         }
     }
 

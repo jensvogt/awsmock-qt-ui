@@ -30,7 +30,7 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     _ui->refreshButton->setToolTip("Refresh the dashboard");
-    connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this] {
         LoadContent();
     });
 
@@ -101,7 +101,7 @@ void Dashboard::Initialize() {
         .setSeries("mem_type")
         .setXAxisText("Time")
         .setXAxisFormat("HH:mm")
-        .setYAxisText("% Memory [MB]")
+        .setYAxisText("Memory [mb]")
         .setYAxisFormat("%d")
         .setRow(1)
         .setColumn(0)
@@ -172,7 +172,7 @@ void Dashboard::Initialize() {
         .setSeries("container")
         .setXAxisText("Time")
         .setXAxisFormat("HH:mm")
-        .setYAxisText("% CPU")
+        .setYAxisText("% Memory")
         .setYAxisFormat("%.1f")
         .setRow(2)
         .setColumn(2)

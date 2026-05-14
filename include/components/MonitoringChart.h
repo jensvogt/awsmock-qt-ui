@@ -43,7 +43,7 @@ namespace Awsmock::Components {
          * @param layout grid layout
          * @param parent parent widget
          */
-        explicit MonitoringChart(const MonitoringConfig &config, QGridLayout *layout, QWidget *parent = nullptr);
+        explicit MonitoringChart(MonitoringConfig config, QGridLayout *layout, QWidget *parent = nullptr);
 
         /**
          * @brief Destructor

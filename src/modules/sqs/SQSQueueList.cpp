@@ -46,6 +46,14 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
         LoadContent();
     });
 
+    // Toolbar monitoring action
+    auto *monitoringButton = new QPushButton(IconUtils::GetIcon("monitoring"), nullptr, this);
+    monitoringButton->setToolTip("Show the SQS monitoring counters");
+    connect(monitoringButton, &QPushButton::clicked, [this]() {
+        // Send notification
+        emit EventBus::instance().RouteChanged("SQS Monitoring", {});
+    });
+
     // Toolbar refresh action
     auto *refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setToolTip("Refresh the queue list");
@@ -58,6 +66,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(resetCounterButton);
+    toolBar->addWidget(monitoringButton);
     toolBar->addWidget(refreshButton);
 
     // Table
@@ -101,9 +110,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     layout->addWidget(_tableView, 2);
 }
 
-SQSQueueList::~SQSQueueList() {
-    StopAutoUpdate();
-}
+SQSQueueList::~SQSQueueList() = default;
 
 void SQSQueueList::LoadContent() {
     _sqsService->ListQueues(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
