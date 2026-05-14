@@ -7,27 +7,29 @@
 
 // Qt includes
 #include <QMap>
+#include <QStackedWidget>
 #include <QString>
 #include <QWidget>
-#include <QStackedWidget>
 
 // Awsmock includes
-#include <utils/BasePage.h>
+#include <modules/application/ApplicationList.h>
+#include <modules/cognito/CognitoUserpoolList.h>
 #include <modules/dashboard/Dashboard.h>
+#include <modules/dynamodb/DynamoDbItemList.h>
+#include <modules/dynamodb/DynamoDbTableList.h>
 #include <modules/kms/KMSKeyList.h>
-#include <modules/sqs/SQSQueueList.h>
-#include <modules/sqs/SQSMessageList.h>
-#include <modules/sns/SNSTopicList.h>
-#include <modules/sns/SNSMessageList.h>
+#include <modules/lambda/LambdaList.h>
 #include <modules/s3/S3BucketList.h>
 #include <modules/s3/S3ObjectList.h>
-#include <modules/application/ApplicationList.h>
-#include <modules/lambda/LambdaList.h>
 #include <modules/secretsmanager/SecretList.h>
+#include <modules/sns/SNSDashboard.h>
+#include <modules/sns/SNSMessageList.h>
+#include <modules/sns/SNSTopicList.h>
+#include <modules/sqs/SQSDashboard.h>
+#include <modules/sqs/SQSMessageList.h>
+#include <modules/sqs/SQSQueueList.h>
 #include <modules/ssm/SSMParameterList.h>
-#include <modules/dynamodb/DynamoDbTableList.h>
-#include <modules/dynamodb/DynamoDbItemList.h>
-#include <modules/cognito/CognitoUserpoolList.h>
+#include <utils/BasePage.h>
 
 class MainRouter : public QWidget {
     Q_OBJECT
@@ -50,10 +52,16 @@ public:
                 "SQS Message List", new SQSMessageList("SQS Message List", parent)
             },
             {
+                "SQS Monitoring", new SQSDashboard(parent)
+            },
+            {
                 "SNS", new SNSTopicList("SNS Topic List", parent)
             },
             {
                 "SNS Message List", new SNSMessageList("SNS Message List", parent)
+            },
+            {
+                "SNS Monitoring", new SNSDashboard(parent)
             },
             {
                 "S3", new S3BucketList("S3 Bucket List", parent)

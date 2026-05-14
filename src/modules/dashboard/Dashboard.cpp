@@ -30,7 +30,7 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     _ui->refreshButton->setToolTip("Refresh the dashboard");
-    connect(_ui->refreshButton, &QPushButton::clicked, this, [this]() {
+    connect(_ui->refreshButton, &QPushButton::clicked, this, [this] {
         LoadContent();
     });
 

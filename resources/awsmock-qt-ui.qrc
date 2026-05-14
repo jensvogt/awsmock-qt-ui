@@ -34,6 +34,7 @@
         <file>light/kill.svg</file>
         <file>light/left-2-right.svg</file>
         <file>light/logs.svg</file>
+        <file>light/monitoring.svg</file>
         <file>light/next.svg</file>
         <file>light/ok.svg</file>
         <file>light/pretty.svg</file>
@@ -96,6 +97,7 @@
         <file>dark/kill.svg</file>
         <file>dark/left-2-right.svg</file>
         <file>dark/logs.svg</file>
+        <file>dark/monitoring.svg</file>
         <file>dark/next.svg</file>
         <file>dark/ok.svg</file>
         <file>dark/preferences.svg</file>

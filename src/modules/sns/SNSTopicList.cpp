@@ -47,6 +47,14 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
         LoadContent();
     });
 
+    // Toolbar monitoring action
+    auto *monitoringButton = new QPushButton(IconUtils::GetIcon("monitoring"), nullptr, this);
+    monitoringButton->setToolTip("Show the SNS monitoring counters");
+    connect(monitoringButton, &QPushButton::clicked, []() {
+        // Send notification
+        emit EventBus::instance().RouteChanged("SNS Monitoring", {});
+    });
+
     // Toolbar refresh action
     const auto refreshButton = new QPushButton(IconUtils::GetIcon("refresh"), "", this);
     refreshButton->setIconSize(QSize(16, 16));
@@ -60,6 +68,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     toolBar->addWidget(addButton);
     toolBar->addWidget(purgeAllButton);
     toolBar->addWidget(resetCounterButton);
+    toolBar->addWidget(monitoringButton);
     toolBar->addWidget(refreshButton);
 
     // Table
@@ -102,9 +111,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     layout->addWidget(_tableView, 2);
 }
 
-SNSTopicList::~SNSTopicList() {
-    StopAutoUpdate();
-}
+SNSTopicList::~SNSTopicList() = default;
 
 void SNSTopicList::LoadContent() {
     _snsService->ListTopics(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());

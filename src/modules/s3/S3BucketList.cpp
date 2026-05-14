@@ -101,9 +101,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     layout->addWidget(_tableView, 2);
 }
 
-S3BucketList::~S3BucketList() {
-    StopAutoUpdate();
-}
+S3BucketList::~S3BucketList() = default;
 
 void S3BucketList::LoadContent() {
     _s3Service->ListBuckets(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());
