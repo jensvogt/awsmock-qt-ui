@@ -15,6 +15,8 @@
 #include <modules/dashboard/ChartConfig.h>
 #include <dto/dashboard/DashboardCounterResult.h>
 
+#include "components/MonitoringConfig.h"
+
 class DashboardService : public BaseService {
     Q_OBJECT
 
@@ -23,7 +25,7 @@ public:
 
     ~DashboardService() override;
 
-    void GetMultiSeriesCounter(const ChartConfig &config);
+    void GetMultiSeriesCounter(const Awsmock::Components::MonitoringConfig &config);
 
 signals:
     void ReloadMonitoringSignal(const DashboardCounter &counter);

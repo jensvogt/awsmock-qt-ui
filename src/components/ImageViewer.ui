@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Awsmock::Components::MonitoringChart</class>
- <widget class="QWidget" name="Awsmock::Components::MonitoringChart">
+ <class>Awsmock::Components::ImageViewer</class>
+ <widget class="QWidget" name="Awsmock::Components::ImageViewer">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>961</width>
-    <height>511</height>
+    <width>1045</width>
+    <height>459</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MonitoringChart</string>
+   <string>ImageViewer</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -30,7 +30,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="settingsButton">
+      <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>PushButton</string>
        </property>
@@ -39,25 +39,20 @@
     </layout>
    </item>
    <item>
-    <widget class="QCustomPlot" name="monitoringGraph" native="true">
+    <widget class="QLabel" name="imageLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QCustomPlot</class>
-   <extends>QWidget</extends>
-   <header location="global">components/QCustomPlot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

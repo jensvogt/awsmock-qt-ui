@@ -1,5 +1,54 @@
 # Changelog
 
+## [1.11.62](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.61...v1.11.62) (2026-05-12)
+
+
+### Bug Fixes
+
+* fix SQS queue tagging ([9e0a613](https://github.com/jensvogt/awsmock-qt-ui/commit/9e0a6136f2165ccc27a0235998137adff293163f))
+* fix SQS queue tagging ([6c74fd4](https://github.com/jensvogt/awsmock-qt-ui/commit/6c74fd4c39025a91008f0ed790473fd433b74a0c))
+
+## [1.11.61](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.60...v1.11.61) (2026-05-12)
+
+
+### Bug Fixes
+
+* fix local log list filter ([91c7ad4](https://github.com/jensvogt/awsmock-qt-ui/commit/91c7ad4a3d1c7b4d506930f3d95d7c26a41fa36c))
+
+## [1.11.60](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.59...v1.11.60) (2026-05-12)
+
+
+### Bug Fixes
+
+* auto scroll buttons ([74b08ef](https://github.com/jensvogt/awsmock-qt-ui/commit/74b08ef678024613008c68941aa04c761a32a81c))
+* fix log list filter ([ab944fa](https://github.com/jensvogt/awsmock-qt-ui/commit/ab944fa737417d194223c9f83dcfba37eb14103c))
+* fix log list filter ([e2a2485](https://github.com/jensvogt/awsmock-qt-ui/commit/e2a2485e207817c452c08efe8ac864d81176db38))
+
+## [1.11.59](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.58...v1.11.59) (2026-05-05)
+
+
+### Bug Fixes
+
+* auto scroll buttons ([58e98d7](https://github.com/jensvogt/awsmock-qt-ui/commit/58e98d74dd8a2f6a0d6bc6a6111b74bdfdc3ab10))
+* auto scroll buttons ([1554571](https://github.com/jensvogt/awsmock-qt-ui/commit/155457162e6876e23e341b94371497c7425d5e96))
+* images in S3 Object window ([8eff1d3](https://github.com/jensvogt/awsmock-qt-ui/commit/8eff1d3372542064a38938f573103640d22741e0))
+* resend SNS messages ([717c3c6](https://github.com/jensvogt/awsmock-qt-ui/commit/717c3c618a4e0811850ac590c334698c9409c7b3))
+
+## [1.11.58](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.57...v1.11.58) (2026-05-05)
+
+
+### Bug Fixes
+
+* details window for S3 objects ([223b37e](https://github.com/jensvogt/awsmock-qt-ui/commit/223b37ebbac7a7ad7b2d71a7100d6e1c00aba260))
+
+## [1.11.57](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.56...v1.11.57) (2026-05-05)
+
+
+### Bug Fixes
+
+* details window for SQS/SNS messages ([5ee38cd](https://github.com/jensvogt/awsmock-qt-ui/commit/5ee38cdc650f80f1c0af6d41414c4c11736e6b36))
+* details window for SQS/SNS messages ([df139e3](https://github.com/jensvogt/awsmock-qt-ui/commit/df139e3497a0c9f2282366e340de136cc0561fa2))
+
 ## [1.11.56](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.55...v1.11.56) (2026-05-04)
 
 

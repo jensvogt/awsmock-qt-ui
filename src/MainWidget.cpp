@@ -2,8 +2,6 @@
 // Created by vogje01 on 2/6/26.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_MainWidget.h" resolved
-
 #include <MainWidget.h>
 #include "ui_MainWidget.h"
 
@@ -150,14 +148,18 @@ void MainWidget::SetupServerLogs() {
     _webSocket->open(QUrl(_websocketUrl));
 
     // Data model
-    _serverLogDataModel = new QStandardItemModel(_ui->serverLogList);
-    _ui->serverLogList->setModel(_serverLogDataModel);
+    _serverLogDataModel = new QStandardItemModel();
+    _serverProxyModel = new QSortFilterProxyModel(this);
+    _serverProxyModel->setSourceModel(_serverLogDataModel);
+    _serverProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    _ui->serverLogList->setModel(_serverProxyModel);
+    _ui->serverListFilterWidget->SetFilterProxyModel(_serverProxyModel);
 
     // Scroll button
     _ui->serverScrollButton->setText(nullptr);
     _ui->serverScrollButton->setIcon(IconUtils::GetIcon("purge"));
     _ui->serverScrollButton->setToolTip("Start/stop scrolling");
-    _ui->serverScrollButton->setEnabled(_serverScrolling);
+    _ui->serverScrollButton->setChecked(_serverScrolling);
     connect(_ui->serverScrollButton, &QPushButton::toggled, this, [this](const bool value) {
         _serverScrolling = value;
     });
@@ -239,14 +241,20 @@ void MainWidget::SetupServerLogs() {
 }
 
 void MainWidget::SetupLocalLogs() {
+    
     // Data model
     _localLogDataModel = new QStandardItemModel(_ui->serverLogsTab);
-    _ui->localLogList->setModel(_localLogDataModel);
+    _localProxyModel = new QSortFilterProxyModel(this);
+    _localProxyModel->setSourceModel(_localLogDataModel);
+    _localProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    _ui->localLogList->setModel(_localProxyModel);
+    _ui->localListFilterWidget->SetFilterProxyModel(_localProxyModel);
 
     // Scroll button
     _ui->localScrollButton->setText(nullptr);
     _ui->localScrollButton->setIcon(IconUtils::GetIcon("scroll"));
     _ui->localScrollButton->setToolTip("Start/stop local scrolling");
+    _ui->localScrollButton->setChecked(_localScrolling);
     connect(_ui->localScrollButton, &QPushButton::toggled, this, [this](const bool value) {
         _localScrolling = value;
     });

@@ -51,7 +51,10 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         include/components/QCustomPlot.h src/components/QCustomPlot.cpp include/components/PlainTextEditor.h
         src/components/PlainTextEditor.cpp include/components/Toast.h include/components/SelectLists.h
         src/components/SelectLists.cpp src/components/SelectLists.ui src/components/MonitoringChart.cpp
-        src/components/MonitoringChart.ui include/components/MonitoringChart.h)
+        src/components/MonitoringChart.ui include/components/MonitoringChart.h src/components/ImageViewer.cpp
+        include/components/ImageViewer.h src/components/ImageViewer.ui src/components/ListFilterWidget.cpp
+        include/components/ListFilterWidget.h src/components/ListFilterWidget.ui
+)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -66,10 +69,11 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         src/modules/sqs/SQSQueueDetailsDialog.cpp src/modules/sqs/SQSQueueDetailsDialog.ui
         include/modules/sqs/SQSQueueDetailsDialog.h src/modules/sqs/SQSService.cpp include/modules/sqs/SQSService.h
         src/modules/sqs/SQSQueueList.cpp include/modules/sqs/SQSQueueList.h src/modules/sqs/SQSMessageList.cpp
-        include/modules/sqs/SQSMessageList.h
-        src/modules/sqs/SQSMessageWindow.cpp
-        include/modules/sqs/SQSMessageWindow.h
-        src/modules/sqs/SQSMessageWindow.ui)
+        include/modules/sqs/SQSMessageList.h src/modules/sqs/SQSMessageWindow.cpp include/modules/sqs/SQSMessageWindow.h
+        src/modules/sqs/SQSMessageWindow.ui src/modules/sqs/SQSQueueTagsDialog.cpp src/modules/sqs/SQSQueueTagsDialog.ui
+        include/modules/sqs/SQSQueueTagsDialog.h
+        include/dto/sqs/SQSListQueueTagsResponse.h
+        include/dto/sqs/SQSUpdateTagsRequest.h)
 set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp

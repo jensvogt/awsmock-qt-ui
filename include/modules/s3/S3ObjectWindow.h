@@ -5,6 +5,9 @@
 #ifndef AWSMOCK_QT_UI_S3_MESSAGE_WINDOW_H
 #define AWSMOCK_QT_UI_S3_MESSAGE_WINDOW_H
 
+// C++ includes
+#include <utility>
+
 // Qt includes
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -33,7 +36,7 @@ public:
      * @param objectId SQS message ID
      * @param parent parent widget
      */
-    explicit S3ObjectWindow(const QString &objectId, QWidget *parent = nullptr);
+    explicit S3ObjectWindow(QString objectId, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor

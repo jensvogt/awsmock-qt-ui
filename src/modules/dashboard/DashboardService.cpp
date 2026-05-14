@@ -1,5 +1,7 @@
 #include <modules/dashboard/DashboardService.h>
 
+#include "components/MonitoringConfig.h"
+
 DashboardService::DashboardService() {
 
     // Create RestManager in its own thread
@@ -15,7 +17,7 @@ DashboardService::~DashboardService() {
 }
 
 
-void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
+void DashboardService::GetMultiSeriesCounter(const Awsmock::Components::MonitoringConfig &config) {
     QElapsedTimer timer;
     timer.start();
 
@@ -44,13 +46,12 @@ void DashboardService::GetMultiSeriesCounter(const ChartConfig &config) {
                     {"x-awsmock-action", "get-multi-counters"},
                     {"content-type", "application/json"}
                 },
-                [this, config, timer](const bool success, const QByteArray &response, const int status, const QString &error) {
+                [this, config, timer](const bool success, const QByteArray &response, const int status, const QString &) {
                     if (success) {
                         if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                             DashboardCounter counter;
                             counter.FromJson(jsonDoc.object());
                             counter.chartConfig = config;
-                            logTrace << "GetMultiSeriesCounter succeeded, status: " << status << "response: " << response;
                             emit ReloadMonitoringSignal(counter);
                         } else {
                             logWarning << "Response is not an object!";

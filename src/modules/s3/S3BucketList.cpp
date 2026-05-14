@@ -36,7 +36,8 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     purgeAllButton->setIconSize(QSize(16, 16));
     purgeAllButton->setToolTip("Purge all Buckets");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
-        //  _s3Service->PurgeAllBuckets();
+        _s3Service->PurgeAllBuckets();
+        new Awsmock::Components::ToastOverlay("Purge all buckets initiated.\nChanges may take some time to propagate.");
     });
 
     // Toolbar reset counter action

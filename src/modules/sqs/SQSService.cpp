@@ -27,7 +27,7 @@ void SQSService::ListQueues(const QString &prefix, const long pageSize, const lo
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  //JsonUtils::WriteJsonString(jsonDoc.object());
+                                  //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                                   SQSQueueListResponse sqsResponse;
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueuesSignal(sqsResponse);
@@ -434,10 +434,11 @@ void SQSService::GetQueueDetails(const QString &queueArn) {
                           {"x-awsmock-action", "get-queue-details"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an array containing one object
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                               SQSGetQueueDetailsResponse sqsResponse;
                               sqsResponse.FromJson(jsonDoc);
 
@@ -670,5 +671,77 @@ void SQSService::DeleteMessage(const QString &queueUrl, const QString &receiptHa
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteMessage", timer.elapsed());
+                      });
+}
+
+void SQSService::ListQueueTags(const QString &queueUrl, const QString &prefix) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = -1;
+    jSorting["column"] = "name";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["QueueUrl"] = queueUrl;
+    jRequest["Prefix"] = prefix;
+    jRequest["PageSize"] = -1;
+    jRequest["PageIndex"] = -1;
+    jRequest["SortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "list-queue-tags"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              // The API returns an array od objects
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
+                                  SQSListQueueTagsResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit ListQueueTagsSignal(sqsResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListQueueTags", timer.elapsed());
+                      });
+}
+
+void SQSService::TagQueue(const QString &queueUrl, const QString &key, const QString &value) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jTags;
+    jTags[key] = value;
+
+    QJsonObject jRequest;
+    jRequest["QueueUrl"] = queueUrl;
+    jRequest["Tags"] = jTags;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "tag-queue"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadQueueTagsSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("TagQueue", timer.elapsed());
                       });
 }

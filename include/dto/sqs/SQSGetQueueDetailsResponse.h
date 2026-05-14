@@ -12,8 +12,6 @@ struct SQSGetQueueDetailsResponse {
 
     QString queueArn;
 
-    long messageCount;
-
     long retentionPeriod;
 
     long maxMessageSize;
@@ -44,7 +42,6 @@ struct SQSGetQueueDetailsResponse {
         queueName = jsonDoc["queueName"].toString();
         queueUrl = jsonDoc["queueUrl"].toString();
         queueArn = jsonDoc["queueArn"].toString();
-        messageCount = jsonDoc["messageCount"].toInteger();
         retentionPeriod = jsonDoc["retentionPeriod"].toInteger();
         maxMessageSize = jsonDoc["maxMessageSize"].toInteger();
         visibilityTimeout = jsonDoc["visibilityTimeout"].toInteger();

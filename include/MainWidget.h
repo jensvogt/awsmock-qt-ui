@@ -70,9 +70,9 @@ private:
     QStandardItemModel *_navDataModel{};
 
     /**
-     * @brief Data proxy model
+     * @brief Server proxy model
      */
-    PrefixFilterProxyModel *_proxyModel{};
+    QSortFilterProxyModel *_serverProxyModel{};
 
     /**
      *  @brief Log item data model
@@ -85,10 +85,18 @@ private:
     QStandardItemModel *_localLogDataModel{};
 
     /**
+     * @brief Local proxy model
+     */
+    QSortFilterProxyModel *_localProxyModel{};
+    
+    /**
      * @brief Content pane
      */
     QStackedWidget *_contentPane{};
 
+    /**
+     * @brief Navigation list
+     */
     QListView *_navList{};
 
     /**
