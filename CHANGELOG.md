@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.63](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.62...v1.11.63) (2026-05-14)
+
+
+### Bug Fixes
+
+* SQS/SNS monitoring ([6822ffb](https://github.com/jensvogt/awsmock-qt-ui/commit/6822ffbfdaec79e16c4ac42e44ecc9ce8127cad7))
+
 ## [1.11.62](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.61...v1.11.62) (2026-05-12)
 
 
