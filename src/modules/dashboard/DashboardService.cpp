@@ -1,7 +1,5 @@
 #include <modules/dashboard/DashboardService.h>
 
-#include "components/MonitoringConfig.h"
-
 DashboardService::DashboardService() {
 
     // Create RestManager in its own thread

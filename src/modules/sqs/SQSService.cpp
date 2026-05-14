@@ -703,7 +703,7 @@ void SQSService::ListQueueTags(const QString &queueUrl, const QString &prefix) {
                           if (success) {
                               // The API returns an array od objects
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
+                                  //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                                   SQSListQueueTagsResponse sqsResponse;
                                   sqsResponse.FromJson(jsonDoc);
                                   emit ListQueueTagsSignal(sqsResponse);
