@@ -92,9 +92,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     layout->addWidget(_tableView, 2);
 }
 
-ApplicationList::~ApplicationList() {
-    StopAutoUpdate();
-}
+ApplicationList::~ApplicationList() = default;
 
 void ApplicationList::LoadContent() {
     _applicationService->ListApplications(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());

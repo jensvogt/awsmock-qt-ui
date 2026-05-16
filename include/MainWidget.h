@@ -45,11 +45,13 @@ public:
 
     void SetupServerLogs();
 
+    void FlushLogQueue();
+
     void SetupLocalLogs();
 
     void OnConnected() const;
 
-    void OnMessageReceived(const QString &message) const;
+    void OnMessageReceived(const QString &message);
 
     void SetupStatusbar();
 
@@ -88,7 +90,7 @@ private:
      * @brief Local proxy model
      */
     QSortFilterProxyModel *_localProxyModel{};
-    
+
     /**
      * @brief Content pane
      */
@@ -143,6 +145,19 @@ private:
      * @brief Module service
      */
     ModuleService *_moduleService;
+
+    /**
+     * @brief Logging timer
+     */
+    QTimer *_logTimer;
+
+    /**
+     * @brief Logging queue
+     */
+    QList<QString> _logQueue;
+
+    static constexpr int LOG_BATCH_MS = 50;
+    static constexpr int LOG_BATCH_MAX = 100;
 };
 
 

@@ -46,7 +46,6 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
 }
 
 DockerStatsDialog::~DockerStatsDialog() {
-    StopAutoUpdate();
     delete _ui;
 }
 

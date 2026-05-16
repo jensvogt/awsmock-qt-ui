@@ -1,3 +1,4 @@
+#include <QStringListModel>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 #include "ui_SQSQueueDetailsDialog.h"
 
@@ -31,6 +32,9 @@ SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *p
     // Setup default attributes tab
     SetupDefaultAttributesTab();
 
+    // Setup main queues Tab
+    SetupMainQueuesTab();
+
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 }
@@ -42,6 +46,7 @@ SQSQueueDetailsDialog::~SQSQueueDetailsDialog() {
 void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse &response) {
 
     _queueUrl = response.queueUrl;
+    _queueArn = response.queueArn;
     _ui->queueNameEdit->setText(response.queueName);
     _ui->queueArnEdit->setText(response.queueArn);
     _ui->queueUrlEdit->setText(response.queueUrl);
@@ -67,7 +72,7 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
     connect(_ui->dlqMaxReceiveEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
     connect(_ui->ownerEdit, &QLineEdit::editingFinished, this, [&]() { this->changed = true; });
 
-    // Get the default attribute list
+    // Get the tags
     _sqsService->ListQueueTags(_queueUrl, "");
 }
 
@@ -335,7 +340,7 @@ void SQSQueueDetailsDialog::SetupTagsTab() {
             key = dialog.GetKey();
             value = dialog.GetValue();
             _sqsService->TagQueue(_queueUrl, key, value);
-            
+
         }
     });
 }
@@ -351,4 +356,30 @@ void SQSQueueDetailsDialog::UpdateTags(const SQSListQueueTagsResponse &response)
     }
     _ui->tagsTable->setSortingEnabled(true);
     _tagsModel->sort(_tagsSortColumn, _tagsSortOrder);
+}
+
+void SQSQueueDetailsDialog::SetupMainQueuesTab() {
+
+    // Default invisible
+    _ui->tabWidget->setTabVisible(4, false);
+
+    // Main queue refresh
+    _ui->mainQueuesRefreshButton->setText(nullptr);
+    _ui->mainQueuesRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->mainQueuesRefreshButton, &QPushButton::clicked, [this]() {
+        _sqsService->IsDlq(_queueArn);
+    });
+    
+    // Get the DLQs
+    _sqsService->IsDlq(_queueArn);
+    connect(_sqsService, &SQSService::IsDlqSignal, this, [this](const SQSIsDlqResponse &isDlqResponse) {
+        _isDlq = isDlqResponse.isDlq;
+        if (_isDlq) {
+            _mainQueues = isDlqResponse.mainQueues;
+            _ui->tabWidget->setTabVisible(4, true);
+
+            auto *model = new QStringListModel(_mainQueues, this);
+            _ui->mainQueuesList->setModel(model);
+        }
+    });
 }

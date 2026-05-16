@@ -67,6 +67,8 @@ private:
 
     void UpdateTags(const SQSListQueueTagsResponse &response) const;
 
+    void SetupMainQueuesTab();
+
     /**
      * @brief Update the lambda trigger tab
      *
@@ -88,6 +90,16 @@ private:
      * @brief Queue URL
      */
     QString _queueUrl;
+
+    /**
+     * @brief DLQ flag
+     */
+    bool _isDlq;
+
+    /**
+     * @brief List of main queues
+     */
+    QList<QString> _mainQueues;
 
     /**
      * @brief SQS REST service

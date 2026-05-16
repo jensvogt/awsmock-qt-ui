@@ -97,9 +97,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     layout->addWidget(_tableView, 6);
 }
 
-SQSMessageList::~SQSMessageList() {
-    StopAutoUpdate();
-}
+SQSMessageList::~SQSMessageList() =default;
 
 void SQSMessageList::LoadContent() {
 

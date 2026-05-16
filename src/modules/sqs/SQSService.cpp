@@ -1,5 +1,7 @@
 #include <modules/sqs/SQSService.h>
 
+#include "dto/sqs/SQSIsDlqResponse.h"
+
 void SQSService::ListQueues(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortColumn, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
@@ -743,5 +745,37 @@ void SQSService::TagQueue(const QString &queueUrl, const QString &key, const QSt
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("TagQueue", timer.elapsed());
+                      });
+}
+
+void SQSService::IsDlq(const QString &queueArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["queueArn"] = queueArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "sqs"},
+                          {"x-awsmock-action", "is-dlq"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
+                                  SQSIsDlqResponse sqsResponse;
+                                  sqsResponse.FromJson(jsonDoc);
+                                  emit IsDlqSignal(sqsResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("IsDlq", timer.elapsed());
                       });
 }

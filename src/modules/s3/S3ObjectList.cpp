@@ -102,9 +102,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     layout->addWidget(_tableView, 2);
 }
 
-S3ObjectList::~S3ObjectList() {
-    StopAutoUpdate();
-}
+S3ObjectList::~S3ObjectList() =default;
 
 void S3ObjectList::HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse) {
     this->_bucketDetailsResponse = bucketDetailsResponse;
