@@ -88,14 +88,12 @@ DynamoDbItemList::DynamoDbItemList(const QString &title, QWidget *parent) : Base
 
     // Add context menu
     connect(_itemView, &PageableTable::ContextMenuRequested, this, &DynamoDbItemList::ShowContextMenu);
- const auto mainLayout = new QVBoxLayout(this);
+    const auto mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(toolBar, 0); // fixed height
     mainLayout->addWidget(_itemView, 1); // expands to fill
 }
 
-DynamoDbItemList::~DynamoDbItemList() {
-    StopAutoUpdate();
-}
+DynamoDbItemList::~DynamoDbItemList() = default;
 
 void DynamoDbItemList::LoadContent() {
     _tableName = GetArgument<QString>("tableName");

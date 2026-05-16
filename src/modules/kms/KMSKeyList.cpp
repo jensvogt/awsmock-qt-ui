@@ -86,9 +86,7 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addWidget(_tableView, 2);
 }
 
-KMSKeyList::~KMSKeyList() {
-    StopAutoUpdate();
-}
+KMSKeyList::~KMSKeyList() =default;
 
 void KMSKeyList::LoadContent() {
     _kmsService->ListKmsKeys(_tableView->GetPrefix());
