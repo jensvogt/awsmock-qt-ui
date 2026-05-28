@@ -2,20 +2,26 @@
 // Created by vogje01 on 2/7/26.
 //
 
-#ifndef AWSMOCK_QT_UI_LOGGING_H
-#define AWSMOCK_QT_UI_LOGGING_H
+#pragma once
 
 // C++ include
 #include <map>
-#include <iostream>
 
 // Qt includes
 #include <QList>
 #include <QString>
 
 // Awsmock includes
-#include <utils/EventBus.h>
 #include <utils/DateTimeUtils.h>
+#include <utils/EventBus.h>
+
+#ifdef ERROR
+#undef ERROR
+#endif
+
+#ifdef DEBUG
+#undef DEBUG
+#endif
 
 enum LogLevel {
     ERROR,
@@ -159,5 +165,3 @@ inline void myCustomMessageHandler(QtMsgType type, const QMessageLogContext &con
 #define logInfo qInfo()
 #define logDebug qDebug()
 #define logTrace qDebug()
-
-#endif //AWSMOCK_QT_UI_LOGGING_H

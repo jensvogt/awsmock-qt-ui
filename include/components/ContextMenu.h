@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/15/26.
 //
 
-#ifndef AWSMOCK_QT_UI_CONTEXT_MENU_H
-#define AWSMOCK_QT_UI_CONTEXT_MENU_H
+#pragma once
 
 // Qt includes
 #include <QMenu>
@@ -30,5 +29,3 @@ public:
      */
     ~ContextMenu() override = default;
 };
-
-#endif // AWSMOCK_QT_UI_CONTEXT_MENU_H

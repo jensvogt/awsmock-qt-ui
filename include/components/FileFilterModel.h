@@ -2,11 +2,9 @@
 // Created by vogje01 on 2/11/26.
 //
 
-#ifndef AWSMOCK_QT_UI_FTP_FILE_FILTER_MODEL_H
-#define AWSMOCK_QT_UI_FTP_FILE_FILTER_MODEL_H
+#pragma once
 
 // Qt includes
-#include <iostream>
 #include <QSortFilterProxyModel>
 
 #include "FolderFilterModel.h"
@@ -14,19 +12,17 @@
 #define FTP_FILE_TYPE_FILE "file"
 
 /**
- * @brief Special filter model which filters all rows with fileType = 'folder';
+ * @brief Proxy model for the FTP file panel (bottom panel in FTPFileTree).
+ *
+ * Accepts file and folder rows; rejects only the virtual ".." parent items.
+ * This keeps folder items in the proxy so that setRootIndex() receives a valid
+ * proxy index when the user selects a folder in the folder tree.
  */
 class FileFilterModel : public QSortFilterProxyModel {
-
 protected:
     [[nodiscard]] bool filterAcceptsRow(const int sourceRow, const QModelIndex &sourceParent) const override {
         const QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
         const QString type = index.data(Qt::UserRole + 1).toString();
-        if (type == FTP_FILE_TYPE_FOLDER) {
-            return true;
-        }
-        return type == FTP_FILE_TYPE_FILE;
+        return type == FTP_FILE_TYPE_FILE || type == FTP_FILE_TYPE_FOLDER;
     }
 };
-
-#endif // AWSMOCK_QT_UI_FTP_FILE_FILTER_MODEL_H

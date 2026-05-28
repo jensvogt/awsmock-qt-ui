@@ -2,11 +2,9 @@
 // Created by jensv on 22/04/2026.
 //
 
-#ifndef AWSMOCK_QT_UI_TOAST_H
-#define AWSMOCK_QT_UI_TOAST_H
+#pragma once
 
 // Qt includes
-#pragma once
 #include <QGraphicsOpacityEffect>
 #include <QLabel>
 #include <QPropertyAnimation>
@@ -63,5 +61,3 @@ namespace Awsmock::Components {
     };
 
 }
-
-#endif //AWSMOCK_QT_UI_TOAST_H

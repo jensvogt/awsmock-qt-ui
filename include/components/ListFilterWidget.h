@@ -2,8 +2,7 @@
 // Created by vogje01 on 5/12/26.
 //
 
-#ifndef AWSMOCK_QT_UI_LIST_FILTER_WIDGET_H
-#define AWSMOCK_QT_UI_LIST_FILTER_WIDGET_H
+#pragma once
 
 // Qt includes
 #include <QSortFilterProxyModel>
@@ -111,6 +110,6 @@ namespace Awsmock::Components {
          */
         QSortFilterProxyModel *_proxyModel{};
     };
+
 } // Awsmock::Components
 
-#endif // AWSMOCK_QT_UI_LIST_FILTER_WIDGET_H

@@ -2,8 +2,7 @@
 // Created by vogje01 on 5/3/26.
 //
 
-#ifndef AWSMOCK_QT_UI_MONITORING_CHART_H
-#define AWSMOCK_QT_UI_MONITORING_CHART_H
+#pragma once
 
 // C++ include
 #pragma once
@@ -123,4 +122,3 @@ namespace Awsmock::Components {
 
 } // namespace Awsmock::Components
 
-#endif //AWSMOCK_QT_UI_MONITORING_CHART_H

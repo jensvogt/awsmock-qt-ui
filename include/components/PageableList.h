@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/15/26.
 //
 
-#ifndef AWSMOCK_QT_UI_PAGEABLE_LIST_H
-#define AWSMOCK_QT_UI_PAGEABLE_LIST_H
+#pragma once
 
 // Qt includes
 #include <QWidget>
@@ -202,6 +201,3 @@ private:
      */
     PrefixFilterProxyModel *_proxyModel;
 };
-
-
-#endif // AWSMOCK_QT_UI_PAGEABLE_LIST_H

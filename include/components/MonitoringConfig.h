@@ -2,10 +2,9 @@
 // Created by vogje01 on 5/8/26.
 //
 
-#ifndef AWSMOCK_QT_UI_MONITORING_CONFIG_H
-#define AWSMOCK_QT_UI_MONITORING_CONFIG_H
 
 #pragma once
+
 #include <QString>
 #include <QDateTime>
 #include <QStringList>
@@ -193,4 +192,3 @@ namespace Awsmock::Components {
 
 };
 
-#endif //AWSMOCK_QT_UI_MONITORING_CONFIG_H

@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/15/26.
 //
 
-#ifndef AWSMOCK_QT_UI_PAGEABLE_TABLE_H
-#define AWSMOCK_QT_UI_PAGEABLE_TABLE_H
+#pragma once
 
 // Qt includes
 #include <QHeaderView>
@@ -443,7 +442,7 @@ private:
      * @brief key column
      */
     int _keyColumn{};
-    
+
     /**
      * @brief Column header names
      */
@@ -485,4 +484,3 @@ private:
     QString _searchFieldPlaceholder = "Prefix";
 };
 
-#endif // AWSMOCK_QT_UI_PAGEABLE_TABLE_H

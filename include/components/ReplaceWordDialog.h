@@ -2,11 +2,10 @@
 // Created by vogje01 on 2/20/26.
 //
 
-#ifndef AWSMOCK_QT_UI_REPLACE_WORD_DIALOG_H
-#define AWSMOCK_QT_UI_REPLACE_WORD_DIALOG_H
+#pragma once
 
+// Qt includes
 #include <QDialog>
-
 
 QT_BEGIN_NAMESPACE
 
@@ -52,6 +51,3 @@ private:
      */
     QString _replacementText;
 };
-
-
-#endif // AWSMOCK_QT_UI_REPLACE_WORD_DIALOG_H

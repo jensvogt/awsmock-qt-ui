@@ -76,7 +76,12 @@ protected:
             model = proxy->sourceModel();
         }
 
-        if (const QString filePath = model->data(sourceIndex, Qt::UserRole).toString(); !filePath.isEmpty()) {
+        // Qt::UserRole holds the path for QStandardItemModel items;
+        // QFileSystemModel stores it at FilePathRole (Qt::UserRole + 1).
+        QString filePath = model->data(sourceIndex, Qt::UserRole).toString();
+        if (filePath.isEmpty())
+            filePath = model->data(sourceIndex, Qt::UserRole + 1).toString();
+        if (!filePath.isEmpty()) {
             auto *mimeData = new QMimeData;
             mimeData->setUrls({QUrl::fromLocalFile(filePath)});
 

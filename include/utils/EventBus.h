@@ -2,8 +2,7 @@
 // Created by vogje01 on 11/19/25.
 //
 
-#ifndef AWSMOCK_QT_UI_EVENT_BUS_H
-#define AWSMOCK_QT_UI_EVENT_BUS_H
+#pragma once
 
 #include <QObject>
 
@@ -28,6 +27,6 @@ signals:
     void PingSignal(bool result);
 
     void LogSignal(int logLevel, const QString &message);
-};
 
-#endif //AWSMOCK_QT_UI_EVENT_BUS_H
+    void FtpUploadSignal(const QString &path);
+};
