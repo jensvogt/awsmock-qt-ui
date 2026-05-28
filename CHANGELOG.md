@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.65](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.64...v1.11.65) (2026-05-16)
+
+
+### Bug Fixes
+
+* server logs stuck, when too many messages arrive ([0f1e409](https://github.com/jensvogt/awsmock-qt-ui/commit/0f1e4090418c2e274b4138f2eaab5677e1b88d06))
+
 ## [1.11.64](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.63...v1.11.64) (2026-05-14)
 
 

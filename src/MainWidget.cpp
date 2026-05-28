@@ -110,6 +110,12 @@ void MainWidget::SetupLogPane() {
 
 void MainWidget::SetupServerLogs() {
 
+    // Setup logging timer
+    _logTimer = new QTimer(this);
+    _logTimer->setInterval(LOG_BATCH_MS);
+    connect(_logTimer, &QTimer::timeout, this, &MainWidget::FlushLogQueue);
+    _logTimer->start();
+
     // Loglevel combo
     const auto logLevelList = QStringList({"trace", "debug", "info", "warning", "error"});
     _ui->logLevelCombo->addItems(logLevelList);
@@ -240,8 +246,38 @@ void MainWidget::SetupServerLogs() {
     });
 }
 
+void MainWidget::FlushLogQueue() {
+    if (_logQueue.isEmpty()) return;
+
+    const auto batch = _logQueue.mid(0, LOG_BATCH_MAX);
+    _logQueue.erase(_logQueue.begin(), _logQueue.begin() + batch.size());
+
+    // Only block view repaints, NOT model signals
+    _ui->serverLogList->setUpdatesEnabled(false);
+
+    for (const auto &message: batch) {
+        const auto item = new QStandardItem(message);
+        if (message.contains("[error]")) {
+            item->setForeground(Qt::red);
+        } else if (message.contains("[warning]")) {
+            item->setForeground(Qt::darkYellow);
+        } else if (message.contains("[debug]")) {
+            item->setForeground(Qt::green);
+        }
+        _serverLogDataModel->appendRow(item);
+    }
+
+    if (const int excess = _serverLogDataModel->rowCount() - _logLimit; excess > 0)
+        _serverLogDataModel->removeRows(0, excess);
+
+    _ui->serverLogList->setUpdatesEnabled(true);
+
+    if (_serverScrolling)
+        _ui->serverLogList->scrollToBottom();
+}
+
 void MainWidget::SetupLocalLogs() {
-    
+
     // Data model
     _localLogDataModel = new QStandardItemModel(_ui->serverLogsTab);
     _localProxyModel = new QSortFilterProxyModel(this);
@@ -294,27 +330,8 @@ void MainWidget::OnConnected() const {
     _ui->serverLogList->scrollToBottom();
 }
 
-void MainWidget::OnMessageReceived(const QString &message) const {
-    // Add item with colors
-    const auto item = new QStandardItem(message);
-    if (message.contains("[error]")) {
-        item->setForeground(Qt::red);
-    } else if (message.contains("[warning]")) {
-        item->setForeground(Qt::darkYellow);
-    } else if (message.contains("[debug]")) {
-        item->setForeground(Qt::green);
-    }
-
-    _serverLogDataModel->appendRow(item);
-
-    if (_serverLogDataModel->rowCount() > _logLimit) {
-        _serverLogDataModel->removeRows(0, 1);
-    }
-
-    // Auto-scroll to bottom
-    if (_serverScrolling) {
-        _ui->serverLogList->scrollToBottom();
-    }
+void MainWidget::OnMessageReceived(const QString &message) {
+    _logQueue.append(message);
 }
 
 void MainWidget::SetupStatusbar() {

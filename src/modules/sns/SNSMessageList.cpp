@@ -91,9 +91,7 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
     layout->addWidget(_tableView, 2);
 }
 
-SNSMessageList::~SNSMessageList() {
-    StopAutoUpdate();
-}
+SNSMessageList::~SNSMessageList() =default;
 
 void SNSMessageList::LoadContent() {
     _topicArn = GetArgument<QString>("topicArn");

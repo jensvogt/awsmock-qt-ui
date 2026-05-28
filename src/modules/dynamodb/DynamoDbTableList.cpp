@@ -101,9 +101,7 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     layout->addWidget(_tableView, 2);
 }
 
-DynamoDbTableList::~DynamoDbTableList() {
-    StopAutoUpdate();
-}
+DynamoDbTableList::~DynamoDbTableList() = default;
 
 void DynamoDbTableList::LoadContent() {
     _dynamoDbService->ListTables(_prefixValue);

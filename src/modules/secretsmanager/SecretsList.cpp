@@ -74,9 +74,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addWidget(_tableView, 2);
 }
 
-SecretList::~SecretList() {
-    StopAutoUpdate();
-}
+SecretList::~SecretList() =default;
 
 void SecretList::LoadContent() {
     _secretsManagerService->ListSecrets(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());

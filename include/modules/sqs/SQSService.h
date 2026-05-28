@@ -28,6 +28,8 @@
 #include <utils/Logging.h>
 #include <utils/RestManager.h>
 
+#include "dto/sqs/SQSIsDlqResponse.h"
+
 class SQSService final : public BaseService {
     Q_OBJECT
 
@@ -219,6 +221,13 @@ public:
      */
     void TagQueue(const QString &queueUrl, const QString &key, const QString &value);
 
+    /**
+     * @brief Return true and all main queues, if given queue is a DLQ.
+     *
+     * @param queueArn queue ARN
+     */
+    void IsDlq(const QString &queueArn);
+
 signals:
     /**
      * @brief Signal is send, when a list queue message arrived.
@@ -307,6 +316,13 @@ signals:
      * @brief Sent when the tags list should be updated
      */
     void ReloadQueueTagsSignal();
+
+    /**
+     * @brief Sent when the tags list should be updated
+     *
+     * @param response is DLQ response
+     */
+    void IsDlqSignal(const SQSIsDlqResponse &response);
 
 private:
     /**
