@@ -1,6 +1,5 @@
 
-#ifndef AWSMOCK_QT_UI_PLAIN_TEXT_EDITOR_H
-#define AWSMOCK_QT_UI_PLAIN_TEXT_EDITOR_H
+#pragma once
 
 // Qt includes
 #include <QMessageBox>
@@ -224,5 +223,3 @@ namespace Awsmock::Components {
     };
 
 }
-
-#endif //AWSMOCK_QT_UI_PLAIN_TEXT_EDITOR_H

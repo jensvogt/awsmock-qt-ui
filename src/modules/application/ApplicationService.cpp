@@ -45,15 +45,19 @@ void ApplicationService::UploadApplication(const ApplicationUploadRequest &reque
     QElapsedTimer timer;
     timer.start();
 
+    const QByteArray body = request.ToJson().toUtf8();
+    QString bodySize = QString::number(body.size());
     _restManager.post(GetBaseUrl(),
-                      request.ToJson().toUtf8(),
+                      body,
                       {
                           {"x-awsmock-target", "application"},
                           {"x-awsmock-action", "upload-application"},
-                          {"content-type", "application/json"}
+                          {"content-type", "application/json"},
+                          {"content-length", bodySize}
                       },
-                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                      [this, timer, bodySize](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
+                              logInfo << "Application uploaded, size: " << bodySize;
                               emit LoadAllApplications();
                           } else {
                               logError << error;
@@ -339,34 +343,34 @@ void ApplicationService::RebuildApplication(const QString &name) {
                       });
 }
 
-void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
-    QElapsedTimer timer;
-    timer.start();
-
-    QJsonObject jRequest;
-    jRequest["version"] = version;
-    jRequest["applicationName"] = applicationName;
-    jRequest["applicationCode"] = applicationCode;
-    const QJsonDocument requestDoc(jRequest);
-
-    QString contentLength = QString::number(applicationCode.length());
-    _restManager.post(GetBaseUrl(),
-                      requestDoc.toJson(),
-                      {
-                          {"x-awsmock-target", "application"},
-                          {"x-awsmock-action", "upload-application"},
-                          {"content-type", "application/json"},
-                          {"content-length", contentLength}
-                      },
-                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
-                          if (success) {
-                              emit LoadAllApplications();
-                          } else {
-                              logError << error;
-                          }
-                          emit EventBus::instance().TimerSignal("UploadApplicationCode", timer.elapsed());
-                      });
-}
+// void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
+//     QElapsedTimer timer;
+//     timer.start();
+//
+//     QJsonObject jRequest;
+//     jRequest["version"] = version;
+//     jRequest["applicationName"] = applicationName;
+//     jRequest["applicationCode"] = applicationCode;
+//     const QJsonDocument requestDoc(jRequest);
+//
+//     QString contentLength = QString::number(applicationCode.length());
+//     _restManager.post(GetBaseUrl(),
+//                       requestDoc.toJson(),
+//                       {
+//                           {"x-awsmock-target", "application"},
+//                           {"x-awsmock-action", "upload-application"},
+//                           {"content-type", "application/json"},
+//                           {"content-length", contentLength}
+//                       },
+//                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+//                           if (success) {
+//                               emit LoadAllApplications();
+//                           } else {
+//                               logError << error;
+//                           }
+//                           emit EventBus::instance().TimerSignal("UploadApplicationCode", timer.elapsed());
+//                       });
+// }
 
 void ApplicationService::ListApplicationNames() {
     QElapsedTimer timer;

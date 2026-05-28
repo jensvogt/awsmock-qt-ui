@@ -2,8 +2,7 @@
 // Created by vogje01 on 4/3/26.
 //
 
-#ifndef AWSMOCK_QT_UI_SELECT_MODULES_H
-#define AWSMOCK_QT_UI_SELECT_MODULES_H
+#pragma once
 
 // QT includes
 #include <QButtonGroup>
@@ -121,4 +120,3 @@ private:
 
 //} // Awsmock::Components
 
-#endif //AWSMOCK_QT_UI_SELECT_MODULES_H

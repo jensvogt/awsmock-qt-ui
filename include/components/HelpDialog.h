@@ -2,8 +2,7 @@
 // Created by jensv on 26/04/2026.
 //
 
-#ifndef AWSMOCK_QT_UI_HELP_DIALOG_H
-#define AWSMOCK_QT_UI_HELP_DIALOG_H
+#pragma once
 
 // Qt includes
 #include <QDialog>
@@ -97,4 +96,3 @@ namespace Awsmock::Components {
         }
     };
 }
-#endif // AWSMOCK_QT_UI_HELP_DIALOG_H

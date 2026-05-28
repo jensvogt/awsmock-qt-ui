@@ -2,8 +2,7 @@
 // Created by vogje01 on 4/3/26.
 //
 
-#ifndef AWSMOCK_QT_UI_SELECT_LISTS_H
-#define AWSMOCK_QT_UI_SELECT_LISTS_H
+#pragma once
 
 // QT includes
 #include <QButtonGroup>
@@ -104,8 +103,6 @@ namespace Awsmock::Components {
          */
         QStandardItemModel *_rightDataModel;
     };
-}
 
-//} // Awsmock::Components
+} // Awsmock::Components
 
-#endif //AWSMOCK_QT_UI_SELECT_LISTS_H

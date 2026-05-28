@@ -2,8 +2,7 @@
 // Created by jensv on 24/02/2026.
 //
 
-#ifndef AWSMOCK_QT_UI_SEARCH_FIELD_H
-#define AWSMOCK_QT_UI_SEARCH_FIELD_H
+#pragma once
 
 // Qt includes
 #include <QWidget>
@@ -122,6 +121,6 @@ namespace Awsmock::Components {
          */
         QString _searchType;
     };
+
 }
 
-#endif //AWSMOCK_QT_UI_SEARCH_FIELD_H

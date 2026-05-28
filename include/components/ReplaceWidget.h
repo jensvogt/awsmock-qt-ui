@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/22/26.
 //
 
-#ifndef AWSMOCK_QT_UI_REPLACE_WIDGET_H
-#define AWSMOCK_QT_UI_REPLACE_WIDGET_H
+#pragma once
 
 // Qt includes
 #include <QWidget>
@@ -95,6 +94,6 @@ namespace Awsmock::Components {
          */
         QString _replaceText;
     };
+
 } // Awsmock::Components
 
-#endif //AWSMOCK_QT_UI_REPLACE_WIDGET_H

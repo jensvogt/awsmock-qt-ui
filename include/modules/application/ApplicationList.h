@@ -17,6 +17,7 @@
 // Awsmock Qt includes
 #include <components/ContextMenu.h>
 #include <components/PageableTable.h>
+#include <components/Toast.h>
 #include <dto/sns/SNSListTopicResult.h>
 #include <modules/application/ApplicationAddDialog.h>
 #include <modules/application/ApplicationEditDialog.h>

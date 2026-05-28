@@ -1,8 +1,6 @@
 
 #include <modules/application/ApplicationList.h>
 
-#include "components/Toast.h"
-
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -116,8 +114,8 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
         _tableView->SetColumn(r, c++, listApplicationResponse.applicationCounters.at(r).containerId);
     }
     _tableView->setUpdatesEnabled(true);
-    _tableView->UpdateSorting();
     _tableView->RestoreSelection();
+    _tableView->UpdateSorting();
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {
@@ -173,7 +171,7 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         if (ApplicationEditDialog dialog(name, this); dialog.exec() == QFileDialog::Accept) {
-            new Awsmock::Components::ToastOverlay("Application updated! Name: " + name, this);
+            new Awsmock::Components::ToastOverlay("Application updated!\nName: " + name, this);
             LoadContent();
         }
     } else if (selectedAction == logsAction) {
@@ -184,35 +182,35 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == startAction) {
         _applicationService->StartApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application started! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application started!\nName: " + name, this);
     } else if (selectedAction == enableAction) {
         _applicationService->EnableApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application enabled! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application enabled!\nName: " + name, this);
     } else if (selectedAction == disableAction) {
         _applicationService->DisableApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application disabled! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application disabled!\nName: " + name, this);
     } else if (selectedAction == stopAction) {
         _applicationService->StopApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application stopped! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application stopped\nName: " + name, this);
     } else if (selectedAction == restartAction) {
         _applicationService->RestartApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application restarted! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application restarted\nName: " + name, this);
     } else if (selectedAction == rebuildAction) {
         _applicationService->RebuildApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application rebuild! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application rebuild\nName: " + name, this);
     } else if (selectedAction == uploadAction) {
         if (ApplicationUploadCodeDialog dialog(name); dialog.exec() == QFileDialog::Accept) {
             LoadContent();
-            new Awsmock::Components::ToastOverlay("Application uploaded! Name: " + name, this);
+            new Awsmock::Components::ToastOverlay("Application uploaded!\nName: " + name, this);
         }
     } else if (selectedAction == deleteAction) {
         _applicationService->DeleteApplication(name);
         LoadContent();
-        new Awsmock::Components::ToastOverlay("Application deleted! Name: " + name, this);
+        new Awsmock::Components::ToastOverlay("Application deleted!\nName: " + name, this);
     }
 }

@@ -2,26 +2,26 @@
 #define AWSMOCK_QT_UI_APPLICATION_SERVICE_H
 
 // QT includes
+#include <QElapsedTimer>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QObject>
-#include <QElapsedTimer>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 
 // Awsmock Qt includes
-#include <utils/Configuration.h>
-#include <utils/RestManager.h>
-#include <utils/EventBus.h>
-#include <utils/Logging.h>
-#include <utils/BaseService.h>
-#include <dto/application/ApplicationListResponse.h>
-#include <dto/application/ApplicationUploadRequest.h>
 #include <dto/application/ApplicationCreateRequest.h>
 #include <dto/application/ApplicationGetResponse.h>
+#include <dto/application/ApplicationListResponse.h>
+#include <dto/application/ApplicationUploadRequest.h>
+#include <utils/BaseService.h>
+#include <utils/Configuration.h>
+#include <utils/EventBus.h>
+#include <utils/Logging.h>
+#include <utils/RestManager.h>
 
 
 class ApplicationService final : public BaseService {
@@ -106,7 +106,7 @@ public:
      * @param version
      * @param applicationCode
      */
-    void UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode);
+    //void UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode);
 
     void ListApplicationNames();
 

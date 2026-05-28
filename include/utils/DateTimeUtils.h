@@ -2,8 +2,7 @@
 // Created by vogje01 on 12/20/25.
 //
 
-#ifndef AWSMOCK_QT_UI_DATE_TIME_UTILS_H
-#define AWSMOCK_QT_UI_DATE_TIME_UTILS_H
+#pragma once
 
 // Qt includes
 #include <QLocale>
@@ -80,4 +79,3 @@ public:
         return startOfDay;
     }
 };
-#endif //AWSMOCK_QT_UI_DATE_TIME_UTILS_H

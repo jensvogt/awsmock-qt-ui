@@ -102,12 +102,12 @@ void ApplicationUploadCodeDialog::HandleAccept() {
     request.archive = _fileInfo.fileName();
     request.contentLength = static_cast<long>(base64File.size());
     _applicationService->UploadApplication(request);
-    logInfo << "File uploaded: " << file.fileName() << ", size: " << base64File.size();
+    logInfo << "File upload initiated: " << file.fileName() << ", size: " << base64File.size();
 
     accept();
 }
 
 
 void ApplicationUploadCodeDialog::HandleReject() {
-    accept();
+    reject();
 }

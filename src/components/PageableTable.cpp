@@ -284,6 +284,9 @@ void PageableTable::SaveSelection() {
 
 void PageableTable::RestoreSelection() {
 
+    if (_savedIds.isEmpty()) {
+        return;
+    }
     _ui->tableView->selectionModel()->clearSelection(); // Clear existing
     for (int i = 0; i < _dataModel->rowCount(); ++i) {
         if (QString currentId = _dataModel->index(i, 0).data(Qt::DisplayRole).toString(); _savedIds.contains(currentId)) {

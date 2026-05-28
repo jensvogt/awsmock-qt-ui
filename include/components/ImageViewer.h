@@ -2,8 +2,7 @@
 // Created by vogje01 on 5/5/26.
 //
 
-#ifndef AWSMOCK_QT_UI_IMAGE_VIEWER_H
-#define AWSMOCK_QT_UI_IMAGE_VIEWER_H
+#pragma once
 
 //Qt includes
 #include <QWidget>
@@ -48,5 +47,3 @@ namespace Awsmock::Components {
         Ui::ImageViewer *_ui;
     };
 } // Awsmock::Components
-
-#endif //AWSMOCK_QT_UI_IMAGEVIEWER_H
