@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.66](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.65...v1.11.66) (2026-05-28)
+
+
+### Bug Fixes
+
+* renew FTP client ([5aeb139](https://github.com/jensvogt/awsmock-qt-ui/commit/5aeb1390f723360d71a75c7511d0d4aaf3f572ad))
+
 ## [1.11.65](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.64...v1.11.65) (2026-05-16)
 
 
