@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.67](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.66...v1.11.67) (2026-05-29)
+
+
+### Bug Fixes
+
+* application/lambda Monitoring ([87e0d4f](https://github.com/jensvogt/awsmock-qt-ui/commit/87e0d4f2f987d9f495b6780f17addabf37bbd8a5))
+
 ## [1.11.66](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.65...v1.11.66) (2026-05-28)
 
 
