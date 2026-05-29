@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/6/26.
 //
 
-#ifndef AWSMOCK_QT_UI_MAIN_ROUTER_H
-#define AWSMOCK_QT_UI_MAIN_ROUTER_H
+#pragma once
 
 // Qt includes
 #include <QMap>
@@ -12,12 +11,14 @@
 #include <QWidget>
 
 // Awsmock includes
+#include <modules/application/ApplicationDashboard.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/cognito/CognitoUserpoolList.h>
 #include <modules/dashboard/Dashboard.h>
 #include <modules/dynamodb/DynamoDbItemList.h>
 #include <modules/dynamodb/DynamoDbTableList.h>
 #include <modules/kms/KMSKeyList.h>
+#include <modules/lambda/LambdaDashboard.h>
 #include <modules/lambda/LambdaList.h>
 #include <modules/s3/S3BucketList.h>
 #include <modules/s3/S3ObjectList.h>
@@ -73,7 +74,13 @@ public:
                 "Application", new ApplicationList("Application List", parent)
             },
             {
+                "Application Monitoring", new ApplicationDashboard(parent)
+            },
+            {
                 "Lambda", new LambdaList("Lambda List", parent)
+            },
+            {
+                "Lambda Monitoring", new LambdaDashboard(parent)
             },
             {
                 "Secrets Manager", new SecretList("Secrets List", parent)
@@ -175,5 +182,3 @@ private:
      */
     QStackedWidget *_contentPane;
 };
-
-#endif //AWSMOCK_QT_UI_MAIN_ROUTER_H

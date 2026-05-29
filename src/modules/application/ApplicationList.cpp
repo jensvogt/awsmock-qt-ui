@@ -29,10 +29,18 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
-    purgeAllButton->setToolTip("Restart all applications");
-    connect(purgeAllButton, &QPushButton::clicked, [this]() {
+    const auto restartAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
+    restartAllButton->setToolTip("Restart all applications");
+    connect(restartAllButton, &QPushButton::clicked, [this]() {
         _applicationService->RestartAllApplications();
+    });
+
+    // Toolbar monitoring action
+    auto *monitoringButton = new QPushButton(IconUtils::GetIcon("monitoring"), nullptr, this);
+    monitoringButton->setToolTip("Show the application monitoring counters");
+    connect(monitoringButton, &QPushButton::clicked, []() {
+        // Send notification
+        emit EventBus::instance().RouteChanged("Application Monitoring", {});
     });
 
     // Toolbar refresh action
@@ -45,7 +53,8 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     //    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
-    toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(restartAllButton);
+    toolBar->addWidget(monitoringButton);
     toolBar->addWidget(refreshButton);
 
     // Table

@@ -31,11 +31,20 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     });
 
     // Toolbar add action
-    const auto purgeAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
-    purgeAllButton->setIconSize(QSize(16, 16));
-    purgeAllButton->setToolTip("Restart all lambdas");
-    connect(purgeAllButton, &QPushButton::clicked, [this]() {
+    const auto restartAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
+    restartAllButton->setIconSize(QSize(16, 16));
+    restartAllButton->setToolTip("Restart all lambdas");
+    connect(restartAllButton, &QPushButton::clicked, [this]() {
+        // TODO: fix implementation
         //        _lambdaService->RestartAllLambdas();
+    });
+
+    // Toolbar monitoring action
+    auto *monitoringButton = new QPushButton(IconUtils::GetIcon("monitoring"), nullptr, this);
+    monitoringButton->setToolTip("Show the lambda monitoring counters");
+    connect(monitoringButton, &QPushButton::clicked, [this]() {
+        // Send notification
+        emit EventBus::instance().RouteChanged("Lambda Monitoring", {});
     });
 
     // Toolbar refresh action
@@ -49,7 +58,8 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     //    toolBar->addWidget(titleLabel);
     toolBar->addWidget(spacer);
     toolBar->addWidget(addButton);
-    toolBar->addWidget(purgeAllButton);
+    toolBar->addWidget(restartAllButton);
+    toolBar->addWidget(monitoringButton);
     toolBar->addWidget(refreshButton);
 
     // Table
