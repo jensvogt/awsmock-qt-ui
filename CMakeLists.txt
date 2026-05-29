@@ -53,8 +53,7 @@ set(COMPONENTS_SOURCES include/components/FolderFilterModel.h src/components/FTP
         src/components/SelectLists.cpp src/components/SelectLists.ui src/components/MonitoringChart.cpp
         src/components/MonitoringChart.ui include/components/MonitoringChart.h src/components/ImageViewer.cpp
         include/components/ImageViewer.h src/components/ImageViewer.ui src/components/ListFilterWidget.cpp
-        include/components/ListFilterWidget.h src/components/ListFilterWidget.ui
-)
+        include/components/ListFilterWidget.h src/components/ListFilterWidget.ui)
 set(DASHBOARD_SOURCES src/modules/dashboard/Dashboard.cpp include/modules/dashboard/Dashboard.h
         src/modules/dashboard/Dashboard.ui src/modules/dashboard/DashboardService.cpp
         include/modules/dashboard/DashboardService.h include/modules/dashboard/ChartConfig.h
@@ -73,8 +72,7 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         src/modules/sqs/SQSMessageWindow.ui src/modules/sqs/SQSQueueTagsDialog.cpp src/modules/sqs/SQSQueueTagsDialog.ui
         include/modules/sqs/SQSQueueTagsDialog.h include/dto/sqs/SQSListQueueTagsResponse.h
         include/dto/sqs/SQSUpdateTagsRequest.h src/modules/sqs/SQSDashboard.cpp include/modules/sqs/SQSDashboard.h
-        src/modules/sqs/SQSDashboard.ui
-        include/dto/sqs/SQSIsDlqResponse.h)
+        src/modules/sqs/SQSDashboard.ui include/dto/sqs/SQSIsDlqResponse.h)
 set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp
@@ -115,7 +113,9 @@ set(APPLICATION_SOURCES src/modules/application/ApplicationList.cpp include/modu
         src/modules/application/ApplicationTagDialog.ui include/modules/application/ApplicationTagDialog.h
         src/modules/application/ApplicationDependencyDialog.cpp src/modules/application/ApplicationDependencyDialog.ui
         include/modules/application/ApplicationDependencyDialog.h src/modules/application/ApplicationLogsDialog.cpp
-        src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h)
+        src/modules/application/ApplicationLogsDialog.ui include/modules/application/ApplicationLogsDialog.h
+        src/modules/application/ApplicationDashboard.cpp include/modules/application/ApplicationDashboard.h
+        src/modules/application/ApplicationDashboard.ui)
 set(LAMBDA_SOURCES include/modules/lambda/LambdaList.h include/modules/lambda/LambdaService.h
         include/dto/lambda/LambdaCounter.h src/modules/lambda/LambdaList.cpp src/modules/lambda/LambdaService.cpp
         src/modules/lambda/LambdaDetailsDialog.cpp include/modules/lambda/LambdaDetailsDialog.h
@@ -125,7 +125,9 @@ set(LAMBDA_SOURCES include/modules/lambda/LambdaList.h include/modules/lambda/La
         include/modules/lambda/LambdaLogsDialog.h src/modules/lambda/LambdaLogsDialog.ui
         include/dto/lambda/LambdaListResultsResponse.h include/dto/lambda/LambdaResultCounter.h
         src/modules/lambda/LambdaResultListDialog.cpp include/modules/lambda/LambdaResultListDialog.h
-        src/modules/lambda/LambdaResultListDialog.ui include/dto/lambda/LambdaGetResultResponse.h)
+        src/modules/lambda/LambdaResultListDialog.ui include/dto/lambda/LambdaGetResultResponse.h
+        src/modules/lambda/LambdaDashboard.cpp include/modules/lambda/LambdaDashboard.h
+        src/modules/lambda/LambdaDashboard.ui)
 set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
         src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
         include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp
