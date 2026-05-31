@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.68](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.67...v1.11.68) (2026-05-31)
+
+
+### Bug Fixes
+
+* server log channels ([88029dc](https://github.com/jensvogt/awsmock-qt-ui/commit/88029dcec2b1b8088b22c8552e6d3dce15333db1))
+* server log channels ([4808af5](https://github.com/jensvogt/awsmock-qt-ui/commit/4808af5d7eddb5facea25e529493b40af4147b4d))
+
 ## [1.11.67](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.66...v1.11.67) (2026-05-29)
 
 
