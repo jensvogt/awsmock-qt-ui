@@ -142,6 +142,11 @@ private:
     QString _currentLogLevel = "warning";
 
     /**
+     * @brief Current log channel, we start with 'All'.
+     */
+    QString _currentLogChannel = "All";
+
+    /**
      * @brief Module service
      */
     ModuleService *_moduleService;

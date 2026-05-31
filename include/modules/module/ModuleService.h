@@ -108,7 +108,7 @@ public:
      */
     void PingServer();
 
-    void SetLogLevel(const QString &logLevel);
+    void SetLogLevel(const QString &logLevel, const QString &logChannel);
 
     void GetLogLevel();
 
