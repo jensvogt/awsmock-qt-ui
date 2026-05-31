@@ -89,6 +89,9 @@
               </spacer>
              </item>
              <item>
+              <widget class="QComboBox" name="logChannelCombo"/>
+             </item>
+             <item>
               <widget class="QComboBox" name="logLevelCombo"/>
              </item>
              <item>

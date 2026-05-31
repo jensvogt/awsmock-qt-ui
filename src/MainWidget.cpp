@@ -90,7 +90,7 @@ void MainWidget::SetupContentPane() {
 void MainWidget::SetupLogPane() {
 
     // Set server log level
-    _moduleService->SetLogLevel(_currentLogLevel);
+    _moduleService->SetLogLevel(_currentLogLevel, "All");
 
     // Get the log level from server
     connect(_moduleService, &ModuleService::GetLoglevelSignal, this, [this](const QString &logLevel) {
@@ -110,20 +110,32 @@ void MainWidget::SetupLogPane() {
 
 void MainWidget::SetupServerLogs() {
 
-    // Setup logging timer
+    // Set up logging timer
     _logTimer = new QTimer(this);
     _logTimer->setInterval(LOG_BATCH_MS);
     connect(_logTimer, &QTimer::timeout, this, &MainWidget::FlushLogQueue);
     _logTimer->start();
 
-    // Loglevel combo
-    const auto logLevelList = QStringList({"trace", "debug", "info", "warning", "error"});
+    // Logging channel combo
+    const auto logChannelList = QStringList({"All", "Common", "Core", "Application", "S3", "SQS", "SNS", "Lambda", "SSM", "KMS", "SecretsManager", "DynamoDB", "Cognito", "Module", "Monitoring"});
+    _ui->logChannelCombo->addItems(logChannelList);
+    _ui->logChannelCombo->setCurrentText(_currentLogChannel);
+    logInfo << "Server log channel set to " << _currentLogChannel;
+
+    connect(_ui->logChannelCombo, &QComboBox::currentTextChanged, this, [this](const QString &logChannel) {
+        _moduleService->SetLogLevel(_currentLogLevel, logChannel);
+        _currentLogChannel = logChannel;
+        logInfo << "Server log level changed to " << _currentLogLevel;
+    });
+
+    // Logging level combo
+    const auto logLevelList = QStringList({"trace", "debug", "info", "warning", "error", "fatal"});
     _ui->logLevelCombo->addItems(logLevelList);
     _ui->logLevelCombo->setCurrentText(_currentLogLevel);
     logInfo << "Server log level set to " << _currentLogLevel;
 
     connect(_ui->logLevelCombo, &QComboBox::currentTextChanged, this, [this](const QString &logLevel) {
-        _moduleService->SetLogLevel(logLevel);
+        _moduleService->SetLogLevel(logLevel, _currentLogChannel);
         _currentLogLevel = logLevel;
         logInfo << "Server log level changed to " << _currentLogLevel;
     });

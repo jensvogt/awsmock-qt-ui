@@ -200,12 +200,18 @@ void ModuleService::PingServer() {
                      });
 }
 
-void ModuleService::SetLogLevel(const QString &logLevel) {
+void ModuleService::SetLogLevel(const QString &logLevel, const QString &logChannel) {
     QElapsedTimer timer;
     timer.start();
 
+    QJsonObject jRequest;
+    jRequest["level"] = logLevel;
+    if (!comparesEqual(logChannel, "All")) {
+        jRequest["channel"] = logChannel;
+    }
+
     _restManager.post(GetBaseUrl(),
-                      logLevel.toUtf8(),
+                      QJsonDocument(jRequest).toJson(),
                       {
                           {"x-awsmock-target", "module"},
                           {"x-awsmock-action", "set-log-level"},
