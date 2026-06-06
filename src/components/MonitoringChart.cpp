@@ -40,11 +40,22 @@ namespace Awsmock::Components {
         _ui->settingsButton->setText(nullptr);
         _ui->settingsButton->setIcon(IconUtils::GetIcon("settings"));
 
+        // One-time plot setup
+        if (auto *customPlot = qobject_cast<QCustomPlot *>(_ui->monitoringGraph)) {
+            AddCrossHair(customPlot);
+            AddZoom(customPlot);
+            AddRange(customPlot);
+        }
+
+        // Place widget in grid
+        _layout->addWidget(this, _config.row, _config.column);
+
         // Start dashboard
         MonitoringChart::LoadContent();
     }
 
     MonitoringChart::~MonitoringChart() {
+        delete _dashboardService;
         delete _ui;
     }
 
@@ -105,19 +116,11 @@ namespace Awsmock::Components {
 
             // Redraw
             customPlot->replot();
-
-            // Crosshair
-            if (!customPlot->property("crosshair_init").toBool()) {
-                AddCrossHair(customPlot);
-            }
-
-            AddZoom(customPlot);
-            AddRange(customPlot);
-            _layout->addWidget(this, _config.row, _config.column);
         }
     }
 
     void MonitoringChart::AddCrossHair(QCustomPlot *customPlot) {
+        customPlot->setProperty("crosshair_init", true);
         auto *tracer = new QCPItemTracer(customPlot);
         tracer->setStyle(QCPItemTracer::tsCircle);
         tracer->setPen(QPen(Qt::red));

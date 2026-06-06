@@ -83,7 +83,9 @@ set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSM
         src/modules/sns/SNSSubscriptionDialog.cpp include/modules/sns/SNSSubscriptionDialog.h
         src/modules/sns/SNSSubscriptionDialog.ui include/modules/sns/SNSMessageWindow.h
         src/modules/sns/SNSMessageWindow.cpp src/modules/sns/SNSDashboard.cpp include/modules/sns/SNSDashboard.h
-        src/modules/sns/SNSDashboard.ui)
+        src/modules/sns/SNSDashboard.ui include/dto/sns/SNSListTopicAttributesResponse.h include/dto/sns/SNSTopicAttribute.h
+        include/dto/sns/SNSListTopicTagsResponse.h include/dto/sns/SNSTopicTag.h include/dto/sns/SNSTopicSubscription.h
+        include/dto/sns/SNSListTopicSubscriptionsResponse.h)
 set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
         include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
         include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h
@@ -93,7 +95,12 @@ set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h
         include/dto/s3/S3TopicConfiguration.h include/dto/s3/S3QueueConfiguration.h include/dto/s3/S3FilterRule.h
         include/dto/s3/S3NotificationEventType.h include/dto/s3/S3PutBucketNotificationConfigurationRequest.h
         src/modules/s3/S3QueueNotificationDialog.cpp include/modules/s3/S3QueueNotificationDialog.h
-        src/modules/s3/S3QueueNotificationDialog.ui include/modules/s3/S3ObjectWindow.h src/modules/s3/S3ObjectWindow.cpp)
+        src/modules/s3/S3QueueNotificationDialog.ui include/modules/s3/S3ObjectWindow.h src/modules/s3/S3ObjectWindow.cpp
+        include/modules/s3/S3BucketMetadataDialog.h src/modules/s3/S3BucketMetadataDialog.cpp
+        src/modules/s3/S3BucketLifecycleDialog.cpp include/modules/s3/S3BucketLifecycleDialog.h
+        src/modules/s3/S3BucketLifecycleDialog.ui src/modules/s3/S3ObjectAddDialog.cpp include/modules/s3/S3ObjectAddDialog.h
+        src/modules/s3/S3ObjectAddDialog.ui src/modules/s3/S3ObjectAddDialog.cpp include/utils/BaseService.h
+        include/dto/s3/S3ObjectUploadRequest.h)
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
@@ -158,6 +165,8 @@ set(DYNAMODB_SOURCES src/modules/dynamodb/DynamoDbExportTableDialog.cpp src/modu
 set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/ModuleService.h
         src/modules/module/ModuleExportDialog.cpp include/modules/module/ModuleExportDialog.h
         src/modules/module/ModuleExportDialog.ui)
+set(API_GATEWAY_SOURCES src/modules/apigateway/RestApiList.cpp include/modules/apigateway/ApiGatewayService.h
+        include/modules/apigateway/RestApiList.h src/modules/apigateway/ApiGatewayService.cpp)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h
@@ -171,110 +180,42 @@ set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h i
         src/utils/md4c/md4c.c src/utils/md4c/md4c-html.c)
 set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${S3_SOURCES} ${DASHBOARD_SOURCES}
         ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
-        ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES} ${LAMBDA_SOURCES}
-        src/modules/docker/DockerLogClient.cpp
-        include/modules/docker/DockerLogClient.h
-        include/Version.h
-        include/dto/lambda/LambdaListEnvironmentResponse.h
-        cmake/version.h.in
-        src/modules/s3/S3ObjectMetadataDialog.cpp
-        include/modules/s3/S3ObjectMetadataDialog.h
-        src/modules/s3/S3ObjectMetadataDialog.ui
-        src/modules/docker/DockerStatsDialog.cpp
-        src/modules/docker/DockerService.cpp
-        include/modules/docker/DockerService.h
-        include/modules/docker/DockerStatsDialog.h
-        include/dto/docker/DockerStatsResponse.h
-        src/modules/docker/DockerStatsDialog.ui
-        include/dto/docker/DockerContainersResponse.h
-        include/dto/docker/Container.h
-        include/dto/docker/CpuUsage.h
-        include/dto/docker/CpuStat.h
-        include/dto/docker/ContainerStat.h
-        include/dto/docker/MemoryStat.h
-        include/utils/PrefixFilterModel.h
-        src/utils/PrefixFilterModel.cpp
-        include/dto/docker/State.h
-        include/utils/StringUtils.h
-        src/modules/s3/S3ObjectAddDialog.cpp
-        include/modules/s3/S3ObjectAddDialog.h
-        src/modules/s3/S3ObjectAddDialog.ui
-        src/modules/s3/S3ObjectAddDialog.cpp
-        include/utils/BaseService.h
-        include/dto/s3/S3ObjectUploadRequest.h
-        include/modules/secretsmanager/SecretList.h
-        src/modules/secretsmanager/SecretsList.cpp
-        src/modules/sns/SNSMessageAddDialog.cpp
-        src/modules/sns/SNSMessageAddDialog.ui
-        include/modules/sns/SNSMessageAddDialog.h
-        include/dto/sns/SNSSendMessageRequest.h
-        include/dto/sns/SNSMessageAttribute.h
-        include/dto/sns/SNSSendMessageResponse.h
-        include/modules/secretsmanager/SecretsManagerService.h
-        src/modules/secretsmanager/SecretsManagerService.cpp
-        include/dto/secretsmanager/SecretsManagerListSecretsResponse.h
-        include/dto/secretsmanager/SecretCounter.h
-        src/modules/secretsmanager/SecretsDetailsDialog.cpp
-        include/modules/secretsmanager/SecretsDetailsDialog.h
-        src/modules/secretsmanager/SecretsDetailsDialog.ui
-        include/dto/secretsmanager/SecretGetResponse.h
-        src/modules/secretsmanager/SecretAddDialog.cpp
-        include/modules/secretsmanager/SecretAddDialog.h
-        src/modules/secretsmanager/SecretAddDialog.ui
-        include/dto/secretsmanager/SecretVersionCounter.h
-        include/dto/secretsmanager/SecretGetVersionsResponse.h
-        include/modules/ssm/SSMParameterList.h
-        include/modules/ssm/SSMService.h
-        include/dto/ssm/SSMParameterListResponse.h
-        src/modules/ssm/SSMParameterList.cpp
-        src/modules/ssm/SSMService.cpp
-        include/dto/ssm/SSMParameterCounter.h
-        include/dto/ssm/SSMParameterGetResponse.h
-        src/modules/ssm/SSMParameterEditDialog.cpp
-        src/modules/ssm/SSMParameterEditDialog.ui
-        include/modules/ssm/SSMParameterEditDialog.h
-        src/modules/ssm/SSMParameterAddDialog.cpp
-        include/modules/ssm/SSMParameterAddDialog.h
-        src/modules/ssm/SSMParameterAddDialog.ui
-        include/dto/sns/SNSListTopicAttributesResponse.h
-        include/dto/sns/SNSTopicAttribute.h
-        include/dto/sns/SNSListTopicTagsResponse.h
-        include/dto/sns/SNSTopicTag.h
-        include/dto/sns/SNSTopicSubscription.h
-        include/dto/sns/SNSListTopicSubscriptionsResponse.h
+        ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES} ${LAMBDA_SOURCES} ${API_GATEWAY_SOURCES}
+        src/modules/docker/DockerLogClient.cpp include/modules/docker/DockerLogClient.h include/Version.h
+        include/dto/lambda/LambdaListEnvironmentResponse.h cmake/version.h.in src/modules/s3/S3ObjectMetadataDialog.cpp
+        include/modules/s3/S3ObjectMetadataDialog.h src/modules/s3/S3ObjectMetadataDialog.ui src/modules/docker/DockerStatsDialog.cpp
+        src/modules/docker/DockerService.cpp include/modules/docker/DockerService.h include/modules/docker/DockerStatsDialog.h
+        include/dto/docker/DockerStatsResponse.h src/modules/docker/DockerStatsDialog.ui
+        include/dto/docker/DockerContainersResponse.h include/dto/docker/Container.h include/dto/docker/CpuUsage.h
+        include/dto/docker/CpuStat.h include/dto/docker/ContainerStat.h include/dto/docker/MemoryStat.h
+        include/utils/PrefixFilterModel.h src/utils/PrefixFilterModel.cpp include/dto/docker/State.h
+        include/utils/StringUtils.h include/modules/secretsmanager/SecretList.h
+        src/modules/secretsmanager/SecretsList.cpp src/modules/sns/SNSMessageAddDialog.cpp
+        src/modules/sns/SNSMessageAddDialog.ui include/modules/sns/SNSMessageAddDialog.h
+        include/dto/sns/SNSSendMessageRequest.h include/dto/sns/SNSMessageAttribute.h include/dto/sns/SNSSendMessageResponse.h
+        include/modules/secretsmanager/SecretsManagerService.h src/modules/secretsmanager/SecretsManagerService.cpp
+        include/dto/secretsmanager/SecretsManagerListSecretsResponse.h include/dto/secretsmanager/SecretCounter.h
+        src/modules/secretsmanager/SecretsDetailsDialog.cpp include/modules/secretsmanager/SecretsDetailsDialog.h
+        src/modules/secretsmanager/SecretsDetailsDialog.ui include/dto/secretsmanager/SecretGetResponse.h
+        src/modules/secretsmanager/SecretAddDialog.cpp include/modules/secretsmanager/SecretAddDialog.h
+        src/modules/secretsmanager/SecretAddDialog.ui include/dto/secretsmanager/SecretVersionCounter.h
+        include/dto/secretsmanager/SecretGetVersionsResponse.h include/modules/ssm/SSMParameterList.h
+        include/modules/ssm/SSMService.h include/dto/ssm/SSMParameterListResponse.h src/modules/ssm/SSMParameterList.cpp
+        src/modules/ssm/SSMService.cpp include/dto/ssm/SSMParameterCounter.h include/dto/ssm/SSMParameterGetResponse.h
+        src/modules/ssm/SSMParameterEditDialog.cpp src/modules/ssm/SSMParameterEditDialog.ui
+        include/modules/ssm/SSMParameterEditDialog.h src/modules/ssm/SSMParameterAddDialog.cpp
+        include/modules/ssm/SSMParameterAddDialog.h src/modules/ssm/SSMParameterAddDialog.ui
         include/utils/DateTimeUtils.h
-        include/modules/s3/S3BucketMetadataDialog.h
-        src/modules/s3/S3BucketMetadataDialog.cpp
-        src/modules/s3/S3BucketLifecycleDialog.cpp
-        include/modules/s3/S3BucketLifecycleDialog.h
-        src/modules/s3/S3BucketLifecycleDialog.ui
-        src/modules/module/ShowInfrastructure.cpp
-        include/modules/module/ShowInfrastructure.h
-        src/modules/module/ShowInfrastructure.ui
-        include/dto/ssm/SSMParameterPutResponse.h
-        src/modules/ssm/SSMParameterTagDialog.cpp
-        include/modules/ssm/SSMParameterTagDialog.h
-        src/modules/ssm/SSMParameterTagDialog.ui
-        src/modules/module/ModuleService.cpp
-        include/utils/ImageUtils.h
-        include/utils/ImageUtils.h
-        src/utils/ImageUtils.cpp
-        include/modules/ssm/SSMParameterTagDialog.h
-        src/modules/ssm/SSMParameterTagDialog.cpp
-        include/dto/kms/KMSCreateKeyRequest.h
-        include/utils/Logging.h
-        include/utils/UpdateChecker.h
-        include/utils/DroppableTreeView.h
-        include/utils/NetworkUtils.h
-        include/utils/AwsUtils.h
-        include/dto/module/ListModuleNamesResponse.h
-        src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
-        include/modules/sqs/SQSQueueDefaultAttributeDialog.h
-        src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
-        include/utils/ChunkUploader.h
-        include/components/HelpDialog.h
-        include/dto/sns/SNSSubscriptionResponse.h
-)
+        src/modules/module/ShowInfrastructure.cpp include/modules/module/ShowInfrastructure.h
+        src/modules/module/ShowInfrastructure.ui include/dto/ssm/SSMParameterPutResponse.h
+        src/modules/ssm/SSMParameterTagDialog.cpp include/modules/ssm/SSMParameterTagDialog.h
+        src/modules/ssm/SSMParameterTagDialog.ui src/modules/module/ModuleService.cpp include/utils/ImageUtils.h
+        include/utils/ImageUtils.h src/utils/ImageUtils.cpp include/modules/ssm/SSMParameterTagDialog.h
+        src/modules/ssm/SSMParameterTagDialog.cpp include/dto/kms/KMSCreateKeyRequest.h include/utils/Logging.h
+        include/utils/UpdateChecker.h include/utils/DroppableTreeView.h include/utils/NetworkUtils.h
+        include/utils/AwsUtils.h include/dto/module/ListModuleNamesResponse.h src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
+        include/modules/sqs/SQSQueueDefaultAttributeDialog.h src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
+        include/utils/ChunkUploader.h include/components/HelpDialog.h include/dto/sns/SNSSubscriptionResponse.h)
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
 qt_add_executable(awsmock-qt-ui MANUAL_FINALIZATION ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS} ${APP_RESOURCES})

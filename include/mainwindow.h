@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_MAIN_WINDOW_H
-#define AWSMOCK_QT_UI_MAIN_WINDOW_H
+#pragma once
 
 #include <utility>
 
@@ -64,31 +63,65 @@ class MainWindow final : public QMainWindow {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor
+     *
+     * @param parent parent widget
+     */
     explicit MainWindow(QWidget *parent = nullptr);
 
+    /**
+     * @brief Destructor
+     */
     ~MainWindow() override;
 
+    /**
+     * @brief Starts the server ping
+     */
     void StartServerPing();
 
+    /**
+     * @brief Check for updates
+     */
     void StartUpdateChecker();
 
 private slots:
+    /**
+     * @brief Update the status bar
+     *
+     * @param text response text
+     */
     void UpdateStatusBar(const QString &text) const;
 
 private:
     /**
-     * Setup menu bar
+     * @brief Set up the menu bar
      */
     void SetupMenuBar();
 
+    /**
+     * @brief Set up the toolbar
+     */
     void SetupToolBar();
 
+    /**
+     * @brief Import the infrastructure
+     */
     void ImportInfrastructure() const;
 
+    /**
+     * @brief Export the infrastructure
+     */
     void ExportInfrastructure();
 
+    /**
+     * @brief Clean the infrastructure
+     */
     void CleanInfrastructure() const;
 
+    /**
+     * @brief Starts an FTP upload session
+     */
     void FtpUpload();
 
     void DockerStats();
@@ -170,4 +203,3 @@ private:
      */
     DockerStatsDialog *_dockerStatsDialog{};
 };
-#endif // AWSMOCK_QT_UI_MAIN_WINDOW_H

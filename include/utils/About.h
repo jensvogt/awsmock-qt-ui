@@ -2,8 +2,7 @@
 // Created by vogje01 on 11/16/25.
 //
 
-#ifndef AWSMOCK_QT_UI_ABOUT_H
-#define AWSMOCK_QT_UI_ABOUT_H
+#pragma once
 
 #include <QDialog>
 
@@ -37,6 +36,3 @@ private:
 
     ModuleService *_infraStructureService;
 };
-
-
-#endif //AWSMOCK_QT_UI_ABOUT_H

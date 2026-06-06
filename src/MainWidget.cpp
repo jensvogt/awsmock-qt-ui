@@ -67,6 +67,7 @@ void MainWidget::SetupNavPane() {
     _navDataModel->appendRow(new QStandardItem("Systems Manager"));
     _navDataModel->appendRow(new QStandardItem("DynamoDB"));
     _navDataModel->appendRow(new QStandardItem("KMS"));
+    _navDataModel->appendRow(new QStandardItem("API Gateway"));
 
     // Set current index
     _navList->setCurrentIndex(_navList->model()->index(0, 0));
@@ -117,7 +118,10 @@ void MainWidget::SetupServerLogs() {
     _logTimer->start();
 
     // Logging channel combo
-    const auto logChannelList = QStringList({"All", "Common", "Core", "Application", "S3", "SQS", "SNS", "Lambda", "SSM", "KMS", "SecretsManager", "DynamoDB", "Cognito", "Module", "Monitoring"});
+    const auto logChannelList = QStringList({
+        "All", "ApiGateway", "Application", "Cognito", "Core", "DynamoDB", "KMS", "Lambda", "Manager", "Module", "Monitoring", "S3", "SNS", "SQS", "SSM",
+        "SecretsManager", "Transfer"
+    });
     _ui->logChannelCombo->addItems(logChannelList);
     _ui->logChannelCombo->setCurrentText(_currentLogChannel);
     logInfo << "Server log channel set to " << _currentLogChannel;
