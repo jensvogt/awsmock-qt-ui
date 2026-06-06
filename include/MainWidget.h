@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/6/26.
 //
 
-#ifndef AWSMOCK_QT_UI_MAIN_WIDGET_H
-#define AWSMOCK_QT_UI_MAIN_WIDGET_H
+#pragma once
 
 // Qt includes
 #include <QWidget>
@@ -164,6 +163,3 @@ private:
     static constexpr int LOG_BATCH_MS = 50;
     static constexpr int LOG_BATCH_MAX = 100;
 };
-
-
-#endif // AWSMOCK_QT_UI_MAIN_WIDGET_H

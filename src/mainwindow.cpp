@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Set the splitter as the central widget of the QMainWindow
     setCentralWidget(mainWidget);
 
-    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &value) {
+    connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [](const QString &key, const QString &value) {
         if (key == "ui.style") {
             qApp->setStyle(QStyleFactory::create(value));
         }

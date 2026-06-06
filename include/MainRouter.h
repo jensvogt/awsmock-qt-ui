@@ -11,6 +11,7 @@
 #include <QWidget>
 
 // Awsmock includes
+#include <modules/apigateway/RestApiList.h>
 #include <modules/application/ApplicationDashboard.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/cognito/CognitoUserpoolList.h>
@@ -99,6 +100,9 @@ public:
             },
             {
                 "Cognito", new CognitoUserpoolList("Cognito User Pool List", parent)
+            },
+            {
+                "API Gateway", new RestApiList("API Gateway REST API List", parent)
             }
         };
         connect(&EventBus::instance(), &EventBus::RouteChanged, this, [this](const QString &pageName, const QMap<QString, QString> &arguments) {
@@ -128,7 +132,8 @@ public:
     }
 
     void SetRoute(const QString &pageName, const QMap<QString, QString> &arguments = {}) {
-        // Setup content pane
+
+        // Set up content pane
         if (_routes.contains(pageName)) {
             // Set arguments
             BasePage *basePage = _routes[pageName];

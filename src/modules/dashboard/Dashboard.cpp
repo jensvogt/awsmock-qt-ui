@@ -185,11 +185,12 @@ void Dashboard::ClearContent() {
 }
 
 void Dashboard::LoadContent() {
+    qDeleteAll(_monitoringCharts);
     _monitoringCharts.clear();
     for (auto &config: _monitoringConfigs) {
         config.start = DateTimeUtils::GetLastMidnight().toUTC();
         config.end = QDateTime::currentDateTime().toUTC();
-        _monitoringCharts.emplace_back(new Awsmock::Components::MonitoringChart(config, _ui->gridLayout));
+        _monitoringCharts.emplace_back(new Awsmock::Components::MonitoringChart(config, _ui->gridLayout, this));
     }
     logInfo << "Dashboard updated";
 }
