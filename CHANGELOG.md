@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.69](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.68...v1.11.69) (2026-06-07)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([9a60b6e](https://github.com/jensvogt/awsmock-qt-ui/commit/9a60b6e1f951ed7df86b0f78ca4a676a41c02bde))
+* server log channels ([5b6ceed](https://github.com/jensvogt/awsmock-qt-ui/commit/5b6ceed3e1547bfdfae3b22d8278e2cf2f82eab3))
+
 ## [1.11.68](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.67...v1.11.68) (2026-05-31)
 
 
