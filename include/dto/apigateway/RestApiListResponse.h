@@ -19,7 +19,7 @@ struct RestApiListResponse {
 
         for (QJsonArray jArray = jsonDoc["restApis"].toArray(); const auto &element: jArray) {
             RestApiCounter restApiCounter;
-            restApiCounter.FromJson(element.toObject());
+            restApiCounter.fromJson(element.toObject());
             restApiCounters.append(restApiCounter);
         }
     }

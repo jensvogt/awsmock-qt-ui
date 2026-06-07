@@ -37,7 +37,7 @@ void ApplicationService::ListApplications(const QString &prefix, const long page
                           } else {
                               logError << "http status: " << error;
                           }
-                          emit EventBus::instance().TimerSignal("GetMultiSeriesCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListApplications", timer.elapsed());
                       });
 }
 
@@ -202,7 +202,7 @@ void ApplicationService::DisableApplication(const QString &name) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("EnableApplication", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DisableApplication", timer.elapsed());
                       });
 }
 
@@ -260,7 +260,7 @@ void ApplicationService::StopApplication(const QString &name) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("StartApplication", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("StopApplication", timer.elapsed());
                       });
 }
 
@@ -342,35 +342,6 @@ void ApplicationService::RebuildApplication(const QString &name) {
                           emit EventBus::instance().TimerSignal("RebuildApplication", timer.elapsed());
                       });
 }
-
-// void ApplicationService::UploadApplicationCode(const QString &applicationName, const QString &version, const QString &applicationCode) {
-//     QElapsedTimer timer;
-//     timer.start();
-//
-//     QJsonObject jRequest;
-//     jRequest["version"] = version;
-//     jRequest["applicationName"] = applicationName;
-//     jRequest["applicationCode"] = applicationCode;
-//     const QJsonDocument requestDoc(jRequest);
-//
-//     QString contentLength = QString::number(applicationCode.length());
-//     _restManager.post(GetBaseUrl(),
-//                       requestDoc.toJson(),
-//                       {
-//                           {"x-awsmock-target", "application"},
-//                           {"x-awsmock-action", "upload-application"},
-//                           {"content-type", "application/json"},
-//                           {"content-length", contentLength}
-//                       },
-//                       [this, timer](const bool success, const QByteArray &, int, const QString &error) {
-//                           if (success) {
-//                               emit LoadAllApplications();
-//                           } else {
-//                               logError << error;
-//                           }
-//                           emit EventBus::instance().TimerSignal("UploadApplicationCode", timer.elapsed());
-//                       });
-// }
 
 void ApplicationService::ListApplicationNames() {
     QElapsedTimer timer;

@@ -141,7 +141,7 @@ void EditConfigDialog::SetupFtpSettings() {
     connect(_ui->ftpStartFolderBrowseButton, &QPushButton::clicked, this, [this]() {
 
         // Create a QFileDialog set to select existing files
-        const auto defaultDir = Configuration::instance().GetValue<QString>("ftp-client.local-base-dir", "/usr/local/awsmock-qt-_ui");
+        const auto defaultDir = Configuration::instance().GetValue<QString>("ftp-client.local-base-dir", "/usr/local/awsmock-qt-ui");
 
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::Directory); // Mandatory for folder selection

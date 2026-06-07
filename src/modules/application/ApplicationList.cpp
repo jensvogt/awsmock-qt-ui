@@ -72,6 +72,7 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     });
     _tableView->SetHiddenColumns({9});
     _tableView->SetSorting(0, "name", 1);
+    _tableView->setServiceApis(_applicationService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {

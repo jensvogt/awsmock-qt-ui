@@ -18,6 +18,7 @@
 #include <components/PageableTable.h>
 #include <components/Toast.h>
 #include <dto/sns/SNSListTopicResult.h>
+#include <modules/apigateway/RestApiDetailsDialog.h>
 #include <modules/application/ApplicationAddDialog.h>
 #include <modules/application/ApplicationEditDialog.h>
 #include <modules/application/ApplicationLogsDialog.h>
