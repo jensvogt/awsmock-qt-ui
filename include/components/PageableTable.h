@@ -14,6 +14,7 @@
 #include <utils/DateTimeUtils.h>
 #include <utils/Configuration.h>
 #include <utils/PrefixFilterModel.h>
+#include <utils/EventBus.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -89,10 +90,19 @@ public:
         CalculatePageStatus();
     }
 
+    /**
+     * @brief Save the current selection
+     */
     void SaveSelection();
 
+    /**
+     * @brief Restore the saved selection
+     */
     void RestoreSelection();
 
+    /**
+     * @brief Sho details of the selected row
+     */
     void ShowDetails();
 
     /**
@@ -100,7 +110,8 @@ public:
      *
      * @return total item count
      */
-    [[nodiscard]] long GetTotalSize() const {
+    [[nodiscard]]
+    long GetTotalSize() const {
         return _totalSize;
     }
 
@@ -109,7 +120,8 @@ public:
      *
      * @return item count
      */
-    [[nodiscard]] int GetSize() const {
+    [[nodiscard]]
+    int GetSize() const {
         return _dataModel->rowCount();
     }
 
@@ -118,7 +130,8 @@ public:
      *
      * @return sort column name
      */
-    [[nodiscard]] int GetSortColumn() const {
+    [[nodiscard]]
+    int GetSortColumn() const {
         return _sortColumn;
     }
 
@@ -127,7 +140,8 @@ public:
      *
      * @return sort column name
      */
-    [[nodiscard]] QString GetSortAttribute() const {
+    [[nodiscard]]
+    QString GetSortAttribute() const {
         return _sortAttribute;
     }
 
@@ -162,7 +176,8 @@ public:
      *
      * @return sort direction, 1 = ascending, -1 = descending
      */
-    [[nodiscard]] int GetSortDirection() const {
+    [[nodiscard]]
+    int GetSortDirection() const {
         return _sortDirection;
     }
 
@@ -282,7 +297,8 @@ public:
      * @param pos mouse position
      * @return table row/column index
      */
-    [[nodiscard]] QModelIndex GetIndexFromPosition(const QPoint &pos) const;
+    [[nodiscard]]
+    QModelIndex GetIndexFromPosition(const QPoint &pos) const;
 
     /**
      * @brief Returns the global position
@@ -290,7 +306,8 @@ public:
      * @param tablePosition table position
      * @return global position
      */
-    [[nodiscard]] QPoint GetGlobalPosition(const QPoint &tablePosition) const;
+    [[nodiscard]]
+    QPoint GetGlobalPosition(const QPoint &tablePosition) const;
 
     /**
      * @brief Remove a row from the table
@@ -304,7 +321,8 @@ public:
      *
      * @return list of selected rows
      */
-    [[nodiscard]] QModelIndexList GetSelectedRows() const;
+    [[nodiscard]]
+    QModelIndexList GetSelectedRows() const;
 
     /**
      * @brief Converts a proxy index to a source index
@@ -312,7 +330,8 @@ public:
      * @param index proxy index
      * @return source index
      */
-    [[nodiscard]] QModelIndex GetSourceIndex(const QModelIndex &index) const;
+    [[nodiscard]]
+    QModelIndex GetSourceIndex(const QModelIndex &index) const;
 
     /**
      * @brief Returns the prefix value
@@ -324,7 +343,7 @@ public:
     }
 
     /**
-     * @brief Set multi row selection
+     * @brief Set multi-row selection
      */
     void SetMultiRowSelection(bool enabled) const;
 
@@ -345,10 +364,22 @@ public:
      */
     void UpdateSorting() const;
 
+    /**
+     * @brief Table data changed
+     *
+     * @param startIndex start index
+     * @param endIndex end index
+     */
     void DataChanged(const QModelIndex &startIndex, const QModelIndex &endIndex) const {
         _dataModel->dataChanged(startIndex, endIndex);
     }
 
+    /**
+     * @brief Convert the IDs to indexes
+     *
+     * @param ids table row IDs
+     * @return map of row indexes
+     */
     QHash<QString, int> GetRowIndexesFromIds(const QVector<QString> &ids) {
         QHash<QString, int> result;
         for (const auto &id: ids) {
@@ -361,16 +392,25 @@ public:
         return result;
     }
 
+    /**
+     * @brief Sets the list of service APIs
+     *
+     * @param serviceApis list of service APIs
+     */
+    void setServiceApis(const QStringList &serviceApis) {
+        _serviceApis = serviceApis;
+    }
+
 signals:
     /**
-     * @brief Send when the context menu is selected
+     * @brief Sent when the context menu is selected
      *
      * @param pos page index
      */
     void ContextMenuRequested(const QPoint &pos);
 
     /**
-     * @brief Double click proxy signal
+     * @brief Double-click proxy signal
      *
      * @param index normalized table index
      */
@@ -482,5 +522,10 @@ private:
      * @brief Search field prefix
      */
     QString _searchFieldPlaceholder = "Prefix";
+
+    /**
+     * @brief List of service APIs
+     */
+    QStringList _serviceApis;
 };
 

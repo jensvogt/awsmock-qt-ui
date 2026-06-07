@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_SERVICE_H
-#define AWSMOCK_QT_UI_APPLICATION_SERVICE_H
+#pragma once
 
 // QT includes
 #include <QElapsedTimer>
@@ -23,7 +22,6 @@
 #include <utils/Logging.h>
 #include <utils/RestManager.h>
 
-
 class ApplicationService final : public BaseService {
     Q_OBJECT
 
@@ -31,7 +29,12 @@ public:
     /**
      * @brief ApplicationService
      */
-    ApplicationService() = default;
+    ApplicationService() {
+        setApis({
+            "ListApplications", "UploadApplication", "CreateApplication", "GetApplication", "UpdateApplication", "EnableApplication", "DisableApplication", "StartApplication",
+            "StopApplication", "RestartApplication", "RestartAllApplications", "RebuildApplication", "ListApplicationNames", "DeleteApplication"
+        });
+    };
 
     /**
      * @brief List applications
@@ -137,6 +140,3 @@ private:
      */
     QUrl url;
 };
-
-
-#endif // AWSMOCK_QT_UI_APPLICATION_SERVICE_H

@@ -135,6 +135,14 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
 
     // Reset message box
     _ui->messageLabel->setText(nullptr);
+
+    // Timer
+    connect(&EventBus::instance(), &EventBus::TimerSignal, this, [this](const QString &timerName, const qint64 elapsed) {
+        if (_serviceApis.contains(timerName)) {
+            _ui->statusLabel->setText("Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]");
+        }
+    });
+
 }
 
 PageableTable::~PageableTable() {
@@ -233,12 +241,12 @@ void PageableTable::SetHiddenColumn(const int row, const int column, const bool 
 }
 
 void PageableTable::SetStatus(const QString &message) const {
-    _ui->statusLabel->setText(message);
+    //    _ui->statusLabel->setText(message);
 }
 
 void PageableTable::SetLastUpdate() const {
-    const QString message = "Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime());
-    _ui->statusLabel->setText(message);
+    //    const QString message = "Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime());
+    //    _ui->statusLabel->setText(message);
 }
 
 QModelIndex PageableTable::GetIndexFromPosition(const QPoint &pos) const {

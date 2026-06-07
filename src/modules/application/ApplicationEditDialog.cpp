@@ -103,6 +103,17 @@ ApplicationEditDialog::ApplicationEditDialog(const QString &name, QWidget *paren
         _changed = true;
     });
 
+    // Timer
+    QStringList apis = {
+        "ListApplications", "UploadApplication", "CreateApplication", "GetApplication", "UpdateApplication", "EnableApplication", "DisableApplication",
+        "StartApplication", "StopApplication", "RestartApplication", "RestartAllApplications", "RebuildApplication", "DeleteApplication"
+    };
+    connect(&EventBus::instance(), &EventBus::TimerSignal, this, [this, apis](const QString &timerName, const qint64 elapsed) {
+        if (apis.contains(timerName)) {
+            _ui->lastUpdateLabel->setText("Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]");
+        }
+    });
+
     // Setup environment tab
     SetupEnvironmentTab();
 

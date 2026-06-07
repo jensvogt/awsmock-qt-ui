@@ -219,7 +219,7 @@ void MainWindow::SetupToolBar() {
 void MainWindow::ImportInfrastructure() const {
     // Create a QFileDialog set to select existing files
     const auto filter = "JSON Files (*.json);;All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-_ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.ImportInfrastructure", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);

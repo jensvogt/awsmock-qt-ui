@@ -2,8 +2,7 @@
 // Created by vogje01 on 11/11/25.
 //
 
-#ifndef AWSMOCK_QT_UI_BASE_SERVICE_H
-#define AWSMOCK_QT_UI_BASE_SERVICE_H
+#pragma once
 
 #include <QTimer>
 
@@ -37,6 +36,14 @@ public:
         return {Configuration::instance().GetValue<QString>("server.base-url", "eu-central-1") + "/" + path};
     }
 
+    QStringList getApis() {
+        return _apis;
+    }
+
+    void setApis(const QStringList &apis) {
+        _apis = apis;
+    }
+
 private:
     /**
      * @brief Network access manager
@@ -47,7 +54,9 @@ private:
      * @brief Timer
      */
     QTimer *_timer;
+
+    /**
+     * @brief Api names
+     */
+    QStringList _apis;
 };
-
-#endif //AWSMOCK_QT_UI_BASE_SERVICE_H
-

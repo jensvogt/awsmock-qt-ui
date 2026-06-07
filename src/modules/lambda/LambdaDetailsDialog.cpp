@@ -37,6 +37,14 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
         dialog->show();
     });
 
+    // Timer
+    QStringList apis = {"GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "UpdateLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment"};
+    connect(&EventBus::instance(), &EventBus::TimerSignal, this, [this, apis](const QString &timerName, const qint64 elapsed) {
+        if (apis.contains(timerName)) {
+            _ui->lastUpdateLabel->setText("Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]");
+        }
+    });
+
     // Setup instances tab
     SetupInstancesTab();
 
@@ -50,7 +58,7 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
     LoadContent();
 
     // Status
-    _ui->statusEdit->setText("Initialized");
+    _ui->lastUpdateLabel->setText("Initialized");
 }
 
 LambdaDetailsDialog::~LambdaDetailsDialog() {
