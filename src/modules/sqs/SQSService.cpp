@@ -1,7 +1,5 @@
 #include <modules/sqs/SQSService.h>
 
-#include "dto/sqs/SQSIsDlqResponse.h"
-
 void SQSService::ListQueues(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortColumn, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
@@ -39,7 +37,6 @@ void SQSService::ListQueues(const QString &prefix, const long pageSize, const lo
                           } else {
                               logError << error;
                           }
-                          logInfo << "SQS queue list updated [" << timer.elapsed() << "]";
                           emit EventBus::instance().TimerSignal("ListQueues", timer.elapsed());
                       });
 }

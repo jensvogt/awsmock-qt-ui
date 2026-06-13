@@ -47,6 +47,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(1, "name", -1);
+    _tableView->setServiceApis(_secretsManagerService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -74,7 +75,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addWidget(_tableView, 2);
 }
 
-SecretList::~SecretList() =default;
+SecretList::~SecretList() = default;
 
 void SecretList::LoadContent() {
     _secretsManagerService->ListSecrets(_tableView->GetPrefix(), _tableView->GetPageSize(), _tableView->GetPageIndex(), _tableView->GetSortAttribute(), _tableView->GetSortDirection());

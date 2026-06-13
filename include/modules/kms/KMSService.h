@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_KMS_SERVICE_H
-#define AWSMOCK_QT_UI_KMS_SERVICE_H
+#pragma once
 
 // QT includes
 #include <QMessageBox>
@@ -25,7 +24,9 @@ public:
     /**
      * @brief KMS service
      */
-    KMSService() = default;
+    KMSService() {
+        setApis({"ListKmsKeys", "GetKeyCounter", "UpdateKeyCounter", "DeleteKey"});
+    }
 
     /**
      * @brief List KMS keys
@@ -57,21 +58,21 @@ public:
 
 signals:
     /**
-     * @brief Send when a new key list is available
+     * @brief Send it when a new key list is available
      *
      * @param kmsKeyListResponse KMS key list response
      */
     void ListKeysSignal(const KMSListKeysResponse &kmsKeyListResponse);
 
     /**
-     * @brief Send when a new key counter is available
+     * @brief Send it when a new key counter is available
      *
      * @param getKeyCounterResponse KMS get key response
      */
     void GetKeyCounterSignal(const KMSGetKeyCounterResponse &getKeyCounterResponse);
 
     /**
-     * @brief Send when a new key list is available
+     * @brief Send it when a new key list is available
      */
     void ReloadKeysSignal();
 
@@ -81,6 +82,3 @@ private:
      */
     RestManager _restManager;
 };
-
-
-#endif // AWSMOCK_QT_UI_KMS_SERVICE_H

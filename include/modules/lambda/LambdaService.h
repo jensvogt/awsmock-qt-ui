@@ -25,7 +25,6 @@
 #include <dto/lambda/LambdaListResultsResponse.h>
 #include <dto/lambda/LambdaGetResultResponse.h>
 #include <dto/lambda/LambdaUploadRequest.h>
-#include <dto/lambda/LambdaUploadRequest.h>
 #include <dto/lambda/LambdaListArnsResponse.h>
 
 class LambdaService final : public BaseService {
@@ -35,7 +34,13 @@ public:
     /**
      * @brief LambdaService
      */
-    LambdaService() = default;
+    LambdaService() {
+        setApis({
+            "ListLambdas", "GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment",
+            "ListLambdaLogs", "GetLambdaResult", "GetLambdaResults", "UploadLambdaCode", "UpdateLambda", "UpdateLambdaEnvironment", "RebuildLambda",
+            "ListLambdaArns", "StartInstance", "StopInstance", "DeleteLambda", "DeleteLambdaResults"
+        });
+    }
 
     /**
      * @brief List lambdas
@@ -242,7 +247,7 @@ signals:
      * @brief Reload lambda instance list signal
      */
     void ReloadLambdaInstances();
-    
+
 private:
     /**
      * @brief HTTP REST manager

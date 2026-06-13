@@ -64,32 +64,32 @@ static std::function<void()> makeRequest(
 std::function<void()> RestManager::post(const QUrl &url,
                                         const QByteArray &body,
                                         const QMap<QString, QString> &headers,
-                                        std::function<void(bool, QByteArray, int, QString)> callback) {
-    return makeRequest(m_manager, QNetworkAccessManager::PostOperation, url, body, headers, std::move(callback));
+                                        const std::function<void(bool, QByteArray, int, QString)> &callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::PostOperation, url, body, headers, callback);
 }
 
 std::function<void()> RestManager::get(const QUrl &url,
                                        const QMap<QString, QString> &headers,
-                                       std::function<void(bool, QByteArray, int, QString)> callback) {
-    return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, {}, headers, std::move(callback));
+                                       const std::function<void(bool, QByteArray, int, QString)> &callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, {}, headers, callback);
 }
 
 std::function<void()> RestManager::get(const QUrl &url,
                                        const QByteArray &body,
                                        const QMap<QString, QString> &headers,
-                                       std::function<void(bool, QByteArray, int, QString)> callback) {
-    return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, body, headers, std::move(callback));
+                                       const std::function<void(bool, QByteArray, int, QString)> &callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::GetOperation, url, body, headers, callback);
 }
 
 std::function<void()> RestManager::put(const QUrl &url,
                                        const QByteArray &body,
                                        const QMap<QString, QString> &headers,
-                                       std::function<void(bool, QByteArray, int, QString)> callback) {
-    return makeRequest(m_manager, QNetworkAccessManager::PutOperation, url, body, headers, std::move(callback));
+                                       const std::function<void(bool, QByteArray, int, QString)> &callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::PutOperation, url, body, headers, callback);
 }
 
 std::function<void()> RestManager::del(const QUrl &url,
                                        const QMap<QString, QString> &headers,
-                                       std::function<void(bool, QByteArray, int, QString)> callback) {
-    return makeRequest(m_manager, QNetworkAccessManager::DeleteOperation, url, {}, headers, std::move(callback));
+                                       const std::function<void(bool, QByteArray, int, QString)> &callback) {
+    return makeRequest(m_manager, QNetworkAccessManager::DeleteOperation, url, {}, headers, callback);
 }

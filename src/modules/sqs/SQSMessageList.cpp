@@ -70,6 +70,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     _tableView->SetHiddenColumns({6, 7, 8});
     _tableView->SetSorting(4, "created", -1);
     _tableView->SetMultiRowSelection(true);
+    _tableView->setServiceApis(_sqsService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -97,7 +98,7 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     layout->addWidget(_tableView, 6);
 }
 
-SQSMessageList::~SQSMessageList() =default;
+SQSMessageList::~SQSMessageList() = default;
 
 void SQSMessageList::LoadContent() {
 

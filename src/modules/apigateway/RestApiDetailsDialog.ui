@@ -15,7 +15,10 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="topMargin">
+      <number>0</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -40,48 +43,81 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="createdEdit">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="5" column="0">
+      <widget class="QLabel" name="rootResourceIdLabel">
+       <property name="text">
+        <string>Root Resource ID:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="nameLabel">
        <property name="text">
         <string>Name:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="8" column="0">
+      <widget class="QCheckBox" name="enabledCheck">
+       <property name="text">
+        <string>Enabled</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLineEdit" name="nameEdit"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLineEdit" name="rootResourceIdEdit"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="idLabel">
+       <property name="text">
+        <string>ID:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLineEdit" name="idEdit"/>
+     </item>
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout"/>
+     </item>
+     <item row="5" column="1">
       <widget class="QLabel" name="modifiedLabel">
        <property name="text">
         <string>Modified:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="createdEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
       <widget class="QLabel" name="createdLabel">
        <property name="text">
         <string>Created:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="nameEdit"/>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="modifiedEdit">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="1" column="1">
+      <widget class="QLabel" name="apiKeySourceLabel">
+       <property name="text">
+        <string>API Key Source:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="enabledCheck">
-       <property name="text">
-        <string>Enabled</string>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="apiKeySourceCombo"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="modifiedEdit">
+       <property name="enabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -90,12 +126,44 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="Tab">
       <attribute name="title">
        <string>Resources</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addResourceButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="resourceTable"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="descriptionTab">
       <attribute name="title">
@@ -106,6 +174,11 @@
         <widget class="QTextEdit" name="descriptionEdit"/>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tagTab">
+      <attribute name="title">
+       <string>Tags</string>
+      </attribute>
      </widget>
     </widget>
    </item>

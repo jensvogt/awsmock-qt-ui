@@ -30,28 +30,28 @@ public:
     std::function<void()> post(const QUrl &url,
                                const QByteArray &body,
                                const QMap<QString, QString> &headers,
-                               std::function<void(bool success,
-                                                  QByteArray response,
-                                                  int status,
-                                                  QString error)> callback);
+                               const std::function<void(bool success,
+                                                        QByteArray response,
+                                                        int status,
+                                                        QString error)> &callback);
 
     std::function<void()> get(const QUrl &url,
                               const QMap<QString, QString> &headers,
-                              std::function<void(bool success,
-                                                 QByteArray response,
-                                                 int status,
-                                                 QString error)> callback);
+                              const std::function<void(bool success,
+                                                       QByteArray response,
+                                                       int status,
+                                                       QString error)> &callback);
 
-    std::function<void()> get(const QUrl &url, const QByteArray &body, const QMap<QString, QString> &headers, std::function<void(bool, QByteArray, int, QString)> callback);
+    std::function<void()> get(const QUrl &url, const QByteArray &body, const QMap<QString, QString> &headers, const std::function<void(bool, QByteArray, int, QString)> &callback);
 
-    std::function<void()> put(const QUrl &url, const QByteArray &body, const QMap<QString, QString> &headers, std::function<void(bool, QByteArray, int, QString)> callback);
+    std::function<void()> put(const QUrl &url, const QByteArray &body, const QMap<QString, QString> &headers, const std::function<void(bool, QByteArray, int, QString)> &callback);
 
     std::function<void()> del(const QUrl &url,
                               const QMap<QString, QString> &headers,
-                              std::function<void(bool success,
-                                                 QByteArray response,
-                                                 int status,
-                                                 QString error)> callback);
+                              const std::function<void(bool success,
+                                                       QByteArray response,
+                                                       int status,
+                                                       QString error)> &callback);
 
 private:
     QNetworkAccessManager m_manager;

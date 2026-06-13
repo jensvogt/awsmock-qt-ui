@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_KMS_KEY_LIST_H
-#define AWSMOCK_QT_UI_KMS_KEY_LIST_H
+#pragma once
 
 // Qt includes
 #include <QLabel>
@@ -94,5 +93,3 @@ private:
      */
     KMSService *_kmsService;
 };
-
-#endif // AWSMOCK_QT_UI_KMS_KEY_LIST_H

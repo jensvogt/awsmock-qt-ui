@@ -80,6 +80,7 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     _tableView->SetHiddenColumns({7});
     _tableView->SetSortColumn(1, "messages");
     _tableView->SetSortDirection(-1);
+    _tableView->setServiceApis(_snsService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {

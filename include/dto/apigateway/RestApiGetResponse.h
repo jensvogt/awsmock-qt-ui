@@ -5,7 +5,7 @@
 #include <QJsonObject>
 
 // Awsmock includes
-#include <dto/apigateway/RestApiCounter.h>
+#include <dto/apigateway/model/RestApiCounter.h>
 
 struct RestApiGetResponse {
 

@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_S3_BUCKET_LIST_H
-#define AWSMOCK_QT_UI_S3_BUCKET_LIST_H
+#pragma once
 
 // Qt includes
 #include <QFormLayout>
@@ -97,5 +96,3 @@ private:
      */
     S3Service *_s3Service;
 };
-
-#endif // AWSMOCK_QT_UI_S3_BUCKET_LIST_H

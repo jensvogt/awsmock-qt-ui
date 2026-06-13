@@ -2,7 +2,7 @@
 
 // Awsmock includes
 #include <utils/Configuration.h>
-#include <dto/apigateway/RestApiCounter.h>
+#include <dto/apigateway/model/RestApiCounter.h>
 
 struct RestApiCreateRequest {
 
@@ -12,6 +12,7 @@ struct RestApiCreateRequest {
 
     bool enabled;
 
+    [[nodiscard]]
     QString ToJson() const {
         QJsonObject jRequest;
         jRequest["region"] = Configuration::instance().GetValue<QString>("awsmock.region");

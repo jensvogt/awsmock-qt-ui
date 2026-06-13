@@ -31,7 +31,7 @@ RestApiList::RestApiList(const QString &title, QWidget *parent) : BasePage(paren
     // Toolbar add action
     const auto restartAllButton = new QPushButton(IconUtils::GetIcon("restart"), "", this);
     restartAllButton->setToolTip("Restart all applications");
-    connect(restartAllButton, &QPushButton::clicked, [this]() {
+    connect(restartAllButton, &QPushButton::clicked, []() {
         //_apiGatewayService->RestartAllApplications();
     });
 
@@ -70,6 +70,7 @@ RestApiList::RestApiList(const QString &title, QWidget *parent) : BasePage(paren
     });
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(0, "name", 1);
+    _tableView->setServiceApis(_apiGatewayService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {

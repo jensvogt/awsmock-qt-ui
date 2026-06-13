@@ -77,6 +77,7 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     });
     _tableView->SetHiddenColumns({9, 10});
     _tableView->SetSorting(0, "function", 1);
+    _tableView->setServiceApis(_lambdaService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
