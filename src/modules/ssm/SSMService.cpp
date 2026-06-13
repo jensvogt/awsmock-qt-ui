@@ -1,7 +1,5 @@
 #include <modules/ssm/SSMService.h>
 
-#include "utils/Logging.h"
-
 void SSMService::CreateParameter(const SSMParameterCounter &parameter) {
     QElapsedTimer timer;
     timer.start();

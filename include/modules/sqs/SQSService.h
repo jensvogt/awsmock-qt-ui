@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SQS_SERVICE_H
-#define AWSMOCK_QT_UI_SQS_SERVICE_H
+#pragma once
 
 // Qt includes
 #include <QElapsedTimer>
@@ -11,6 +10,7 @@
 #include <dto/sns/SNSSendMessageResponse.h>
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <dto/sqs/SQSGetQueueDetailsResponse.h>
+#include <dto/sqs/SQSIsDlqResponse.h>
 #include <dto/sqs/SQSListMessagesResponse.h>
 #include <dto/sqs/SQSListQueueAttributesResponse.h>
 #include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
@@ -28,8 +28,6 @@
 #include <utils/Logging.h>
 #include <utils/RestManager.h>
 
-#include "dto/sqs/SQSIsDlqResponse.h"
-
 class SQSService final : public BaseService {
     Q_OBJECT
 
@@ -37,10 +35,18 @@ public:
     /**
      * @brief SQSService
      */
-    SQSService() = default;
+    SQSService() {
+        setApis({
+            "ListQueues", "ListQueueArns", "PurgeQueue", "PurgeAllQueues", "AddQueue", "RedriveQueue", "GetQueueDetails",
+            "ResetMessageCounters", "UpdateQueue", "ListQueueAttributes", "ListQueueLambdaTriggers", "ListQueueDefaultAttributes",
+            "AddQueueDefaultAttributes", "UpdateQueueDefaultAttributes", "DeleteQueueDefaultAttributes", "ListMessages",
+            "PurgeAllMessages", "GetSqsMessageDetails", "SendMessage", "ResendMessage", "RedriveMessage", "DeleteMessage",
+            "ListQueueTags", "TagQueue", "IsDlq"
+        });
+    }
 
     /**
-     * @brief List SQS Queues
+     * @brief List of SQS Queues
      *
      * @param prefix queue name prefix
      * @param pageSize page size
@@ -301,24 +307,24 @@ signals:
     void ReloadMessagesSignal();
 
     /**
-     * @brief Send when new messages are available
+     * @brief Send it when new messages are available
      *
      * @param response message response
      */
     void SendMessagesSignal(const SQSSendMessageResponse &response);
 
     /**
-     * @brief Sent when the tags list arrived
+     * @brief Sent when the tag list arrived
      */
     void ListQueueTagsSignal(const SQSListQueueTagsResponse &response);
 
     /**
-     * @brief Sent when the tags list should be updated
+     * @brief Sent when the tag list should be updated
      */
     void ReloadQueueTagsSignal();
 
     /**
-     * @brief Sent when the tags list should be updated
+     * @brief Sent when the tag list should be updated
      *
      * @param response is DLQ response
      */
@@ -335,5 +341,3 @@ private:
      */
     QTableWidget *tableWidget{};
 };
-
-#endif // SQS_SERVICE_H

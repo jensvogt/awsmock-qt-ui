@@ -168,7 +168,10 @@ set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/M
 set(API_GATEWAY_SOURCES src/modules/apigateway/RestApiList.cpp include/modules/apigateway/ApiGatewayService.h
         include/modules/apigateway/RestApiList.h src/modules/apigateway/ApiGatewayService.cpp
         src/modules/apigateway/RestApiDetailsDialog.cpp include/modules/apigateway/RestApiDetailsDialog.h
-        src/modules/apigateway/RestApiDetailsDialog.ui)
+        src/modules/apigateway/RestApiDetailsDialog.ui include/dto/apigateway/model/RestApiResource.h
+        include/dto/apigateway/model/RestApiResourceMethod.h include/dto/apigateway/model/RestApiCounter.h
+        src/modules/apigateway/ResourceDialog.cpp include/modules/apigateway/ResourceDialog.h
+        src/modules/apigateway/ResourceDialog.ui include/dto/apigateway/ResourceCreateRequest.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h

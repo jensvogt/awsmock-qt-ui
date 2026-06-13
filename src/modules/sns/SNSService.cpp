@@ -1,7 +1,5 @@
 #include <modules/sns/SNSService.h>
 
-#include "dto/sns/SNSSubscriptionResponse.h"
-
 void SNSService::AddTopic(const QString &region, const QString &topicName) {
     QElapsedTimer timer;
     timer.start();

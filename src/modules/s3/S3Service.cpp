@@ -37,7 +37,7 @@ void S3Service::ListBuckets(const QString &prefix, const long pageSize, const lo
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("AddTopic", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListBuckets", timer.elapsed());
                       });
 }
 
@@ -82,7 +82,7 @@ void S3Service::PurgeAllBuckets() {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().TimerSignal("PurgeBucket", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("PurgeAllBuckets", timer.elapsed());
                       });
 }
 
@@ -406,7 +406,7 @@ void S3Service::TouchObject(const QString &bucketName, const QString &key) {
                           {"x-awsmock-action", "TouchObject"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {
@@ -433,7 +433,7 @@ void S3Service::DeleteObject(const QString &bucketName, const QString &key) {
                           {"x-awsmock-action", "DeleteObjectCounter"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
                           if (success) {
                               emit ReloadObjectsSignal();
                           } else {

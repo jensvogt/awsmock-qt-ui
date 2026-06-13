@@ -50,6 +50,7 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({3});
     _tableView->SetSorting(0, "name", 1);
+    _tableView->setServiceApis(_ssmService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
