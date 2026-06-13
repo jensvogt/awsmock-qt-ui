@@ -37,7 +37,7 @@ void KMSService::ListKmsKeys(const QString &prefix) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().DockerStatsTimerSignal("ListKmsKeys", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListKmsKeys", timer.elapsed());
                       });
 }
 

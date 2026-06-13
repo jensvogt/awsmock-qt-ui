@@ -12,9 +12,14 @@ message(STATUS "Configured version: ${PROJECT_VERSION}")
 
 # Export version to source code
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_SOURCE_DIR}/include/Version.h)
-update_xml_version("${CMAKE_SOURCE_DIR}/installer/config/config.xml" "${VERSION_STRING}" "Version")
-update_xml_version("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml" "${VERSION_STRING}" "Version")
-update_release_date("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml")
+file(READ "${CMAKE_SOURCE_DIR}/installer/config/config.xml.in" _CONFIG_XML)
+string(REPLACE "@VERSION_STRING@" "${VERSION_STRING}" _CONFIG_XML "${_CONFIG_XML}")
+file(WRITE "${CMAKE_SOURCE_DIR}/installer/config/config.xml" "${_CONFIG_XML}")
+string(TIMESTAMP _RELEASE_DATE "%Y-%m-%d %H:%M:%S")
+file(READ "${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml.in" _PACKAGE_XML)
+string(REPLACE "@VERSION_STRING@" "${VERSION_STRING}" _PACKAGE_XML "${_PACKAGE_XML}")
+string(REPLACE "@RELEASE_DATE@" "${_RELEASE_DATE}" _PACKAGE_XML "${_PACKAGE_XML}")
+file(WRITE "${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml" "${_PACKAGE_XML}")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
