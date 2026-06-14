@@ -38,9 +38,7 @@ void LambdaService::ListLambdas(const QString &prefix, const long pageSize, cons
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("ListLambdas", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListLambdas", timer.elapsed());
                       });
 }
 
@@ -71,9 +69,7 @@ void LambdaService::GetLambda(const QString &lambdaArn) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("GetLambda", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetLambda", timer.elapsed());
                       });
 }
 

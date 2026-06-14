@@ -1,12 +1,10 @@
-#ifndef AWSMOCK_QT_UI_SQS_IS_DLQ_RESPONSE_H
-#define AWSMOCK_QT_UI_SQS_IS_DLQ_RESPONSE_H
+#pragma once
 
+// Qt include
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
-
-#include <dto/sqs/SQSQueueCounter.h>
 
 struct SQSIsDlqResponse {
 
@@ -22,5 +20,3 @@ struct SQSIsDlqResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_IS_DLQ_RESPONSE_H

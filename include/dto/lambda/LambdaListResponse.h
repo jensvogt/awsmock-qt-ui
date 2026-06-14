@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_LAMBDA_LIST_RESPONSE_H
-#define AWSMOCK_QT_UI_LAMBDA_LIST_RESPONSE_H
+#pragma once
 
 // Qt includes
 #include <QList>
@@ -11,7 +10,7 @@
 #include <dto/lambda/LambdaCounter.h>
 
 struct LambdaListResponse {
- long total{};
+    long total{};
 
     QList<LambdaCounter> lambdaCounters;
 
@@ -26,5 +25,3 @@ struct LambdaListResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_LAMBDA_LIST_RESPONSE_H

@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SQS_LIST_QUEUE_LAMBDA_TRIGGERS_RESPONSE_H
-#define AWSMOCK_QT_UI_SQS_LIST_QUEUE_LAMBDA_TRIGGERS_RESPONSE_H
+#pragma once
 
 // Qt includes
 #include <QJsonArray>
@@ -22,5 +21,3 @@ struct SQSListQueueLambdaTriggersResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_LIST_QUEUE_LAMBDA_TRIGGERS_RESPONSE_H

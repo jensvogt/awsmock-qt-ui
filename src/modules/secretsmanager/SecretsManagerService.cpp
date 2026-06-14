@@ -91,9 +91,10 @@ void SecretsManagerService::GetSecret(const QString &secretId) {
                           {"x-awsmock-action", "GetSecretDetails"},
                           {"content-type", "application/json"}
                       },
-                      [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an JSON secretsManager counter list
+                              std::cerr << response.toStdString() << std::endl;
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SecretCounter secretCounter;
                                   secretCounter.FromJson(jsonDoc.object());

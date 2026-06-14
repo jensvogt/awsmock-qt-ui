@@ -1,11 +1,12 @@
-#ifndef GET_QUEUE_DETAILS_RESPONSE_H
-#define GET_QUEUE_DETAILS_RESPONSE_H
+#pragma once
 
 #include <QJsonDocument>
-#include <QJsonObject>
 #include <QJsonArray>
 
 struct SQSGetQueueDetailsResponse {
+
+    QString region;
+
     QString queueName;
 
     QString queueUrl;
@@ -39,6 +40,7 @@ struct SQSGetQueueDetailsResponse {
     QDateTime modified;
 
     void FromJson(const QJsonDocument &jsonDoc) {
+        region = jsonDoc["region"].toString();
         queueName = jsonDoc["queueName"].toString();
         queueUrl = jsonDoc["queueUrl"].toString();
         queueArn = jsonDoc["queueArn"].toString();
@@ -58,5 +60,3 @@ struct SQSGetQueueDetailsResponse {
         modified = QDateTime::fromString(jsonDoc["modified"].toString(), Qt::ISODate);
     }
 };
-
-#endif // GET_QUEUE_DETAILS_RESPONSE_H

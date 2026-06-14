@@ -1,7 +1,6 @@
-#ifndef AWSMOCK_QT_UI_SQS_QUEUE_ATTRIBUTE_COUNTER_H
-#define AWSMOCK_QT_UI_SQS_QUEUE_ATTRIBUTE_COUNTER_H
+#pragma once
 
-#include <QDateTime>
+// Qt includes
 #include <QJsonObject>
 
 struct SQSQueueAttributeCounter {
@@ -15,6 +14,3 @@ struct SQSQueueAttributeCounter {
         value = jsonObject["attributeValue"].toString();
     }
 };
-
-
-#endif // AWSMOCK_QT_UI_SQS_QUEUE_ATTRIBUTE_COUNTER_H
