@@ -251,10 +251,9 @@ void MainWindow::ExportInfrastructure() {
         const ExportType exportType = dialog->GetExportType();
 
         disconnect(_moduleService, &ModuleService::GetInfrastructureSignal, nullptr, nullptr);
-        connect(_moduleService, &ModuleService::GetInfrastructureSignal, this,
-                [this, filePath](const QString &infrastructure) {
-                    WriteInfrastructureExport(filePath, infrastructure);
-                });
+        connect(_moduleService, &ModuleService::GetInfrastructureSignal, this, [this, filePath](const QString &infrastructure) {
+            WriteInfrastructureExport(filePath, infrastructure);
+        });
 
         _moduleService->GetInfrastructure(modules, exportType, true);
         Configuration::instance().SetValue<QString>("ui.default-directory.ExportInfrastructure", QFileInfo(filePath).absolutePath());

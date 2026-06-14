@@ -50,10 +50,14 @@ public:
      */
     void Initialize();
 
+    void InitializeAuthorizerTab();
+
     /**
      * @brief Destructor
      */
     ~RestApiDetailsDialog() override;
+
+    void InitializeResourceTab();
 
     /**
      * @brief Handle the OK button clicks

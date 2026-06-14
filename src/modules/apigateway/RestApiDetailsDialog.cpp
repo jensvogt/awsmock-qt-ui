@@ -23,6 +23,10 @@ RestApiDetailsDialog::RestApiDetailsDialog(QString name, QWidget *parent) : Base
     _apiGatewayService->GetRestApi(_name);
 }
 
+RestApiDetailsDialog::~RestApiDetailsDialog() {
+    delete _ui;
+}
+
 void RestApiDetailsDialog::Initialize() {
 
     // Set up service
@@ -52,6 +56,62 @@ void RestApiDetailsDialog::Initialize() {
     connect(_ui->enabledCheck, &QCheckBox::checkStateChanged, this, [this](int) { _changed = true; });
     connect(_ui->descriptionEdit, &QTextEdit::textChanged, this, [this]() { _changed = true; });
 
+    InitializeResourceTab();
+    InitializeAuthorizerTab();
+
+    // API key source
+    const QStringList sources = {"HEADER", "AUTHORIZER", "UNKNOWN"};
+    _ui->apiKeySourceCombo->addItems(sources);
+    _ui->apiKeySourceCombo->setCurrentIndex(0);
+}
+
+void RestApiDetailsDialog::InitializeAuthorizerTab() {
+
+    // Resource table
+    const QStringList headers = QStringList() = {tr("ID"), tr("Name"), tr("Type"), tr("Created"), tr("Modified")};
+    _ui->authorizerTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->authorizerTable->setShowGrid(true);
+    _ui->authorizerTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->authorizerTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->authorizerTable->setHorizontalHeaderLabels(headers);
+    _ui->authorizerTable->setSortingEnabled(true);
+    _ui->authorizerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->authorizerTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->authorizerTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _ui->authorizerTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _ui->authorizerTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _ui->authorizerTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+
+    // Connect double-click
+    connect(_ui->authorizerTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
+
+        const QString authorizerId = _ui->resourceTable->item(row, 0)->text();
+
+        // Open details dialog
+        // if (ResourceDialog dialog; dialog.exec() == Accepted) {
+        //     _apiGatewayService->GetRestApi(_name);
+        // }
+        // _changed = true;
+    });
+    //
+    // // Add context menu
+    // _ui->resourceTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    // connect(_ui->resourceTable, &QTableWidget::customContextMenuRequested, this, &RestApiDetailsDialog::ShowResourcesContextMenu);
+    //
+    // // Add resource button
+    // _ui->addResourceButton->setText(nullptr);
+    // _ui->addResourceButton->setIcon(IconUtils::GetIcon("add"));
+    // connect(_ui->addResourceButton, &QPushButton::clicked, [this]() {
+    //     if (ResourceDialog dialog(this); dialog.exec() == Accepted) {
+    //         _apiGatewayService->GetRestApi(_name);
+    //     }
+    // });
+}
+
+void RestApiDetailsDialog::InitializeResourceTab() {
+
     // Resource table
     const QStringList headers = QStringList() = {tr("ID"), tr("Name"), tr("ParentId"), tr("Created"), tr("Modified")};
     _ui->resourceTable->setColumnCount(static_cast<int>(headers.count()));
@@ -67,6 +127,20 @@ void RestApiDetailsDialog::Initialize() {
     _ui->resourceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _ui->resourceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
+    // Connect double-click
+    connect(_ui->resourceTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
+
+        const QString resourceId = _ui->resourceTable->item(row, 0)->text();
+
+        // Open details dialog
+        if (ResourceDialog dialog; dialog.exec() == Accepted) {
+            _apiGatewayService->GetRestApi(_name);
+        }
+        _changed = true;
+    });
+
     // Add context menu
     _ui->resourceTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->resourceTable, &QTableWidget::customContextMenuRequested, this, &RestApiDetailsDialog::ShowResourcesContextMenu);
@@ -79,15 +153,6 @@ void RestApiDetailsDialog::Initialize() {
             _apiGatewayService->GetRestApi(_name);
         }
     });
-
-    // API key source
-    QStringList sources = {"HEADER", "AUTHORIZER", "UNKNOWN"};
-    _ui->apiKeySourceCombo->addItems(sources);
-    _ui->apiKeySourceCombo->setCurrentIndex(0);
-}
-
-RestApiDetailsDialog::~RestApiDetailsDialog() {
-    delete _ui;
 }
 
 void RestApiDetailsDialog::HandleAccept() {
@@ -135,8 +200,25 @@ void RestApiDetailsDialog::HandleGet(const RestApiGetResponse &restApiGetRespons
     }
     _ui->resourceTable->setRowCount(static_cast<int>(restApiGetResponse.restApiCounter.resources.count()));
     _ui->resourceTable->setSortingEnabled(true);
-    //_ui->resourceTable->sortItems(_instanceSortColumn, _instanceSortOrder);
     _ui->resourceTable->selectRow(selectedRow);
+
+    const int selectedAuthRow = _ui->authorizerTable->selectionModel()->currentIndex().row();
+    _ui->authorizerTable->setRowCount(0);
+    _ui->authorizerTable->setSortingEnabled(false);
+    auto ar = 0;
+    for (const auto &[key, authorizer]: restApiGetResponse.restApiCounter.authorizers.asKeyValueRange()) {
+        auto c = 0;
+        _ui->authorizerTable->insertRow(ar);
+        SetColumn(_ui->authorizerTable, ar, c++, authorizer.id);
+        SetColumn(_ui->authorizerTable, ar, c++, authorizer.name);
+        SetColumn(_ui->authorizerTable, ar, c++, authorizer.type);
+        SetColumn(_ui->authorizerTable, ar, c++, authorizer.created);
+        SetColumn(_ui->authorizerTable, ar, c++, authorizer.modified);
+        ar++;
+    }
+    _ui->authorizerTable->setRowCount(static_cast<int>(restApiGetResponse.restApiCounter.authorizers.count()));
+    _ui->authorizerTable->setSortingEnabled(true);
+    _ui->authorizerTable->selectRow(selectedAuthRow);
 }
 
 void RestApiDetailsDialog::ShowResourcesContextMenu(const QPoint &pos) {

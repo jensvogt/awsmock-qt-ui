@@ -68,13 +68,14 @@ void LambdaUploadCodeDialog::dropEvent(QDropEvent *event) {
 void LambdaUploadCodeDialog::HandleBrowse() {
     // Create a QFileDialog set to select existing files
     const QString filter = "All Files (*.*)";
-    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory", "/usr/local/awsmock-qt-ui");
+    const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.LambdaUploadCodeDialog", "/usr/local/awsmock-qt-ui");
 
     if (const QString filePath = QFileDialog::getOpenFileName(nullptr, "Open lambda code file", defaultDir, filter); !filePath.isEmpty()) {
         const QString version = FileUtils::ExtractVersionFromFileName(filePath);
         _ui->filenameEdit->setText(filePath);
         _ui->versionEdit->setText(version);
         _fileInfo = QFileInfo(filePath);
+        Configuration::instance().SetValue<QString>("ui.default-directory.LambdaUploadCodeDialog", _fileInfo.absolutePath());
     }
 }
 

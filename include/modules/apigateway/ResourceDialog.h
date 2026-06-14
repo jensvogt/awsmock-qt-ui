@@ -37,7 +37,7 @@ public:
      * @param resourceId ID of the resource
      * @param parent parent widget
      */
-    ResourceDialog(const RestApiCounter &restApi, const QString &resourceId, QWidget *parent);
+    ResourceDialog(const RestApiCounter &restApi, const QString &resourceId, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
