@@ -6,6 +6,7 @@
 #include <QJsonObject>
 
 // Awsmock includes
+#include <dto/apigateway/model/RestApiAuthorizer.h>
 #include <dto/apigateway/model/RestApiResource.h>
 
 struct RestApiCounter {
@@ -21,6 +22,8 @@ struct RestApiCounter {
     QVector<QString> binaryMediaTypes;
 
     QMap<QString, RestApiResource> resources;
+
+    QMap<QString, RestApiAuthorizer> authorizers;
 
     bool enabled{};
 
@@ -56,6 +59,12 @@ struct RestApiCounter {
             resource.fromJson(jResources[key].toObject());
             resources[key] = resource;
         }
+
+        for (const QJsonObject jAuthorizers = jsonObject["authorizers"].toObject(); const QString &key: jAuthorizers.keys()) {
+            RestApiAuthorizer authorizer;
+            authorizer.fromJson(jAuthorizers[key].toObject());
+            authorizers[key] = authorizer;
+        }
     }
 
     [[nodiscard]]
@@ -75,6 +84,11 @@ struct RestApiCounter {
             jResources[resource.id] = resource.toJson();
         }
         jsonObject["resources"] = jResources;
+        QJsonObject jAuthorizers;
+        for (const auto &authorizer: authorizers) {
+            jAuthorizers[authorizer.id] = authorizer.toJson();
+        }
+        jsonObject["authorizers"] = jAuthorizers;
         return jsonObject;
     }
 };

@@ -4,6 +4,7 @@
 
 #include <modules/module/ModuleExportDialog.h>
 #include "ui_ModuleExportDialog.h"
+#include "utils/FileUtils.h"
 
 QStringList ModuleExportDialog::_excluded = {"gateway", "monitoring"};
 
@@ -18,7 +19,8 @@ ModuleExportDialog::ModuleExportDialog(QWidget *parent) : BaseDialog(parent), _u
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ModuleExportDialog::HandleReject);
 
     // Setup filename
-    _ui->filenameEdit->setText(Configuration::instance().GetValue<QString>("ui.default-file.ExportInfrastructure"));
+    const QString fullPath = FileUtils::appendPath(Configuration::instance().GetValue<QString>("ui.default-directory.ExportInfrastructure"), Configuration::instance().GetValue<QString>("ui.default-file.ExportInfrastructure"));
+    _ui->filenameEdit->setText(fullPath);
     _ui->browseButton->setText(nullptr);
     _ui->browseButton->setIcon(IconUtils::GetIcon("browse"));
     connect(_ui->browseButton, &QPushButton::clicked, this, &ModuleExportDialog::HandleBrowseButton);

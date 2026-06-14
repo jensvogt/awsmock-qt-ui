@@ -2,8 +2,7 @@
 // Created by vogje01 on 11/8/25.
 //
 
-#ifndef AWSMOCK_QT_UI_LAMBDA_UPLOAD_CODE_DIALOG_H
-#define AWSMOCK_QT_UI_LAMBDA_UPLOAD_CODE_DIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QDropEvent>
@@ -68,6 +67,3 @@ private:
      */
     QString _lambdaArn;
 };
-
-
-#endif //AWSMOCK_QT_UI_LAMBDA_UPLOAD_CODE_DIALOG_H

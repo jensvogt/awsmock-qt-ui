@@ -45,6 +45,11 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
         }
     });
 
+    // Enabled
+    connect(_ui->enabledCheckBox, &QCheckBox::checkStateChanged, this, [this](int) {
+        _lambdaService->UpdateLambda(_lambdaArn, _ui->enabledCheckBox->isChecked());
+    });
+    
     // Setup instances tab
     SetupInstancesTab();
 
@@ -86,6 +91,7 @@ void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetRespons
     _ui->avgExecutionEdit->setText(QString::number(lambdaGetResponse.averageRuntime));
     _ui->zipFileEdit->setText(lambdaGetResponse.zipFile);
     _ui->statusEdit->setText(lambdaGetResponse.state);
+    _ui->enabledCheckBox->setCheckState(lambdaGetResponse.enabled ? Qt::CheckState::Checked : Qt::Unchecked);
 }
 
 void LambdaDetailsDialog::ReloadLambdaInstances() {
