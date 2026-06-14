@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SSM_PARAMETER_PUT_RESULT_H
-#define AWSMOCK_QT_UI_SSM_PARAMETER_PUT_RESULT_H
+#pragma once
 
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -15,5 +14,3 @@ struct SSMParameterPutResponse {
         version = jsonDoc["Version"].toInt();
     }
 };
-
-#endif // AWSMOCK_QT_UI_SSM_PARAMETER_PUT_RESULT_H

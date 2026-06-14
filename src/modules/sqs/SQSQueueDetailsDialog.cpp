@@ -1,4 +1,3 @@
-#include <QStringListModel>
 #include <modules/sqs/SQSQueueDetailsDialog.h>
 #include "ui_SQSQueueDetailsDialog.h"
 
@@ -47,6 +46,7 @@ void SQSQueueDetailsDialog::UpdateQueueDetails(const SQSGetQueueDetailsResponse 
 
     _queueUrl = response.queueUrl;
     _queueArn = response.queueArn;
+    _ui->regionEdit->setText(response.region);
     _ui->queueNameEdit->setText(response.queueName);
     _ui->queueArnEdit->setText(response.queueArn);
     _ui->queueUrlEdit->setText(response.queueUrl);
@@ -369,7 +369,7 @@ void SQSQueueDetailsDialog::SetupMainQueuesTab() {
     connect(_ui->mainQueuesRefreshButton, &QPushButton::clicked, [this]() {
         _sqsService->IsDlq(_queueArn);
     });
-    
+
     // Get the DLQs
     _sqsService->IsDlq(_queueArn);
     connect(_sqsService, &SQSService::IsDlqSignal, this, [this](const SQSIsDlqResponse &isDlqResponse) {

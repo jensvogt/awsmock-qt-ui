@@ -1,8 +1,10 @@
-#ifndef AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H
-#define AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H
+#pragma once
 
+// Qt includes
 #include <QMenu>
+#include <QStringListModel>
 
+// Awsmock includes
 #include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 #include <dto/sqs/SQSListQueueTagsResponse.h>
 #include <dto/sqs/SQSUpdateTagsRequest.h>
@@ -94,7 +96,7 @@ private:
     /**
      * @brief DLQ flag
      */
-    bool _isDlq;
+    bool _isDlq{};
 
     /**
      * @brief List of main queues
@@ -169,5 +171,3 @@ private:
      */
     QStandardItemModel *_tagsModel{};
 };
-
-#endif // AWSMOCK_QT_UI_SQS_QUEUE_DETAILS_DIALOG_H

@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SEND_MESSAGE_REQUEST_H
-#define AWSMOCK_QT_UI_SEND_MESSAGE_REQUEST_H
+#pragma once
 
 // Qt includes
 #include <QJsonDocument>
@@ -51,5 +50,3 @@ struct SQSSendMessageRequest {
         return jDoc.toJson();
     }
 };
-
-#endif // AWSMOCK_QT_UI_SEND_MESSAGE_REQUEST_H

@@ -55,16 +55,6 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QLineEdit" name="retentionPeriodEdit"/>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="dlqArnLabel">
-      <property name="text">
-       <string>DLQ ARN:</string>
-      </property>
-     </widget>
-    </item>
     <item row="10" column="0">
      <widget class="QLabel" name="ownerLabel">
       <property name="text">
@@ -103,23 +93,6 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
-     <widget class="QLineEdit" name="dlqMaxReceiveEdit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="2">
-     <widget class="QLineEdit" name="modifiedEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
     <item row="7" column="1">
      <widget class="QLineEdit" name="availableEdit">
       <property name="enabled">
@@ -130,114 +103,8 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QLabel" name="messageCountLabel">
-      <property name="text">
-       <string>Message Count:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="queueArnLabel">
-      <property name="text">
-       <string>Queue ARN:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="2">
-     <widget class="QLabel" name="modifiedLabel">
-      <property name="text">
-       <string>Modified:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLineEdit" name="messageCountEdit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="retentionPeriodLabel">
-      <property name="text">
-       <string>RetentionPeriod (s):</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="2">
-     <widget class="QLabel" name="createdLabel">
-      <property name="text">
-       <string>Created:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
-     <widget class="QLineEdit" name="messageSizeEdit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLineEdit" name="dlqArnEdit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="queueUrlLabel">
-      <property name="text">
-       <string>Queue URL:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLineEdit" name="queueUrlEdit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLineEdit" name="queueArnEdit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="queueNameLabel">
-      <property name="text">
-       <string>Queue Name:</string>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="1">
      <widget class="QLineEdit" name="delayEdit"/>
-    </item>
-    <item row="7" column="2">
-     <widget class="QLineEdit" name="createdEdit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
     </item>
     <item row="6" column="1">
      <widget class="QLabel" name="availableLabel">
@@ -246,24 +113,10 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="dlqMacReceivedLabel">
-      <property name="text">
-       <string>DLQ Max Receive:</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1">
      <widget class="QLabel" name="visibilityLabel">
       <property name="text">
        <string>Visibility (s):</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QLabel" name="messageSizeLabel">
-      <property name="text">
-       <string>Total Size:</string>
       </property>
      </widget>
     </item>
@@ -304,7 +157,147 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="11" column="2">
+     <widget class="QLineEdit" name="modifiedEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="2">
+     <widget class="QLabel" name="modifiedLabel">
+      <property name="text">
+       <string>Modified:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QLineEdit" name="createdEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QLabel" name="createdLabel">
+      <property name="text">
+       <string>Created:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLineEdit" name="messageSizeEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QLabel" name="messageSizeLabel">
+      <property name="text">
+       <string>Total Size:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QLineEdit" name="messageCountEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLabel" name="messageCountLabel">
+      <property name="text">
+       <string>Message Count:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLineEdit" name="retentionPeriodEdit"/>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLabel" name="retentionPeriodLabel">
+      <property name="text">
+       <string>RetentionPeriod (s):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="dlqMacReceivedLabel">
+      <property name="text">
+       <string>DLQ Max Receive:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="dlqMaxReceiveEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLineEdit" name="dlqArnEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="dlqArnLabel">
+      <property name="text">
+       <string>DLQ ARN:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLineEdit" name="queueUrlEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="queueUrlLabel">
+      <property name="text">
+       <string>Queue URL:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLineEdit" name="queueArnEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="queueArnLabel">
+      <property name="text">
+       <string>Queue ARN:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
      <widget class="QLineEdit" name="queueNameEdit">
       <property name="enabled">
        <bool>true</bool>
@@ -313,6 +306,23 @@
        <bool>true</bool>
       </property>
      </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="queueNameLabel">
+      <property name="text">
+       <string>Queue Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="regionLabel">
+      <property name="text">
+       <string>Region:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="regionEdit"/>
     </item>
    </layout>
   </widget>
@@ -578,11 +588,6 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>queueNameEdit</tabstop>
-  <tabstop>queueArnEdit</tabstop>
-  <tabstop>queueUrlEdit</tabstop>
-  <tabstop>dlqArnEdit</tabstop>
-  <tabstop>dlqMaxReceiveEdit</tabstop>
   <tabstop>ownerEdit</tabstop>
   <tabstop>visibilityEdit</tabstop>
   <tabstop>delayEdit</tabstop>
@@ -590,11 +595,6 @@
   <tabstop>availableEdit</tabstop>
   <tabstop>invisibleEdit</tabstop>
   <tabstop>delayedEdit</tabstop>
-  <tabstop>retentionPeriodEdit</tabstop>
-  <tabstop>messageCountEdit</tabstop>
-  <tabstop>messageSizeEdit</tabstop>
-  <tabstop>createdEdit</tabstop>
-  <tabstop>modifiedEdit</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>attributesTable</tabstop>
   <tabstop>attributeRefreshButton</tabstop>

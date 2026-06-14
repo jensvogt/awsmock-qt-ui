@@ -1,6 +1,6 @@
-#ifndef AWSMOCK_QT_UI_SQS_QUEUE_COUNTER_H
-#define AWSMOCK_QT_UI_SQS_QUEUE_COUNTER_H
+#pragma once
 
+// Qt includes
 #include <QDateTime>
 #include <QJsonObject>
 
@@ -39,6 +39,3 @@ struct SQSQueueCounter {
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
 };
-
-
-#endif // AWSMOCK_QT_UI_SQS_QUEUE_COUNTER_H

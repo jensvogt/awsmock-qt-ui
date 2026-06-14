@@ -2,8 +2,7 @@
 // Created by vogje01 on 12/19/25.
 //
 
-#ifndef AWSMOCK_QT_UI_SSM_PARAMETER_COUNTER_H
-#define AWSMOCK_QT_UI_SSM_PARAMETER_COUNTER_H
+#pragma once
 
 // Qt includes
 #include <QString>
@@ -114,6 +113,4 @@ struct SSMParameterCounter {
             }
         }
     }
-
 };
-#endif //AWSMOCK_QT_UI_SSM_PARAMETER_COUNTER_H

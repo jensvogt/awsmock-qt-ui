@@ -1,13 +1,8 @@
-#ifndef AWSMOCK_QT_UI_SQS_LIST_QUEUE_TAGS_RESPONSE_H
-#define AWSMOCK_QT_UI_SQS_LIST_QUEUE_TAGS_RESPONSE_H
+#pragma once
 
 // Qt includes
 #include <QJsonArray>
 #include <QJsonDocument>
-
-// Awsmock includes
-#include <dto/sqs/SQSQueueLambdaTriggerCounter.h>
-#include <dto/sqs/SQSMessageAttribute.h>
 
 struct SQSListQueueTagsResponse {
     long total{};
@@ -21,5 +16,3 @@ struct SQSListQueueTagsResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_LIST_QUEUE_TAGS_RESPONSE_H

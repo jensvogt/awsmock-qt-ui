@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SSM_PARAMETER_LIST_RESULT_H
-#define AWSMOCK_QT_UI_SSM_PARAMETER_LIST_RESULT_H
+#pragma once
 
 // Qt includes
 #include <QList>
@@ -27,5 +26,3 @@ struct SSMParameterListResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SSM_PARAMETER_LIST_RESULT_H

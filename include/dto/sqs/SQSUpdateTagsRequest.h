@@ -1,13 +1,8 @@
-#ifndef AWSMOCK_QT_UI_SQS_UPDATE_TAGS_REQUEST_H
-#define AWSMOCK_QT_UI_SQS_UPDATE_TAGS_REQUEST_H
+#pragma once
 
 // Qt includes
 #include <QJsonArray>
 #include <QJsonDocument>
-
-// Awsmock includes
-#include <dto/sqs/SQSQueueLambdaTriggerCounter.h>
-#include <dto/sqs/SQSMessageAttribute.h>
 
 struct SQSUpdateTagsRequest {
 
@@ -22,5 +17,3 @@ struct SQSUpdateTagsRequest {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_UPDATE_TAGS_REQUEST_H

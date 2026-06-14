@@ -1,6 +1,6 @@
-#ifndef AWSMOCK_QT_UI_SQS_LIST_QUEUE_RESPONSE_H
-#define AWSMOCK_QT_UI_SQS_LIST_QUEUE_RESPONSE_H
+#pragma once
 
+// Qt includes
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -24,5 +24,3 @@ struct SQSQueueListResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_LIST_QUEUE_RESPONSE_H

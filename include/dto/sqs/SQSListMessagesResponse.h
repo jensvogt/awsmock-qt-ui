@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SQS_LIST_MESSAGE_RESPONSE_H
-#define AWSMOCK_QT_UI_SQS_LIST_MESSAGE_RESPONSE_H
+#pragma once
 
 // Qt includes
 #include <QList>
@@ -25,5 +24,3 @@ struct SQSListMessagesResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_LIST_MESSAGE_RESPONSE_H

@@ -1,7 +1,6 @@
-#ifndef AWSMOCK_QT_UI_LAMBDA_SERVICE_H
-#define AWSMOCK_QT_UI_LAMBDA_SERVICE_H
+#pragma once
 
-// QT includes
+// Qt includes
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -12,7 +11,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 
-// Awsmock Qt includes
+// Awsmock includes
 #include <utils/Logging.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
@@ -254,6 +253,3 @@ private:
      */
     RestManager _restManager;
 };
-
-
-#endif // AWSMOCK_QT_UI_LAMBDA_SERVICE_H
