@@ -24,7 +24,7 @@ DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(
     });
 
     const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("State"), tr("ContainerId"), tr("CPU [%]"), tr("Memory [MB]"), tr("Memory [%]"), tr("Limit [MB]"), tr("running")
+                                    tr("Name"), tr("State"), tr("ContainerId"), tr("CPU"), tr("Memory"), tr("Memory"), tr("Limit"), tr("running")
                                 };
 
     // Table
@@ -59,21 +59,25 @@ void DockerStatsDialog::HandleReject() {
 
 void DockerStatsDialog::LoadContent() {
     _ui->statsTable->SaveSelection();
-    _ui->statsTable->Clear();
     _containerService->ListDockerStats();
 }
 
 void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &dockerStatsResponse) {
     _ui->statsTable->SetTotalSize(dockerStatsResponse.total);
+    _ui->statsTable->setUpdatesEnabled(false);
     for (auto r = 0, c = 0; r < dockerStatsResponse.containerStats.count(); r++, c = 0) {
         _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).name);
         _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).state.running, IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).containerId.mid(0, 12));
         if (dockerStatsResponse.containerStats.at(r).state.running) {
-            _ui->statsTable->SetColumn(r, c++, GetCpuPercent(dockerStatsResponse.containerStats.at(r)));
-            _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).GetTotalMemory());
-            _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).GetPercentMemory());
-            _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).memoryStat.limit / (1024 * 1024));
+            const double totalCpu = GetCpuPercent(dockerStatsResponse.containerStats.at(r));
+            const double totalMem = dockerStatsResponse.containerStats.at(r).GetTotalMemory() * 1024 * 1024;
+            const double percentMem = dockerStatsResponse.containerStats.at(r).GetPercentMemory();
+            const auto memLimit = static_cast<double>(dockerStatsResponse.containerStats.at(r).memoryStat.limit);
+            _ui->statsTable->SetColumn(r, c++, StringUtils::FormatPercentColumn(totalCpu, 1), Qt::AlignRight | Qt::AlignVCenter);
+            _ui->statsTable->SetColumn(r, c++, StringUtils::FormatSizeColumn(totalMem, 1), Qt::AlignRight | Qt::AlignVCenter);
+            _ui->statsTable->SetColumn(r, c++, StringUtils::FormatPercentColumn(percentMem, 1), Qt::AlignRight | Qt::AlignVCenter);
+            _ui->statsTable->SetColumn(r, c++, StringUtils::FormatSizeColumn(memLimit, 1), Qt::AlignRight | Qt::AlignVCenter);
         } else {
             _ui->statsTable->SetColumn(r, c++, "--", Qt::AlignRight | Qt::AlignVCenter);
             _ui->statsTable->SetColumn(r, c++, "--", Qt::AlignRight | Qt::AlignVCenter);
@@ -82,6 +86,7 @@ void DockerStatsDialog::LoadContainerStatsContent(const DockerStatsResponse &doc
         }
         _ui->statsTable->SetColumn(r, c++, dockerStatsResponse.containerStats.at(r).state.running);
     }
+    _ui->statsTable->setUpdatesEnabled(true);
     _ui->statsTable->UpdateSorting();
     _ui->statsTable->RestoreSelection();
 }
