@@ -2,8 +2,7 @@
 // Created by vogje01 on 12/11/25.
 //
 
-#ifndef AWSMOCK_QT_UI_STRING_UTILS_H
-#define AWSMOCK_QT_UI_STRING_UTILS_H
+#pragma once
 
 // C++ standard includes
 #include <string>
@@ -88,6 +87,23 @@ public:
         return QString::number(static_cast<double>(value) / 1024 / 1024, 'f', precision) + " mb";
     }
 
+    static QString FormatSizeColumn(const double value, const int precision = 1) {
+        if (value < 1024) {
+            return QString::number(value, 'f', 0) + " b";
+        }
+        if (value < 1024 * 1024) {
+            return QString::number(static_cast<double>(value) / 1024, 'f', precision) + " kb";
+        }
+        if (value < 1024 * 1024 * 1204) {
+            return QString::number(static_cast<double>(value) / 1024 / 1024, 'f', precision) + " mb";
+        }
+        return QString::number(static_cast<double>(value) / 1024 / 1024 / 1024, 'f', precision) + " gb";
+    }
+
+    static QString FormatPercentColumn(const double value, const int precision = 1) {
+        return QString::number(value, 'f', precision) + "%";
+    }
+
 private:
     static bool IsControlOrNonAscii(const unsigned char c) {
         // Check if the character is NOT a standard printable character (ASCII 32-126)
@@ -101,4 +117,3 @@ private:
         return !std::isprint(c) && c != '\n' && c != '\r' && c != '\t';
     }
 };
-#endif //AWSMOCK_QT_UI_STRING_UTILS_H

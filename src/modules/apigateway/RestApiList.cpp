@@ -65,8 +65,7 @@ RestApiList::RestApiList(const QString &title, QWidget *parent) : BasePage(paren
     _tableView = new PageableTable(this);
     _tableView->SetHeaderNames(headers);
     _tableView->SetResizeModes({
-        QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents,
-        QHeaderView::ResizeToContents, QHeaderView::ResizeToContents
+        QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents
     });
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(0, "name", 1);

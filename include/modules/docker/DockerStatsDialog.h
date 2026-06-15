@@ -2,22 +2,22 @@
 // Created by jensv on 08/12/2025.
 //
 
-#ifndef AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
-#define AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
+#pragma once
 
 // Qt includes
-#include <QMenu>
 #include <QDialog>
 #include <QList>
+#include <QMenu>
 
 // Awsmock includes
-#include <utils/IconUtils.h>
-#include <utils/BaseDialog.h>
-#include <utils/PrefixFilterModel.h>
 #include <components/PageableTable.h>
-#include <modules/docker/DockerService.h>
 #include <modules/application/ApplicationEditDialog.h>
 #include <modules/application/ApplicationUploadCodeDialog.h>
+#include <modules/docker/DockerService.h>
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
+#include <utils/StringUtils.h>
+#include <utils/PrefixFilterModel.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -136,6 +136,3 @@ private:
      */
     PrefixFilterProxyModel *_proxyModel;
 };
-
-
-#endif //AWSMOCK_QT_UI_DOCKER_STATS_DIALOG_H
