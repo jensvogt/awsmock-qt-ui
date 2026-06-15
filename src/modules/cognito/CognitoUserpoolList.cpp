@@ -49,6 +49,7 @@ CognitoUserpoolList::CognitoUserpoolList(const QString &title, QWidget *parent) 
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetSortColumn(0, "name");
     _tableView->SetSortDirection(1);
+    _tableView->setServiceApis(_cognitoService->getApis());
 
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &CognitoUserpoolList::ShowContextMenu);

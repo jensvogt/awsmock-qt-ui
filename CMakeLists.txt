@@ -12,9 +12,14 @@ message(STATUS "Configured version: ${PROJECT_VERSION}")
 
 # Export version to source code
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in ${CMAKE_SOURCE_DIR}/include/Version.h)
-update_xml_version("${CMAKE_SOURCE_DIR}/installer/config/config.xml" "${VERSION_STRING}" "Version")
-update_xml_version("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml" "${VERSION_STRING}" "Version")
-update_release_date("${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml")
+file(READ "${CMAKE_SOURCE_DIR}/installer/config/config.xml.in" _CONFIG_XML)
+string(REPLACE "@VERSION_STRING@" "${VERSION_STRING}" _CONFIG_XML "${_CONFIG_XML}")
+file(WRITE "${CMAKE_SOURCE_DIR}/installer/config/config.xml" "${_CONFIG_XML}")
+string(TIMESTAMP _RELEASE_DATE "%Y-%m-%d %H:%M:%S")
+file(READ "${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml.in" _PACKAGE_XML)
+string(REPLACE "@VERSION_STRING@" "${VERSION_STRING}" _PACKAGE_XML "${_PACKAGE_XML}")
+string(REPLACE "@RELEASE_DATE@" "${_RELEASE_DATE}" _PACKAGE_XML "${_PACKAGE_XML}")
+file(WRITE "${CMAKE_SOURCE_DIR}/installer/packages/de.jensvogt.awsmockqtui/meta/package.xml" "${_PACKAGE_XML}")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -168,7 +173,10 @@ set(MODULE_SOURCES src/modules/module/ModuleService.cpp include/modules/module/M
 set(API_GATEWAY_SOURCES src/modules/apigateway/RestApiList.cpp include/modules/apigateway/ApiGatewayService.h
         include/modules/apigateway/RestApiList.h src/modules/apigateway/ApiGatewayService.cpp
         src/modules/apigateway/RestApiDetailsDialog.cpp include/modules/apigateway/RestApiDetailsDialog.h
-        src/modules/apigateway/RestApiDetailsDialog.ui)
+        src/modules/apigateway/RestApiDetailsDialog.ui include/dto/apigateway/model/RestApiResource.h
+        include/dto/apigateway/model/RestApiResourceMethod.h include/dto/apigateway/model/RestApiCounter.h
+        src/modules/apigateway/ResourceDialog.cpp include/modules/apigateway/ResourceDialog.h
+        src/modules/apigateway/ResourceDialog.ui include/dto/apigateway/ResourceCreateRequest.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h

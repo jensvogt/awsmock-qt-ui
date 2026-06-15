@@ -1,9 +1,6 @@
-#ifndef AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_H
-#define AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_H
+#pragma once
 
-// C++ standard includes
-#include <string>
-
+// Awsmock includes
 #include <dto/sqs/SQSMessageAttributeDataType.h>
 
 struct SQSMessageAttribute final {
@@ -47,5 +44,3 @@ struct SQSMessageAttribute final {
         return jDoc.toJson();
     }
 };
-
-#endif// AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_H

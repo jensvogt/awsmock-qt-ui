@@ -27,7 +27,11 @@ public:
     /**
      * @brief ApiGatewayService
      */
-    ApiGatewayService() = default;
+    ApiGatewayService() {
+        setApis({
+            "ListRestApis", "GetRestApi", "UpdateRestApi", "DeleteRestApi", "DeleteResource"
+        });
+    };
 
     /**
      * @brief Create a new REST API
@@ -67,6 +71,14 @@ public:
      * @param name REST API name
      */
     void DeleteRestApi(const QString &name);
+
+    /**
+     * @brief Delete a resource from a REST API
+     *
+     * @param restApiId REST API name
+     * @param resourceId resource ID
+     */
+    void DeleteResource(const QString &restApiId, const QString &resourceId);
 
 signals:
     /**

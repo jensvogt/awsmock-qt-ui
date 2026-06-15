@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_DATA_TYPE_H
-#define AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_DATA_TYPE_H
+#pragma once
 
 enum MessageAttributeDataType {
     STRING,
@@ -20,5 +19,3 @@ static QMap<MessageAttributeDataType, QString> MessageAttributeDataTypeNames{
 [[maybe_unused]] static MessageAttributeDataType MessageAttributeDataTypeFromString(const QString &messageAttributeDataType) {
     return MessageAttributeDataTypeNames.key(messageAttributeDataType, STRING);
 }
-
-#endif// AWSMOCK_QT_UI_SQS_MESSAGE_ATTRIBUTE_DATA_TYPE_H

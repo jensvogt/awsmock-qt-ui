@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.11.75](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.74...v1.11.75) (2026-06-14)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([6702e44](https://github.com/jensvogt/awsmock-qt-ui/commit/6702e44ac6b3ed70380b582bf4369919fcb43645))
+
+## [1.11.74](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.73...v1.11.74) (2026-06-14)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([df51acc](https://github.com/jensvogt/awsmock-qt-ui/commit/df51accfa3286210948a6fa927410625f6c84249))
+
+## [1.11.73](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.72...v1.11.73) (2026-06-14)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([fa2dbf1](https://github.com/jensvogt/awsmock-qt-ui/commit/fa2dbf1407198363872a1ae1a80e1507aec0a5fb))
+
+## [1.11.72](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.71...v1.11.72) (2026-06-13)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([afef67f](https://github.com/jensvogt/awsmock-qt-ui/commit/afef67f076c08e601a492a15eb2cef8c000f3ce5))
+
+## [1.11.71](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.70...v1.11.71) (2026-06-13)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([1b51b6e](https://github.com/jensvogt/awsmock-qt-ui/commit/1b51b6e5aec00af5c9f738be7d231677d83d60e0))
+
+## [1.11.70](https://github.com/jensvogt/awsmock-qt-ui/compare/v1.11.69...v1.11.70) (2026-06-08)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([bd7155f](https://github.com/jensvogt/awsmock-qt-ui/commit/bd7155fd17bae88c3193cc7dfb066c61a54c0545))
+
 ## [1.11.69](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.68...v1.11.69) (2026-06-07)
 
 

@@ -63,7 +63,7 @@ public:
 
 private slots:
     /**
-     * @brief Show context menu
+     * @brief Show the context menu
      *
      * @param pos table position
      */

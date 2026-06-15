@@ -1,7 +1,6 @@
-#ifndef AWSMOCK_QT_UI_LAMBDA_SERVICE_H
-#define AWSMOCK_QT_UI_LAMBDA_SERVICE_H
+#pragma once
 
-// QT includes
+// Qt includes
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -12,7 +11,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 
-// Awsmock Qt includes
+// Awsmock includes
 #include <utils/Logging.h>
 #include <utils/Configuration.h>
 #include <utils/RestManager.h>
@@ -25,7 +24,6 @@
 #include <dto/lambda/LambdaListResultsResponse.h>
 #include <dto/lambda/LambdaGetResultResponse.h>
 #include <dto/lambda/LambdaUploadRequest.h>
-#include <dto/lambda/LambdaUploadRequest.h>
 #include <dto/lambda/LambdaListArnsResponse.h>
 
 class LambdaService final : public BaseService {
@@ -35,7 +33,13 @@ public:
     /**
      * @brief LambdaService
      */
-    LambdaService() = default;
+    LambdaService() {
+        setApis({
+            "ListLambdas", "GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment",
+            "ListLambdaLogs", "GetLambdaResult", "GetLambdaResults", "UploadLambdaCode", "UpdateLambda", "UpdateLambdaEnvironment", "RebuildLambda",
+            "ListLambdaArns", "StartInstance", "StopInstance", "DeleteLambda", "DeleteLambdaResults"
+        });
+    }
 
     /**
      * @brief List lambdas
@@ -242,13 +246,10 @@ signals:
      * @brief Reload lambda instance list signal
      */
     void ReloadLambdaInstances();
-    
+
 private:
     /**
      * @brief HTTP REST manager
      */
     RestManager _restManager;
 };
-
-
-#endif // AWSMOCK_QT_UI_LAMBDA_SERVICE_H

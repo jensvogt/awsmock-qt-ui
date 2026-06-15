@@ -2,8 +2,7 @@
 // Created by jensv on 18/02/2026.
 //
 
-#ifndef AWSMOCK_QT_UI_MODULE_EXPORT_DIALOG_H
-#define AWSMOCK_QT_UI_MODULE_EXPORT_DIALOG_H
+#pragma once
 
 // Qt includes
 #include <QDialog>
@@ -11,8 +10,7 @@
 #include <QDialogButtonBox>
 #include <QButtonGroup>
 
-// Awsmock in
-
+// Awsmock includes
 #include <utils/IconUtils.h>
 #include <utils/BaseDialog.h>
 #include <modules/module/ModuleService.h>
@@ -41,10 +39,27 @@ public:
 
     void WriteInfrastructureFile(const QString &infrastructure) const;
 
+    /**
+     * @brief Returns the chosen file path
+     * @return chosen file path
+     */
+    [[nodiscard]]
     QString GetFilePath() const;
 
+    /**
+     * @brief Returns the list of modules
+     *
+     * @return string list of modules
+     */
+    [[nodiscard]]
     QStringList GetModules() const;
 
+    /**
+     * @brief Returns the export type
+     *
+     * @return export type
+     */
+    [[nodiscard]]
     ExportType GetExportType() const;
 
     void HandleAccept();
@@ -104,6 +119,3 @@ private:
 
     QButtonGroup *_exportTypeGroup{};
 };
-
-
-#endif //AWSMOCK_QT_UI_MODULE_EXPORT_DIALOG_H

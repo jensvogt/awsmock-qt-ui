@@ -70,6 +70,7 @@ void KMSKeyDialog::HandleGetKeyCounterSignal(const KMSGetKeyCounterResponse &res
 
     _keyCounter = response.keyCounter;
 
+    _ui->regionEdit->setText(_keyCounter.region);
     _ui->idEdit->setText(_keyCounter.keyId);
     _ui->arnEdit->setText(_keyCounter.arn);
     _ui->arnEdit->setText(_keyCounter.arn);
@@ -95,5 +96,5 @@ void KMSKeyDialog::HandleAccept() {
 
 
 void KMSKeyDialog::HandleReject() {
-    accept();
+    reject();
 }

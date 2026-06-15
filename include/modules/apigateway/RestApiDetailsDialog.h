@@ -4,12 +4,18 @@
 
 #pragma once
 
+// C*+ includes
+#include <utility>
+
 // Qt includes
 #include <QDialog>
 
 // Awsmock includes
+#include <components/ContextMenu.h>
 #include <dto/apigateway/RestApiCreateRequest.h>
 #include <modules/apigateway/ApiGatewayService.h>
+#include <modules/apigateway/ResourceDialog.h>
+#include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +26,7 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-class RestApiDetailsDialog : public QDialog {
+class RestApiDetailsDialog : public BaseDialog {
     Q_OBJECT
 
 public:
@@ -37,14 +43,21 @@ public:
      * @param name name of the REST API
      * @param parent parent widget
      */
-    explicit RestApiDetailsDialog(const QString &name, QWidget *parent = nullptr);
+    explicit RestApiDetailsDialog(QString name, QWidget *parent = nullptr);
 
+    /**
+     * @brief Initialization
+     */
     void Initialize();
+
+    void InitializeAuthorizerTab();
 
     /**
      * @brief Destructor
      */
     ~RestApiDetailsDialog() override;
+
+    void InitializeResourceTab();
 
     /**
      * @brief Handle the OK button clicks
@@ -61,7 +74,24 @@ public:
      *
      * @param restApiGetResponse server response
      */
-    void HandleGet(const RestApiGetResponse &restApiGetResponse) const;
+    void HandleGet(const RestApiGetResponse &restApiGetResponse);
+
+    /**
+     * @brief Show the context menu
+     *
+     * @param pos table position
+     */
+    void ShowResourcesContextMenu(const QPoint &pos);
+
+    void UpdateResource() const;
+
+    void CreateResource() const;
+
+    /**
+     * @brief Load content
+     */
+    void LoadContent() override {
+    }
 
 private:
     /**
@@ -83,4 +113,9 @@ private:
      * @brief Changed flag
      */
     bool _changed = false;
+
+    /**
+     * @brief REST API
+     */
+    RestApiCounter _restApi;
 };

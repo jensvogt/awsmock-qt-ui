@@ -71,6 +71,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(3, "created", -1);
     _tableView->SetMultiRowSelection(true);
+    _tableView->setServiceApis(_s3Service->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -102,7 +103,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     layout->addWidget(_tableView, 2);
 }
 
-S3ObjectList::~S3ObjectList() =default;
+S3ObjectList::~S3ObjectList() = default;
 
 void S3ObjectList::HandleBucketDetailsSignal(const S3GetBucketDetailsResponse &bucketDetailsResponse) {
     this->_bucketDetailsResponse = bucketDetailsResponse;

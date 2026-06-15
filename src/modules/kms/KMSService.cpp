@@ -37,7 +37,7 @@ void KMSService::ListKmsKeys(const QString &prefix) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().DockerStatsTimerSignal("ListKmsKeys", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("ListKmsKeys", timer.elapsed());
                       });
 }
 
@@ -68,8 +68,7 @@ void KMSService::GetKeyCounter(const QString &keyId) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance().
-                                  TimerSignal("GetKeyCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("GetKeyCounter", timer.elapsed());
                       });
 }
 
@@ -90,9 +89,7 @@ void KMSService::UpdateKeyCounter(const KMSUpdateKeyCounterRequest &request) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("UpdateKeyCounter", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("UpdateKeyCounter", timer.elapsed());
                       });
 }
 
@@ -117,8 +114,6 @@ void KMSService::DeleteKey(const QString &keyId) {
                           } else {
                               logError << error;
                           }
-                          emit EventBus::instance()
-                                  .
-                                  TimerSignal("DeleteKey", timer.elapsed());
+                          emit EventBus::instance().TimerSignal("DeleteKey", timer.elapsed());
                       });
 }

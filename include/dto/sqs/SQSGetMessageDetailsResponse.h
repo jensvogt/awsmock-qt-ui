@@ -1,6 +1,4 @@
-#ifndef GET_SQS_MESSAGE_DETAILS_RESPONSE_H
-#define GET_SQS_MESSAGE_DETAILS_RESPONSE_H
-
+#pragma once
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -106,5 +104,3 @@ struct SQSGetMessageDetailsResponse {
         }
     }
 };
-
-#endif // GET_SQS_MESSAGE_DETAILS_RESPONSE_H

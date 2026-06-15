@@ -1,22 +1,18 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_GET_APPLICATION_RESPONSE_H
-#define AWSMOCK_QT_UI_APPLICATION_GET_APPLICATION_RESPONSE_H
+#pragma once
 
+// QT includes
 #include <QJsonObject>
 #include <QJsonDocument>
 
+// Awsmock includes
 #include <dto/application/Application.h>
 
 struct ApplicationGetResponse {
 
-    QString region;
-
     Application application;
 
     void FromJson(const QJsonObject &jsonObject) {
-        region = jsonObject["region"].toString();
         application.FromJson(jsonObject["application"].toObject());
+        application.region = jsonObject["region"].toString();
     }
-
 };
-
-#endif // AWSMOCK_QT_UI_APPLICATION_GET_APPLICATION_RESPONSE_H

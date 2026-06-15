@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_LAMBDA_GET_LAMBDA_RESPONSE_H
-#define AWSMOCK_QT_UI_LAMBDA_GET_LAMBDA_RESPONSE_H
+#pragma once
 
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -25,15 +24,17 @@ struct LambdaGetResponse {
 
     QString version;
 
-    int size;
+    int size{};
 
-    int concurrency;
+    int concurrency{};
 
-    int instances;
+    int instances{};
 
-    int invocations;
+    int invocations{};
 
-    int averageRuntime;
+    int averageRuntime{};
+
+    bool enabled{};
 
     QString state;
 
@@ -56,7 +57,6 @@ struct LambdaGetResponse {
         averageRuntime = jsonObject["averageRuntime"].toInt();
         state = jsonObject["state"].toString();
         zipFile = jsonObject["zipFile"].toString();
+        enabled = jsonObject["enabled"].toBool();
     }
 };
-
-#endif // AWSMOCK_QT_UI_LAMBDA_GET_LAMBDA_RESPONSE_H

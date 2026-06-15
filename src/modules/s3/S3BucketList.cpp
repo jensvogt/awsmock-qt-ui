@@ -70,6 +70,7 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(1, "keys", -1);
+    _tableView->setServiceApis(_s3Service->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {

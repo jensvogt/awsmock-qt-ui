@@ -64,6 +64,7 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
     _tableView->SetHiddenColumns({7});
     _tableView->SetSortColumn(1, "created");
     _tableView->SetSortDirection(-1);
+    _tableView->setServiceApis(_snsService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -91,7 +92,7 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
     layout->addWidget(_tableView, 2);
 }
 
-SNSMessageList::~SNSMessageList() =default;
+SNSMessageList::~SNSMessageList() = default;
 
 void SNSMessageList::LoadContent() {
     _topicArn = GetArgument<QString>("topicArn");

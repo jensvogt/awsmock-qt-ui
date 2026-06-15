@@ -78,6 +78,7 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     _tableView->SetHiddenColumns({7, 8, 9});
     _tableView->SetSortColumn(1, "attributes.approximateNumberOfMessages");
     _tableView->SetSortDirection(-1);
+    _tableView->setServiceApis(_sqsService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {

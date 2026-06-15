@@ -79,7 +79,7 @@ void ApiGatewayService::GetRestApi(const QString &name) {
                       [this, timer](const bool success, const QByteArray &response, int status, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
+                                  std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                                   RestApiGetResponse restApiGetResponse;
                                   restApiGetResponse.FromJson(jsonDoc);
                                   emit GetRestApiSignal(restApiGetResponse);
@@ -112,6 +112,26 @@ void ApiGatewayService::UpdateRestApi(const RestApiUpdateRequest &request) {
                           }
                           emit EventBus::instance().TimerSignal("UpdateRestApi", timer.elapsed());
                       });
+}
+
+void ApiGatewayService::DeleteResource(const QString &restApiId, const QString &resourceId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.del(GetBaseUrl("restapis/" + restApiId + "/resources/" + resourceId),
+                     {
+                         {"x-awsmock-target", "apigateway"},
+                         {"x-awsmock-action", "delete-resource"},
+                         {"content-type", "application/json"}
+                     },
+                     [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                         if (success) {
+                             emit ReloadRestApisSignal();
+                         } else {
+                             logError << "http status: " << error;
+                         }
+                         emit EventBus::instance().TimerSignal("DeleteResource", timer.elapsed());
+                     });
 }
 
 void ApiGatewayService::DeleteRestApi(const QString &name) {

@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_COGNITO_SERVICE_H
-#define AWSMOCK_QT_UI_COGNITO_SERVICE_H
+#pragma once
 
 // Qt includes
 #include <QMessageBox>
@@ -22,7 +21,9 @@ public:
     /**
      * @brief Cognito service
      */
-    CognitoService() = default;
+    CognitoService() {
+        setApis({"ListUserpools", "CreateUserpool", "DeleteUserpool"});
+    }
 
     /**
      * @brief List user pools
@@ -68,6 +69,3 @@ private:
      */
     RestManager _restManager;
 };
-
-
-#endif // AWSMOCK_QT_UI_COGNITO_SERVICE_H

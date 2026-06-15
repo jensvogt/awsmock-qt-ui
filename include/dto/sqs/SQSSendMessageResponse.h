@@ -1,10 +1,11 @@
-#ifndef AWSMOCK_QT_UI_SQS_SEND_MESSAGE_RESPONSE_H
-#define AWSMOCK_QT_UI_SQS_SEND_MESSAGE_RESPONSE_H
+#pragma once
 
+// Qt icnludes
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 
+// Awsmock includes
 #include <dto/sqs/SQSMessageAttribute.h>
 
 struct SQSSendMessageResponse {
@@ -43,5 +44,3 @@ struct SQSSendMessageResponse {
         return jDoc.toJson();
     }
 };
-
-#endif // AWSMOCK_QT_UI_SQS_SEND_MESSAGE_RESPONSE_H

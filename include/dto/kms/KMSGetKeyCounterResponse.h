@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_KMS_GET_KEY_COUNTER_RESPONSE_H
-#define AWSMOCK_QT_UI_KMS_GET_KEY_COUNTER_RESPONSE_H
+#pragma once
 
 // Qt includes
 #include <QJsonDocument>
@@ -14,7 +13,6 @@ struct KMSGetKeyCounterResponse {
 
     void FromJson(const QJsonDocument &jsonDoc) {
         keyCounter.FromJson(jsonDoc["keyCounter"].toObject());
+        keyCounter.region = jsonDoc["region"].toString();
     }
 };
-
-#endif // AWSMOCK_QT_UI_KMS_GET_KEY_COUNTER_RESPONSE_H

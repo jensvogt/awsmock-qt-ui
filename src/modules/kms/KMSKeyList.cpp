@@ -62,6 +62,7 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
     _tableView->SetHiddenColumns({5});
     _tableView->SetSorting(1, "id", -1);
+    _tableView->setServiceApis(_kmsService->getApis());
 
     // Connect double-click
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
@@ -86,7 +87,7 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
     layout->addWidget(_tableView, 2);
 }
 
-KMSKeyList::~KMSKeyList() =default;
+KMSKeyList::~KMSKeyList() = default;
 
 void KMSKeyList::LoadContent() {
     _kmsService->ListKmsKeys(_tableView->GetPrefix());

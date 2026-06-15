@@ -1,6 +1,6 @@
-#ifndef AWSMOC_QT_UI_QUEUE_UPDATE_REQUEST_H
-#define AWSMOC_QT_UI_QUEUE_UPDATE_REQUEST_H
+#pragma once
 
+// Qt includes
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -46,5 +46,3 @@ struct SQSQueueUpdateRequest {
         return jDoc.toJson();
     }
 };
-
-#endif // AWSMOC_QT_UI_QUEUE_UPDATE_REQUEST_H

@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_SNS_SERVICE_H
-#define AWSMOCK_QT_UI_SNS_SERVICE_H
+#pragma once
 
 // Qt includes
 #include <QMessageBox>
@@ -15,11 +14,10 @@
 #include <dto/sns/SNSListTopicTagsResponse.h>
 #include <dto/sns/SNSSendMessageRequest.h>
 #include <dto/sns/SNSSendMessageResponse.h>
+#include <dto/sns/SNSSubscriptionResponse.h>
 #include <dto/sqs/SQSGetMessageDetailsResponse.h>
 #include <utils/BaseService.h>
 #include <utils/RestManager.h>
-
-#include "dto/sns/SNSSubscriptionResponse.h"
 
 class SNSService : public BaseService {
     Q_OBJECT
@@ -28,10 +26,18 @@ public:
     /**
      * @brief SNSService
      */
-    SNSService() = default;
+    SNSService() {
+        setApis({
+            "AddTopic", "ListTopics", "PurgeTopic", "PurgeAllTopics", "AddQueue", "ListTopicAttributes", "ListTopicTags",
+            "ListTopicSubscriptions", "ListMessages", "PurgeMessages", "GetTopicDetails", "ResetMessageCounters",
+            "ListTopicDefaultAttributes", "AddTopicDefaultAttributes", "UpdateTopicDefaultAttributes", "DeleteTopicDefaultAttributes",
+            "GetSnsMessageDetails", "DeleteTopic", "SendMessage", "ResendTopic", "ResendMessage", "AddSubscription",
+            "GetSubscription", "DeleteSubscription"
+        });
+    };
 
     /**
-     * @brief Add topic
+     * @brief Add a topic
      *
      * @param region
      * @param topicName name of the topic
@@ -39,7 +45,7 @@ public:
     void AddTopic(const QString &region, const QString &topicName);
 
     /**
-     * @brief List SNS Topics
+     * @brief List of SNS Topics
      *
      * @param prefix topic name prefix
      * @param pageSize
@@ -311,6 +317,3 @@ private:
      */
     QUrl url;
 };
-
-
-#endif // AWSMOCK_QT_UI_SNS_SERVICE_H
