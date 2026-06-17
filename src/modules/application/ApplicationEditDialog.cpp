@@ -201,6 +201,7 @@ void ApplicationEditDialog::SetupDockerfileTab() {
     _ui->dockerfileEdit->SetText(_application.dockerFile);
     connect(_ui->dockerfileEdit, &Awsmock::Components::PlainTextEditor::TextChanged, this, [this](const QString &text) {
         _application.dockerFile = text;
+        _changed = true;
     });
 
     // Help icon

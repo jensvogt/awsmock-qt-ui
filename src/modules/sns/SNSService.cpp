@@ -712,8 +712,10 @@ void SNSService::GetSnsMessageDetails(const QString &messageId) {
                           if (success) {
                               // The API returns an array containing one object
                               const QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                              // std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                               SNSGetMessageDetailsResponse snsResponse;
                               snsResponse.FromJson(jsonDoc["message"].toObject());
+                              snsResponse.region = jsonDoc["region"].toString();
                               emit GetMessageDetailsSignal(snsResponse);
                           } else {
                               logError << error;

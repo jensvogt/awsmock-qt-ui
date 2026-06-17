@@ -20,7 +20,8 @@
       "ws://localhost:4569",
       "ws://vogje01-desktop:4569",
       "ws://192.168.178.46:4569"
-    ]
+    ],
+    "container-log-url": "ws://localhost:4568"
   },
   "ui": {
     "application-log-limit": 1000,

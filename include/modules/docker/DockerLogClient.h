@@ -2,33 +2,33 @@
 // Created by vogje01 on 11/23/25.
 //
 
-#ifndef AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H
-#define AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H
+#pragma once
+
+// C++ includes
+#include <utility>
+#include <iostream>
 
 // Qt includes
-#include <QDebug>
-#include <QLocalSocket>
 #include <QObject>
+#include <QUrlQuery>
 #include <QRegularExpression>
-#include <QTcpSocket>
+#include <QtWebSockets/QWebSocket>
+
+// Awsmock includes
+#include <utils/Logging.h>
 
 class DockerLogClient final : public QObject {
     Q_OBJECT
 
 public:
-    enum class Mode {
-        UnixSocket,
-        Tcp
-    };
-
-    DockerLogClient(QString containerId, Mode mode, QString endpoint, long limit, QObject *parent);
+    DockerLogClient(QString containerId, QString endpoint, long limit, QObject *parent);
 
     void ConnectToDocker() const;
 
     void DisconnectFromDocker() const;
 
 signals:
-    void LogReceived(const QStringList &line);
+    void LogReceived(const QStringList &lines);
 
     void Connected();
 
@@ -39,36 +39,20 @@ signals:
 private slots:
     void onConnected();
 
-    void onReadyRead();
+    void onTextMessageReceived(const QString &message);
 
-    void onErrorOccurred();
+    void onDisconnected();
+
+    void onErrorOccurred(QAbstractSocket::SocketError error);
 
     static QStringList SanitizeString(const QString &input);
 
 private:
-    static QByteArray StripChunkedEncoding(const QByteArray &input);
-
-    void SendRequest(long limit) const;
-
     QString m_containerId;
     QString m_endpoint;
-    Mode m_mode;
 
-    QTcpSocket *m_tcpSocket = nullptr;
-    QLocalSocket *m_localSocket = nullptr;
+    QWebSocket *m_webSocket = nullptr;
 
-    bool headersParsed = false;
-    QByteArray buffer;
-
-    /**
-     * @brief Maximal number of log lines
-     */
     long _limit = 1000;
-
-    /**
-     * @brief Chunked flag
-     */
-    bool _chunked = false;
+    bool m_hasError = false;
 };
-
-#endif //AWSMOCK_QT_UI_DOCKER_LOG_CLIENT_H

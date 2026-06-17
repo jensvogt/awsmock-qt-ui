@@ -1,12 +1,13 @@
-#ifndef AWSMOCK_QT_UI_SNS_MESSAGE_DETAILS_DIALOG_H
-#define AWSMOCK_QT_UI_SNS_MESSAGE_DETAILS_DIALOG_H
+#pragma once
 
 // Qt includes
 #include <QDialog>
+#include <QFileDialog>
 #include <QHeaderView>
 #include <QStandardItemModel>
 
 // Awsmock includes
+#include <components/Toast.h>
 #include <modules/sns/SNSMessageWindow.h>
 #include <modules/sns/SNSService.h>
 #include <utils/DateTimeUtils.h>
@@ -38,7 +39,7 @@ private slots:
     void on_prettyPushButton_toggled(bool checked) const;
 
     void SaveToFile() const;
-    
+
     void HandleAccept();
 
     void HandleReject();
@@ -58,5 +59,3 @@ private:
      */
     QStandardItemModel *_dataModel;
 };
-
-#endif // AWSMOCK_QT_UI_SNS_MESSAGE_DETAILS_DIALOG_H
