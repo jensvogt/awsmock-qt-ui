@@ -5,8 +5,6 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_LambdaResultListDialog.h" resolved
 
 #include <modules/lambda/LambdaResultListDialog.h>
-
-#include <utility>
 #include "ui_LambdaResultListDialog.h"
 
 LambdaResultListDialog::LambdaResultListDialog(QString lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaResultListDialog), _lambdaArn(std::move(lambdaArn)) {
@@ -27,6 +25,7 @@ LambdaResultListDialog::LambdaResultListDialog(QString lambdaArn, QWidget *paren
     _ui->deleteButton->setIcon(IconUtils::GetIcon("delete"));
     connect(_ui->deleteButton, &QPushButton::clicked, this, [this]() {
         _lambdaService->DeleteLambdaResults(_lambdaArn);
+        new Awsmock::Components::ToastOverlay("Delete lambda results initiated.\nChanges may take some time to propagate.", this);
     });
 
     // Result table

@@ -9,16 +9,19 @@
 
 ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, const QString &containerId, QWidget *parent) : QDialog(parent), _ui(new Ui::ApplicationLogsDialog), _containerId(containerId) {
     const long limit = Configuration::instance().GetValue<long>("ui.application-log-limit", 1000);
-#ifdef _WIN32
-    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::Tcp, "localhost:2375", limit, this);
-#else
-    _dockerLogClient = new DockerLogClient(containerId, DockerLogClient::Mode::UnixSocket, "/var/run/docker.sock", limit, this);
-#endif
+    const auto url = Configuration::instance().GetValue<QString>("server.container-log-url", "ws://localhost:4568");
+    _dockerLogClient = new DockerLogClient(containerId, url, limit, this);
     connect(_dockerLogClient, &DockerLogClient::Connected, [this]() {
         _ui->statusLabel->setText("Status: Connected");
     });
+    connect(_dockerLogClient, &DockerLogClient::Disconnected, [this]() {
+        _ui->statusLabel->setText("Status: Disconnected");
+    });
+    connect(_dockerLogClient, &DockerLogClient::ErrorOccurred, [this](const QString &msg) {
+        _ui->statusLabel->setText("Status: Error - " + msg);
+    });
 
-    // Setup UI components
+    // Set up UI components
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &ApplicationLogsDialog::HandleAccept);
     connect(_ui->buttonBox, &QDialogButtonBox::rejected, this, &ApplicationLogsDialog::HandleReject);
@@ -29,7 +32,7 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
     // Status label
     _ui->statusLabel->setText("Status: Disconnected");
 
-    // Setup log list view
+    // Set up log list view
     _model = new QStandardItemModel(this);
     _ui->logListView->setModel(_model);
     _ui->logListView->setUniformItemSizes(false);
@@ -100,6 +103,7 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
 }
 
 ApplicationLogsDialog::~ApplicationLogsDialog() {
+    _dockerLogClient->DisconnectFromDocker();
     delete _ui;
 }
 
