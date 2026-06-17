@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.76](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.75...v1.11.76) (2026-06-17)
+
+
+### Bug Fixes
+
+* add api-gateway resources ([0ab83e4](https://github.com/jensvogt/awsmock-qt-ui/commit/0ab83e4387d0c9d14670719ca5501b3b36f656f4))
+* add api-gateway resources ([82c09d1](https://github.com/jensvogt/awsmock-qt-ui/commit/82c09d1fefa8b05914fbc159f460fa6027f262dc))
+* application/lambda Monitoring ([efa624b](https://github.com/jensvogt/awsmock-qt-ui/commit/efa624beedeb107d81213d4389e6e36926612c8d))
+* application/lambda Monitoring ([a636670](https://github.com/jensvogt/awsmock-qt-ui/commit/a636670a6c61cbd721d26701a2193b4541f700e2))
+
 ## [1.11.75](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.74...v1.11.75) (2026-06-14)
 
 
