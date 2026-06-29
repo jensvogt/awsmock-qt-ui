@@ -1,7 +1,5 @@
 #include <modules/lambda/LambdaList.h>
 
-#include "components/Toast.h"
-
 LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent) {
 
     // Set region
@@ -120,7 +118,7 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).name);
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).version);
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).enabled, IconUtils::GetIcon("enabled"), IconUtils::GetIcon("disabled"));
-        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).state == "Active", IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
+        _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).active, IconUtils::GetIcon("running"), IconUtils::GetIcon("stopped"));
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).instances);
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).invocations);
         _tableView->SetColumn(r, c++, listLambdaResponse.lambdaCounters.at(r).averageRuntime);

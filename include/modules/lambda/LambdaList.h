@@ -2,8 +2,7 @@
 // Created by vogje01 on 11/7/25.
 //
 
-#ifndef AWSMOCK_QT_UI_LAMBDA_LIST_H
-#define AWSMOCK_QT_UI_LAMBDA_LIST_H
+#pragma once
 
 // QT includes
 #include <QHBoxLayout>
@@ -18,6 +17,7 @@
 // Awsmock includes
 #include <components/ContextMenu.h>
 #include <components/PageableTable.h>
+#include <components/Toast.h>
 #include <dto/sns/SNSListTopicResult.h>
 #include <modules/docker/DockerService.h>
 #include <modules/lambda/LambdaDetailsDialog.h>
@@ -66,15 +66,11 @@ public:
      */
     void HandleListLambdasSignal(const LambdaListResponse &listLambdaResponse) const;
 
-private
-slots:
     /**
-     * @brief Show context menu
+     * @brief Show the context menu
      *
      * @param pos table position
      */
-
-
     void ShowContextMenu(const QPoint &pos);
 
 private:
@@ -98,5 +94,3 @@ private:
      */
     DockerService *_containerService{};
 };
-
-#endif //AWSMOCK_QT_UI_LAMBDA_LIST_H
