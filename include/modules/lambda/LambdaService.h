@@ -26,6 +26,8 @@
 #include <dto/lambda/LambdaUploadRequest.h>
 #include <dto/lambda/LambdaListArnsResponse.h>
 
+#include "dto/lambda/LambdaGetInstanceResponse.h"
+
 class LambdaService final : public BaseService {
     Q_OBJECT
 
@@ -65,6 +67,14 @@ public:
      * @param lambdaArn lambda AWS ARN
      */
     void GetLambdaInstances(const QString &lambdaArn);
+
+    /**
+     * @brief Get a single instance
+     *
+     * @param lambdaArn lambda AWS ARN
+     * @param instanceId lambda instance ID
+     */
+    void GetLambdaInstance(const QString &lambdaArn, const QString &instanceId);
 
     /**
      * @brief Get the lambda environment list
@@ -198,6 +208,13 @@ signals:
      * @param listInstancesResponse lambda instances list response
      */
     void ListLambdaInstancesSignal(const LambdaListInstancesResponse &listInstancesResponse);
+
+    /**
+     * @brief Get instance signal
+     *
+     * @param getInstanceResponse lambda get instance response
+     */
+    void GetLambdaInstanceSignal(const LambdaGetInstanceResponse &getInstanceResponse);
 
     /**
      * @brief List environment signal

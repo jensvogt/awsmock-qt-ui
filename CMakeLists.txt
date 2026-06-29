@@ -139,7 +139,8 @@ set(LAMBDA_SOURCES include/modules/lambda/LambdaList.h include/modules/lambda/La
         src/modules/lambda/LambdaResultListDialog.cpp include/modules/lambda/LambdaResultListDialog.h
         src/modules/lambda/LambdaResultListDialog.ui include/dto/lambda/LambdaGetResultResponse.h
         src/modules/lambda/LambdaDashboard.cpp include/modules/lambda/LambdaDashboard.h
-        src/modules/lambda/LambdaDashboard.ui)
+        src/modules/lambda/LambdaDashboard.ui src/modules/lambda/LambdaInstanceDialog.cpp
+        include/modules/lambda/LambdaInstanceDialog.h src/modules/lambda/LambdaInstanceDialog.ui)
 set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
         src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
         include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp

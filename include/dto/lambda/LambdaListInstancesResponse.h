@@ -1,10 +1,11 @@
-#ifndef AWSMOCK_QT_UI_LAMBDA_LIST_LAMBDA_INSTANCES_RESPONSE_H
-#define AWSMOCK_QT_UI_LAMBDA_LIST_LAMBDA_INSTANCES_RESPONSE_H
+#pragma once
 
+// Qt includes
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
 
+// Awsmock includes
 #include <dto/lambda/LambdaInstanceCounter.h>
 
 struct LambdaListInstancesResponse {
@@ -20,5 +21,3 @@ struct LambdaListInstancesResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_LAMBDA_LIST_LAMBDA_INSTANCES_RESPONSE_H

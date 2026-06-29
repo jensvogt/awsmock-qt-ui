@@ -3,10 +3,7 @@
 //
 
 #include <modules/lambda/LambdaDetailsDialog.h>
-
-#include <utility>
 #include "ui_LambdaDetailsDialog.h"
-#include "components/Toast.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(std::move(lambdaArn)) {
     _lambdaService = new LambdaService();
@@ -49,7 +46,7 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
     connect(_ui->enabledCheckBox, &QCheckBox::checkStateChanged, this, [this](int) {
         _lambdaService->UpdateLambda(_lambdaArn, _ui->enabledCheckBox->isChecked());
     });
-    
+
     // Setup instances tab
     SetupInstancesTab();
 
@@ -72,7 +69,7 @@ LambdaDetailsDialog::~LambdaDetailsDialog() {
 
 void LambdaDetailsDialog::LoadContent() {
     _lambdaService->GetLambda(_lambdaArn);
-    _ui->statusLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
+    _ui->lastUpdateLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
 void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const {
@@ -88,7 +85,7 @@ void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetRespons
     _ui->concurrencyEdit->setText(QString::number(lambdaGetResponse.concurrency));
     _ui->instancesEdit->setText(QString::number(lambdaGetResponse.instances));
     _ui->invocationsEdit->setText(QString::number(lambdaGetResponse.invocations));
-    _ui->avgExecutionEdit->setText(QString::number(lambdaGetResponse.averageRuntime));
+    _ui->avgExecutionEdit->setText(QString::number(lambdaGetResponse.avgDuration));
     _ui->zipFileEdit->setText(lambdaGetResponse.zipFile);
     _ui->statusEdit->setText(lambdaGetResponse.state);
     _ui->enabledCheckBox->setCheckState(lambdaGetResponse.enabled ? Qt::CheckState::Checked : Qt::Unchecked);
@@ -117,14 +114,29 @@ void LambdaDetailsDialog::SetupInstancesTab() {
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 
     // Instance refresh button
     _ui->instanceRefreshButton->setText(nullptr);
     _ui->instanceRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->instanceRefreshButton, &QPushButton::clicked, this, &LambdaDetailsDialog::ReloadLambdaInstances);
 
     // Add tag context menu
     _ui->instanceTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->instanceTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowInstanceContextMenu);
+
+    // Connect double-click
+    connect(_ui->instanceTable, &QTableWidget::doubleClicked, this, [this](const QModelIndex &index) {
+        // Get the position
+        const int row = index.row();
+
+        const QString instanceId = _ui->instanceTable->item(row, 0)->text();
+
+        // Open details dialog
+        if (LambdaInstanceDialog dialog(_lambdaArn, instanceId); dialog.exec() == Accepted) {
+            //_changed = true;
+        }
+    });
 
     // Send request
     ReloadLambdaInstances();
@@ -191,7 +203,6 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     _ui->environmentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->environmentTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui->environmentTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-
 
     // Connect double-click
     connect(_ui->environmentTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
@@ -262,10 +273,16 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
 
     int row = 0;
     QMenu menu;
-    QAction *startAction = nullptr, *killAction = nullptr;
+    QAction *startAction = nullptr, *killAction = nullptr, *editAction = nullptr;
 
     // Cell index
-    if (const QModelIndex index = _ui->instanceTable->indexAt(pos); !index.isValid()) {
+    const QModelIndex index = _ui->instanceTable->indexAt(pos);
+
+    // Edit action
+    editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit the lambda instance");
+    editAction->setToolTip("Start a new Lambda Instance");
+
+    if (!index.isValid()) {
 
         startAction = menu.addAction(IconUtils::GetIcon("start"), "Start a new Lambda Instance");
         startAction->setToolTip("Start a new Lambda Instance");
@@ -292,7 +309,12 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
     } else if (selectedAction == startAction) {
         _lambdaService->StartInstance(_lambdaArn);
         logInfo << "Lambda instance started, lambdaArn: " << _lambdaArn;
-        new Awsmock::Components::ToastOverlay("Lambda insrance started.\nLambdaArn: " + _lambdaArn);
+        new Awsmock::Components::ToastOverlay("Lambda instance started.\nLambdaArn: " + _lambdaArn);
+    } else if (selectedAction == editAction) {
+        const QString instanceId = _ui->instanceTable->item(row, 0)->text();
+        if (LambdaInstanceDialog dialog(_lambdaArn, instanceId); dialog.exec() == Accepted) {
+            logInfo << "Lambda instance dialog started, lambdaArn: " << _lambdaArn;
+        }
     }
 }
 

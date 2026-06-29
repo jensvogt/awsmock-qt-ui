@@ -1,5 +1,7 @@
 #include <modules/lambda/LambdaService.h>
 
+#include "dto/lambda/LambdaGetInstanceResponse.h"
+
 void LambdaService::ListLambdas(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();
@@ -47,7 +49,7 @@ void LambdaService::GetLambda(const QString &lambdaArn) {
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["functionArn"] = lambdaArn;
+    jRequest["lambdaArn"] = lambdaArn;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
@@ -115,6 +117,38 @@ void LambdaService::GetLambdaInstances(const QString &lambdaArn) {
                       });
 }
 
+void LambdaService::GetLambdaInstance(const QString &lambdaArn, const QString &instanceId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["lambdaArn"] = lambdaArn;
+    jRequest["instanceId"] = instanceId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "get-instance-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  LambdaGetInstanceResponse lambdaResponse;
+                                  lambdaResponse.FromJson(jsonDoc);
+                                  emit GetLambdaInstanceSignal(lambdaResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("GetLambdaInstances", timer.elapsed());
+                      });
+}
+
 void LambdaService::GetLambdaEnvironment(const QString &lambdaArn) {
     QElapsedTimer timer;
     timer.start();
@@ -162,7 +196,7 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["FunctionArn"] = lambdaArn;
+    jRequest["lambdaArn"] = lambdaArn;
     jRequest["Key"] = key;
     jRequest["Value"] = value;
     const QJsonDocument requestDoc(jRequest);
@@ -189,7 +223,7 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["FunctionArn"] = lambdaArn;
+    jRequest["lambdaArn"] = lambdaArn;
     jRequest["Key"] = key;
     const QJsonDocument requestDoc(jRequest);
 
@@ -309,7 +343,7 @@ void LambdaService::UploadLambdaCode(const LambdaUploadRequest &request) {
 
     QJsonObject jRequest = CreateBaseRequest();
     jRequest["version"] = request.version;
-    jRequest["functionArn"] = request.lambdaArn;
+    jRequest["lambdaArn"] = request.lambdaArn;
     jRequest["functionCode"] = request.lambdaCode;
     const QJsonDocument requestDoc(jRequest);
 
@@ -335,7 +369,7 @@ void LambdaService::UpdateLambda(const QString &lambdaArn, const bool enabled) {
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["functionArn"] = lambdaArn;
+    jRequest["lambdaArn"] = lambdaArn;
     jRequest["enabled"] = enabled;
     const QJsonDocument requestDoc(jRequest);
 
@@ -361,7 +395,7 @@ void LambdaService::UpdateLambdaEnvironment(const QString &lambdaArn, const QStr
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["FunctionArn"] = lambdaArn;
+    jRequest["FunktionArn"] = lambdaArn;
     jRequest["Key"] = key;
     jRequest["Value"] = value;
     const QJsonDocument requestDoc(jRequest);
@@ -441,7 +475,7 @@ void LambdaService::StartInstance(const QString &lambdaArn) {
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["functionArn"] = lambdaArn;
+    jRequest["lambdaArn"] = lambdaArn;
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
@@ -466,7 +500,7 @@ void LambdaService::StopInstance(const QString &lambdaArn, const QString &instan
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["functionArn"] = lambdaArn;
+    jRequest["lambdaArn"] = lambdaArn;
     jRequest["instanceId"] = instanceId;
     const QJsonDocument requestDoc(jRequest);
 

@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_LAMBDA_COUNTER_H
-#define AWSMOCK_QT_UI_LAMBDA_COUNTER_H
+#pragma once
 
 #include <QDateTime>
 #include <QJsonObject>
@@ -25,7 +24,7 @@ struct LambdaCounter {
 
     QString version;
 
-    QString state;
+    bool active;
 
     bool enabled;
 
@@ -44,14 +43,14 @@ struct LambdaCounter {
     void FromJson(const QJsonObject &jsonObject) {
         region = jsonObject["region"].toString();
         name = jsonObject["functionName"].toString();
-        arn = jsonObject["functionArn"].toString();
+        arn = jsonObject["lambdaArn"].toString();
         runtime = jsonObject["runtime"].toString();
         handler = jsonObject["handler"].toString();
         instances = jsonObject["instances"].toInt();
         invocations = jsonObject["invocations"].toInt();
         averageRuntime = jsonObject["averageRuntime"].toInt();
         version = jsonObject["version"].toString();
-        state = jsonObject["state"].toString();
+        active = jsonObject["active"].toBool();
         enabled = jsonObject["enabled"].toBool();
         containerId = jsonObject["containerId"].toString();
         containerName = jsonObject["containerName"].toString();
@@ -60,6 +59,3 @@ struct LambdaCounter {
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
 };
-
-
-#endif // AWSMOCK_QT_UI_LAMBDA_COUNTER_H
