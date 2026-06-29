@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.77](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.76...v1.11.77) (2026-06-29)
+
+
+### Bug Fixes
+
+* add lambda instance resources ([b1f4dc1](https://github.com/jensvogt/awsmock-qt-ui/commit/b1f4dc1ebcfe4dd49dc394930b50abf99e0e9cc1))
+
 ## [1.11.76](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.75...v1.11.76) (2026-06-17)
 
 
