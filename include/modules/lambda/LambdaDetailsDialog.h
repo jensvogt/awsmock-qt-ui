@@ -53,7 +53,7 @@ public:
      *
      * @param lambdaGetResponse lambda service response
      */
-    void UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const;
+    void UpdateLambda(const LambdaGetResponse &lambdaGetResponse);
 
     /**
      * @brief Reload the lambda instances tab
@@ -98,6 +98,8 @@ public:
      */
     void ShowInstanceContextMenu(const QPoint &pos) const;
 
+    void StartInstance() const;
+
     /**
      * @brief Handle OK button
      */
@@ -130,6 +132,11 @@ private:
     QString _lambdaArn;
 
     /**
+     * @brief Changed flag
+     */
+    bool _changed = false;
+
+    /**
      * @brief Instance sort column index
      */
     int _instanceSortColumn = 0;
@@ -148,4 +155,9 @@ private:
      * @brief Environment sort order
      */
     Qt::SortOrder _environmentSortOrder = Qt::AscendingOrder;
+
+    /**
+     *  @brief Save the response
+     */
+    LambdaGetResponse _lambdaGetResponse;
 };
