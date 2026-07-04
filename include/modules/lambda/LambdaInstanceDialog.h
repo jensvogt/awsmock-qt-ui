@@ -11,8 +11,9 @@
 #include <QDialog>
 
 // Awsmock includes
-#include <utils/BaseDialog.h>
 #include <modules/lambda/LambdaService.h>
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -55,7 +56,14 @@ public:
      */
     void LoadContent() override;
 
+    /**
+     * @brief Update dialog fields
+     *
+     * @param lambdaResponse response from REST call
+     */
     void handleUpdate(const LambdaGetInstanceResponse &lambdaResponse) const;
+
+    void StartInstance() const;
 
 private:
     /**

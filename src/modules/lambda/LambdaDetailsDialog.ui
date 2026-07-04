@@ -47,17 +47,24 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="2,1,1">
-     <item row="2" column="2">
-      <widget class="QLabel" name="invocationsLabel">
+     <item row="8" column="0">
+      <widget class="QLabel" name="roleLabel">
        <property name="text">
-        <string>Invocations:</string>
+        <string>Role:</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="sizeLabel">
+     <item row="0" column="0">
+      <widget class="QLabel" name="regionLabel">
        <property name="text">
-        <string>Size:</string>
+        <string>Region:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="userLabel">
+       <property name="text">
+        <string>User:</string>
        </property>
       </widget>
      </item>
@@ -68,24 +75,10 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
-      <widget class="QLineEdit" name="invocationsEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="userEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="regionLabel">
+     <item row="2" column="2">
+      <widget class="QLabel" name="invocationsLabel">
        <property name="text">
-        <string>Region:</string>
+        <string>Invocations:</string>
        </property>
       </widget>
      </item>
@@ -103,99 +96,8 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="sizeEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="runtimeLabel">
-       <property name="text">
-        <string>Runtime:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="handlerLabel">
-       <property name="text">
-        <string>Handler:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="versionLabel">
-       <property name="text">
-        <string>Version:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="userLabel">
-       <property name="text">
-        <string>User:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="instancesLabel">
-       <property name="text">
-        <string>Instances:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLineEdit" name="handlerEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="2">
-      <widget class="QLabel" name="statusLabel">
-       <property name="text">
-        <string>Status:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="arnLabel">
-       <property name="text">
-        <string>ARN:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLineEdit" name="instancesEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="2">
-      <widget class="QLineEdit" name="statusEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="roleLabel">
-       <property name="text">
-        <string>Role:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QLineEdit" name="concurrencyEdit">
+     <item row="3" column="2">
+      <widget class="QLineEdit" name="invocationsEdit">
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -208,10 +110,52 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
-      <widget class="QLabel" name="avgExecutionLabel">
+     <item row="6" column="0">
+      <widget class="QLabel" name="handlerLabel">
        <property name="text">
-        <string>Avg. Execution Time:</string>
+        <string>Handler:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLineEdit" name="handlerEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="2">
+      <widget class="QLineEdit" name="statusEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QLabel" name="lifetimeLabel">
+       <property name="text">
+        <string>Lifetime:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="sizeLabel">
+       <property name="text">
+        <string>Size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="instancesLabel">
+       <property name="text">
+        <string>Instances:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="arnLabel">
+       <property name="text">
+        <string>ARN:</string>
        </property>
       </widget>
      </item>
@@ -222,22 +166,15 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
-      <widget class="QLineEdit" name="avgExecutionEdit">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="userEdit">
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="runtimeEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLineEdit" name="roleEdit">
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="regionEdit">
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -250,6 +187,13 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="runtimeLabel">
+       <property name="text">
+        <string>Runtime:</string>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="0">
       <widget class="QLineEdit" name="nameEdit">
        <property name="readOnly">
@@ -257,10 +201,83 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="9" column="0">
+      <widget class="QLineEdit" name="roleEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QLineEdit" name="concurrencyEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QLabel" name="avgExecutionLabel">
+       <property name="text">
+        <string>Avg. Execution Time:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="versionLabel">
+       <property name="text">
+        <string>Version:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLineEdit" name="sizeEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QLabel" name="statusLabel">
+       <property name="text">
+        <string>Status:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="runtimeEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLineEdit" name="avgExecutionEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="instancesEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <widget class="QLineEdit" name="lifetimeEdit"/>
+     </item>
+     <item row="11" column="0">
       <widget class="QCheckBox" name="enabledCheckBox">
        <property name="text">
         <string>Enabled</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="startStatusLabel">
+       <property name="text">
+        <string>Start Status:</string>
        </property>
       </widget>
      </item>
@@ -292,6 +309,13 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="startInstanceButton">
+             <property name="text">
+              <string>Start</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="instanceRefreshButton">

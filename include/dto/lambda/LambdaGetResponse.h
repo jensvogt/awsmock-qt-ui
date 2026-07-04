@@ -34,6 +34,8 @@ struct LambdaGetResponse {
 
     int avgDuration{};
 
+    int lifetime{};
+
     bool enabled{};
 
     QString state;
@@ -56,6 +58,7 @@ struct LambdaGetResponse {
         invocations = jsonObject["invocations"].toInt();
         avgDuration = jsonObject["avgDuration"].toInt();
         state = jsonObject["state"].toString();
+        lifetime = jsonObject["lifetime"].toInt();
         zipFile = jsonObject["zipFile"].toString();
         enabled = jsonObject["enabled"].toBool();
     }

@@ -12,6 +12,7 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
     connect(_lambdaService, &LambdaService::LoadLambdaEnvironment, this, &LambdaDetailsDialog::LoadContent);
     connect(_lambdaService, &LambdaService::ReloadLambdaDetails, this, &LambdaDetailsDialog::LoadContent);
     connect(_lambdaService, &LambdaService::ReloadLambdaInstances, this, &LambdaDetailsDialog::LoadContent);
+    connect(_lambdaService, &LambdaService::ReloadLambdas, this, &LambdaDetailsDialog::LoadContent);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &LambdaDetailsDialog::HandleAccept);
@@ -44,7 +45,8 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
 
     // Enabled
     connect(_ui->enabledCheckBox, &QCheckBox::checkStateChanged, this, [this](int) {
-        _lambdaService->UpdateLambda(_lambdaArn, _ui->enabledCheckBox->isChecked());
+        _lambdaGetResponse.enabled = _ui->enabledCheckBox->isChecked();
+        _changed = true;
     });
 
     // Setup instances tab
@@ -72,7 +74,8 @@ void LambdaDetailsDialog::LoadContent() {
     _ui->lastUpdateLabel->setText("Last update: " + DateTimeUtils::GetLogTimeFormat(QDateTime::currentDateTime()));
 }
 
-void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const {
+void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetResponse) {
+    _lambdaGetResponse = lambdaGetResponse;
     _ui->regionEdit->setText(lambdaGetResponse.region);
     _ui->nameEdit->setText(lambdaGetResponse.lambdaName);
     _ui->arnEdit->setText(lambdaGetResponse.lambdaArn);
@@ -88,6 +91,7 @@ void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetRespons
     _ui->avgExecutionEdit->setText(QString::number(lambdaGetResponse.avgDuration));
     _ui->zipFileEdit->setText(lambdaGetResponse.zipFile);
     _ui->statusEdit->setText(lambdaGetResponse.state);
+    _ui->lifetimeEdit->setText(QString::number(lambdaGetResponse.lifetime));
     _ui->enabledCheckBox->setCheckState(lambdaGetResponse.enabled ? Qt::CheckState::Checked : Qt::Unchecked);
 }
 
@@ -115,6 +119,11 @@ void LambdaDetailsDialog::SetupInstancesTab() {
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+
+    // Start instance button
+    _ui->startInstanceButton->setText(nullptr);
+    _ui->startInstanceButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->startInstanceButton, &QPushButton::clicked, this, &LambdaDetailsDialog::StartInstance);
 
     // Instance refresh button
     _ui->instanceRefreshButton->setText(nullptr);
@@ -273,7 +282,7 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
 
     int row = 0;
     QMenu menu;
-    QAction *startAction = nullptr, *killAction = nullptr, *editAction = nullptr;
+    QAction *startAction = nullptr, *killAction = nullptr, *editAction = nullptr, *stopAction = nullptr;
 
     // Cell index
     const QModelIndex index = _ui->instanceTable->indexAt(pos);
@@ -289,27 +298,28 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
 
     } else {
 
+        stopAction = menu.addAction(IconUtils::GetIcon("stop"), "Stop the lambda instance");
+        stopAction->setToolTip("Stop lambda instance");
+
         killAction = menu.addAction(IconUtils::GetIcon("delete"), "Kill Lambda Instance");
-        killAction->setToolTip("Kill Lambda Instance");
+        killAction->setToolTip("Kill lambda instance");
         row = index.row();
     }
-
-
-    // menu.addSeparator();
-    //
-    // QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Environment Variable");
-    // deleteAction->setToolTip("Delete the environment variable");
 
     if (const QAction *selectedAction = menu.exec(_ui->instanceTable->viewport()->mapToGlobal(pos)); selectedAction == killAction) {
         const QString instanceId = _ui->instanceTable->item(row, 0)->text();
         _lambdaService->StopInstance(_lambdaArn, instanceId);
-        _lambdaService->GetLambdaInstances(_lambdaArn);
         logInfo << "Lambda instance stopped, instanceId: " << instanceId;
         new Awsmock::Components::ToastOverlay("Lambda instance killed.\nInstanceId: " + instanceId);
     } else if (selectedAction == startAction) {
         _lambdaService->StartInstance(_lambdaArn);
         logInfo << "Lambda instance started, lambdaArn: " << _lambdaArn;
         new Awsmock::Components::ToastOverlay("Lambda instance started.\nLambdaArn: " + _lambdaArn);
+    } else if (selectedAction == stopAction) {
+        const QString instanceId = _ui->instanceTable->item(row, 0)->text();
+        _lambdaService->StopInstance(_lambdaArn, instanceId);
+        logInfo << "Lambda instance stopped, lambdaArn: " << _lambdaArn << ", instanceId: " << instanceId;
+        new Awsmock::Components::ToastOverlay("Lambda instance stopped.\nLambdaArn: " + _lambdaArn + ", instanceId: " + instanceId);
     } else if (selectedAction == editAction) {
         const QString instanceId = _ui->instanceTable->item(row, 0)->text();
         if (LambdaInstanceDialog dialog(_lambdaArn, instanceId); dialog.exec() == Accepted) {
@@ -318,10 +328,17 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
     }
 }
 
+void LambdaDetailsDialog::StartInstance() const {
+    _lambdaService->StartInstance(_lambdaArn);
+}
+
 void LambdaDetailsDialog::HandleAccept() {
+    if (_changed) {
+        _lambdaService->UpdateLambda(_lambdaArn, _lambdaGetResponse.enabled);
+    }
     accept();
 }
 
 void LambdaDetailsDialog::HandleReject() {
-    accept();
+    reject();
 }

@@ -64,7 +64,9 @@ public:
 
     void DeleteContainer(const QString &containerId);
 
-signals:
+    signals:
+
+
     void ReloadDockerContainerSignal(const DockerContainersResponse &dockerContainersResponse);
 
     void ReloadDockerStatsSignal(const DockerStatsResponse &dockerStatsResponse);

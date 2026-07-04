@@ -33,6 +33,7 @@
     "default-ftp-protocol": "FTP",
     "default-directory": {
       "ApplicationUploadCodeDialog": "C:\\work\\libri\\Libri.ONE\\PIM\\compliance-archive-service\\target",
+      "LambdaUploadCodeDialog": "C:\\work\\libri\\Libri.ONE\\PIM\\compliance-archive-service\\target",
       "ExportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
       "ImportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
       "FTPUploadDialog": "C:\\home\\vogje01\\work\\libri\\Libri.ONE\\PIM\\tests"

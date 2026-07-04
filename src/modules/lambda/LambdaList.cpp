@@ -199,11 +199,7 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     } else if (selectedAction == startAction) {
-        if (containerId.isEmpty()) {
-            QMessageBox::warning(this, tr("Lambda"), tr("Empty container ID!"));
-            return;
-        }
-        _containerService->StartContainer(containerId);
+        _lambdaService->StartInstance(arn);
         LoadContent();
         new Awsmock::Components::ToastOverlay("Lambda started! Name: " + name, this);
     } else if (selectedAction == enableAction) {

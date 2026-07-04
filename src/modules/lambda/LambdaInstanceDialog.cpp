@@ -4,7 +4,6 @@
 
 #include <modules/lambda/LambdaInstanceDialog.h>
 #include "ui_LambdaInstanceDialog.h"
-#include "utils/IconUtils.h"
 
 LambdaInstanceDialog::LambdaInstanceDialog(QString lambdaArn, QString instanceId, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaInstanceDialog), _arn(std::move(lambdaArn)), _instanceId(std::move(instanceId)) {
 
@@ -21,7 +20,7 @@ LambdaInstanceDialog::LambdaInstanceDialog(QString lambdaArn, QString instanceId
     _ui->refreshButton->setText(nullptr);
     _ui->refreshButton->setIcon(IconUtils::GetIcon("refresh"));
     connect(_ui->refreshButton, &QPushButton::clicked, this, &LambdaInstanceDialog::LoadContent);
-    
+
     // Initial loading
     LambdaInstanceDialog::LoadContent();
 }
