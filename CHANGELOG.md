@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.78](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.77...v1.11.78) (2026-07-04)
+
+
+### Bug Fixes
+
+* add lambda start/stop instances and update UI ([6a074ba](https://github.com/jensvogt/awsmock-qt-ui/commit/6a074babb80939dd445551e2b66f8b6552dfa804))
+
 ## [1.11.77](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.76...v1.11.77) (2026-06-29)
 
 
