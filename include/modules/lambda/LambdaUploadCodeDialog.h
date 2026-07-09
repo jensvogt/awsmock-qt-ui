@@ -27,21 +27,41 @@ class LambdaUploadCodeDialog final : public QDialog {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor
+     *
+     * @param lambdaName name of the lambda
+     * @param lambdaArn lambda ARN
+     * @param parent parent widget
+     */
     explicit LambdaUploadCodeDialog(const QString &lambdaName, const QString &lambdaArn, QWidget *parent = nullptr);
 
+    /**
+     * @brief destructor
+     */
     ~LambdaUploadCodeDialog() override;
 
+protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
 
     void dropEvent(QDropEvent *event) override;
 
+private:
+    /**
+     * @brief Handle browse button events
+     */
     void HandleBrowse();
 
+    /**
+     * @brie Handle OK button events
+     */
     void HandleAccept();
 
+    /**
+     * @brie Handle CANCEL button events
+     */
     void HandleReject();
 
-private:
     /**
      * UI connection
      */

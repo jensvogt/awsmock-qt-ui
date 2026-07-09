@@ -1,14 +1,13 @@
-#ifndef SNS_GET_MESSAGE_DETAILS_RESPONSE_H
-#define SNS_GET_MESSAGE_DETAILS_RESPONSE_H
+#pragma once
 
-
+// Qt includes
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
 
+// Awsmock includes
+#include <dto/sns/SNSMessageAttribute.h>
 #include <utils/JsonUtils.h>
-
-#include "SNSMessageAttribute.h"
 
 struct SNSAttribute {
     QString key;
@@ -17,7 +16,7 @@ struct SNSAttribute {
 };
 
 struct SNSGetMessageDetailsResponse {
-public:
+
     QString region;
 
     QString id;
@@ -37,7 +36,6 @@ public:
     QList<SNSMessageAttribute> messageAttributes;
 
     void FromJson(QJsonObject jsonObject) {
-        region = jsonObject["Region"].toString();
         id = jsonObject["Id"].toString();
         messageId = jsonObject["MessageId"].toString();
         topicArn = jsonObject["TopicArn"].toString();
@@ -54,5 +52,3 @@ public:
         }
     }
 };
-
-#endif // SNS_GET_MESSAGE_DETAILS_RESPONSE_H

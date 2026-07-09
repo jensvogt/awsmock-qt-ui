@@ -110,7 +110,7 @@ void ApplicationService::GetApplication(const QString &name) {
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
-                                  std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
+                                  //std::cerr << JsonUtils::WriteJsonToString(jsonDoc.object()).toStdString() << std::endl;
                                   ApplicationGetResponse applicationResponse;
                                   applicationResponse.FromJson(jsonDoc.object());
                                   emit GetApplicationDetailsSignal(applicationResponse);

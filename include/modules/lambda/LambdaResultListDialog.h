@@ -2,17 +2,20 @@
 // Created by vogje01 on 11/28/25.
 //
 
-#ifndef AWSMOCK_QT_UI_LAMBDA_RESULT_LIST_DIALOG_H
-#define AWSMOCK_QT_UI_LAMBDA_RESULT_LIST_DIALOG_H
+#pragma once
+
+// C++ includes
+#include <utility>
 
 // Qt includes
 #include <QDialog>
 
 // Awsmock includes
+#include <components/Toast.h>
+#include <modules/lambda/LambdaLogsDialog.h>
+#include <modules/lambda/LambdaService.h>
 #include <utils/BaseDialog.h>
 #include <utils/IconUtils.h>
-#include <modules/lambda/LambdaService.h>
-#include <modules/lambda/LambdaLogsDialog.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -90,6 +93,3 @@ private:
      */
     Qt::SortOrder _sortOrder = Qt::DescendingOrder;
 };
-
-
-#endif //AWSMOCK_QT_UI_LAMBDA_RESULT_LIST_DIALOG_H

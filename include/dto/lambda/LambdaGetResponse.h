@@ -32,7 +32,9 @@ struct LambdaGetResponse {
 
     int invocations{};
 
-    int averageRuntime{};
+    int avgDuration{};
+
+    int lifetime{};
 
     bool enabled{};
 
@@ -44,7 +46,7 @@ struct LambdaGetResponse {
         region = jsonObject["region"].toString();
         id = jsonObject["id"].toString();
         lambdaName = jsonObject["functionName"].toString();
-        lambdaArn = jsonObject["functionArn"].toString();
+        lambdaArn = jsonObject["lambdaArn"].toString();
         role = jsonObject["role"].toString();
         user = jsonObject["user"].toString();
         handler = jsonObject["handler"].toString();
@@ -54,8 +56,9 @@ struct LambdaGetResponse {
         concurrency = jsonObject["concurrency"].toInt();
         instances = jsonObject["instances"].toInt();
         invocations = jsonObject["invocations"].toInt();
-        averageRuntime = jsonObject["averageRuntime"].toInt();
+        avgDuration = jsonObject["avgDuration"].toInt();
         state = jsonObject["state"].toString();
+        lifetime = jsonObject["lifetime"].toInt();
         zipFile = jsonObject["zipFile"].toString();
         enabled = jsonObject["enabled"].toBool();
     }

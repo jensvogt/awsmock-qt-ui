@@ -2,20 +2,26 @@
 // Created by vogje01 on 11/25/25.
 //
 
-#ifndef AWSMOCK_QT_UI_LAMBDA_DETAILS_DIALOG_H
-#define AWSMOCK_QT_UI_LAMBDA_DETAILS_DIALOG_H
+#pragma once
 
+// C++ includes
+#include <utility>
+
+// Qt includes
 #include <QDialog>
 #include <QMenu>
 
-#include <utils/IconUtils.h>
-#include <utils/BaseDialog.h>
+// Awsmock includes
+#include <components/Toast.h>
 #include <dto/lambda/LambdaGetResponse.h>
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
-#include <modules/lambda/LambdaService.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
+#include <modules/lambda/LambdaInstanceDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
+#include <modules/lambda/LambdaService.h>
+#include <utils/BaseDialog.h>
+#include <utils/IconUtils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -47,7 +53,7 @@ public:
      *
      * @param lambdaGetResponse lambda service response
      */
-    void UpdateLambda(const LambdaGetResponse &lambdaGetResponse) const;
+    void UpdateLambda(const LambdaGetResponse &lambdaGetResponse);
 
     /**
      * @brief Reload the lambda instances tab
@@ -92,6 +98,8 @@ public:
      */
     void ShowInstanceContextMenu(const QPoint &pos) const;
 
+    void StartInstance() const;
+
     /**
      * @brief Handle OK button
      */
@@ -124,6 +132,11 @@ private:
     QString _lambdaArn;
 
     /**
+     * @brief Changed flag
+     */
+    bool _changed = false;
+
+    /**
      * @brief Instance sort column index
      */
     int _instanceSortColumn = 0;
@@ -142,7 +155,9 @@ private:
      * @brief Environment sort order
      */
     Qt::SortOrder _environmentSortOrder = Qt::AscendingOrder;
+
+    /**
+     *  @brief Save the response
+     */
+    LambdaGetResponse _lambdaGetResponse;
 };
-
-
-#endif //AWSMOCK_QT_UI_LAMBDA_DETAILS_DIALOG_H
