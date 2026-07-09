@@ -13,13 +13,15 @@
     "base-urls": [
       "http://localhost:4566",
       "http://vogje01-desktop:4566",
-      "http://192.168.178.46:4566"
+      "http://192.168.178.46:4566",
+      "http://127.0.0.1:4566"
     ],
     "websocket-url": "ws://localhost:4569",
     "websocket-urls": [
       "ws://localhost:4569",
       "ws://vogje01-desktop:4569",
-      "ws://192.168.178.46:4569"
+      "ws://192.168.178.46:4569",
+      "ws://127.0.0.1:4569"
     ]
   },
   "ui": {
