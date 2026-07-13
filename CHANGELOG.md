@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.80](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.79...v1.11.80) (2026-07-13)
+
+
+### Bug Fixes
+
+* api key update dialog ([bc1d788](https://github.com/jensvogt/awsmock-qt-ui/commit/bc1d788626aebb8c7d13295f3211dba3d27c1040))
+
 ## [1.11.79](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.78...v1.11.79) (2026-07-13)
 
 
