@@ -15,8 +15,10 @@
 #include <dto/apigateway/RestApiGetResponse.h>
 #include <dto/apigateway/RestApiKeyCreateRequest.h>
 #include <dto/apigateway/RestApiKeyListResponse.h>
+#include <dto/apigateway/RestApiKeyUpdateRequest.h>
 #include <dto/apigateway/RestApiListResponse.h>
 #include <dto/apigateway/RestApiUpdateRequest.h>
+#include <dto/apigateway/model/RestApiKey.h>
 #include <utils/BaseService.h>
 #include <utils/RestManager.h>
 
@@ -31,7 +33,7 @@ public:
      */
     ApiGatewayService() {
         setApis({
-            "ListRestApis", "GetRestApi", "UpdateRestApi", "DeleteRestApi", "DeleteResource", "ListApiKeys", "CreateApiKey", "DeleteApiKey", "EnableApiKey", "DisableApiKey"
+            "ListRestApis", "GetRestApi", "UpdateRestApi", "DeleteRestApi", "DeleteResource", "ListApiKeys", "GetApiKey", "CreateApiKey", "UpdateApiKey", "DeleteApiKey", "EnableApiKey", "DisableApiKey"
         });
     };
 
@@ -94,11 +96,25 @@ public:
     void ListApiKeys(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
 
     /**
+     * @brief Get an API key
+     *
+     * @param keyId API key ID
+     */
+    void GetApiKey(const QString &keyId);
+
+    /**
      * @brief Create an API key
      *
      * @param request create request
      */
     void CreateApiKey(const RestApiKeyCreateRequest &request);
+
+    /**
+     * @brief Update an API key
+     *
+     * @param request update request
+     */
+    void UpdateApiKey(const RestApiKeyUpdateRequest &request);
 
     /**
      * @brief Delete an API key
@@ -140,6 +156,13 @@ signals:
      * @brief Sent when a REST API list should be reloaded
      */
     void ReloadRestApisSignal();
+
+    /**
+     * @brief Sent when an API key was retrieved.
+     *
+     * @param apiKey API key model
+     */
+    void GetApiKeySignal(const RestApiKey &apiKey);
 
     /**
      * @brief Sent when an API key list arrived.

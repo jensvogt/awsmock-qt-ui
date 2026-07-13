@@ -77,7 +77,8 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         src/modules/sqs/SQSMessageWindow.ui src/modules/sqs/SQSQueueTagsDialog.cpp src/modules/sqs/SQSQueueTagsDialog.ui
         include/modules/sqs/SQSQueueTagsDialog.h include/dto/sqs/SQSListQueueTagsResponse.h
         include/dto/sqs/SQSUpdateTagsRequest.h src/modules/sqs/SQSDashboard.cpp include/modules/sqs/SQSDashboard.h
-        src/modules/sqs/SQSDashboard.ui include/dto/sqs/SQSIsDlqResponse.h)
+        src/modules/sqs/SQSDashboard.ui include/dto/sqs/SQSIsDlqResponse.h src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
+        include/modules/sqs/SQSQueueDefaultAttributeDialog.h src/modules/sqs/SQSQueueDefaultAttributeDialog.ui)
 set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp
@@ -90,7 +91,9 @@ set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSM
         src/modules/sns/SNSMessageWindow.cpp src/modules/sns/SNSDashboard.cpp include/modules/sns/SNSDashboard.h
         src/modules/sns/SNSDashboard.ui include/dto/sns/SNSListTopicAttributesResponse.h include/dto/sns/SNSTopicAttribute.h
         include/dto/sns/SNSListTopicTagsResponse.h include/dto/sns/SNSTopicTag.h include/dto/sns/SNSTopicSubscription.h
-        include/dto/sns/SNSListTopicSubscriptionsResponse.h)
+        include/dto/sns/SNSListTopicSubscriptionsResponse.h src/modules/sns/SNSMessageAddDialog.cpp
+        src/modules/sns/SNSMessageAddDialog.ui include/modules/sns/SNSMessageAddDialog.h
+        include/dto/sns/SNSSendMessageRequest.h include/dto/sns/SNSMessageAttribute.h include/dto/sns/SNSSendMessageResponse.h)
 set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h src/modules/s3/S3Service.cpp
         include/modules/s3/S3Service.h src/modules/s3/S3BucketEditDialog.cpp src/modules/s3/S3BucketEditDialog.ui
         include/modules/s3/S3BucketEditDialog.h src/modules/s3/S3ObjectList.cpp include/modules/s3/S3ObjectList.h
@@ -206,10 +209,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/dto/docker/CpuStat.h include/dto/docker/ContainerStat.h include/dto/docker/MemoryStat.h
         include/utils/PrefixFilterModel.h src/utils/PrefixFilterModel.cpp include/dto/docker/State.h
         include/utils/StringUtils.h include/modules/secretsmanager/SecretList.h
-        src/modules/secretsmanager/SecretsList.cpp src/modules/sns/SNSMessageAddDialog.cpp
-        src/modules/sns/SNSMessageAddDialog.ui include/modules/sns/SNSMessageAddDialog.h
-        include/dto/sns/SNSSendMessageRequest.h include/dto/sns/SNSMessageAttribute.h include/dto/sns/SNSSendMessageResponse.h
-        include/modules/secretsmanager/SecretsManagerService.h src/modules/secretsmanager/SecretsManagerService.cpp
+        src/modules/secretsmanager/SecretsList.cpp include/modules/secretsmanager/SecretsManagerService.h src/modules/secretsmanager/SecretsManagerService.cpp
         include/dto/secretsmanager/SecretsManagerListSecretsResponse.h include/dto/secretsmanager/SecretCounter.h
         src/modules/secretsmanager/SecretsDetailsDialog.cpp include/modules/secretsmanager/SecretsDetailsDialog.h
         src/modules/secretsmanager/SecretsDetailsDialog.ui include/dto/secretsmanager/SecretGetResponse.h
@@ -229,8 +229,7 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         include/utils/ImageUtils.h src/utils/ImageUtils.cpp include/modules/ssm/SSMParameterTagDialog.h
         src/modules/ssm/SSMParameterTagDialog.cpp include/dto/kms/KMSCreateKeyRequest.h include/utils/Logging.h
         include/utils/UpdateChecker.h include/utils/DroppableTreeView.h include/utils/NetworkUtils.h
-        include/utils/AwsUtils.h include/dto/module/ListModuleNamesResponse.h src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
-        include/modules/sqs/SQSQueueDefaultAttributeDialog.h src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
+        include/utils/AwsUtils.h include/dto/module/ListModuleNamesResponse.h
         include/utils/ChunkUploader.h include/components/HelpDialog.h include/dto/sns/SNSSubscriptionResponse.h)
 
 qt_add_resources(APP_RESOURCES resources/awsmock-qt-ui.qrc)
