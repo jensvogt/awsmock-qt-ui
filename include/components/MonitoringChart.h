@@ -61,6 +61,14 @@ namespace Awsmock::Components {
          */
         void LoadContent() override;
 
+        /**
+         * @brief Refresh data for a new time window without recreating the widget
+         *
+         * @param start start of time range
+         * @param end end of time range
+         */
+        void Refresh(const QDateTime &start, const QDateTime &end);
+
         void ClearContent();
 
     private:

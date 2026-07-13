@@ -23,6 +23,17 @@ S3ObjectAddDialog::S3ObjectAddDialog(const QString &bucketName, const QString &b
     _ui->fileBrowseButton->setToolTip("Search for the file");
     connect(_ui->fileBrowseButton, &QPushButton::clicked, this, &S3ObjectAddDialog::BrowseSourceFile);
 
+    // Content type combo
+    QMimeDatabase mimeDb;
+    QStringList mimeTypes;
+    for (const QMimeType &m: mimeDb.allMimeTypes()) {
+        mimeTypes << m.name();
+    }
+    mimeTypes.sort();
+    _ui->contentTypeCombo->addItems(mimeTypes);
+    _ui->contentTypeCombo->setEditable(true);
+    _ui->contentTypeCombo->setCurrentText("application/octet-stream");
+
     // Metadata
     _ui->tabWidget->setCurrentIndex(0);
     _ui->tabWidget->removeTab(1);
@@ -92,6 +103,10 @@ void S3ObjectAddDialog::BrowseSourceFile() {
         _ui->fileEdit->setText(file.fileName());
         _ui->s3KeyEdit->setText(_fileInfo.baseName() + "." + _fileInfo.suffix());
         Configuration::instance().SetValue<QString>("ui.default-directory.S3ObjectAddDialog", _fileInfo.absolutePath());
+
+        QMimeDatabase mimeDb;
+        const QString detectedType = mimeDb.mimeTypeForFile(_fileInfo, QMimeDatabase::MatchContent).name();
+        _ui->contentTypeCombo->setCurrentText(detectedType);
     }
 }
 
@@ -105,7 +120,7 @@ void S3ObjectAddDialog::HandleAccept() {
     const QByteArray binaryData = file.readAll();
     file.close();
 
-    _s3Service->UploadObject(_bucketName, _bucketArn, _ui->s3KeyEdit->text(), binaryData, _metadata);
+    _s3Service->UploadObject(_bucketName, _bucketArn, _ui->s3KeyEdit->text(), binaryData, _ui->contentTypeCombo->currentText(), _metadata);
     _s3Key = _ui->s3KeyEdit->text();
     accept();
 }

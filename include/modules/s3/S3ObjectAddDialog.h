@@ -9,6 +9,8 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include <QStandardItemModel>
 
 // Awsmock includes

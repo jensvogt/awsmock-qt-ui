@@ -177,7 +177,12 @@ set(API_GATEWAY_SOURCES src/modules/apigateway/RestApiList.cpp include/modules/a
         src/modules/apigateway/RestApiDetailsDialog.ui include/dto/apigateway/model/RestApiResource.h
         include/dto/apigateway/model/RestApiResourceMethod.h include/dto/apigateway/model/RestApiCounter.h
         src/modules/apigateway/ResourceDialog.cpp include/modules/apigateway/ResourceDialog.h
-        src/modules/apigateway/ResourceDialog.ui include/dto/apigateway/ResourceCreateRequest.h)
+        src/modules/apigateway/ResourceDialog.ui include/dto/apigateway/ResourceCreateRequest.h
+        src/modules/apigateway/RestApiKeyList.cpp include/modules/apigateway/RestApiKeyList.h
+        include/dto/apigateway/model/RestApiKey.h include/dto/apigateway/RestApiKeyListResponse.h
+        include/dto/apigateway/RestApiKeyCreateRequest.h
+        src/modules/apigateway/RestApiKeyDialog.cpp include/modules/apigateway/RestApiKeyDialog.h
+        src/modules/apigateway/RestApiKeyDialog.ui)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h

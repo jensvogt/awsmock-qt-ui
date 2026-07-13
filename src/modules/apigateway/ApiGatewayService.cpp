@@ -134,6 +134,139 @@ void ApiGatewayService::DeleteResource(const QString &restApiId, const QString &
                      });
 }
 
+void ApiGatewayService::CreateApiKey(const RestApiKeyCreateRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "create-api-key"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadApiKeysSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("CreateApiKey", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::ListApiKeys(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
+    jRequest["sortColumns"] = jSortingArray;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "list-api-key-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  RestApiKeyListResponse listResponse;
+                                  listResponse.FromJson(jsonDoc);
+                                  emit ListApiKeysSignal(listResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListApiKeys", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::DeleteApiKey(const QString &keyId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["apiKey"] = keyId;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "delete-api-key"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadApiKeysSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteApiKey", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::EnableApiKey(const QString &keyId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["keyId"] = keyId;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "enable-api-key"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadApiKeysSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("EnableApiKey", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::DisableApiKey(const QString &keyId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["keyId"] = keyId;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "disable-api-key"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadApiKeysSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DisableApiKey", timer.elapsed());
+                      });
+}
+
 void ApiGatewayService::DeleteRestApi(const QString &name) {
     QElapsedTimer timer;
     timer.start();
