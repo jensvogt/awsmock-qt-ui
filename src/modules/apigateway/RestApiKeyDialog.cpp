@@ -1,5 +1,4 @@
 #include <modules/apigateway/RestApiKeyDialog.h>
-#include <dto/apigateway/RestApiKeyCreateRequest.h>
 #include "ui_RestApiKeyDialog.h"
 
 RestApiKeyDialog::RestApiKeyDialog(QWidget *parent) : QDialog(parent), _ui(new Ui::RestApiKeyDialog) {
