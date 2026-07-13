@@ -41,6 +41,8 @@ Dashboard::Dashboard(const QString &title, QWidget *parent) : BasePage(parent), 
     connect(&Configuration::instance(), &Configuration::ConfigurationChanged, this, [this](const QString &key, const QString &) {
         if (key == "server.base-url") {
             _monitoringConfigs.clear();
+            qDeleteAll(_monitoringCharts);
+            _monitoringCharts.clear();
             Initialize();
             LoadContent();
         }
@@ -185,12 +187,18 @@ void Dashboard::ClearContent() {
 }
 
 void Dashboard::LoadContent() {
-    qDeleteAll(_monitoringCharts);
-    _monitoringCharts.clear();
-    for (auto &config: _monitoringConfigs) {
-        config.start = DateTimeUtils::GetLastMidnight().toUTC();
-        config.end = QDateTime::currentDateTime().toUTC();
-        _monitoringCharts.emplace_back(new Awsmock::Components::MonitoringChart(config, _ui->gridLayout, this));
+    const QDateTime start = DateTimeUtils::GetLastMidnight().toUTC();
+    const QDateTime end = QDateTime::currentDateTime().toUTC();
+    if (_monitoringCharts.isEmpty()) {
+        for (auto &config: _monitoringConfigs) {
+            config.start = start;
+            config.end = end;
+            _monitoringCharts.emplace_back(new Awsmock::Components::MonitoringChart(config, _ui->gridLayout, this));
+        }
+    } else {
+        for (auto *chart: _monitoringCharts) {
+            chart->Refresh(start, end);
+        }
     }
     logInfo << "Dashboard updated";
 }

@@ -124,7 +124,7 @@ public:
      * @param content The content of the object, represented as a QByteArray.
      * @param metadata A map of metadata key-value pairs associated with the object.
      */
-    void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
+    void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QString &contentType, const QMap<QString, QString> &metadata);
 
     /**
      * @brief Updates an object in an S3 bucket.

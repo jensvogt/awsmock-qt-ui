@@ -58,9 +58,7 @@ RestApiList::RestApiList(const QString &title, QWidget *parent) : BasePage(paren
     toolBar->addWidget(refreshButton);
 
     // Table
-    const QStringList headers = QStringList() = {
-                                    tr("Name"), tr("SourceKey"), tr("Enabled"), tr("Created"), tr("Modified"), tr("Region")
-                                };
+    const QStringList headers = QStringList() = {tr("Name"), tr("SourceKey"), tr("Enabled"), tr("Created"), tr("Modified"), tr("Region")};
 
     _tableView = new PageableTable(this);
     _tableView->SetHeaderNames(headers);

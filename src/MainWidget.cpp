@@ -48,33 +48,83 @@ MainWidget::~MainWidget() {
 }
 
 void MainWidget::SetupNavPane() {
-    // Create the Navigation Pane (QListWidget)
-    _navList = new QListView(this);
-    _navList->setGridSize(QSize(0, 20));
-
-    // Data model
-    _navDataModel = new QStandardItemModel(_navList);
-    _navList->setModel(_navDataModel);
+    _navList = new QTreeView(this);
+    _navList->setHeaderHidden(true);
     _navList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _navDataModel->appendRow(new QStandardItem("Dashboard"));
-    _navDataModel->appendRow(new QStandardItem("SQS"));
-    _navDataModel->appendRow(new QStandardItem("SNS"));
-    _navDataModel->appendRow(new QStandardItem("S3"));
-    _navDataModel->appendRow(new QStandardItem("Cognito"));
-    _navDataModel->appendRow(new QStandardItem("Application"));
-    _navDataModel->appendRow(new QStandardItem("Lambda"));
-    _navDataModel->appendRow(new QStandardItem("Secrets Manager"));
-    _navDataModel->appendRow(new QStandardItem("Systems Manager"));
-    _navDataModel->appendRow(new QStandardItem("DynamoDB"));
-    _navDataModel->appendRow(new QStandardItem("KMS"));
-    _navDataModel->appendRow(new QStandardItem("API Gateway"));
+    _navList->setExpandsOnDoubleClick(false);
 
-    // Set current index
-    _navList->setCurrentIndex(_navList->model()->index(0, 0));
-    connect(_navList, &QListView::clicked, [this](const QModelIndex &index) {
-        const QString name = _navDataModel->item(index.row())->text();
-        MainRouter::instance().SetRoute(name);
+    // Helper: create an item with an optional route key stored in UserRole
+    auto makeItem = [](const QString &label, const QString &route = {}) {
+        auto *item = new QStandardItem(label);
+        item->setData(route, Qt::UserRole);
+        return item;
+    };
+
+    _navDataModel = new QStandardItemModel(_navList);
+
+    // Flat items
+    _navDataModel->appendRow(makeItem("Dashboard", "Dashboard"));
+
+    // SQS
+    auto *sqsItem = makeItem("SQS");
+    sqsItem->appendRow(makeItem("Queues", "SQS"));
+    sqsItem->appendRow(makeItem("Monitoring", "SQS Monitoring"));
+    _navDataModel->appendRow(sqsItem);
+
+    // SNS
+    auto *snsItem = makeItem("SNS");
+    snsItem->appendRow(makeItem("Topics", "SNS"));
+    snsItem->appendRow(makeItem("Monitoring", "SNS Monitoring"));
+    _navDataModel->appendRow(snsItem);
+
+    // S3
+    _navDataModel->appendRow(makeItem("S3", "S3"));
+
+    // Application
+    auto *appItem = makeItem("Application");
+    appItem->appendRow(makeItem("List", "Application"));
+    appItem->appendRow(makeItem("Monitoring", "Application Monitoring"));
+    _navDataModel->appendRow(appItem);
+
+    // Lambda
+    auto *lambdaItem = makeItem("Lambda");
+    lambdaItem->appendRow(makeItem("Functions", "Lambda"));
+    lambdaItem->appendRow(makeItem("Monitoring", "Lambda Monitoring"));
+    _navDataModel->appendRow(lambdaItem);
+
+    // Flat items
+    _navDataModel->appendRow(makeItem("Cognito", "Cognito"));
+    _navDataModel->appendRow(makeItem("Secrets Manager", "Secrets Manager"));
+    _navDataModel->appendRow(makeItem("Systems Manager", "Systems Manager"));
+    _navDataModel->appendRow(makeItem("DynamoDB", "DynamoDB"));
+    _navDataModel->appendRow(makeItem("KMS", "KMS"));
+
+    // API Gateway
+    auto *apiGwItem = makeItem("API Gateway");
+    apiGwItem->appendRow(makeItem("REST APIs", "API Gateway"));
+    apiGwItem->appendRow(makeItem("API Keys", "API Gateway Keys"));
+    _navDataModel->appendRow(apiGwItem);
+
+    _navList->setModel(_navDataModel);
+    _navList->expandAll();
+
+    // Set current index to Dashboard
+    _navList->setCurrentIndex(_navDataModel->index(0, 0));
+
+    connect(_navList, &QTreeView::clicked, [this](const QModelIndex &index) {
+        const QStandardItem *item = _navDataModel->itemFromIndex(index);
+        if (!item) return;
+        // Parent (group) items expand/collapse; only navigate for items with a route
+        if (item->hasChildren()) {
+            _navList->isExpanded(index) ? _navList->collapse(index) : _navList->expand(index);
+            return;
+        }
+        const QString route = item->data(Qt::UserRole).toString();
+        if (!route.isEmpty()) {
+            MainRouter::instance().SetRoute(route);
+        }
     });
+
     _ui->horizontalSplitter->addWidget(_navList);
 }
 
@@ -343,7 +393,8 @@ void MainWidget::OnConnected() const {
     _serverLogDataModel->appendRow(item);
 
     // Auto-scroll to bottom
-    _ui->serverLogList->scrollToBottom();
+    if (_serverScrolling)
+        _ui->serverLogList->scrollToBottom();
 }
 
 void MainWidget::OnMessageReceived(const QString &message) {

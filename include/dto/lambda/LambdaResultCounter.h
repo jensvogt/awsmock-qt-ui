@@ -30,7 +30,7 @@ struct LambdaResultCounter {
 
     QString lambdaStatus;
 
-    int httpStatusCode;
+    QString httpStatusCode;
 
     QDateTime timestamp;
 
@@ -47,7 +47,7 @@ struct LambdaResultCounter {
         instanceId = jsonObject["instanceId"].toString();
         containerId = jsonObject["containerId"].toString();
         lambdaStatus = jsonObject["lambdaStatus"].toString();
-        httpStatusCode = jsonObject["httpStatusCode"].toInt();
+        httpStatusCode = jsonObject["httpStatusCode"].toString();
         timestamp = QDateTime::fromString(jsonObject["timestamp"].toString(), Qt::ISODate);
     }
 };

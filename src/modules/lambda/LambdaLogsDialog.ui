@@ -28,37 +28,6 @@
      <property name="bottomMargin">
       <number>0</number>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="regionLlabel">
-       <property name="text">
-        <string>Region:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="regionEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="functionLabel">
-       <property name="text">
-        <string>Function:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLineEdit" name="functionEdit">
-       <property name="dragEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="durationLabel">
        <property name="text">
@@ -73,10 +42,10 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="timestampLabel">
+     <item row="0" column="0">
+      <widget class="QLabel" name="regionLlabel">
        <property name="text">
-        <string>Timestamp:</string>
+        <string>Region:</string>
        </property>
       </widget>
      </item>
@@ -86,6 +55,67 @@
         <bool>true</bool>
        </property>
       </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="containerIdLabel">
+       <property name="text">
+        <string>Container ID:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="timestampLabel">
+       <property name="text">
+        <string>Timestamp:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="functionLabel">
+       <property name="text">
+        <string>Function:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLineEdit" name="instanceIdEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="regionEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="functionEdit">
+       <property name="dragEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="instanceIdLabel">
+       <property name="text">
+        <string>Instance ID:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLineEdit" name="containerIdEdit"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="httpStatusLabel">
+       <property name="text">
+        <string>HTTP Status Code:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="httpStatusEdit"/>
      </item>
     </layout>
    </item>

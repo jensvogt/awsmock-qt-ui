@@ -296,7 +296,7 @@ void S3Service::GetObjectDetails(const QString &objectId) {
                       });
 }
 
-void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata) {
+void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QString &contentType, const QMap<QString, QString> &metadata) {
     QElapsedTimer timer;
     timer.start();
 
@@ -310,7 +310,7 @@ void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn
     jRequest["bucketName"] = bucketName;
     jRequest["objectKey"] = key;
     jRequest["content"] = QString(content.toBase64());
-    jRequest["contentType"] = "application/json";
+    jRequest["contentType"] = contentType;
     jRequest["metadata"] = jMetadata;
     const QJsonDocument requestDoc(jRequest);
 
