@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.79](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.78...v1.11.79) (2026-07-13)
+
+
+### Bug Fixes
+
+* dashboard flickering - update navigation, add enable/disable API Keys ([fba70b6](https://github.com/jensvogt/awsmock-qt-ui/commit/fba70b62ba74c9979a6a6fbd94610030e8e298ff))
+* dashboard flickering - update navigation, add enable/disable API Keys ([869f21f](https://github.com/jensvogt/awsmock-qt-ui/commit/869f21ff4704f2670a43ec005a78fd00315854a8))
+
 ## [1.11.78](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.77...v1.11.78) (2026-07-04)
 
 
