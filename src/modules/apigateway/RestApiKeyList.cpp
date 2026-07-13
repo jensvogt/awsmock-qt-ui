@@ -47,6 +47,11 @@ RestApiKeyList::RestApiKeyList(const QString &title, QWidget *parent) : BasePage
     _tableView->setServiceApis(_apiGatewayService->getApis());
 
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &RestApiKeyList::ShowContextMenu);
+    connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
+        const auto keyId = _tableView->GetValue<QString>(index, 0);
+        RestApiKeyDialog dialog(keyId, this);
+        dialog.exec();
+    });
 
     const auto layout = new QVBoxLayout(this);
     layout->addLayout(toolBar, 0);
@@ -85,6 +90,11 @@ void RestApiKeyList::ShowContextMenu(const QPoint &pos) {
 
     QMenu *menu = new ContextMenu();
 
+    QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit API Key");
+    editAction->setToolTip("Edit the API key.");
+
+    menu->addSeparator();
+
     QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable API Key");
     enableAction->setToolTip("Enable the API key.");
     enableAction->setEnabled(!enabled);
@@ -98,7 +108,10 @@ void RestApiKeyList::ShowContextMenu(const QPoint &pos) {
     QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete API Key");
     deleteAction->setToolTip("Delete the API key.");
 
-    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == enableAction) {
+    if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
+        RestApiKeyDialog dialog(keyId, this);
+        dialog.exec();
+    } else if (selectedAction == enableAction) {
         _apiGatewayService->EnableApiKey(keyId);
         new Awsmock::Components::ToastOverlay("API key enabled!\nName: " + name, this);
     } else if (selectedAction == disableAction) {

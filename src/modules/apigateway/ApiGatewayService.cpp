@@ -134,6 +134,36 @@ void ApiGatewayService::DeleteResource(const QString &restApiId, const QString &
                      });
 }
 
+void ApiGatewayService::GetApiKey(const QString &keyId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["keyId"] = keyId;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "get-api-key-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  RestApiKey apiKey;
+                                  apiKey.fromJson(jsonDoc.object()["apiKey"].toObject());
+                                  emit GetApiKeySignal(apiKey);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("GetApiKey", timer.elapsed());
+                      });
+}
+
 void ApiGatewayService::CreateApiKey(const RestApiKeyCreateRequest &request) {
     QElapsedTimer timer;
     timer.start();
@@ -152,6 +182,27 @@ void ApiGatewayService::CreateApiKey(const RestApiKeyCreateRequest &request) {
                               logError << "http status: " << error;
                           }
                           emit EventBus::instance().TimerSignal("CreateApiKey", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::UpdateApiKey(const RestApiKeyUpdateRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "update-api-key"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadApiKeysSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("UpdateApiKey", timer.elapsed());
                       });
 }
 

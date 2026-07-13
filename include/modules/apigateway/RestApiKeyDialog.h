@@ -6,6 +6,8 @@
 
 // Awsmock includes
 #include <dto/apigateway/RestApiKeyCreateRequest.h>
+#include <dto/apigateway/RestApiKeyUpdateRequest.h>
+#include <dto/apigateway/model/RestApiKey.h>
 #include <modules/apigateway/ApiGatewayService.h>
 
 QT_BEGIN_NAMESPACE
@@ -18,21 +20,28 @@ QT_END_NAMESPACE
 /**
  * @brief A dialog interface for managing and configuring REST API keys.
  *
- * This dialog provides functionalities for adding, editing, and removing
- * REST API keys. It facilitates users in handling authentication keys
- * used for interacting with external RESTful services. The implementation
- * ensures secure handling of sensitive information.
+ * This dialog provides functionalities for adding and editing REST API keys.
+ * Use the single-argument constructor (parent only) to create a new key, or
+ * the keyId constructor to edit an existing key.
  */
 class RestApiKeyDialog : public QDialog {
     Q_OBJECT
 
 public:
     /**
-     * @brief Constructor
+     * @brief Add API key constructor
      *
      * @param parent parent widget
      */
     explicit RestApiKeyDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief Edit API key constructor
+     *
+     * @param keyId ID of the API key to edit
+     * @param parent parent widget
+     */
+    explicit RestApiKeyDialog(const QString &keyId, QWidget *parent = nullptr);
 
     /**
      * @brief Destructor
@@ -41,38 +50,29 @@ public:
 
     /**
      * @brief Handles the acceptance action for a dialog or process.
-     *
-     * This method is typically invoked when the user confirms an action
-     * or submits data, triggering the necessary logic to process the acceptance.
      */
     void HandleAccept();
 
     /**
      * @brief Handles the rejection action for a dialog or process.
-     *
-     * This method is typically called when the user cancels or dismisses the dialog,
-     * closing it without applying any changes.
      */
     void HandleReject();
 
-private:
     /**
-     * @brief Pointer to the UI components of the RestApiKeyDialog.
+     * @brief Populates the form with data received from the server.
      *
-     * This member variable is used to manage and interact with the user interface elements
-     * defined in the RestApiKeyDialog. It is initialized in the constructor and cleaned up
-     * in the destructor to ensure proper resource management.
+     * @param apiKey API key model from server
      */
+    void HandleGetApiKeySignal(const RestApiKey &apiKey);
+
+private:
+    void Initialize();
+
     Ui::RestApiKeyDialog *_ui;
 
-    /**
-     * @brief Pointer to the ApiGatewayService instance.
-     *
-     * This member variable is used to interact with the ApiGatewayService, which
-     * provides functionalities for managing REST APIs and API keys. It is
-     * initialized during the construction of the RestApiKeyDialog and ensures
-     * communication with the backend services for creating, updating, and deleting
-     * APIs and API keys.
-     */
     ApiGatewayService *_apiGatewayService{};
+
+    QString _keyId;
+
+    bool _editMode{false};
 };
