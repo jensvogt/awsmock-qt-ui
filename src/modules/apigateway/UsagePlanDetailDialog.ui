@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UsagePlanDetailDialog</class>
+ <widget class="QDialog" name="UsagePlanDetailDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Add Usage Plan</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="nameLabel">
+       <property name="text">
+        <string>Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="nameEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="descriptionLabel">
+       <property name="text">
+        <string>Description:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="descriptionEdit"/>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QGroupBox" name="throttleGroup">
+       <property name="title">
+        <string>Throttle</string>
+       </property>
+       <layout class="QGridLayout" name="throttleGridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="rateLimitLabel">
+          <property name="text">
+           <string>Rate limit (req/s):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QDoubleSpinBox" name="rateLimitSpin">
+          <property name="minimum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1000000.000000000000000</double>
+          </property>
+          <property name="decimals">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="burstLimitLabel">
+          <property name="text">
+           <string>Burst limit:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="burstLimitSpin">
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>1000000</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QGroupBox" name="quotaGroup">
+       <property name="title">
+        <string>Quota</string>
+       </property>
+       <layout class="QGridLayout" name="quotaGridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="quotaLimitLabel">
+          <property name="text">
+           <string>Limit:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="quotaLimitSpin">
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>1000000000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="quotaPeriodLabel">
+          <property name="text">
+           <string>Period:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="quotaPeriodCombo">
+          <item>
+           <property name="text">
+            <string>DAY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WEEK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>MONTH</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>descriptionEdit</tabstop>
+  <tabstop>rateLimitSpin</tabstop>
+  <tabstop>burstLimitSpin</tabstop>
+  <tabstop>quotaLimitSpin</tabstop>
+  <tabstop>quotaPeriodCombo</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

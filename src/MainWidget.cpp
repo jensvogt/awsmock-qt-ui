@@ -103,6 +103,7 @@ void MainWidget::SetupNavPane() {
     auto *apiGwItem = makeItem("API Gateway");
     apiGwItem->appendRow(makeItem("REST APIs", "API Gateway"));
     apiGwItem->appendRow(makeItem("API Keys", "API Gateway Keys"));
+    apiGwItem->appendRow(makeItem("Usage Plans", "API Gateway Usage Plans"));
     _navDataModel->appendRow(apiGwItem);
 
     _navList->setModel(_navDataModel);
