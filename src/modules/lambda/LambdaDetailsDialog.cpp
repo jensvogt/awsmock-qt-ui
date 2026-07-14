@@ -84,7 +84,7 @@ void LambdaDetailsDialog::UpdateLambda(const LambdaGetResponse &lambdaGetRespons
     _ui->userEdit->setText(lambdaGetResponse.user);
     _ui->runtimeEdit->setText(lambdaGetResponse.runtime);
     _ui->versionEdit->setText(lambdaGetResponse.version);
-    _ui->sizeEdit->setText(QString::number(lambdaGetResponse.size));
+    _ui->sizeEdit->setText(StringUtils::FormatSizeColumn(lambdaGetResponse.size, 0));
     _ui->concurrencyEdit->setText(QString::number(lambdaGetResponse.concurrency));
     _ui->instancesEdit->setText(QString::number(lambdaGetResponse.instances));
     _ui->invocationsEdit->setText(QString::number(lambdaGetResponse.invocations));

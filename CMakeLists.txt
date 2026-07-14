@@ -185,7 +185,12 @@ set(API_GATEWAY_SOURCES src/modules/apigateway/RestApiList.cpp include/modules/a
         include/dto/apigateway/model/RestApiKey.h include/dto/apigateway/RestApiKeyListResponse.h
         include/dto/apigateway/RestApiKeyCreateRequest.h
         src/modules/apigateway/RestApiKeyDialog.cpp include/modules/apigateway/RestApiKeyDialog.h
-        src/modules/apigateway/RestApiKeyDialog.ui)
+        src/modules/apigateway/RestApiKeyDialog.ui
+        src/modules/apigateway/UsagePlanList.cpp include/modules/apigateway/UsagePlanList.h
+        include/dto/apigateway/UsagePlanListResponse.h include/dto/apigateway/model/UsagePlan.h
+        src/modules/apigateway/UsagePlanDetailDialog.cpp include/modules/apigateway/UsagePlanDetailDialog.h
+        src/modules/apigateway/UsagePlanDetailDialog.ui
+        include/dto/apigateway/UsagePlanCreateRequest.h include/dto/apigateway/UsagePlanUpdateRequest.h)
 set(MAIN_SOURCES src/main.cpp src/mainwindow.cpp include/mainwindow.h src/MainWidget.cpp include/MainWidget.h
         src/MainWidget.ui include/MainRouter.h)
 set(UTILS_SOURCES src/utils/About.cpp src/utils/About.ui include/utils/About.h include/utils/About.h

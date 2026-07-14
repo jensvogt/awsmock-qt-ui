@@ -1,4 +1,5 @@
 #include <modules/apigateway/ApiGatewayService.h>
+#include <dto/apigateway/UsagePlanListResponse.h>
 
 void ApiGatewayService::CreateRestApi(const RestApiCreateRequest &request) {
     QElapsedTimer timer;
@@ -315,6 +316,142 @@ void ApiGatewayService::DisableApiKey(const QString &keyId) {
                               logError << "http status: " << error;
                           }
                           emit EventBus::instance().TimerSignal("DisableApiKey", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::ListUsagePlans(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = sortDirection;
+    jSorting["column"] = sortAttribute;
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest;
+    jRequest["prefix"] = prefix;
+    jRequest["pageSize"] = static_cast<qint64>(pageSize);
+    jRequest["pageIndex"] = static_cast<qint64>(pageIndex);
+    jRequest["sortColumns"] = jSortingArray;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "list-usage-plan-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  UsagePlanListResponse listResponse;
+                                  listResponse.FromJson(jsonDoc);
+                                  emit ListUsagePlansSignal(listResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListUsagePlans", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::GetUsagePlan(const QString &planId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["usagePlanId"] = planId;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "get-usage-plan-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  UsagePlan usagePlan;
+                                  usagePlan.fromJson(jsonDoc.object()["usagePlan"].toObject());
+                                  emit GetUsagePlanSignal(usagePlan);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("GetUsagePlan", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::CreateUsagePlan(const UsagePlanCreateRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "create-usage-plan-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadUsagePlansSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("CreateUsagePlan", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::UpdateUsagePlan(const UsagePlanUpdateRequest &request) {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      request.ToJson().toUtf8(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "update-usage-plan-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadUsagePlansSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("UpdateUsagePlan", timer.elapsed());
+                      });
+}
+
+void ApiGatewayService::DeleteUsagePlan(const QString &planId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest;
+    jRequest["usagePlanId"] = planId;
+
+    _restManager.post(GetBaseUrl(),
+                      QJsonDocument(jRequest).toJson(),
+                      {
+                          {"x-awsmock-target", "apigateway"},
+                          {"x-awsmock-action", "delete-usage-plan-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit ReloadUsagePlansSignal();
+                          } else {
+                              logError << "http status: " << error;
+                          }
+                          emit EventBus::instance().TimerSignal("DeleteUsagePlan", timer.elapsed());
                       });
 }
 
