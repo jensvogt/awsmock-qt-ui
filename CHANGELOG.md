@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.81](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.80...v1.11.81) (2026-07-14)
+
+
+### Bug Fixes
+
+* usage plan add/edit - update API ([38f8661](https://github.com/jensvogt/awsmock-qt-ui/commit/38f8661c343626833ab37696a1fea83dc2bd95b8))
+* usage plan add/edit - update API ([22be4a7](https://github.com/jensvogt/awsmock-qt-ui/commit/22be4a7aa5081af0ae85f72858bec3adc2636c73))
+
 ## [1.11.80](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.79...v1.11.80) (2026-07-13)
 
 
