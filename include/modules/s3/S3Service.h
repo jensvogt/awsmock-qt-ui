@@ -146,6 +146,19 @@ public:
     void PutBucketNotificationConfiguration(const S3PutBucketNotificationConfigurationRequest &request);
 
     /**
+     * @brief Puts the full notification configuration for a bucket from individual notification lists.
+     *
+     * @param bucket The name of the S3 bucket.
+     * @param lambdaNotifications List of lambda notification configurations.
+     * @param queueNotifications List of SQS queue notification configurations.
+     * @param topicNotifications List of SNS topic notification configurations.
+     */
+    void PutBucketNotificationConfiguration(const QString &bucket,
+                                            const QList<LambdaNotification> &lambdaNotifications,
+                                            const QList<QueueNotification> &queueNotifications,
+                                            const QList<TopicNotification> &topicNotifications);
+
+    /**
      * @brief Updates the timestamp or metadata of an object in an S3-compatible storage bucket.
      *
      * This method sends a request to simulate touching an object within a bucket, potentially

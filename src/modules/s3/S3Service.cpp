@@ -371,13 +371,12 @@ void S3Service::PutBucketNotificationConfiguration(const S3PutBucketNotification
     QElapsedTimer timer;
     timer.start();
 
-    qInfo() << request.ToXml().toUtf8();
-
     _restManager.put(GetBaseUrl(request.bucket),
                      request.ToXml().toUtf8(),
                      {
                          {"x-awsmock-target", "s3"},
                          {"x-awsmock-action", "PutBucketNotificationConfiguration"},
+                         {"x-awsmock-region", Configuration::instance().GetValue<QString>("aws.region", "eu-central-1")},
                          {"content-type", "application/xml; charset=utf-8"}
                      },
                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
@@ -388,6 +387,44 @@ void S3Service::PutBucketNotificationConfiguration(const S3PutBucketNotification
                          }
                          emit EventBus::instance().TimerSignal("PutBucketNotificationConfiguration", timer.elapsed());
                      });
+}
+
+void S3Service::PutBucketNotificationConfiguration(const QString &bucket,
+                                                   const QList<LambdaNotification> &lambdaNotifications,
+                                                   const QList<QueueNotification> &queueNotifications,
+                                                   const QList<TopicNotification> &topicNotifications) {
+    S3PutBucketNotificationConfigurationRequest request;
+    request.region = bucket;
+    request.bucket = bucket;
+
+    for (const auto &[id, lambdaArn, filterRules, events]: lambdaNotifications) {
+        S3LambdaConfiguration config;
+        config.id = id;
+        config.lambdaArn = lambdaArn;
+        config.filterRules = QVector<S3FilterRule>(filterRules.cbegin(), filterRules.cend());
+        config.events = QVector<S3NotificationEventType>(events.cbegin(), events.cend());
+        request.lambdaConfigurations.append(config);
+    }
+
+    for (const auto &[id, queueArn, filterRules, events]: queueNotifications) {
+        S3QueueConfiguration config;
+        config.id = id;
+        config.queueArn = queueArn;
+        config.filterRules = QVector<S3FilterRule>(filterRules.cbegin(), filterRules.cend());
+        config.events = QVector<S3NotificationEventType>(events.cbegin(), events.cend());
+        request.queueConfigurations.append(config);
+    }
+
+    for (const auto &[id, topicArn, filterRules, events]: topicNotifications) {
+        S3TopicConfiguration config;
+        config.id = id;
+        config.topicArn = topicArn;
+        config.filterRules = QVector<S3FilterRule>(filterRules.cbegin(), filterRules.cend());
+        config.events = QVector<S3NotificationEventType>(events.cbegin(), events.cend());
+        request.topicConfigurations.append(config);
+    }
+
+    PutBucketNotificationConfiguration(request);
 }
 
 void S3Service::TouchObject(const QString &bucketName, const QString &key) {

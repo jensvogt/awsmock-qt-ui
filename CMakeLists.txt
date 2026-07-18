@@ -103,12 +103,15 @@ set(S3_SOURCES src/modules/s3/S3BucketList.cpp include/modules/s3/S3BucketList.h
         include/dto/s3/S3TopicConfiguration.h include/dto/s3/S3QueueConfiguration.h include/dto/s3/S3FilterRule.h
         include/dto/s3/S3NotificationEventType.h include/dto/s3/S3PutBucketNotificationConfigurationRequest.h
         src/modules/s3/S3QueueNotificationDialog.cpp include/modules/s3/S3QueueNotificationDialog.h
-        src/modules/s3/S3QueueNotificationDialog.ui include/modules/s3/S3ObjectWindow.h src/modules/s3/S3ObjectWindow.cpp
+        src/modules/s3/S3QueueNotificationDialog.ui src/modules/s3/S3TopicNotificationDialog.cpp
+        include/modules/s3/S3TopicNotificationDialog.h src/modules/s3/S3TopicNotificationDialog.ui
+        include/modules/s3/S3ObjectWindow.h src/modules/s3/S3ObjectWindow.cpp
         include/modules/s3/S3BucketMetadataDialog.h src/modules/s3/S3BucketMetadataDialog.cpp
         src/modules/s3/S3BucketLifecycleDialog.cpp include/modules/s3/S3BucketLifecycleDialog.h
         src/modules/s3/S3BucketLifecycleDialog.ui src/modules/s3/S3ObjectAddDialog.cpp include/modules/s3/S3ObjectAddDialog.h
         src/modules/s3/S3ObjectAddDialog.ui src/modules/s3/S3ObjectAddDialog.cpp include/utils/BaseService.h
-        include/dto/s3/S3ObjectUploadRequest.h)
+        include/dto/s3/S3ObjectUploadRequest.h include/modules/s3/S3ObjectMetadataDialog.h
+        src/modules/s3/S3ObjectMetadataDialog.ui src/modules/s3/S3ObjectMetadataDialog.cpp)
 set(KMS_SOURCES src/modules/kms/KMSService.cpp include/modules/kms/KMSService.h include/dto/kms/KMSListKeysResponse.h
         include/dto/kms/KeyCounter.h include/modules/kms/KMSKeyList.h include/dto/kms/KMSListKeysRequest.h
         include/dto/kms/KeySpec.h include/dto/kms/KeyUsage.h include/dto/kms/KeyState.h src/modules/kms/KMSKeyList.cpp
@@ -206,8 +209,8 @@ set(PROJECT_SOURCES ${TS_FILES} ${MAIN_SOURCES} ${KMS_SOURCES} ${SQS_SOURCES} ${
         ${MODULE_SOURCES} ${APPLICATION_SOURCES} ${SNS_SOURCES} ${COGNITO_SOURCES} ${UTILS_SOURCES} ${FTP_SOURCES}
         ${COMPONENTS_SOURCES} ${DYNAMODB_SOURCES} ${LAMBDA_SOURCES} ${API_GATEWAY_SOURCES}
         src/modules/docker/DockerLogClient.cpp include/modules/docker/DockerLogClient.h include/Version.h
-        include/dto/lambda/LambdaListEnvironmentResponse.h cmake/version.h.in src/modules/s3/S3ObjectMetadataDialog.cpp
-        include/modules/s3/S3ObjectMetadataDialog.h src/modules/s3/S3ObjectMetadataDialog.ui src/modules/docker/DockerStatsDialog.cpp
+        include/dto/lambda/LambdaListEnvironmentResponse.h cmake/version.h.in
+        src/modules/docker/DockerStatsDialog.cpp
         src/modules/docker/DockerService.cpp include/modules/docker/DockerService.h include/modules/docker/DockerStatsDialog.h
         include/dto/docker/DockerStatsResponse.h src/modules/docker/DockerStatsDialog.ui
         include/dto/docker/DockerContainersResponse.h include/dto/docker/Container.h include/dto/docker/CpuUsage.h

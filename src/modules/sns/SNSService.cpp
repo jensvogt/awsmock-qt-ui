@@ -28,6 +28,35 @@ void SNSService::AddTopic(const QString &region, const QString &topicName) {
                       });
 }
 
+void SNSService::ListTopicArns() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "sns"},
+                          {"x-awsmock-action", "list-topic-arns"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  QList<QString> arns;
+                                  for (const auto &arn: jsonDoc["topicArns"].toArray()) {
+                                      arns.append(arn.toString());
+                                  }
+                                  emit ListTopicArnsSignal(arns);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListTopicArns", timer.elapsed());
+                      });
+}
+
 void SNSService::ListTopics(const QString &prefix, const long pageSize, const long pageIndex, const QString &sortAttribute, const int sortDirection) {
     QElapsedTimer timer;
     timer.start();

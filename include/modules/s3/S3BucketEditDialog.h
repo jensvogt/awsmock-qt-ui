@@ -18,6 +18,7 @@
 #include <modules/s3/S3BucketMetadataDialog.h>
 #include <modules/s3/S3ObjectMetadataDialog.h>
 #include <modules/s3/S3QueueNotificationDialog.h>
+#include <modules/s3/S3TopicNotificationDialog.h>
 #include <modules/s3/S3Service.h>
 #include <utils/BaseDialog.h>
 #include <utils/DateTimeUtils.h>
@@ -47,9 +48,15 @@ public:
 
     void SetupLambdaNotifications();
 
+    void ShowLambdaNotificationContextMenu(const QPoint &pos);
+
     void SetupQueueNotifications();
 
     void SetupTopicNotifications();
+
+    void ShowTopicNotificationContextMenu(const QPoint &pos);
+
+    void HandleTopicNotificationEdit(const TopicNotification *topicNotification);
 
     void SetupLifecycles();
 
@@ -58,6 +65,8 @@ public:
     void ShowQueueNotificationContextMenu(const QPoint &pos);
 
     void HandleQueueNotificationEdit(const QueueNotification *queueNotification);
+
+    void PutNotificationConfiguration() const;
 
     void LoadContent() override {
     };
