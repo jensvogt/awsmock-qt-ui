@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/21/26.
 //
 
-#ifndef AWSMOCK_QT_UI_S3_PUT_BUCKET_NOTIFICATION_CONFIGURATION_REQUEST_H
-#define AWSMOCK_QT_UI_S3_PUT_BUCKET_NOTIFICATION_CONFIGURATION_REQUEST_H
+#pragma once
 
 // Awsmock includes
 #include <dto/s3/S3LambdaConfiguration.h>
@@ -13,6 +12,8 @@
 
 struct S3PutBucketNotificationConfigurationRequest {
 
+    QString region;
+
     QString bucket;
 
     QVector<S3LambdaConfiguration> lambdaConfigurations;
@@ -21,6 +22,7 @@ struct S3PutBucketNotificationConfigurationRequest {
 
     QVector<S3TopicConfiguration> topicConfigurations;
 
+    [[nodiscard]]
     QString ToXml() const {
         QString xmlString;
         QXmlStreamWriter writer(&xmlString);
@@ -81,8 +83,8 @@ struct S3PutBucketNotificationConfigurationRequest {
                 for (const auto &event: events) {
                     writer.writeTextElement("Event", S3NotificationEventToString(event));
                 }
+                writer.writeEndElement();
             }
-            writer.writeEndElement();
         }
 
         if (!topicConfigurations.isEmpty()) {
@@ -109,11 +111,10 @@ struct S3PutBucketNotificationConfigurationRequest {
                 for (const auto &event: events) {
                     writer.writeTextElement("Event", S3NotificationEventToString(event));
                 }
+                writer.writeEndElement();
             }
-            writer.writeEndElement();
         }
         writer.writeEndDocument();
         return xmlString;
     }
 };
-#endif // AWSMOCK_QT_UI_S3_PUT_BUCKET_NOTIFICATION_CONFIGURATION_REQUEST_H

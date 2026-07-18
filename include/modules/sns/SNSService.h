@@ -28,7 +28,7 @@ public:
      */
     SNSService() {
         setApis({
-            "AddTopic", "ListTopics", "PurgeTopic", "PurgeAllTopics", "AddQueue", "ListTopicAttributes", "ListTopicTags",
+            "AddTopic", "ListTopics", "ListTopicArns", "PurgeTopic", "PurgeAllTopics", "AddQueue", "ListTopicAttributes", "ListTopicTags",
             "ListTopicSubscriptions", "ListMessages", "PurgeMessages", "GetTopicDetails", "ResetMessageCounters",
             "ListTopicDefaultAttributes", "AddTopicDefaultAttributes", "UpdateTopicDefaultAttributes", "DeleteTopicDefaultAttributes",
             "GetSnsMessageDetails", "DeleteTopic", "SendMessage", "ResendTopic", "ResendMessage", "AddSubscription",
@@ -58,6 +58,11 @@ public:
      * @param sortDirection
      */
     void ListTopics(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
+
+    /**
+     * @brief List SNS topic ARNs
+     */
+    void ListTopicArns();
 
     /**
      * @brief Purge all messages
@@ -227,6 +232,13 @@ signals:
      * @param listTopicResult topic list response
      */
     void ListTopicSignal(const SNSListTopicResult &listTopicResult);
+
+    /**
+     * @brief Signaled when a list of topic ARNs arrived.
+     *
+     * @param arns string list of topic ARNs
+     */
+    void ListTopicArnsSignal(const QList<QString> &arns);
 
     /**
      * @brief Signaled, when a topic details arrived.

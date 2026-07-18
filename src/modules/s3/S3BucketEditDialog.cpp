@@ -2,8 +2,6 @@
 // Created by vogje01 on 11/12/25.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_S3BucketEditDialog.h" resolved
-
 #include <modules/s3/S3BucketEditDialog.h>
 #include "ui_S3BucketEditDialog.h"
 
@@ -72,6 +70,13 @@ void S3BucketEditDialog::UpdateBucket(const S3GetBucketDetailsResponse &bucketGe
         const int row = _queueNotificationDataModel->rowCount();
         SetColumn(_queueNotificationDataModel, row, 0, it->id);
         SetColumn(_queueNotificationDataModel, row, 1, it->queueArn);
+    }
+
+    // Topic notifications
+    for (auto it = bucketGetResponse.topicNotifications.begin(); it != bucketGetResponse.topicNotifications.cend(); ++it) {
+        const int row = _topicNotificationDataModel->rowCount();
+        SetColumn(_topicNotificationDataModel, row, 0, it->id);
+        SetColumn(_topicNotificationDataModel, row, 1, it->topicArn);
     }
 
     // Lifecycle rules
@@ -201,9 +206,60 @@ void S3BucketEditDialog::SetupLambdaNotifications() {
     _ui->lambdaNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->lambdaNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
         S3BucketLambdaNotificationDialog lambdaNotificationDialog(_bucket, this);
-        lambdaNotificationDialog.exec();
-        this->_changed = true;
+        if (lambdaNotificationDialog.exec() == Accepted) {
+            const S3LambdaConfiguration config = lambdaNotificationDialog.GetLambdaConfiguration();
+            LambdaNotification notification;
+            notification.id = config.id;
+            notification.lambdaArn = config.lambdaArn;
+            notification.filterRules = config.filterRules;
+            notification.events = config.events;
+            _bucketGetResponse.lambdaNotifications.append(notification);
+            const int row = _lambdaNotificationDataModel->rowCount();
+            SetColumn(_lambdaNotificationDataModel, row, 0, notification.id);
+            SetColumn(_lambdaNotificationDataModel, row, 1, notification.lambdaArn);
+            PutNotificationConfiguration();
+            this->_changed = true;
+        }
     });
+
+    // Context menu
+    _ui->lambdaNotificationTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->lambdaNotificationTable, &QTableView::customContextMenuRequested, this, &S3BucketEditDialog::ShowLambdaNotificationContextMenu);
+}
+
+void S3BucketEditDialog::ShowLambdaNotificationContextMenu(const QPoint &pos) {
+    const QModelIndex index = _ui->lambdaNotificationTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+    // Context menu
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Lambda Notification");
+    editAction->setToolTip("Edit the bucket lambda notification");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Lambda Notification");
+    deleteAction->setToolTip("Delete the bucket lambda notification");
+    const QString id = _lambdaNotificationDataModel->item(index.row(), 0)->text();
+    const auto it = std::ranges::find_if(_bucketGetResponse.lambdaNotifications, [id](const LambdaNotification &n) {
+        return n.id == id;
+    });
+    if (it == _bucketGetResponse.lambdaNotifications.end()) {
+        return;
+    }
+    if (const QAction *selectedAction = menu.exec(_ui->lambdaNotificationTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        S3LambdaConfiguration configuration{};
+        configuration.lambdaArn = it->lambdaArn;
+        configuration.filterRules = it->filterRules;
+        configuration.events = it->events;
+        if (S3BucketLambdaNotificationDialog lambdaNotificationDialog(_bucket, configuration, this); lambdaNotificationDialog.exec() == Accepted) {
+            _changed = true;
+        }
+    } else if (selectedAction == deleteAction) {
+        _bucketGetResponse.lambdaNotifications.erase(it);
+        _lambdaNotificationDataModel->removeRow(index.row());
+        PutNotificationConfiguration();
+        _changed = true;
+    }
 }
 
 void S3BucketEditDialog::SetupQueueNotifications() {
@@ -274,12 +330,23 @@ void S3BucketEditDialog::SetupTopicNotifications() {
     _ui->topicNotificationAddButton->setText(nullptr);
     _ui->topicNotificationAddButton->setIcon(IconUtils::GetIcon("add"));
     connect(_ui->topicNotificationAddButton, &QAbstractButton::clicked, this, [this]() {
-        /*S3ObjectMetadataDialog metadataAdd(this, true);
-        metadataAdd.exec();
-        const int row = _topicNotificationDataModel->rowCount();
-        SetColumn(_topicNotificationDataModel, row, 0, metadataAdd.GetKey());
-        SetColumn(_topicNotificationDataModel, row, 1, metadataAdd.GetValue());*/
-        this->_changed = true;
+        HandleTopicNotificationEdit(nullptr);
+    });
+
+    // Context menu
+    _ui->topicNotificationTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->topicNotificationTable, &QTableView::customContextMenuRequested, this, &S3BucketEditDialog::ShowTopicNotificationContextMenu);
+
+    // Double click
+    connect(_ui->topicNotificationTable, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        const QString id = _topicNotificationDataModel->item(index.row(), 0)->text();
+        const auto it = std::ranges::find_if(_bucketGetResponse.topicNotifications, [id](const TopicNotification &t) {
+            return t.id == id;
+        });
+        if (it == _bucketGetResponse.topicNotifications.end()) {
+            return;
+        }
+        HandleTopicNotificationEdit(&*it);
     });
 }
 
@@ -399,8 +466,72 @@ void S3BucketEditDialog::ShowQueueNotificationContextMenu(const QPoint &pos) {
             _changed = true;
         }
     } else if (selectedAction == deleteAction) {
+        _bucketGetResponse.queueNotifications.erase(it);
         _queueNotificationDataModel->removeRow(index.row());
+        PutNotificationConfiguration();
         _changed = true;
+    }
+}
+
+void S3BucketEditDialog::ShowTopicNotificationContextMenu(const QPoint &pos) {
+
+    const QModelIndex index = _ui->topicNotificationTable->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Topic Notification");
+    editAction->setToolTip("Edit the bucket topic notification");
+    menu.addSeparator();
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Topic Notification");
+    deleteAction->setToolTip("Delete the bucket topic notification");
+
+    const QString id = _topicNotificationDataModel->item(index.row(), 0)->text();
+    const auto it = std::ranges::find_if(_bucketGetResponse.topicNotifications, [id](const TopicNotification &t) {
+        return t.id == id;
+    });
+
+    if (it == _bucketGetResponse.topicNotifications.end()) {
+        return;
+    }
+
+    if (const QAction *selectedAction = menu.exec(_ui->topicNotificationTable->viewport()->mapToGlobal(pos)); selectedAction == editAction) {
+        HandleTopicNotificationEdit(&(*it));
+    } else if (selectedAction == deleteAction) {
+        _bucketGetResponse.topicNotifications.erase(it);
+        _topicNotificationDataModel->removeRow(index.row());
+        PutNotificationConfiguration();
+        _changed = true;
+    }
+}
+
+void S3BucketEditDialog::HandleTopicNotificationEdit(const TopicNotification *topicNotification) {
+    S3TopicNotificationDialog *topicNotificationDialog;
+    if (topicNotification) {
+        topicNotificationDialog = new S3TopicNotificationDialog(*topicNotification, this);
+    } else {
+        topicNotificationDialog = new S3TopicNotificationDialog(this);
+    }
+    if (topicNotificationDialog->exec() == Accepted) {
+        const QString topicArn = topicNotificationDialog->GetTopicArn();
+        const QStringList s3Events = topicNotificationDialog->GetS3Event();
+        const QString id = StringUtils::GenerateRandomNumericString(12);
+
+        TopicNotification notification;
+        notification.id = id;
+        notification.topicArn = topicArn;
+        for (const auto &event: s3Events) {
+            notification.events.append(S3NotificationEventFromString(event));
+        }
+        _bucketGetResponse.topicNotifications.append(notification);
+
+        const int row = _topicNotificationDataModel->rowCount();
+        SetColumn(_topicNotificationDataModel, row, 0, id);
+        SetColumn(_topicNotificationDataModel, row, 1, topicArn);
+
+        PutNotificationConfiguration();
+        this->_changed = true;
     }
 }
 
@@ -416,21 +547,29 @@ void S3BucketEditDialog::HandleQueueNotificationEdit(const QueueNotification *qu
         const QStringList s3Events = queueNotificationDialog->GetS3Event();
         const QString id = StringUtils::GenerateRandomNumericString(12);
 
+        QueueNotification notification;
+        notification.id = id;
+        notification.queueArn = queueArn;
+        for (const auto &event: s3Events) {
+            notification.events.append(S3NotificationEventFromString(event));
+        }
+        _bucketGetResponse.queueNotifications.append(notification);
+
         const int row = _queueNotificationDataModel->rowCount();
         SetColumn(_queueNotificationDataModel, row, 0, id);
         SetColumn(_queueNotificationDataModel, row, 1, queueArn);
 
-        S3QueueConfiguration configuration{};
-        configuration.queueArn = queueArn;
-        for (const auto &event: s3Events) {
-            configuration.events.append(S3NotificationEventFromString(event));
-        }
-        S3PutBucketNotificationConfigurationRequest request{};
-        request.bucket = _bucket;
-        request.queueConfigurations.append(configuration);
-        _s3Service->PutBucketNotificationConfiguration(request);
+        PutNotificationConfiguration();
         this->_changed = true;
     }
+}
+
+void S3BucketEditDialog::PutNotificationConfiguration() const {
+    _s3Service->PutBucketNotificationConfiguration(
+        _bucket,
+        _bucketGetResponse.lambdaNotifications,
+        _bucketGetResponse.queueNotifications,
+        _bucketGetResponse.topicNotifications);
 }
 
 void S3BucketEditDialog::HandleAccept() {
