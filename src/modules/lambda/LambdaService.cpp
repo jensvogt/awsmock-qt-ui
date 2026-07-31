@@ -196,7 +196,7 @@ void LambdaService::AddLambdaEnvironment(const QString &lambdaArn, const QString
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["lambdaArn"] = lambdaArn;
+    jRequest["FunctionArn"] = lambdaArn;
     jRequest["Key"] = key;
     jRequest["Value"] = value;
     const QJsonDocument requestDoc(jRequest);
@@ -223,7 +223,7 @@ void LambdaService::RemoveLambdaEnvironment(const QString &lambdaArn, const QStr
     timer.start();
 
     QJsonObject jRequest = CreateBaseRequest();
-    jRequest["lambdaArn"] = lambdaArn;
+    jRequest["FunctionArn"] = lambdaArn;
     jRequest["Key"] = key;
     const QJsonDocument requestDoc(jRequest);
 

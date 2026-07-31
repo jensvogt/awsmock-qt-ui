@@ -11,6 +11,7 @@
 #include <QtWebSockets/QWebSocket>
 #include <QStackedWidget>
 #include <QAbstractItemView>
+#include <QTreeView>
 
 // Awsmock includes
 #include <MainRouter.h>
@@ -96,9 +97,9 @@ private:
     QStackedWidget *_contentPane{};
 
     /**
-     * @brief Navigation list
+     * @brief Navigation tree
      */
-    QListView *_navList{};
+    QTreeView *_navList{};
 
     /**
      * @brief Server scrolling flag
@@ -153,7 +154,7 @@ private:
     /**
      * @brief Logging timer
      */
-    QTimer *_logTimer;
+    QTimer *_logTimer{};
 
     /**
      * @brief Logging queue

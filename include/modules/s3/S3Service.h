@@ -124,7 +124,7 @@ public:
      * @param content The content of the object, represented as a QByteArray.
      * @param metadata A map of metadata key-value pairs associated with the object.
      */
-    void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QMap<QString, QString> &metadata);
+    void UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QString &contentType, const QMap<QString, QString> &metadata);
 
     /**
      * @brief Updates an object in an S3 bucket.
@@ -144,6 +144,19 @@ public:
      * @param request The request object containing the bucket name and notification configuration details in XML format.
      */
     void PutBucketNotificationConfiguration(const S3PutBucketNotificationConfigurationRequest &request);
+
+    /**
+     * @brief Puts the full notification configuration for a bucket from individual notification lists.
+     *
+     * @param bucket The name of the S3 bucket.
+     * @param lambdaNotifications List of lambda notification configurations.
+     * @param queueNotifications List of SQS queue notification configurations.
+     * @param topicNotifications List of SNS topic notification configurations.
+     */
+    void PutBucketNotificationConfiguration(const QString &bucket,
+                                            const QList<LambdaNotification> &lambdaNotifications,
+                                            const QList<QueueNotification> &queueNotifications,
+                                            const QList<TopicNotification> &topicNotifications);
 
     /**
      * @brief Updates the timestamp or metadata of an object in an S3-compatible storage bucket.

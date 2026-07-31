@@ -14,20 +14,21 @@
 class DateTimeUtils {
 public:
     static QString GetDateTimeFormat(const QDateTime &dateTime) {
+        const QDateTime dt = ToLocalTime(dateTime);
         if (!Configuration::instance().GetValue<QString>("ui.datetime-format").isEmpty()) {
-            return dateTime.toString(Configuration::instance().GetValue<QString>("ui.datetime-format"));
+            return dt.toString(Configuration::instance().GetValue<QString>("ui.datetime-format"));
         }
         if (const auto locale = Configuration::instance().GetValue<QString>("ui.default-locale"); locale == "US") {
             const QLocale us(QLocale::English, QLocale::UnitedStates);
-            return us.toString(dateTime, QLocale::ShortFormat);
+            return us.toString(dt, QLocale::ShortFormat);
         } else {
             if (locale == "UK") {
                 const QLocale uk(QLocale::English, QLocale::UnitedKingdom);
-                return uk.toString(dateTime, QLocale::ShortFormat);
+                return uk.toString(dt, QLocale::ShortFormat);
             }
             if (locale == "DE") {
                 const QLocale de(QLocale::German, QLocale::Germany);
-                return de.toString(dateTime, QLocale::ShortFormat);
+                return de.toString(dt, QLocale::ShortFormat);
             }
         }
         return "Unknown locale";
@@ -78,6 +79,17 @@ public:
             }
         }
         return "Unknown locale";
+    }
+
+    static QDateTime ToLocalTime(const QDateTime &utcDateTime) {
+        return utcDateTime.toLocalTime();
+    }
+
+    static std::optional<QDateTime> ToLocalTime(const std::optional<QDateTime> &utcDateTime) {
+        if (!utcDateTime.has_value()) {
+            return std::nullopt;
+        }
+        return utcDateTime->toLocalTime();
     }
 
     static QDateTime GetLastMidnight() {

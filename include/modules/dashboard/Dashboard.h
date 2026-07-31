@@ -85,7 +85,7 @@ private:
     /**
      * @brief REST service
      */
-    DashboardService *_dashboardService;
+    DashboardService *_dashboardService{};
 
     /**
      * @brief Charts configuration map

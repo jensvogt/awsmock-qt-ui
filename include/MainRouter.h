@@ -11,7 +11,9 @@
 #include <QWidget>
 
 // Awsmock includes
+#include <modules/apigateway/RestApiKeyList.h>
 #include <modules/apigateway/RestApiList.h>
+#include <modules/apigateway/UsagePlanList.h>
 #include <modules/application/ApplicationDashboard.h>
 #include <modules/application/ApplicationList.h>
 #include <modules/cognito/CognitoUserpoolList.h>
@@ -103,6 +105,12 @@ public:
             },
             {
                 "API Gateway", new RestApiList("API Gateway REST API List", parent)
+            },
+            {
+                "API Gateway Keys", new RestApiKeyList("API Gateway API Key List", parent)
+            },
+            {
+                "API Gateway Usage Plans", new UsagePlanList("API Gateway Usage Plan List", parent)
             }
         };
         connect(&EventBus::instance(), &EventBus::RouteChanged, this, [this](const QString &pageName, const QMap<QString, QString> &arguments) {

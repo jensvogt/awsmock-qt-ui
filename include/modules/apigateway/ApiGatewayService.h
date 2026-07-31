@@ -13,8 +13,16 @@
 
 // Awsmock includes
 #include <dto/apigateway/RestApiGetResponse.h>
+#include <dto/apigateway/RestApiKeyCreateRequest.h>
+#include <dto/apigateway/RestApiKeyListResponse.h>
+#include <dto/apigateway/RestApiKeyUpdateRequest.h>
 #include <dto/apigateway/RestApiListResponse.h>
 #include <dto/apigateway/RestApiUpdateRequest.h>
+#include <dto/apigateway/UsagePlanCreateRequest.h>
+#include <dto/apigateway/UsagePlanListResponse.h>
+#include <dto/apigateway/UsagePlanUpdateRequest.h>
+#include <dto/apigateway/model/RestApiKey.h>
+#include <dto/apigateway/model/UsagePlan.h>
 #include <utils/BaseService.h>
 #include <utils/RestManager.h>
 
@@ -29,7 +37,9 @@ public:
      */
     ApiGatewayService() {
         setApis({
-            "ListRestApis", "GetRestApi", "UpdateRestApi", "DeleteRestApi", "DeleteResource"
+            "ListRestApis", "GetRestApi", "UpdateRestApi", "DeleteRestApi", "DeleteResource",
+            "ListApiKeys", "GetApiKey", "CreateApiKey", "UpdateApiKey", "DeleteApiKey", "EnableApiKey", "DisableApiKey",
+            "ListUsagePlans", "GetUsagePlan", "CreateUsagePlan", "UpdateUsagePlan", "DeleteUsagePlan"
         });
     };
 
@@ -80,6 +90,98 @@ public:
      */
     void DeleteResource(const QString &restApiId, const QString &resourceId);
 
+    /**
+     * @brief List API keys
+     *
+     * @param prefix name prefix filter
+     * @param pageSize page size
+     * @param pageIndex page index
+     * @param sortAttribute sort attribute
+     * @param sortDirection sort direction
+     */
+    void ListApiKeys(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
+
+    /**
+     * @brief Get an API key
+     *
+     * @param keyId API key ID
+     */
+    void GetApiKey(const QString &keyId);
+
+    /**
+     * @brief Create an API key
+     *
+     * @param request create request
+     */
+    void CreateApiKey(const RestApiKeyCreateRequest &request);
+
+    /**
+     * @brief Update an API key
+     *
+     * @param request update request
+     */
+    void UpdateApiKey(const RestApiKeyUpdateRequest &request);
+
+    /**
+     * @brief Delete an API key
+     *
+     * @param keyId API key ID
+     */
+    void DeleteApiKey(const QString &keyId);
+
+    /**
+     * @brief Enable an API key
+     *
+     * @param keyId API key ID
+     */
+    void EnableApiKey(const QString &keyId);
+
+    /**
+     * @brief Disable an API key
+     *
+     * @param keyId API key ID
+     */
+    void DisableApiKey(const QString &keyId);
+
+    /**
+     * @brief List usage plans
+     *
+     * @param prefix name prefix filter
+     * @param pageSize page size
+     * @param pageIndex page index
+     * @param sortAttribute sort attribute
+     * @param sortDirection sort direction
+     */
+    void ListUsagePlans(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
+
+    /**
+     * @brief Get a usage plan
+     *
+     * @param planId usage plan ID
+     */
+    void GetUsagePlan(const QString &planId);
+
+    /**
+     * @brief Create a new usage plan
+     *
+     * @param request create request
+     */
+    void CreateUsagePlan(const UsagePlanCreateRequest &request);
+
+    /**
+     * @brief Update a usage plan
+     *
+     * @param request update request
+     */
+    void UpdateUsagePlan(const UsagePlanUpdateRequest &request);
+
+    /**
+     * @brief Delete a usage plan
+     *
+     * @param planId usage plan ID
+     */
+    void DeleteUsagePlan(const QString &planId);
+
 signals:
     /**
      * @brief Sent when a REST API list arrived.
@@ -99,6 +201,44 @@ signals:
      * @brief Sent when a REST API list should be reloaded
      */
     void ReloadRestApisSignal();
+
+    /**
+     * @brief Sent when an API key was retrieved.
+     *
+     * @param apiKey API key model
+     */
+    void GetApiKeySignal(const RestApiKey &apiKey);
+
+    /**
+     * @brief Sent when an API key list arrived.
+     *
+     * @param response response from server
+     */
+    void ListApiKeysSignal(const RestApiKeyListResponse &response);
+
+    /**
+     * @brief Sent when the API key list should be reloaded
+     */
+    void ReloadApiKeysSignal();
+
+    /**
+     * @brief Sent when a usage plan was retrieved.
+     *
+     * @param usagePlan usage plan model
+     */
+    void GetUsagePlanSignal(const UsagePlan &usagePlan);
+
+    /**
+     * @brief Sent when a usage plan list arrived.
+     *
+     * @param response response from server
+     */
+    void ListUsagePlansSignal(const UsagePlanListResponse &response);
+
+    /**
+     * @brief Sent when the usage plan list should be reloaded
+     */
+    void ReloadUsagePlansSignal();
 
 private:
     /**

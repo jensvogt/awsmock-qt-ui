@@ -44,11 +44,15 @@ void LambdaLogsDialog::HandleGetResult(const LambdaGetResultsResponse &lambdaLog
     _ui->regionEdit->setText(lambdaLogsResult.lambdaLogCounter.region);
     _ui->functionEdit->setText(lambdaLogsResult.lambdaLogCounter.lambdaName);
     _ui->timestampEdit->setText(DateTimeUtils::GetDateTimeFormat(lambdaLogsResult.lambdaLogCounter.timestamp));
+    _ui->durationEdit->setText(QString::number(lambdaLogsResult.lambdaLogCounter.duration) + " ms");
+    _ui->instanceIdEdit->setText(lambdaLogsResult.lambdaLogCounter.instanceId);
+    _ui->containerIdEdit->setText(lambdaLogsResult.lambdaLogCounter.containerId);
+    _ui->httpStatusEdit->setText(lambdaLogsResult.lambdaLogCounter.httpStatusCode);
 
     // Tabs
     _ui->requestEdit->setText(lambdaLogsResult.lambdaLogCounter.requestBody);
     _ui->outputEdit->setText(lambdaLogsResult.lambdaLogCounter.responseBody);
-    _ui->logsEdit->setText(StringUtils::CleanupLogString(lambdaLogsResult.lambdaLogCounter.logMessages));
+    _ui->logsEdit->setText(lambdaLogsResult.lambdaLogCounter.logMessages);
 }
 
 void LambdaLogsDialog::HandleRequestPrettyButton(const bool checked) const {

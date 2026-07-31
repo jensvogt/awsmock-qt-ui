@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.11.81](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.80...v1.11.81) (2026-07-14)
+
+
+### Bug Fixes
+
+* usage plan add/edit - update API ([38f8661](https://github.com/jensvogt/awsmock-qt-ui/commit/38f8661c343626833ab37696a1fea83dc2bd95b8))
+* usage plan add/edit - update API ([22be4a7](https://github.com/jensvogt/awsmock-qt-ui/commit/22be4a7aa5081af0ae85f72858bec3adc2636c73))
+
+## [1.11.80](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.79...v1.11.80) (2026-07-13)
+
+
+### Bug Fixes
+
+* api key update dialog ([bc1d788](https://github.com/jensvogt/awsmock-qt-ui/commit/bc1d788626aebb8c7d13295f3211dba3d27c1040))
+
+## [1.11.79](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.78...v1.11.79) (2026-07-13)
+
+
+### Bug Fixes
+
+* dashboard flickering - update navigation, add enable/disable API Keys ([fba70b6](https://github.com/jensvogt/awsmock-qt-ui/commit/fba70b62ba74c9979a6a6fbd94610030e8e298ff))
+* dashboard flickering - update navigation, add enable/disable API Keys ([869f21f](https://github.com/jensvogt/awsmock-qt-ui/commit/869f21ff4704f2670a43ec005a78fd00315854a8))
+
 ## [1.11.78](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.77...v1.11.78) (2026-07-04)
 
 

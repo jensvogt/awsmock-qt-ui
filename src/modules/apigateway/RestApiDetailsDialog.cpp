@@ -176,6 +176,7 @@ void RestApiDetailsDialog::HandleGet(const RestApiGetResponse &restApiGetRespons
     _ui->idEdit->setText(restApiGetResponse.restApiCounter.id);
     _ui->rootResourceIdEdit->setText(restApiGetResponse.restApiCounter.rootResourceId);
     _ui->descriptionEdit->setText(restApiGetResponse.restApiCounter.description);
+    _ui->enabledCheck->setCheckState(restApiGetResponse.restApiCounter.enabled ? Qt::CheckState::Checked : Qt::Unchecked);
 
     // API key source
     _ui->apiKeySourceCombo->setCurrentText(restApiGetResponse.restApiCounter.apiKeySource);

@@ -63,6 +63,12 @@ namespace Awsmock::Components {
         _dashboardService->GetMultiSeriesCounter(_config);
     }
 
+    void MonitoringChart::Refresh(const QDateTime &start, const QDateTime &end) {
+        _config.start = start;
+        _config.end = end;
+        LoadContent();
+    }
+
     void MonitoringChart::ClearContent() {
     }
 

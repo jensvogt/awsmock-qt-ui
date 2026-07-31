@@ -43,6 +43,8 @@ public:
 
     void HandleReject();
 
+    S3LambdaConfiguration GetLambdaConfiguration() const { return _lambdaConfiguration; }
+
 private:
     /**
      * UI Components

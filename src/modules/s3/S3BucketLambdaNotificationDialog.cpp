@@ -166,13 +166,6 @@ void S3BucketLambdaNotificationDialog::HandleAccept() {
     filterRule.filterValue = _ui->filterRulesEdit->text();
     _lambdaConfiguration.filterRules.append(filterRule);
 
-    // Create put notification request
-    S3PutBucketNotificationConfigurationRequest request;
-    request.bucket = _bucket;
-    request.lambdaConfigurations.append(_lambdaConfiguration);
-
-    _s3Service->PutBucketNotificationConfiguration(request);
-
     accept();
 }
 
