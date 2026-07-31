@@ -13,15 +13,16 @@
     "base-urls": [
       "http://localhost:4566",
       "http://vogje01-desktop:4566",
-      "http://192.168.178.46:4566"
+      "http://192.168.178.46:4566",
+      "http://127.0.0.1:4566"
     ],
     "websocket-url": "ws://localhost:4569",
     "websocket-urls": [
       "ws://localhost:4569",
       "ws://vogje01-desktop:4569",
-      "ws://192.168.178.46:4569"
-    ],
-    "container-log-url": "ws://localhost:4568"
+      "ws://192.168.178.46:4569",
+      "ws://127.0.0.1:4569"
+    ]
   },
   "ui": {
     "application-log-limit": 1000,
@@ -33,7 +34,6 @@
     "default-ftp-protocol": "FTP",
     "default-directory": {
       "ApplicationUploadCodeDialog": "C:\\work\\libri\\Libri.ONE\\PIM\\compliance-archive-service\\target",
-      "LambdaUploadCodeDialog": "C:\\work\\libri\\Libri.ONE\\PIM\\compliance-archive-service\\target",
       "ExportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
       "ImportInfrastructure": "C:\\work\\libri\\Libri.ONE\\PIM\\pim-awsmock-dev\\init",
       "FTPUploadDialog": "C:\\home\\vogje01\\work\\libri\\Libri.ONE\\PIM\\tests"
