@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.83](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.82...v1.11.83) (2026-08-02)
+
+
+### Bug Fixes
+
+* add lambda avg duration to lambda list ([de1a311](https://github.com/jensvogt/awsmock-qt-ui/commit/de1a311246f8b521c54db142014b5c8e09bc644f))
+
 ## [1.11.82](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.81...v1.11.82) (2026-08-02)
 
 
