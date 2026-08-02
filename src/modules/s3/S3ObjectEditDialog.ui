@@ -266,6 +266,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="bodyUploadButton">
+             <property name="text">
+              <string>Upload</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="windowButton">
              <property name="text">
               <string>PushButton</string>

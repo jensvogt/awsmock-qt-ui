@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <modules/secretsmanager/SecretList.h>
 
 SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -96,7 +97,11 @@ void SecretList::HandleListSecretsSignal(const SecretsListResponse &secretsListR
 
 void SecretList::ShowContextMenu(const QPoint &pos) {
 
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     // Get container
     const auto secretId = _tableView->GetValue<QString>(index, 1);
@@ -104,17 +109,22 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
     QMenu menu;
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Secret");
     editAction->setToolTip("Edit the secret.");
+    editAction->setEnabled(!multiSelect);
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Secret");
-    deleteAction->setToolTip("Delete the secret");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Secrets").arg(selectedRows.count()) : "Delete Secret");
+    deleteAction->setToolTip("Delete the selected secret(s)");
 
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        _secretsManagerService->DeleteSecret(secretId);
+        if (!multiSelect || QMessageBox::question(this, "Delete Secrets", QString("Delete %1 selected secrets?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _secretsManagerService->DeleteSecret(_tableView->GetValue<QString>(row, 1));
+            }
+        }
     }
     LoadContent();
     StartAutoUpdate();

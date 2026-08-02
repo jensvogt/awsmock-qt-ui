@@ -3,6 +3,7 @@
 // Created by vogje01 on 2/15/26.
 //
 
+#include <QMessageBox>
 #include <modules/cognito/CognitoUserpoolList.h>
 #include <ui_CognitoAddUserpoolDialog.h>
 
@@ -87,8 +88,11 @@ void CognitoUserpoolList::HandleUserpoolList(const CognitoUserpoolListResponse &
 
 void CognitoUserpoolList::ShowContextMenu(const QPoint &pos) const {
 
-    // Cell index
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     // Get container
     const auto userPoolId = _tableView->GetValue<QString>(index, 1);
@@ -97,18 +101,23 @@ void CognitoUserpoolList::ShowContextMenu(const QPoint &pos) const {
     menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit User Pool");
     editAction->setToolTip("Edit the user pool details");
+    editAction->setEnabled(!multiSelect);
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete User Pool");
-    deleteAction->setToolTip("Delete the user pool");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 User Pools").arg(selectedRows.count()) : "Delete User Pool");
+    deleteAction->setToolTip("Delete the selected user pool(s)");
 
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         CognitoAddUserpoolDialog dialog;
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        CognitoDeleteUserpoolRequest request;
-        request.userPoolId = userPoolId;
-        _cognitoService->DeleteUserpool(request);
+        if (!multiSelect || QMessageBox::question(nullptr, "Delete User Pools", QString("Delete %1 selected user pools?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                CognitoDeleteUserpoolRequest request;
+                request.userPoolId = _tableView->GetValue<QString>(row, 1);
+                _cognitoService->DeleteUserpool(request);
+            }
+        }
     }
 }

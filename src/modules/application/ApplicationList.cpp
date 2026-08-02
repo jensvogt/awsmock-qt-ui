@@ -1,4 +1,5 @@
 
+#include <QMessageBox>
 #include <modules/application/ApplicationList.h>
 
 ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -129,8 +130,11 @@ void ApplicationList::HandleListApplicationsSignal(const ApplicationListResponse
 }
 
 void ApplicationList::ShowContextMenu(const QPoint &pos) {
-    // Cell index
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     const auto name = _tableView->GetValue<QString>(index, 0);
     const auto enabled = _tableView->GetValue<bool>(index, 2);
@@ -140,44 +144,50 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Application");
     editAction->setToolTip("Edit the application details.");
+    editAction->setEnabled(!multiSelect);
 
     QAction *logsAction = menu->addAction(IconUtils::GetIcon("logs"), "Show the application logs");
     logsAction->setToolTip("Show the application logs");
-    logsAction->setEnabled(enabled);
+    logsAction->setEnabled(!multiSelect && enabled);
 
     menu->addSeparator();
 
     QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable Application");
     enableAction->setToolTip("Enable the application.");
-    enableAction->setEnabled(!enabled);
+    enableAction->setEnabled(!multiSelect && !enabled);
 
     QAction *disableAction = menu->addAction(IconUtils::GetIcon("disabled"), "Disable Application");
     disableAction->setToolTip("Disable the application.");
-    disableAction->setEnabled(enabled);
+    disableAction->setEnabled(!multiSelect && enabled);
 
     menu->addSeparator();
 
     QAction *startAction = menu->addAction(IconUtils::GetIcon("start"), "Start Application");
     startAction->setToolTip("Start the application");
+    startAction->setEnabled(!multiSelect);
 
     QAction *stopAction = menu->addAction(IconUtils::GetIcon("stop"), "Stop Application");
     stopAction->setToolTip("Stop the application");
+    stopAction->setEnabled(!multiSelect);
 
     QAction *restartAction = menu->addAction(IconUtils::GetIcon("restart"), "Restart Application");
     restartAction->setToolTip("Restart the application");
+    restartAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *rebuildAction = menu->addAction(IconUtils::GetIcon("rebuild"), "Rebuild Application");
     rebuildAction->setToolTip("Rebuild the application by creating a new image and container.");
+    rebuildAction->setEnabled(!multiSelect);
 
     QAction *uploadAction = menu->addAction(IconUtils::GetIcon("upload"), "Upload Application Code");
     uploadAction->setToolTip("Upload new application code");
+    uploadAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
-    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Application");
-    deleteAction->setToolTip("Delete the application");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Applications").arg(selectedRows.count()) : "Delete Application");
+    deleteAction->setToolTip("Delete the selected application(s)");
 
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         if (ApplicationEditDialog dialog(name, this); dialog.exec() == QFileDialog::Accept) {
@@ -219,8 +229,12 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
             new Awsmock::Components::ToastOverlay("Application uploaded!\nName: " + name, this);
         }
     } else if (selectedAction == deleteAction) {
-        _applicationService->DeleteApplication(name);
-        LoadContent();
-        new Awsmock::Components::ToastOverlay("Application deleted!\nName: " + name, this);
+        if (!multiSelect || QMessageBox::question(this, "Delete Applications", QString("Delete %1 selected applications?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _applicationService->DeleteApplication(_tableView->GetValue<QString>(row, 0));
+            }
+            LoadContent();
+            new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 applications deleted!").arg(selectedRows.count()) : "Application deleted!\nName: " + name, this);
+        }
     }
 }

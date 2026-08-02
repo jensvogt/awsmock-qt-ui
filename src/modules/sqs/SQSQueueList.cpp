@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <QStyleFactory>
 #include <ui_SQSMessageAddDialog.h>
 #include <modules/sqs/SQSQueueList.h>
@@ -144,31 +145,40 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
 
     StopAutoUpdate();
 
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) {
+        StartAutoUpdate();
+        return;
+    }
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
     const long total = _tableView->GetValue<long>(index, 1) + _tableView->GetValue<long>(index, 2) + _tableView->GetValue<long>(index, 3);
 
     auto *menu = new ContextMenu(this);
 
     QAction *sendAction = menu->addAction(IconUtils::GetIcon("send"), "Send a Message");
     sendAction->setToolTip("Send a message to the queue.");
+    sendAction->setEnabled(!multiSelect);
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Queue");
     editAction->setToolTip("Edit the queue details.");
+    editAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Queue");
     purgeAction->setToolTip("Purge the queue.");
-    purgeAction->setEnabled(total > 0);
+    purgeAction->setEnabled(!multiSelect && total > 0);
 
     QAction *redriveAction = menu->addAction(IconUtils::GetIcon("redrive"), "Redrive Queue");
     redriveAction->setToolTip("Redrive all messages. If the selected queue is a DLQ, it will perform an redrive, otherwise it will set all messages to status 'INITIAL'.");
-    redriveAction->setEnabled(total > 0);
+    redriveAction->setEnabled(!multiSelect && total > 0);
 
     menu->addSeparator();
 
-    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Queue");
-    deleteAction->setToolTip("Delete the queue.");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Queues").arg(selectedRows.count()) : "Delete Queue");
+    deleteAction->setToolTip("Delete the selected queue(s).");
 
     const auto queueUrl = _tableView->GetValue<QString>(index, 7);
     const auto queueArn = _tableView->GetValue<QString>(index, 8);
@@ -182,7 +192,11 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == redriveAction) {
         _sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {
-        _sqsService->DeleteQueue(queueUrl);
+        if (!multiSelect || QMessageBox::question(this, "Delete Queues", QString("Delete %1 selected queues?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _sqsService->DeleteQueue(_tableView->GetValue<QString>(row, 7));
+            }
+        }
     } else if (selectedAction == editAction) {
         SQSQueueDetailsDialog dialog(queueArn);
         dialog.exec();

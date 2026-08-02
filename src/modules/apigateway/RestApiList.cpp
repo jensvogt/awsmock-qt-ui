@@ -1,4 +1,5 @@
 
+#include <QMessageBox>
 #include <modules/apigateway/RestApiList.h>
 
 RestApiList::RestApiList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -119,8 +120,11 @@ void RestApiList::HandleListApplicationsSignal(const RestApiListResponse &restAp
 }
 
 void RestApiList::ShowContextMenu(const QPoint &pos) {
-    // Cell index
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     const auto name = _tableView->GetValue<QString>(index, 0);
     const auto region = _tableView->GetValue<QString>(index, 5);
@@ -130,21 +134,22 @@ void RestApiList::ShowContextMenu(const QPoint &pos) {
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Rest API");
     editAction->setToolTip("Edit the Rest API details.");
+    editAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable Rest API");
     enableAction->setToolTip("Enable the Rest API.");
-    enableAction->setEnabled(!enabled);
+    enableAction->setEnabled(!multiSelect && !enabled);
 
     QAction *disableAction = menu->addAction(IconUtils::GetIcon("disabled"), "Disable Rest API");
     disableAction->setToolTip("Disable the Rest API.");
-    disableAction->setEnabled(enabled);
+    disableAction->setEnabled(!multiSelect && enabled);
 
     menu->addSeparator();
 
-    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Rest API");
-    deleteAction->setToolTip("Delete the Rest API");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Rest APIs").arg(selectedRows.count()) : "Delete Rest API");
+    deleteAction->setToolTip("Delete the selected Rest API(s)");
 
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         if (RestApiDetailsDialog dialog(name, this); dialog.exec() == QFileDialog::Accept) {
@@ -183,7 +188,11 @@ void RestApiList::ShowContextMenu(const QPoint &pos) {
         //         new Awsmock::Components::ToastOverlay("Application uploaded!\nName: " + name, this);
         //     }
     } else if (selectedAction == deleteAction) {
-        _apiGatewayService->DeleteRestApi(name);
-        new Awsmock::Components::ToastOverlay("REST API deleted!\nName: " + name, this);
+        if (!multiSelect || QMessageBox::question(this, "Delete Rest APIs", QString("Delete %1 selected Rest APIs?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _apiGatewayService->DeleteRestApi(_tableView->GetValue<QString>(row, 0));
+            }
+            new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 REST APIs deleted!").arg(selectedRows.count()) : "REST API deleted!\nName: " + name, this);
+        }
     }
 }

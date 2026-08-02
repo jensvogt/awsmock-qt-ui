@@ -20,6 +20,7 @@
 #include <utils/BasePage.h>
 #include <utils/IconUtils.h>
 #include <utils/PrefixFilterModel.h>
+#include <utils/StringUtils.h>
 
 /**
  * @brief S3 object table.
@@ -72,9 +73,9 @@ public:
      */
     void HandleReloadObjectSignal();
 
-    void HandleBulkDelete(const QModelIndexList &proxyIndices) const;
+    void HandleBulkDelete(const QModelIndexList &sourceIndices) const;
 
-    void HandleBulkTouch(const QModelIndexList &proxyIndices) const;
+    void HandleBulkTouch(const QModelIndexList &sourceIndices) const;
 
 signals:
     /**

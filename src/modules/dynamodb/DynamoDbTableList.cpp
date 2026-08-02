@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <modules/dynamodb/DynamoDbTableList.h>
 
 #include "../../../include/modules/dynamodb/DynamoDbExportTableDialog.h"
@@ -134,7 +135,11 @@ void DynamoDbTableList::HandleListTableSignal(const DynamoDbListTableResponse &l
 
 void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
 
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     // Get container
     const auto tableName = _tableView->GetValue<QString>(index, 0);
@@ -144,19 +149,22 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
     menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Table");
     editAction->setToolTip("Edit the table details");
+    editAction->setEnabled(!multiSelect);
 
     menu.addSeparator();
 
     QAction *purgeAction = menu.addAction(IconUtils::GetIcon("purge"), "Purge Table");
     purgeAction->setToolTip("Purge the table");
+    purgeAction->setEnabled(!multiSelect);
 
     QAction *exportAction = menu.addAction(IconUtils::GetIcon("export"), "Export Table Data");
     exportAction->setToolTip("Export the table items");
+    exportAction->setEnabled(!multiSelect);
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Table");
-    deleteAction->setToolTip("Delete the table");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Tables").arg(selectedRows.count()) : "Delete Table");
+    deleteAction->setToolTip("Delete the selected table(s)");
 
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
         _dynamoDbService->PurgeTable(tableName);
@@ -164,7 +172,11 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
         DynamoDbExportTableDialog dialog(tableName);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        _dynamoDbService->DeleteTable(tableName);
+        if (!multiSelect || QMessageBox::question(nullptr, "Delete Tables", QString("Delete %1 selected tables?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _dynamoDbService->DeleteTable(_tableView->GetValue<QString>(row, 0));
+            }
+        }
     } else if (selectedAction == editAction) {
         DynamoDbEditTableDialog dialog(tableName);
         dialog.exec();

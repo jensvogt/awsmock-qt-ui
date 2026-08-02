@@ -39,7 +39,7 @@ public:
         setApis({
             "ListLambdas", "GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment",
             "ListLambdaLogs", "GetLambdaResult", "GetLambdaResults", "UploadLambdaCode", "UpdateLambda", "UpdateLambdaEnvironment", "RebuildLambda",
-            "ListLambdaArns", "StartInstance", "StopInstance", "DeleteLambda", "DeleteLambdaResults"
+            "ListLambdaArns", "StartInstance", "StopInstance", "DeleteLambda", "DeleteLambdaResults", "AddEventSource"
         });
     }
 
@@ -187,6 +187,16 @@ public:
      */
     void DeleteLambdaResults(const QString &lambdaArn);
 
+    /**
+     * @brief Add an event source mapping to a lambda function
+     *
+     * @param type event source type, e.g. 'SQS', 'S3', 'SNS'
+     * @param functionArn lambda function ARN
+     * @param eventSourceArn ARN of the event source, e.g. the SQS queue ARN
+     * @param enabled enabled flag
+     */
+    void AddEventSource(const QString &type, const QString &functionArn, const QString &eventSourceArn, bool enabled);
+
 signals:
     /**
      * @brief Get lambda list signal
@@ -263,6 +273,11 @@ signals:
      * @brief Reload lambda instance list signal
      */
     void ReloadLambdaInstances();
+
+    /**
+     * @brief Event source added signal
+     */
+    void EventSourceAddedSignal();
 
 private:
     /**

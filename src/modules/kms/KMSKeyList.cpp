@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <modules/kms/KMSKeyList.h>
 
 KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -110,7 +111,11 @@ void KMSKeyList::HandleListKeysSignal(const KMSListKeysResponse &listKeysRespons
 
 void KMSKeyList::ShowContextMenu(const QPoint &pos) {
 
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     // Get container
     const auto keyId = _tableView->GetValue<QString>(index, 0);
@@ -120,16 +125,21 @@ void KMSKeyList::ShowContextMenu(const QPoint &pos) {
     menu.setToolTipsVisible(true);
     QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Key");
     editAction->setToolTip("Edit the key");
+    editAction->setEnabled(!multiSelect);
 
     menu.addSeparator();
 
-    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Key");
-    deleteAction->setToolTip("Delete the key");
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Keys").arg(selectedRows.count()) : "Delete Key");
+    deleteAction->setToolTip("Delete the selected key(s)");
 
     if (const QAction *selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         KMSKeyDialog dialog(keyId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        _kmsService->DeleteKey(keyId);
+        if (!multiSelect || QMessageBox::question(this, "Delete Keys", QString("Delete %1 selected keys?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _kmsService->DeleteKey(_tableView->GetValue<QString>(row, 0));
+            }
+        }
     }
 }

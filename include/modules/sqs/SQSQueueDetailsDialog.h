@@ -8,7 +8,9 @@
 #include <dto/sqs/SQSListQueueDefaultAttribtesResponse.h>
 #include <dto/sqs/SQSListQueueTagsResponse.h>
 #include <dto/sqs/SQSUpdateTagsRequest.h>
+#include <modules/lambda/LambdaService.h>
 #include <modules/sqs/SQSQueueDefaultAttributeDialog.h>
+#include <modules/sqs/SQSQueueLambdaTriggerDialog.h>
 #include <modules/sqs/SQSQueueTagsDialog.h>
 #include <modules/sqs/SQSService.h>
 #include <utils/BaseDialog.h>
@@ -107,6 +109,11 @@ private:
      * @brief SQS REST service
      */
     SQSService *_sqsService;
+
+    /**
+     * @brief Lambda REST service, used to add lambda triggers
+     */
+    LambdaService *_lambdaService;
 
     /**
      * @brief changed flag
