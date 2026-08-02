@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.11.82](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.81...v1.11.82) (2026-08-02)
+
+
+### Bug Fixes
+
+* application/lambda Monitoring ([13c2b9c](https://github.com/jensvogt/awsmock-qt-ui/commit/13c2b9c536370305aafac17de4b13d4b587b78fe))
+* application/lambda Monitoring ([b866192](https://github.com/jensvogt/awsmock-qt-ui/commit/b866192a3d58f58a49413dd8968512744cb8b04f))
+* S3 queue notificationa, topic notifications lambda notifications ([83cd2d2](https://github.com/jensvogt/awsmock-qt-ui/commit/83cd2d284f6d2441c0d2df6228c8f7e38a9f2cda))
+* selection during updates - add context menu ([82c71ac](https://github.com/jensvogt/awsmock-qt-ui/commit/82c71ac1790dab80be5f149dbcf8f0d04d81e1b4))
+* selection during updates - add context menu ([bed9dbd](https://github.com/jensvogt/awsmock-qt-ui/commit/bed9dbd07e6721b5a38d3588d82296c4ba8ebaf8))
+
 ## [1.11.81](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.80...v1.11.81) (2026-07-14)
 
 
