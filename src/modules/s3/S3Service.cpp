@@ -296,6 +296,38 @@ void S3Service::GetObjectDetails(const QString &objectId) {
                       });
 }
 
+void S3Service::ListObjectVersionCounters(const QString &bucketName, const QString &key) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["bucket"] = bucketName;
+    jRequest["key"] = key;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "ListObjectVersionCounters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  S3ListObjectVersionCountersResponse versionCountersResponse;
+                                  versionCountersResponse.FromJson(jsonDoc);
+                                  emit ListObjectVersionCountersSignal(versionCountersResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListObjectVersionCounters", timer.elapsed());
+                      });
+}
+
 void S3Service::UploadObject(const QString &bucketName, const QString &bucketArn, const QString &key, const QByteArray &content, const QString &contentType, const QMap<QString, QString> &metadata) {
     QElapsedTimer timer;
     timer.start();

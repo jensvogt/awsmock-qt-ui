@@ -13,6 +13,8 @@ struct LambdaInstanceCounter {
 
     QString status;
 
+    QString runtimeVersion;
+
     QString hostname;
 
     int duration;
@@ -34,6 +36,7 @@ struct LambdaInstanceCounter {
         instanceId = jsonObject["instanceId"].toString();
         containerId = jsonObject["containerId"].toString();
         status = jsonObject["status"].toString();
+        runtimeVersion = jsonObject["runtimeVersion"].toString();
         hostname = jsonObject["hostname"].toString();
         duration = jsonObject["duration"].toInt();
         invocations = jsonObject["invocations"].toInt();

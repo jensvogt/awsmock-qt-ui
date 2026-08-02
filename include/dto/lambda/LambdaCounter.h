@@ -48,7 +48,7 @@ struct LambdaCounter {
         handler = jsonObject["handler"].toString();
         instances = jsonObject["instances"].toInt();
         invocations = jsonObject["invocations"].toInt();
-        averageRuntime = jsonObject["averageRuntime"].toInt();
+        averageRuntime = jsonObject["avgDuration"].toInt();
         version = jsonObject["version"].toString();
         active = jsonObject["active"].toBool();
         enabled = jsonObject["enabled"].toBool();

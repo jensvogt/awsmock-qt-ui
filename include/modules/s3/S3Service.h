@@ -14,6 +14,7 @@
 #include <dto/s3/S3GetBucketDetailsResponse.h>
 #include <dto/s3/S3GetObjectDetailsResponse.h>
 #include <dto/s3/S3ListObjectResponse.h>
+#include <dto/s3/S3ListObjectVersionCountersResponse.h>
 #include <dto/s3/S3PutBucketNotificationConfigurationRequest.h>
 
 class S3Service final : public BaseService {
@@ -27,7 +28,7 @@ public:
         setApis({
             "ListBuckets", "PurgeBucket", "PurgeAllBuckets", "AddBucket", "UpdateBucket", "ResetObjectCounters", "DeleteBucket",
             "GetBucketDetails", "ListObjects", "GetObjectDetails", "UploadObject", "UpdateObject", "PutBucketNotificationConfiguration",
-            "TouchObject", "DeleteObject"
+            "TouchObject", "DeleteObject", "ListObjectVersionCounters"
         });
     }
 
@@ -114,6 +115,14 @@ public:
      * @param objectId The unique identifier of the S3 object.
      */
     void GetObjectDetails(const QString &objectId);
+
+    /**
+     * @brief Lists all stored versions of a single object key, most recently modified first.
+     *
+     * @param bucketName name of the bucket
+     * @param key object key
+     */
+    void ListObjectVersionCounters(const QString &bucketName, const QString &key);
 
     /**
      * @brief Uploads an object to the specified S3 bucket with metadata and content.
@@ -215,6 +224,13 @@ signals
      * @param objectDetailsResponse object details
      */
     void GetObjectDetailsSignal(const S3GetObjectDetailsResponse &objectDetailsResponse);
+
+    /**
+     * @brief Signaled when the list of object versions is available
+     *
+     * @param versionCountersResponse list of object versions
+     */
+    void ListObjectVersionCountersSignal(const S3ListObjectVersionCountersResponse &versionCountersResponse);
 
     /**
      * @brief Reload object list signal
