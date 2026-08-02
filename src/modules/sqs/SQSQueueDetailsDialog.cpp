@@ -5,6 +5,7 @@ SQSQueueDetailsDialog::SQSQueueDetailsDialog(const QString &queueArn, QWidget *p
 
     // Create REST service
     _sqsService = new SQSService();
+    _lambdaService = new LambdaService();
 
     // Setup UI
     _ui->setupUi(this);
@@ -134,6 +135,20 @@ void SQSQueueDetailsDialog::UpdateQueueAttributes(const SQSQueueAttributeListRes
 }
 
 void SQSQueueDetailsDialog::SetupLambdaTriggersTab() const {
+
+    connect(_lambdaService, &LambdaService::EventSourceAddedSignal, this, [this]() {
+        _sqsService->ListQueueLambdaTriggers(_queueArn, "");
+    });
+
+    // Add button
+    _ui->lambdaAddButton->setText(nullptr);
+    _ui->lambdaAddButton->setIcon(IconUtils::GetIcon("add"));
+    _ui->lambdaAddButton->setToolTip(tr("Add a lambda trigger"));
+    connect(_ui->lambdaAddButton, &QPushButton::clicked, [this]() {
+        if (SQSQueueLambdaTriggerDialog dialog; dialog.exec() == Accepted) {
+            _lambdaService->AddEventSource("SQS", dialog.GetLambdaArn(), _queueArn, dialog.GetEnabled());
+        }
+    });
 
     // Refresh button
     _ui->lambdaRefreshButton->setText(nullptr);

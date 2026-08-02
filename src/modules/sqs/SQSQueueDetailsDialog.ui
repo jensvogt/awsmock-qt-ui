@@ -435,6 +435,19 @@
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="lambdaAddButton">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="lambdaRefreshButton">
          <property name="maximumSize">
           <size>
@@ -598,6 +611,7 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>attributesTable</tabstop>
   <tabstop>attributeRefreshButton</tabstop>
+  <tabstop>lambdaAddButton</tabstop>
   <tabstop>lambdaRefreshButton</tabstop>
   <tabstop>lambdaTable</tabstop>
   <tabstop>addDefaultAttributeButton</tabstop>

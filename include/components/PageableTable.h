@@ -317,9 +317,9 @@ public:
     void RemoveRow(const QModelIndex &index) const;
 
     /**
-     * @brief Returns a list of selected row indexes.
+     * @brief Returns a list of selected row indexes, mapped to the source model.
      *
-     * @return list of selected rows
+     * @return list of selected rows (source indexes)
      */
     [[nodiscard]]
     QModelIndexList GetSelectedRows() const;

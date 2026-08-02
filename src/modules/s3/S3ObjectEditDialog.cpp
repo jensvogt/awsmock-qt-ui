@@ -95,6 +95,12 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     _ui->bodySaveButton->setToolTip("Save the data to a local file");
     connect(_ui->bodySaveButton, &QPushButton::clicked, this, &S3ObjectEditDialog::SaveToFile);
 
+    // Body upload button
+    _ui->bodyUploadButton->setText(nullptr);
+    _ui->bodyUploadButton->setIcon(IconUtils::GetIcon("upload"));
+    _ui->bodyUploadButton->setToolTip("Save the body content to the S3 object on the server");
+    connect(_ui->bodyUploadButton, &QPushButton::clicked, this, &S3ObjectEditDialog::SaveToServer);
+
     // Window button
     _ui->windowButton->setText(nullptr);
     _ui->windowButton->setIcon(IconUtils::GetIcon("extern-window"));
@@ -308,13 +314,32 @@ void S3ObjectEditDialog::SaveToFile() const {
     }
 }
 
+void S3ObjectEditDialog::SaveToServer() const {
+
+    if (_ui->stackedWidget->currentWidget() != _plaintextEdit) {
+        QMessageBox::information(nullptr, "Info", "Only text content can be saved to the server.");
+        return;
+    }
+
+    QMap<QString, QString> metadata;
+    for (int i = 0; i < _ui->metadataTable->rowCount(); i++) {
+        const QString key = _ui->metadataTable->item(i, 0)->text();
+        const QString value = _ui->metadataTable->item(i, 1)->text();
+        metadata[key] = value;
+    }
+
+    _s3Service->UpdateObject(_ui->regionEdit->text(), _ui->bucketEdit->text(), _ui->keyEdit->text(), _plaintextEdit->toPlainText().toUtf8(), _ui->storageTypeCombo->currentText(), metadata);
+    logInfo << "S3 object body saved to server, key: " << _ui->keyEdit->text();
+    _ui->statusLabel->setText("S3 object body saved to server");
+}
+
 QString S3ObjectEditDialog::SelectFilename() {
 
     // Create a QFileDialog set to select existing files
-    const auto filter = "JSON Files (*.json);All Files (*.*)";
+    constexpr auto filter = "JSON Files (*.json);All Files (*.*)";
     const auto defaultDir = Configuration::instance().GetValue<QString>("ui.default-directory.S3SaveBodyToFile", "/usr/local/awsmock-qt-ui");
 
-    if (const QString filePath = QFileDialog::getSaveFileName(nullptr, "Open JSON Configuration File", defaultDir, filter); !filePath.isEmpty()) {
+    if (QString filePath = QFileDialog::getSaveFileName(nullptr, "Open File", defaultDir, filter); !filePath.isEmpty()) {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadWrite)) {
             QMessageBox::critical(nullptr, "Error", "Could not open file:" + filePath);

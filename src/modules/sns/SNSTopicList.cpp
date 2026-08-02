@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <modules/sns/SNSTopicList.h>
 
 SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -142,30 +143,40 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
 
     StopAutoUpdate();
 
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) {
+        StartAutoUpdate();
+        return;
+    }
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
     const long total = _tableView->GetValue<long>(index, 1) + _tableView->GetValue<long>(index, 2) + _tableView->GetValue<long>(index, 3);
 
     QMenu *menu = new ContextMenu(this);
 
     QAction *sendAction = menu->addAction(IconUtils::GetIcon("send"), "Send a Message");
     sendAction->setToolTip("Send a message to the topic.");
+    sendAction->setEnabled(!multiSelect);
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Topic");
     editAction->setToolTip("Edit the topic details.");
+    editAction->setEnabled(!multiSelect);
 
     QAction *resendAction = menu->addAction(IconUtils::GetIcon("resend"), "Resend All Messages");
     resendAction->setToolTip("Resend all messages in the topic.");
+    resendAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Topic");
     purgeAction->setToolTip("Purge the topic.");
-    purgeAction->setEnabled(total > 0);
+    purgeAction->setEnabled(!multiSelect && total > 0);
 
     menu->addSeparator();
 
-    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Topic");
-    deleteAction->setToolTip("Delete the topic.");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Topics").arg(selectedRows.count()) : "Delete Topic");
+    deleteAction->setToolTip("Delete the selected topic(s).");
 
     const auto topicArn = _tableView->GetValue<QString>(index, 7);
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == purgeAction) {
@@ -179,8 +190,12 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
         _snsService->ResendTopic(topicArn);
         new Awsmock::Components::ToastOverlay("Messages resend initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == deleteAction) {
-        _snsService->DeleteTopic(topicArn);
-        new Awsmock::Components::ToastOverlay("Topic deletion initiated.\nChanges may take some time to propagate.", this);
+        if (!multiSelect || QMessageBox::question(this, "Delete Topics", QString("Delete %1 selected topics?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _snsService->DeleteTopic(_tableView->GetValue<QString>(row, 7));
+            }
+            new Awsmock::Components::ToastOverlay("Topic deletion initiated.\nChanges may take some time to propagate.", this);
+        }
     } else if (selectedAction == editAction) {
         SNSTopicDetailsDialog dialog(topicArn);
         dialog.exec();

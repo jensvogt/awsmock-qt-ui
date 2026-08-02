@@ -98,6 +98,11 @@ private:
     void SaveToFile() const;
 
     /**
+     * @brief Save the body content to the S3 object on the server
+     */
+    void SaveToServer() const;
+
+    /**
      * @biref Opens a save file dialog and returns the selected file path.
      *
      * @return file path

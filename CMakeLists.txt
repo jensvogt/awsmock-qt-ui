@@ -78,7 +78,9 @@ set(SQS_SOURCES src/modules/sqs/SQSMessageAddDialog.cpp src/modules/sqs/SQSMessa
         include/modules/sqs/SQSQueueTagsDialog.h include/dto/sqs/SQSListQueueTagsResponse.h
         include/dto/sqs/SQSUpdateTagsRequest.h src/modules/sqs/SQSDashboard.cpp include/modules/sqs/SQSDashboard.h
         src/modules/sqs/SQSDashboard.ui include/dto/sqs/SQSIsDlqResponse.h src/modules/sqs/SQSQueueDefaultAttributeDialog.cpp
-        include/modules/sqs/SQSQueueDefaultAttributeDialog.h src/modules/sqs/SQSQueueDefaultAttributeDialog.ui)
+        include/modules/sqs/SQSQueueDefaultAttributeDialog.h src/modules/sqs/SQSQueueDefaultAttributeDialog.ui
+        src/modules/sqs/SQSQueueLambdaTriggerDialog.cpp include/modules/sqs/SQSQueueLambdaTriggerDialog.h
+        src/modules/sqs/SQSQueueLambdaTriggerDialog.ui)
 set(SNS_SOURCES src/modules/sns/SNSMessageDetailsDialog.cpp src/modules/sns/SNSMessageDetailsDialog.ui
         include/modules/sns/SNSMessageDetailsDialog.h src/modules/sns/SNSMessageList.cpp include/modules/sns/SNSMessageList.h
         src/modules/sns/SNSService.cpp include/modules/sns/SNSService.h src/modules/sns/SNSTopicDetailsDialog.cpp

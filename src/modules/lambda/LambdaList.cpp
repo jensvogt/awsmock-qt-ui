@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <modules/lambda/LambdaList.h>
 
 LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent) {
@@ -134,8 +135,11 @@ void LambdaList::HandleListLambdasSignal(const LambdaListResponse &listLambdaRes
 
 void LambdaList::ShowContextMenu(const QPoint &pos) {
 
-    // Cell index
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
 
     const auto arn = _tableView->GetValue<QString>(index, 10);
     const auto name = _tableView->GetValue<QString>(index, 0);
@@ -146,47 +150,54 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Lambda");
     editAction->setToolTip("Edit the lambda details.");
+    editAction->setEnabled(!multiSelect);
 
     QAction *logsAction = menu->addAction(IconUtils::GetIcon("logs"), "Show the lambda logs");
     logsAction->setToolTip("Show the lambda logs");
-    if (arn.isEmpty()) {
-        logsAction->setDisabled(true);
-    }
+    logsAction->setEnabled(!multiSelect && !arn.isEmpty());
 
     menu->addSeparator();
 
     QAction *enableAction = menu->addAction(IconUtils::GetIcon("enabled"), "Enable Lambda");
     enableAction->setToolTip("Enable the lambda.");
+    enableAction->setEnabled(!multiSelect);
 
     QAction *disableAction = menu->addAction(IconUtils::GetIcon("disabled"), "Disable Lambda");
     disableAction->setToolTip("Disable the lambda.");
+    disableAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *startAction = menu->addAction(IconUtils::GetIcon("start"), "Start Lambda");
     startAction->setToolTip("Start the lambda");
+    startAction->setEnabled(!multiSelect);
 
     QAction *stopAction = menu->addAction(IconUtils::GetIcon("stop"), "Stop Lambda");
     stopAction->setToolTip("Stop the lambda");
+    stopAction->setEnabled(!multiSelect);
 
     QAction *restartAction = menu->addAction(IconUtils::GetIcon("restart"), "Restart Lambda");
     restartAction->setToolTip("Restart the lambda");
+    restartAction->setEnabled(!multiSelect);
 
     QAction *killAction = menu->addAction(IconUtils::GetIcon("kill"), "Kill Lambda");
     killAction->setToolTip("Kill the lambda docker container");
+    killAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *rebuildAction = menu->addAction(IconUtils::GetIcon("rebuild"), "Rebuild Lambda");
     rebuildAction->setToolTip("Rebuild the lambda by creating a new image and container.");
+    rebuildAction->setEnabled(!multiSelect);
 
     QAction *uploadAction = menu->addAction(IconUtils::GetIcon("upload"), "Upload Lambda Code");
     uploadAction->setToolTip("Upload new lambda code");
+    uploadAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
-    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Lambda");
-    deleteAction->setToolTip("Delete the lambda function");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Lambdas").arg(selectedRows.count()) : "Delete Lambda");
+    deleteAction->setToolTip("Delete the selected lambda function(s)");
 
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == editAction) {
         if (LambdaDetailsDialog dialog(arn); dialog.exec() == QFileDialog::Accept) {
@@ -243,8 +254,12 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
             new Awsmock::Components::ToastOverlay("Lambda code uploaded! Name: " + name, this);
         }
     } else if (selectedAction == deleteAction) {
-        _lambdaService->DeleteLambda(name);
-        LoadContent();
-        new Awsmock::Components::ToastOverlay("Lambda deleted! Name: " + name, this);
+        if (!multiSelect || QMessageBox::question(this, "Delete Lambdas", QString("Delete %1 selected lambda functions?").arg(selectedRows.count())) == QMessageBox::Yes) {
+            for (const QModelIndex &row: selectedRows) {
+                _lambdaService->DeleteLambda(_tableView->GetValue<QString>(row, 0));
+            }
+            LoadContent();
+            new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 lambdas deleted!").arg(selectedRows.count()) : "Lambda deleted! Name: " + name, this);
+        }
     }
 }

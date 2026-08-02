@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <ui_S3BucketEditDialog.h>
 #include <modules/s3/S3BucketList.h>
 
@@ -127,28 +128,33 @@ void S3BucketList::HandleListBucketSignal(const S3ListBucketResult &listBucketRe
 }
 
 void S3BucketList::ShowContextMenu(const QPoint &pos) const {
-    const QModelIndex index = _tableView->GetIndexFromPosition(pos);
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
 
+    const QModelIndex index = selectedRows.first();
+    const bool multiSelect = selectedRows.count() > 1;
     const long total = _tableView->GetValue<long>(index, 1);
 
     QMenu *menu = new ContextMenu();
 
     QAction *uploadAction = menu->addAction(IconUtils::GetIcon("upload"), "Upload Object");
     uploadAction->setToolTip("Upload an object");
+    uploadAction->setEnabled(!multiSelect);
 
     QAction *editAction = menu->addAction(IconUtils::GetIcon("edit"), "Edit Bucket");
     editAction->setToolTip("Edit the bucket details");
+    editAction->setEnabled(!multiSelect);
 
     menu->addSeparator();
 
     QAction *purgeAction = menu->addAction(IconUtils::GetIcon("purge"), "Purge Bucket");
     purgeAction->setToolTip("Purge the bucket");
-    purgeAction->setEnabled(total > 0);
+    purgeAction->setEnabled(!multiSelect && total > 0);
 
     menu->addSeparator();
 
-    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), "Delete Bucket");
-    deleteAction->setToolTip("Delete the Bucket");
+    QAction *deleteAction = menu->addAction(IconUtils::GetIcon("delete"), multiSelect ? QString("Delete %1 Buckets").arg(selectedRows.count()) : "Delete Bucket");
+    deleteAction->setToolTip("Delete the selected Bucket(s)");
 
     const auto bucketName = _tableView->GetValue<QString>(index, 0);
     const auto bucketArn = _tableView->GetValue<QString>(index, 5);
@@ -156,7 +162,12 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
         selectedAction == purgeAction) {
         _s3Service->PurgeBucket(bucketName);
     } else if (selectedAction == deleteAction) {
-        _s3Service->DeleteBucket(bucketName);
+        if (multiSelect && QMessageBox::question(nullptr, "Delete Buckets", QString("Delete %1 selected buckets?").arg(selectedRows.count())) != QMessageBox::Yes) {
+            return;
+        }
+        for (const QModelIndex &row: selectedRows) {
+            _s3Service->DeleteBucket(_tableView->GetValue<QString>(row, 0));
+        }
     } else if (selectedAction == uploadAction) {
         if (S3ObjectAddDialog dialog(bucketName, bucketArn); dialog.exec() == QDialog::Accepted) {
             new Awsmock::Components::ToastOverlay("Object uploaded! Bucket: " + bucketName + ", Key: " + dialog.GetS3ObjectKey(), _tableView);

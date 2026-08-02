@@ -135,11 +135,12 @@ void SQSMessageList::HandleListMessageSignal(const SQSListMessagesResponse &list
     _tableView->RestoreSelection();
 }
 
-void SQSMessageList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {
-    // Convert to Persistent Source Indexes
+void SQSMessageList::HandleBulkDelete(const QModelIndexList &sourceIndices) const {
+    // Use persistent indexes so removing rows mid-loop doesn't invalidate the rest
     QList<QPersistentModelIndex> persistentRows;
-    for (const QModelIndex &proxyIdx: proxyIndices) {
-        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
+    persistentRows.reserve(sourceIndices.count());
+    for (const QModelIndex &srcIdx: sourceIndices) {
+        persistentRows.append(srcIdx);
     }
 
     // Now it is safe to delete in a loop
@@ -151,43 +152,29 @@ void SQSMessageList::HandleBulkDelete(const QModelIndexList &proxyIndices) const
             _tableView->RemoveRow(srcIdx);
         }
     }
-    logInfo << "Deleted messages, count: " << proxyIndices.count();
+    logInfo << "Deleted messages, count: " << sourceIndices.count();
 }
 
-void SQSMessageList::HandleBulkResend(const QModelIndexList &proxyIndices) const {
-    // Convert to Persistent Source Indexes
-    QList<QPersistentModelIndex> persistentRows;
-    for (const QModelIndex &proxyIdx: proxyIndices) {
-        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
-    }
-
-    // Now it is safe to delete in a loop
-    for (const QPersistentModelIndex &srcIdx: persistentRows) {
+void SQSMessageList::HandleBulkResend(const QModelIndexList &sourceIndices) const {
+    for (const QModelIndex &srcIdx: sourceIndices) {
         if (srcIdx.isValid()) {
             const auto queueArn = _tableView->GetValue<QString>(srcIdx, 7);
             const auto messageId = _tableView->GetValue<QString>(srcIdx, 0);
             _sqsService->ResendMessage(queueArn, messageId);
         }
     }
-    logInfo << "Resend messages, count: " << proxyIndices.count();
+    logInfo << "Resend messages, count: " << sourceIndices.count();
 }
 
-void SQSMessageList::HandleBulkRedrive(const QModelIndexList &proxyIndices) const {
-    // Convert to Persistent Source Indexes
-    QList<QPersistentModelIndex> persistentRows;
-    for (const QModelIndex &proxyIdx: proxyIndices) {
-        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
-    }
-
-    // Now it is safe to delete in a loop
-    for (const QPersistentModelIndex &srcIdx: persistentRows) {
+void SQSMessageList::HandleBulkRedrive(const QModelIndexList &sourceIndices) const {
+    for (const QModelIndex &srcIdx: sourceIndices) {
         if (srcIdx.isValid()) {
             const auto queueArn = _tableView->GetValue<QString>(srcIdx, 7);
             const auto messageId = _tableView->GetValue<QString>(srcIdx, 0);
             _sqsService->RedriveMessage(queueArn, messageId);
         }
     }
-    logInfo << "Resend messages, count: " << proxyIndices.count();
+    logInfo << "Resend messages, count: " << sourceIndices.count();
 }
 
 void SQSMessageList::ShowContextMenu(const QPoint &pos) {
@@ -221,13 +208,13 @@ void SQSMessageList::ShowContextMenu(const QPoint &pos) {
         SQSMessageDetailsDialog dialog(messageId, this);
         dialog.exec();
     } else if (selectedAction == resendAction) {
-        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
-        HandleBulkResend(selectedProxyIndices);
+        const QModelIndexList selectedSourceIndices = _tableView->GetSelectedRows();
+        HandleBulkResend(selectedSourceIndices);
     } else if (selectedAction == redriveAction) {
-        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
-        HandleBulkRedrive(selectedProxyIndices);
+        const QModelIndexList selectedSourceIndices = _tableView->GetSelectedRows();
+        HandleBulkRedrive(selectedSourceIndices);
     } else if (selectedAction == deleteAction) {
-        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
-        HandleBulkDelete(selectedProxyIndices);
+        const QModelIndexList selectedSourceIndices = _tableView->GetSelectedRows();
+        HandleBulkDelete(selectedSourceIndices);
     }
 }

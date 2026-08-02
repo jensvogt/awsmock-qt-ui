@@ -69,14 +69,15 @@ void LambdaResultListDialog::UpdateResultTable(const LambdaListResultsResponse &
     const int selectedRow = _ui->lambdaResultTable->selectionModel()->currentIndex().row();
     _ui->lambdaResultTable->setRowCount(0);
     _ui->lambdaResultTable->setSortingEnabled(false);
-    for (auto r = 0; r < listResultsResponse.lambdaLogCounters.count(); r++) {
+
+    for (auto r = 0, c = 0; r < listResultsResponse.lambdaLogCounters.count(); r++, c = 0) {
         _ui->lambdaResultTable->insertRow(r);
-        SetColumn(_ui->lambdaResultTable, r, 0, listResultsResponse.lambdaLogCounters.at(r).lambdaName);
-        SetColumn(_ui->lambdaResultTable, r, 1, listResultsResponse.lambdaLogCounters.at(r).containerId.mid(0, 12));
-        SetColumn(_ui->lambdaResultTable, r, 2, listResultsResponse.lambdaLogCounters.at(r).lambdaStatus);
-        SetColumn(_ui->lambdaResultTable, r, 3, listResultsResponse.lambdaLogCounters.at(r).timestamp);
-        SetColumn(_ui->lambdaResultTable, r, 4, listResultsResponse.lambdaLogCounters.at(r).duration);
-        SetColumn(_ui->lambdaResultTable, r, 5, listResultsResponse.lambdaLogCounters.at(r).oid);
+        SetColumn(_ui->lambdaResultTable, r, c++, listResultsResponse.lambdaLogCounters.at(r).lambdaName);
+        SetColumn(_ui->lambdaResultTable, r, c++, listResultsResponse.lambdaLogCounters.at(r).containerId.mid(0, 12));
+        SetColumn(_ui->lambdaResultTable, r, c++, listResultsResponse.lambdaLogCounters.at(r).lambdaStatus);
+        SetColumn(_ui->lambdaResultTable, r, c++, listResultsResponse.lambdaLogCounters.at(r).timestamp);
+        SetColumn(_ui->lambdaResultTable, r, c++, listResultsResponse.lambdaLogCounters.at(r).duration);
+        SetColumn(_ui->lambdaResultTable, r, c, listResultsResponse.lambdaLogCounters.at(r).oid);
     }
     _ui->lambdaResultTable->setRowCount(static_cast<int>(listResultsResponse.lambdaLogCounters.count()));
     _ui->lambdaResultTable->setSortingEnabled(true);

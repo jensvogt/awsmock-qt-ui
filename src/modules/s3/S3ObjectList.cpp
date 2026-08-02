@@ -124,7 +124,7 @@ void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjec
     for (auto r = 0, c = 0; r < listObjectResponse.objectCounters.count(); r++, c = 0) {
         _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).key);
         _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).contentType);
-        _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).size);
+        _tableView->SetColumn(r, c++, StringUtils::FormatSizeColumn(listObjectResponse.objectCounters.at(r).size, 1), Qt::AlignRight | Qt::AlignVCenter);
         _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).created);
         _tableView->SetColumn(r, c++, listObjectResponse.objectCounters.at(r).modified);
         _tableView->SetHiddenColumn(r, c++, listObjectResponse.objectCounters.at(r).oid);
@@ -134,12 +134,13 @@ void S3ObjectList::HandleListObjectSignal(const S3ListObjectsResponse &listObjec
     _tableView->RestoreSelection();
 }
 
-void S3ObjectList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {
+void S3ObjectList::HandleBulkDelete(const QModelIndexList &sourceIndices) const {
 
-    // Convert to Persistent Source Indexes
+    // Use persistent indexes so removing rows mid-loop doesn't invalidate the rest
     QList<QPersistentModelIndex> persistentRows;
-    for (const QModelIndex &proxyIdx: proxyIndices) {
-        persistentRows.append(_tableView->GetSourceIndex(proxyIdx));
+    persistentRows.reserve(sourceIndices.count());
+    for (const QModelIndex &srcIdx: sourceIndices) {
+        persistentRows.append(srcIdx);
     }
 
     // Now it is safe to delete in a loop
@@ -150,16 +151,15 @@ void S3ObjectList::HandleBulkDelete(const QModelIndexList &proxyIndices) const {
             _tableView->RemoveRow(srcIdx);
         }
     }
-    logInfo << "Deleted objects, count: " << proxyIndices.count();
+    logInfo << "Deleted objects, count: " << sourceIndices.count();
 }
 
-void S3ObjectList::HandleBulkTouch(const QModelIndexList &proxyIndices) const {
-    for (const QModelIndex &proxyIdx: proxyIndices) {
-        QModelIndex srcIdx = _tableView->GetSourceIndex(proxyIdx);
+void S3ObjectList::HandleBulkTouch(const QModelIndexList &sourceIndices) const {
+    for (const QModelIndex &srcIdx: sourceIndices) {
         const auto key = _tableView->GetValue<QString>(srcIdx, 0);
         _s3Service->TouchObject(_bucketName, key);
     }
-    logInfo << "Touched objects, count: " << proxyIndices.count();
+    logInfo << "Touched objects, count: " << sourceIndices.count();
 }
 
 void S3ObjectList::ShowContextMenu(const QPoint &pos) {
@@ -187,11 +187,11 @@ void S3ObjectList::ShowContextMenu(const QPoint &pos) {
     const auto key = _tableView->GetValue<QString>(index, 0);
     const auto objectId = _tableView->GetValue<QString>(index, 5);
     if (const auto selectedAction = menu->exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
-        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
-        HandleBulkDelete(selectedProxyIndices);
+        const QModelIndexList selectedSourceIndices = _tableView->GetSelectedRows();
+        HandleBulkDelete(selectedSourceIndices);
     } else if (selectedAction == touchAction) {
-        const QModelIndexList selectedProxyIndices = _tableView->GetSelectedRows();
-        HandleBulkTouch(selectedProxyIndices);
+        const QModelIndexList selectedSourceIndices = _tableView->GetSelectedRows();
+        HandleBulkTouch(selectedSourceIndices);
     } else if (selectedAction == editAction) {
         S3ObjectEditDialog dialog(objectId, this);
         dialog.exec();

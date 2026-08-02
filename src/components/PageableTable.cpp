@@ -48,7 +48,7 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     // Table definition
     _ui->tableView->setModel(_proxyModel);
     _ui->tableView->setShowGrid(true);
-    _ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->tableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     _ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     _ui->tableView->setSortingEnabled(true);
     _ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -102,6 +102,12 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     // Add context menu
     _ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->tableView, &QTableView::customContextMenuRequested, this, [this](const QPoint pos) {
+        // Right-clicking outside the current selection selects just that row; right-clicking
+        // inside an existing multi-row selection keeps the selection intact.
+        if (const QModelIndex proxyIndex = _ui->tableView->indexAt(pos);
+            proxyIndex.isValid() && !_ui->tableView->selectionModel()->isRowSelected(proxyIndex.row(), proxyIndex.parent())) {
+            _ui->tableView->selectionModel()->select(proxyIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        }
         emit ContextMenuRequested(pos);
     });
 
@@ -271,7 +277,13 @@ QModelIndex PageableTable::GetSourceIndex(const QModelIndex &index) const {
 }
 
 QModelIndexList PageableTable::GetSelectedRows() const {
-    return _ui->tableView->selectionModel()->selectedRows();
+    QModelIndexList sourceRows;
+    const QModelIndexList selected = _ui->tableView->selectionModel()->selectedRows();
+    sourceRows.reserve(selected.count());
+    for (const QModelIndex &proxyIndex: selected) {
+        sourceRows.append(_proxyModel->mapToSource(proxyIndex));
+    }
+    return sourceRows;
 }
 
 void PageableTable::SetMultiRowSelection(const bool enabled) const {
@@ -298,9 +310,9 @@ void PageableTable::RestoreSelection() {
     _ui->tableView->selectionModel()->clearSelection(); // Clear existing
     for (int i = 0; i < _dataModel->rowCount(); ++i) {
         if (QString currentId = _dataModel->index(i, 0).data(Qt::DisplayRole).toString(); _savedIds.contains(currentId)) {
-            // Select the row
+            // Select the row (map to the proxy model, which is what the view's selection model is bound to)
             _ui->tableView->selectionModel()->select(
-                _dataModel->index(i, 0),
+                _proxyModel->mapFromSource(_dataModel->index(i, 0)),
                 QItemSelectionModel::Select | QItemSelectionModel::Rows
             );
         }

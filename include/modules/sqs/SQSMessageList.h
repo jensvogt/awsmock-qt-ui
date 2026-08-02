@@ -79,11 +79,11 @@ private slots:
      */
     void HandleListMessageSignal(const SQSListMessagesResponse &listMessageResponse) const;
 
-    void HandleBulkDelete(const QModelIndexList &proxyIndices) const;
+    void HandleBulkDelete(const QModelIndexList &sourceIndices) const;
 
-    void HandleBulkResend(const QModelIndexList &proxyIndices) const;
+    void HandleBulkResend(const QModelIndexList &sourceIndices) const;
 
-    void HandleBulkRedrive(const QModelIndexList &proxyIndices) const;
+    void HandleBulkRedrive(const QModelIndexList &sourceIndices) const;
 
 private:
     /**

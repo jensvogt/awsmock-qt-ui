@@ -575,3 +575,33 @@ void LambdaService::DeleteLambdaResults(const QString &lambdaArn) {
                                   TimerSignal("DeleteLambdaResults", timer.elapsed());
                       });
 }
+
+void LambdaService::AddEventSource(const QString &type, const QString &functionArn, const QString &eventSourceArn, const bool enabled) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["Type"] = type;
+    jRequest["FunctionArn"] = functionArn;
+    jRequest["EventSourceArn"] = eventSourceArn;
+    jRequest["BatchSize"] = 10;
+    jRequest["MaximumBatchingWindowInSeconds"] = 5;
+    jRequest["Enabled"] = enabled;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "add-event-source-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              emit EventSourceAddedSignal();
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("AddEventSource", timer.elapsed());
+                      });
+}
