@@ -77,6 +77,13 @@ public:
     void UpdateObject(const S3GetObjectDetailsResponse &objectDetailsResponse);
 
     /**
+     * @brief Handle the list of object versions response
+     *
+     * @param versionCountersResponse list of object versions REST response
+     */
+    void UpdateVersions(const S3ListObjectVersionCountersResponse &versionCountersResponse) const;
+
+    /**
      * @brief Load dialog content
      */
     void LoadContent() override {

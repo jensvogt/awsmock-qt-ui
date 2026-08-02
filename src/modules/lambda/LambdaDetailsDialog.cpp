@@ -104,7 +104,7 @@ void LambdaDetailsDialog::ReloadLambdaInstances() {
 void LambdaDetailsDialog::SetupInstancesTab() {
 
     // Table
-    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Container ID"), tr("Host"), tr("Private Port"), tr("Public Port"), tr("Status"), tr("Last Invocation")};
+    const QStringList headers = QStringList() = {tr("Instance ID"), tr("Runtime"), tr("Runtime Version"), tr("Container ID"), tr("Host"), tr("Private Port"), tr("Public Port"), tr("Status"), tr("Last Invocation")};
     _ui->instanceTable->setColumnCount(static_cast<int>(headers.count()));
     _ui->instanceTable->setShowGrid(true);
     _ui->instanceTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -113,12 +113,14 @@ void LambdaDetailsDialog::SetupInstancesTab() {
     _ui->instanceTable->setSortingEnabled(true);
     _ui->instanceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     _ui->instanceTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(7, QHeaderView::ResizeToContents);
+    _ui->instanceTable->horizontalHeader()->setSectionResizeMode(8, QHeaderView::ResizeToContents);
 
     // Start instance button
     _ui->startInstanceButton->setText(nullptr);
@@ -158,6 +160,8 @@ void LambdaDetailsDialog::UpdateLambdaInstances(const LambdaListInstancesRespons
     for (auto r = 0, c = 0; r < listInstancesResponse.lambdaInstanceCounters.count(); r++, c = 0) {
         _ui->instanceTable->insertRow(r);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).instanceId);
+        SetColumn(_ui->instanceTable, r, c++, _lambdaGetResponse.runtime);
+        SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).runtimeVersion);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).containerId.mid(0, 12));
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).hostname);
         SetColumn(_ui->instanceTable, r, c++, listInstancesResponse.lambdaInstanceCounters.at(r).privatePort);

@@ -11,6 +11,7 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
 
     _s3Service->GetObjectDetails(objectId);
     connect(_s3Service, &S3Service::GetObjectDetailsSignal, this, &S3ObjectEditDialog::UpdateObject);
+    connect(_s3Service, &S3Service::ListObjectVersionCountersSignal, this, &S3ObjectEditDialog::UpdateVersions);
 
     _ui->setupUi(this);
     connect(_ui->buttonBox, &QDialogButtonBox::accepted, this, &S3ObjectEditDialog::HandleAccept);
@@ -127,6 +128,30 @@ S3ObjectEditDialog::S3ObjectEditDialog(const QString &objectId, QWidget *parent)
     _ui->metadataTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->metadataTable, &QTableWidget::customContextMenuRequested, this, &S3ObjectEditDialog::ShowDefaultMetadataContextMenu);
 
+    // Versions table
+    const QStringList versionsHeaders = QStringList() = {tr("Version ID"), tr("Latest"), tr("Size"), tr("Storage Class"), tr("Modified")};
+
+    _ui->versionsTable->setColumnCount(static_cast<int>(versionsHeaders.count()));
+    _ui->versionsTable->setShowGrid(true);
+    _ui->versionsTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->versionsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->versionsTable->setHorizontalHeaderLabels(versionsHeaders);
+    _ui->versionsTable->setSortingEnabled(true);
+    _ui->versionsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->versionsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _ui->versionsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    _ui->versionsTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _ui->versionsTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _ui->versionsTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+
+    // Versions refresh button
+    _ui->versionsRefreshButton->setText(nullptr);
+    _ui->versionsRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    _ui->versionsRefreshButton->setToolTip("Refresh the list of object versions");
+    connect(_ui->versionsRefreshButton, &QAbstractButton::clicked, this, [this]() {
+        _s3Service->ListObjectVersionCounters(_ui->bucketEdit->text(), _ui->keyEdit->text());
+    });
+
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 
@@ -206,6 +231,7 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
     _ui->versionIdEdit->setText(objectDetailsResponse.versionId.size() > 0 ? objectDetailsResponse.versionId : "not versioned");
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(objectDetailsResponse.modified));
+    _s3Service->ListObjectVersionCounters(objectDetailsResponse.bucketName, objectDetailsResponse.key);
     if (ImageUtils::IsImageContentType(objectDetailsResponse.contentType)) {
         QPixmap pix;
         pix.loadFromData(objectDetailsResponse.body);
@@ -247,6 +273,21 @@ void S3ObjectEditDialog::UpdateObject(const S3GetObjectDetailsResponse &objectDe
         _ui->metadataTable->sortItems(_metadataSortColumn, _metadataSortOrder);
         _ui->metadataTable->selectRow(selectedRow);
     }
+}
+
+void S3ObjectEditDialog::UpdateVersions(const S3ListObjectVersionCountersResponse &versionCountersResponse) const {
+
+    _ui->versionsTable->setSortingEnabled(false);
+    _ui->versionsTable->setRowCount(static_cast<int>(versionCountersResponse.versionCounters.count()));
+    for (auto r = 0, c = 0; r < versionCountersResponse.versionCounters.count(); r++, c = 0) {
+        const auto &versionCounter = versionCountersResponse.versionCounters.at(r);
+        SetColumn(_ui->versionsTable, r, c++, versionCounter.versionId.isEmpty() ? "not versioned" : versionCounter.versionId);
+        SetColumn(_ui->versionsTable, r, c++, versionCounter.isLatest ? "yes" : "");
+        SetColumn(_ui->versionsTable, r, c++, StringUtils::FormatSizeColumn(versionCounter.size, 1));
+        SetColumn(_ui->versionsTable, r, c++, versionCounter.storageClass);
+        SetColumn(_ui->versionsTable, r, c++, DateTimeUtils::GetDateTimeFormat(versionCounter.modified));
+    }
+    _ui->versionsTable->setSortingEnabled(true);
 }
 
 bool S3ObjectEditDialog::eventFilter(QObject *watched, QEvent *event) {
