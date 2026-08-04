@@ -26,7 +26,7 @@ public:
      */
     S3Service() {
         setApis({
-            "ListBuckets", "PurgeBucket", "PurgeAllBuckets", "AddBucket", "UpdateBucket", "ResetObjectCounters", "DeleteBucket",
+            "ListBuckets", "ListBucketArns", "PurgeBucket", "PurgeAllBuckets", "AddBucket", "UpdateBucket", "ResetObjectCounters", "DeleteBucket",
             "GetBucketDetails", "ListObjects", "GetObjectDetails", "UploadObject", "UpdateObject", "PutBucketNotificationConfiguration",
             "TouchObject", "DeleteObject", "ListObjectVersionCounters"
         });
@@ -42,6 +42,11 @@ public:
      * @param sortDirection sort direction 1=ascending, -1=descending
      */
     void ListBuckets(const QString &prefix, long pageSize, long pageIndex, const QString &sortAttribute, int sortDirection);
+
+    /**
+     * @brief List S3 bucket ARNs
+     */
+    void ListBucketArns();
 
     /**
      * @brief Purge all objects
@@ -199,6 +204,13 @@ signals
      * @param bucketListResponse list of buckets
      */
     void ListBucketSignal(const S3ListBucketResult &bucketListResponse);
+
+    /**
+     * @brief List S3 bucket ARNs signal
+     *
+     * @param arns list of bucket ARNs
+     */
+    void ListBucketArnsSignal(const QList<QString> &arns);
 
     /**
      * @brief Signaled when a bucket list needs to be reloaded

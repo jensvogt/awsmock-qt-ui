@@ -25,6 +25,7 @@
 #include <dto/lambda/LambdaGetResultResponse.h>
 #include <dto/lambda/LambdaUploadRequest.h>
 #include <dto/lambda/LambdaListArnsResponse.h>
+#include <dto/lambda/LambdaListEventSourcesResponse.h>
 
 #include "dto/lambda/LambdaGetInstanceResponse.h"
 
@@ -39,7 +40,7 @@ public:
         setApis({
             "ListLambdas", "GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment",
             "ListLambdaLogs", "GetLambdaResult", "GetLambdaResults", "UploadLambdaCode", "UpdateLambda", "UpdateLambdaEnvironment", "RebuildLambda",
-            "ListLambdaArns", "StartInstance", "StopInstance", "DeleteLambda", "DeleteLambdaResults", "AddEventSource"
+            "ListLambdaArns", "StartInstance", "StopInstance", "DeleteLambda", "DeleteLambdaResults", "AddEventSource", "RemoveEventSource", "ListLambdaEventSources"
         });
     }
 
@@ -194,8 +195,26 @@ public:
      * @param functionArn lambda function ARN
      * @param eventSourceArn ARN of the event source, e.g. the SQS queue ARN
      * @param enabled enabled flag
+     * @param batchSize batch size
+     * @param maximumBatchingWindowInSeconds maximum batching window in seconds
+     * @param uuid event source mapping UUID, kept when updating an existing mapping
      */
-    void AddEventSource(const QString &type, const QString &functionArn, const QString &eventSourceArn, bool enabled);
+    void AddEventSource(const QString &type, const QString &functionArn, const QString &eventSourceArn, bool enabled, long batchSize = 10, long maximumBatchingWindowInSeconds = 5, const QString &uuid = QString());
+
+    /**
+     * @brief Remove an event source mapping from a lambda function
+     *
+     * @param functionArn lambda function ARN
+     * @param eventSourceArn ARN of the event source, e.g. the SQS queue ARN
+     */
+    void RemoveEventSource(const QString &functionArn, const QString &eventSourceArn);
+
+    /**
+     * @brief Get the lambda event source mappings list
+     *
+     * @param lambdaArn lambda AWS ARN
+     */
+    void ListLambdaEventSources(const QString &lambdaArn);
 
 signals:
     /**
@@ -278,6 +297,13 @@ signals:
      * @brief Event source added signal
      */
     void EventSourceAddedSignal();
+
+    /**
+     * @brief List event sources signal
+     *
+     * @param listEventSourcesResponse lambda event sources list response
+     */
+    void ListLambdaEventSourcesSignal(const LambdaListEventSourcesResponse &listEventSourcesResponse);
 
 private:
     /**
