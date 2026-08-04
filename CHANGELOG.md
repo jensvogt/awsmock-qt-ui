@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.84](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.83...v1.11.84) (2026-08-04)
+
+
+### Bug Fixes
+
+* lambda event sources ([ae2298a](https://github.com/jensvogt/awsmock-qt-ui/commit/ae2298a1eee0c8eca3e8d7439245ebaca201bf56))
+* lambda event sources ([684326b](https://github.com/jensvogt/awsmock-qt-ui/commit/684326bc6b891b303fd2580300f49333a1abb53a))
+
 ## [1.11.83](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.82...v1.11.83) (2026-08-02)
 
 
