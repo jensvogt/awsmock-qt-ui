@@ -3,6 +3,7 @@
 #include "ui_DockerStatsDialog.h"
 
 DockerStatsDialog::DockerStatsDialog(QWidget *parent) : BaseDialog(parent), _ui(new Ui::DockerStatsDialog) {
+
     // Application service
     _applicationService = new ApplicationService();
 

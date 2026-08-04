@@ -15,8 +15,10 @@
 #include <components/Toast.h>
 #include <dto/lambda/LambdaGetResponse.h>
 #include <dto/lambda/LambdaListEnvironmentResponse.h>
+#include <dto/lambda/LambdaListEventSourcesResponse.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
 #include <modules/lambda/LambdaEnvironmentDetailDialog.h>
+#include <modules/lambda/LambdaEventSourceDetailDialog.h>
 #include <modules/lambda/LambdaInstanceDialog.h>
 #include <modules/lambda/LambdaResultListDialog.h>
 #include <modules/lambda/LambdaService.h>
@@ -90,6 +92,25 @@ public:
      * @param pos position in table
      */
     void ShowEnvironmentContextMenu(const QPoint &pos) const;
+
+    /**
+     * @brief Initialize event sources tab
+     */
+    void SetupEventSourcesTab() const;
+
+    /**
+     * @brief Update lambda event sources
+     *
+     * @param listEventSourcesResponse lambda service response
+     */
+    void UpdateLambdaEventSources(const LambdaListEventSourcesResponse &listEventSourcesResponse) const;
+
+    /**
+     * @brief Show the event source context menu
+     *
+     * @param pos position in table
+     */
+    void ShowEventSourceContextMenu(const QPoint &pos) const;
 
     /**
      * @brief Show the instance context menu

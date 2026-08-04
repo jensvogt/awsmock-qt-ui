@@ -6,6 +6,8 @@
 #include "ui_LambdaDetailsDialog.h"
 
 LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : BaseDialog(parent), _ui(new Ui::LambdaDetailsDialog), _lambdaArn(std::move(lambdaArn)) {
+
+    // Initialize service
     _lambdaService = new LambdaService();
 
     connect(_lambdaService, &LambdaService::GetLambdaDetailsSignal, this, &LambdaDetailsDialog::UpdateLambda);
@@ -36,7 +38,7 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
     });
 
     // Timer
-    QStringList apis = {"GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "UpdateLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment"};
+    QStringList apis = {"GetLambda", "GetLambdaInstances", "GetLambdaEnvironment", "UpdateLambdaEnvironment", "AddLambdaEnvironment", "RemoveLambdaEnvironment", "ListLambdaEventSources"};
     connect(&EventBus::instance(), &EventBus::TimerSignal, this, [this, apis](const QString &timerName, const qint64 elapsed) {
         if (apis.contains(timerName)) {
             _ui->lastUpdateLabel->setText("Last update: " + QDateTime::currentDateTime().toString("hh:mm:ss") + " [" + QString::number(elapsed) + "ms]");
@@ -55,11 +57,14 @@ LambdaDetailsDialog::LambdaDetailsDialog(QString lambdaArn, QWidget *parent) : B
     // Setup environment tab
     SetupEnvironmentTab();
 
+    // Setup event sources tab
+    SetupEventSourcesTab();
+
     // Set default tab
     _ui->tabWidget->setCurrentIndex(0);
 
     // Load content
-    LoadContent();
+    LambdaDetailsDialog::LoadContent();
 
     // Status
     _ui->lastUpdateLabel->setText("Initialized");
@@ -279,6 +284,116 @@ void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
     } else if (selectedAction == deleteAction) {
         _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);
         _ui->environmentTable->removeRow(row);
+    }
+}
+
+void LambdaDetailsDialog::SetupEventSourcesTab() const {
+
+    // Table
+    const QStringList headers = QStringList() = {tr("Type"), tr("Event Source ARN"), tr("Batch Size"), tr("Max Batching Window (s)"), tr("UUID")};
+    _ui->eventSourceTable->setColumnCount(static_cast<int>(headers.count()));
+    _ui->eventSourceTable->setShowGrid(true);
+    _ui->eventSourceTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    _ui->eventSourceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _ui->eventSourceTable->setHorizontalHeaderLabels(headers);
+    _ui->eventSourceTable->setSortingEnabled(true);
+    _ui->eventSourceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _ui->eventSourceTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    _ui->eventSourceTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _ui->eventSourceTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    _ui->eventSourceTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    _ui->eventSourceTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+
+    // Add button
+    _ui->eventSourceAddButton->setText(nullptr);
+    _ui->eventSourceAddButton->setIcon(IconUtils::GetIcon("add"));
+    connect(_ui->eventSourceAddButton, &QPushButton::clicked, [this]() {
+        if (LambdaEventSourceDetailDialog dialog("", "", 10, 5, ""); dialog.exec() == Accepted) {
+            const int newRowIndex = _ui->eventSourceTable->rowCount();
+            _ui->eventSourceTable->insertRow(newRowIndex);
+            SetColumn(_ui->eventSourceTable, newRowIndex, 0, dialog.GetType());
+            SetColumn(_ui->eventSourceTable, newRowIndex, 1, dialog.GetEventSourceArn());
+            SetColumn(_ui->eventSourceTable, newRowIndex, 2, dialog.GetBatchSize());
+            SetColumn(_ui->eventSourceTable, newRowIndex, 3, dialog.GetMaximumBatchingWindowInSeconds());
+            SetColumn(_ui->eventSourceTable, newRowIndex, 4, QString());
+            _lambdaService->AddEventSource(dialog.GetType(), _lambdaArn, dialog.GetEventSourceArn(), true, dialog.GetBatchSize(), dialog.GetMaximumBatchingWindowInSeconds());
+        }
+    });
+
+    // Refresh button
+    _ui->eventSourceRefreshButton->setText(nullptr);
+    _ui->eventSourceRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
+    connect(_ui->eventSourceRefreshButton, &QPushButton::clicked, [this]() {
+        _lambdaService->ListLambdaEventSources(_lambdaArn);
+    });
+
+    // Add context menu
+    _ui->eventSourceTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->eventSourceTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowEventSourceContextMenu);
+
+    // Send request
+    _lambdaService->ListLambdaEventSources(_lambdaArn);
+    connect(_lambdaService, &LambdaService::ListLambdaEventSourcesSignal, this, &LambdaDetailsDialog::UpdateLambdaEventSources);
+}
+
+void LambdaDetailsDialog::UpdateLambdaEventSources(const LambdaListEventSourcesResponse &listEventSourcesResponse) const {
+    const int selectedRow = _ui->eventSourceTable->selectionModel()->currentIndex().row();
+    _ui->eventSourceTable->setRowCount(0);
+    _ui->eventSourceTable->setSortingEnabled(false);
+    for (auto r = 0, c = 0; r < listEventSourcesResponse.eventSourceCounters.count(); r++, c = 0) {
+        _ui->eventSourceTable->insertRow(r);
+        SetColumn(_ui->eventSourceTable, r, c++, listEventSourcesResponse.eventSourceCounters.at(r).type);
+        SetColumn(_ui->eventSourceTable, r, c++, listEventSourcesResponse.eventSourceCounters.at(r).eventSourceArn);
+        SetColumn(_ui->eventSourceTable, r, c++, listEventSourcesResponse.eventSourceCounters.at(r).batchSize);
+        SetColumn(_ui->eventSourceTable, r, c++, listEventSourcesResponse.eventSourceCounters.at(r).maximumBatchingWindowInSeconds);
+        SetColumn(_ui->eventSourceTable, r, c++, listEventSourcesResponse.eventSourceCounters.at(r).uuid);
+    }
+    _ui->eventSourceTable->setRowCount(static_cast<int>(listEventSourcesResponse.eventSourceCounters.count()));
+    _ui->eventSourceTable->setSortingEnabled(true);
+    _ui->eventSourceTable->selectRow(selectedRow);
+}
+
+void LambdaDetailsDialog::ShowEventSourceContextMenu(const QPoint &pos) const {
+    // Cell index
+    const QModelIndex index = _ui->eventSourceTable->indexAt(pos);
+    if (!index.isValid()) return;
+
+    const int row = index.row();
+
+    QMenu menu;
+    QAction *editAction = menu.addAction(IconUtils::GetIcon("edit"), "Edit Event Source");
+    editAction->setToolTip("Edit the lambda event source mapping");
+
+    menu.addSeparator();
+
+    QAction *deleteAction = menu.addAction(IconUtils::GetIcon("delete"), "Delete Event Source");
+    deleteAction->setToolTip("Delete the lambda event source mapping");
+
+    const QTableWidgetItem *typeItem = _ui->eventSourceTable->item(row, 0);
+    const QTableWidgetItem *arnItem = _ui->eventSourceTable->item(row, 1);
+    const QTableWidgetItem *batchSizeItem = _ui->eventSourceTable->item(row, 2);
+    const QTableWidgetItem *maxBatchingWindowItem = _ui->eventSourceTable->item(row, 3);
+    const QTableWidgetItem *uuidItem = _ui->eventSourceTable->item(row, 4);
+    if (!typeItem || !arnItem || !batchSizeItem || !maxBatchingWindowItem || !uuidItem) return;
+
+    const QString type = typeItem->text();
+    const QString eventSourceArn = arnItem->text();
+    const long batchSize = batchSizeItem->text().toLong();
+    const long maxBatchingWindow = maxBatchingWindowItem->text().toLong();
+    const QString uuid = uuidItem->text();
+
+    if (const QAction *selectedAction = menu.exec(_ui->eventSourceTable->viewport()->mapToGlobal(pos));
+        selectedAction == editAction) {
+        if (LambdaEventSourceDetailDialog dialog(type, eventSourceArn, batchSize, maxBatchingWindow, uuid); dialog.exec() == Accepted) {
+            SetColumn(_ui->eventSourceTable, row, 0, dialog.GetType());
+            SetColumn(_ui->eventSourceTable, row, 1, dialog.GetEventSourceArn());
+            SetColumn(_ui->eventSourceTable, row, 2, dialog.GetBatchSize());
+            SetColumn(_ui->eventSourceTable, row, 3, dialog.GetMaximumBatchingWindowInSeconds());
+            _lambdaService->AddEventSource(dialog.GetType(), _lambdaArn, dialog.GetEventSourceArn(), true, dialog.GetBatchSize(), dialog.GetMaximumBatchingWindowInSeconds(), dialog.GetUuid());
+        }
+    } else if (selectedAction == deleteAction) {
+        _lambdaService->RemoveEventSource(_lambdaArn, eventSourceArn);
+        _ui->eventSourceTable->removeRow(row);
     }
 }
 

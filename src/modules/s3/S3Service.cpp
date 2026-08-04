@@ -41,6 +41,35 @@ void S3Service::ListBuckets(const QString &prefix, const long pageSize, const lo
                       });
 }
 
+void S3Service::ListBucketArns() {
+    QElapsedTimer timer;
+    timer.start();
+
+    _restManager.post(GetBaseUrl(),
+                      nullptr,
+                      {
+                          {"x-awsmock-target", "s3"},
+                          {"x-awsmock-action", "ListBucketArns"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  QList<QString> arns;
+                                  for (const auto &arn: jsonDoc["bucketArns"].toArray()) {
+                                      arns.append(arn.toString());
+                                  }
+                                  emit ListBucketArnsSignal(arns);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListBucketArns", timer.elapsed());
+                      });
+}
+
 void S3Service::PurgeBucket(const QString &bucketName) {
     QElapsedTimer timer;
     timer.start();

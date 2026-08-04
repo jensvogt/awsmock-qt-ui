@@ -129,10 +129,10 @@ private:
     /**
      *  @brief Table data model
      */
-    QStandardItemModel *_dataModel;
+    QStandardItemModel *_dataModel{};
 
     /**
      * @brief Data proxy model
      */
-    PrefixFilterProxyModel *_proxyModel;
+    PrefixFilterProxyModel *_proxyModel{};
 };

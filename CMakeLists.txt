@@ -148,7 +148,10 @@ set(LAMBDA_SOURCES include/modules/lambda/LambdaList.h include/modules/lambda/La
         src/modules/lambda/LambdaResultListDialog.ui include/dto/lambda/LambdaGetResultResponse.h
         src/modules/lambda/LambdaDashboard.cpp include/modules/lambda/LambdaDashboard.h
         src/modules/lambda/LambdaDashboard.ui src/modules/lambda/LambdaInstanceDialog.cpp
-        include/modules/lambda/LambdaInstanceDialog.h src/modules/lambda/LambdaInstanceDialog.ui)
+        include/modules/lambda/LambdaInstanceDialog.h src/modules/lambda/LambdaInstanceDialog.ui
+        include/dto/lambda/LambdaEventSourceCounter.h include/dto/lambda/LambdaListEventSourcesResponse.h
+        src/modules/lambda/LambdaEventSourceDetailDialog.cpp include/modules/lambda/LambdaEventSourceDetailDialog.h
+        src/modules/lambda/LambdaEventSourceDetailDialog.ui)
 set(COGNITO_SOURCES include/modules/cognito/CognitoService.h include/modules/cognito/CognitoUserpoolList.h
         src/modules/cognito/CognitoUserpoolList.cpp include/dto/cognito/CognitoUserpoolListResponse.h
         include/dto/cognito/CognitoUserpool.h src/modules/cognito/CognitoService.cpp

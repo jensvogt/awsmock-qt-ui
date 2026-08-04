@@ -576,7 +576,49 @@ void LambdaService::DeleteLambdaResults(const QString &lambdaArn) {
                       });
 }
 
-void LambdaService::AddEventSource(const QString &type, const QString &functionArn, const QString &eventSourceArn, const bool enabled) {
+void LambdaService::ListLambdaEventSources(const QString &lambdaArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jSorting;
+    jSorting["sortDirection"] = 1;
+    jSorting["column"] = "eventSourceArn";
+
+    QJsonArray jSortingArray;
+    jSortingArray.append(jSorting);
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["lambdaArn"] = lambdaArn;
+    jRequest["prefix"] = "";
+    jRequest["pageSize"] = 1000;
+    jRequest["pageIndex"] = 0;
+    jRequest["sortColumns"] = jSortingArray;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "list-event-source-counters"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
+                          if (success) {
+                              if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
+                                  LambdaListEventSourcesResponse lambdaResponse;
+                                  lambdaResponse.FromJson(jsonDoc);
+                                  emit ListLambdaEventSourcesSignal(lambdaResponse);
+                              } else {
+                                  logWarning << "Response is not an object!";
+                              }
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("ListLambdaEventSources", timer.elapsed());
+                      });
+}
+
+void LambdaService::AddEventSource(const QString &type, const QString &functionArn, const QString &eventSourceArn, const bool enabled, const long batchSize, const long maximumBatchingWindowInSeconds, const QString &uuid) {
     QElapsedTimer timer;
     timer.start();
 
@@ -584,9 +626,12 @@ void LambdaService::AddEventSource(const QString &type, const QString &functionA
     jRequest["Type"] = type;
     jRequest["FunctionArn"] = functionArn;
     jRequest["EventSourceArn"] = eventSourceArn;
-    jRequest["BatchSize"] = 10;
-    jRequest["MaximumBatchingWindowInSeconds"] = 5;
+    jRequest["BatchSize"] = static_cast<qint64>(batchSize);
+    jRequest["MaximumBatchingWindowInSeconds"] = static_cast<qint64>(maximumBatchingWindowInSeconds);
     jRequest["Enabled"] = enabled;
+    if (!uuid.isEmpty()) {
+        jRequest["UUID"] = uuid;
+    }
     const QJsonDocument requestDoc(jRequest);
 
     _restManager.post(GetBaseUrl(),
@@ -603,5 +648,29 @@ void LambdaService::AddEventSource(const QString &type, const QString &functionA
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("AddEventSource", timer.elapsed());
+                      });
+}
+
+void LambdaService::RemoveEventSource(const QString &functionArn, const QString &eventSourceArn) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["FunctionArn"] = functionArn;
+    jRequest["EventSourceArn"] = eventSourceArn;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "lambda"},
+                          {"x-awsmock-action", "delete-event-source-counter"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer](const bool success, const QByteArray &, int, const QString &error) {
+                          if (!success) {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("RemoveEventSource", timer.elapsed());
                       });
 }
