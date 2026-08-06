@@ -435,6 +435,11 @@ signals:
      */
     void ShowDetailsSignal(const QModelIndex &index);
 
+    /**
+     * @brief Sent when the Delete key is pressed with a non-empty selection
+     */
+    void DeleteRequested();
+
 private:
     /**
      * @brief Sets a status message
@@ -452,6 +457,26 @@ private:
      * @brief Calculate the pageing status
      */
     void CalculatePageStatus();
+
+    /**
+     * @brief Jump to the first page
+     */
+    void GoToFirstPage();
+
+    /**
+     * @brief Go to the previous page
+     */
+    void GoToPreviousPage();
+
+    /**
+     * @brief Go to the next page
+     */
+    void GoToNextPage();
+
+    /**
+     * @brief Jump to the last page
+     */
+    void GoToLastPage();
 
     /**
      * @brief Page index

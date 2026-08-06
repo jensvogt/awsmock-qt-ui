@@ -97,6 +97,9 @@ SNSTopicList::SNSTopicList(const QString &title, QWidget *parent) : BasePage(par
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SNSTopicList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &SNSTopicList::DeleteSelected);
+
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SNSTopicList::LoadContent);
 
@@ -190,15 +193,23 @@ void SNSTopicList::ShowContextMenu(const QPoint &pos) {
         _snsService->ResendTopic(topicArn);
         new Awsmock::Components::ToastOverlay("Messages resend initiated.\nChanges may take some time to propagate.", this);
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Topics", QString("Delete %1 selected topics?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _snsService->DeleteTopic(_tableView->GetValue<QString>(row, 7));
-            }
-            new Awsmock::Components::ToastOverlay("Topic deletion initiated.\nChanges may take some time to propagate.", this);
-        }
+        DeleteSelected();
     } else if (selectedAction == editAction) {
         SNSTopicDetailsDialog dialog(topicArn);
         dialog.exec();
     }
     StartAutoUpdate();
+}
+
+void SNSTopicList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Topics", QString("Delete %1 selected topics?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        for (const QModelIndex &row: selectedRows) {
+            _snsService->DeleteTopic(_tableView->GetValue<QString>(row, 7));
+        }
+        new Awsmock::Components::ToastOverlay("Topic deletion initiated.\nChanges may take some time to propagate.", this);
+    }
 }

@@ -56,40 +56,19 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     // Start button
     _ui->startButton->setText(nullptr);
     _ui->startButton->setIcon(IconUtils::GetIcon("begin"));
-    connect(_ui->startButton, &QPushButton::clicked, this, [this]() {
-        _pageIndex = 0;
-        CalculatePageStatus();
-    });
+    connect(_ui->startButton, &QPushButton::clicked, this, &PageableTable::GoToFirstPage);
 
     _ui->previousButton->setText(nullptr);
     _ui->previousButton->setIcon(IconUtils::GetIcon("previous"));
-    connect(_ui->previousButton, &QPushButton::clicked, this, [this]() {
-        _pageIndex--;
-        if (_pageIndex < 0) {
-            _pageIndex = 0;
-        }
-        CalculatePageStatus();
-        emit ReloadTable();
-    });
+    connect(_ui->previousButton, &QPushButton::clicked, this, &PageableTable::GoToPreviousPage);
 
     _ui->nextButton->setText(nullptr);
     _ui->nextButton->setIcon(IconUtils::GetIcon("next"));
-    connect(_ui->nextButton, &QPushButton::clicked, this, [this]() {
-        _pageIndex++;
-        if (_pageIndex >= _maxPage) {
-            _pageIndex = _maxPage;
-        }
-        CalculatePageStatus();
-        emit ReloadTable();
-    });
+    connect(_ui->nextButton, &QPushButton::clicked, this, &PageableTable::GoToNextPage);
 
     _ui->endButton->setText(nullptr);
     _ui->endButton->setIcon(IconUtils::GetIcon("end"));
-    connect(_ui->endButton, &QPushButton::clicked, this, [this]() {
-        _pageIndex = _maxPage;
-        CalculatePageStatus();
-        emit ReloadTable();
-    });
+    connect(_ui->endButton, &QPushButton::clicked, this, &PageableTable::GoToLastPage);
 
     _ui->pageSizeEdit->setText(QString::number(_pageSize));
     connect(_ui->pageSizeEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
@@ -139,6 +118,41 @@ PageableTable::PageableTable(QWidget *parent) : QWidget(parent), _ui(new Ui::Pag
     _ui->tableView->addAction(detailsAction);
     connect(detailsAction, &QAction::triggered, this, &PageableTable::ShowDetails);
 
+    auto *deleteKeyAction = new QAction(this);
+    deleteKeyAction->setShortcut(QKeySequence(Qt::Key_Delete));
+    deleteKeyAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->tableView->addAction(deleteKeyAction);
+    connect(deleteKeyAction, &QAction::triggered, this, [this]() {
+        if (!_ui->tableView->selectionModel()->selectedRows().isEmpty()) {
+            emit DeleteRequested();
+        }
+    });
+
+    // Paging shortcuts
+    auto *firstPageAction = new QAction(this);
+    firstPageAction->setShortcut(QKeySequence(Qt::Key_Home));
+    firstPageAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->tableView->addAction(firstPageAction);
+    connect(firstPageAction, &QAction::triggered, this, &PageableTable::GoToFirstPage);
+
+    auto *previousPageAction = new QAction(this);
+    previousPageAction->setShortcut(QKeySequence(Qt::Key_PageUp));
+    previousPageAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->tableView->addAction(previousPageAction);
+    connect(previousPageAction, &QAction::triggered, this, &PageableTable::GoToPreviousPage);
+
+    auto *nextPageAction = new QAction(this);
+    nextPageAction->setShortcut(QKeySequence(Qt::Key_PageDown));
+    nextPageAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->tableView->addAction(nextPageAction);
+    connect(nextPageAction, &QAction::triggered, this, &PageableTable::GoToNextPage);
+
+    auto *lastPageAction = new QAction(this);
+    lastPageAction->setShortcut(QKeySequence(Qt::Key_End));
+    lastPageAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->tableView->addAction(lastPageAction);
+    connect(lastPageAction, &QAction::triggered, this, &PageableTable::GoToLastPage);
+
     // Reset message box
     _ui->messageLabel->setText(nullptr);
 
@@ -172,6 +186,36 @@ void PageableTable::CalculatePageStatus() {
     }
     _ui->pageStatusLabel->setText(QString("%1 - %2 / %3").arg(start).arg(end).arg(_totalSize));
     SetLastUpdate();
+}
+
+void PageableTable::GoToFirstPage() {
+    _pageIndex = 0;
+    CalculatePageStatus();
+    emit ReloadTable();
+}
+
+void PageableTable::GoToPreviousPage() {
+    _pageIndex--;
+    if (_pageIndex < 0) {
+        _pageIndex = 0;
+    }
+    CalculatePageStatus();
+    emit ReloadTable();
+}
+
+void PageableTable::GoToNextPage() {
+    _pageIndex++;
+    if (_pageIndex >= _maxPage) {
+        _pageIndex = _maxPage;
+    }
+    CalculatePageStatus();
+    emit ReloadTable();
+}
+
+void PageableTable::GoToLastPage() {
+    _pageIndex = _maxPage;
+    CalculatePageStatus();
+    emit ReloadTable();
 }
 
 void PageableTable::UpdateSorting() const {

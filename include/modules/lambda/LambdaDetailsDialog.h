@@ -94,6 +94,11 @@ public:
     void ShowEnvironmentContextMenu(const QPoint &pos) const;
 
     /**
+     * @brief Delete the currently selected environment variable
+     */
+    void DeleteSelectedEnvironment() const;
+
+    /**
      * @brief Initialize event sources tab
      */
     void SetupEventSourcesTab() const;
@@ -113,11 +118,21 @@ public:
     void ShowEventSourceContextMenu(const QPoint &pos) const;
 
     /**
+     * @brief Delete the currently selected event source mapping
+     */
+    void DeleteSelectedEventSource() const;
+
+    /**
      * @brief Show the instance context menu
      *
      * @param pos position in table
      */
     void ShowInstanceContextMenu(const QPoint &pos) const;
+
+    /**
+     * @brief Kill the currently selected lambda instance
+     */
+    void KillSelectedInstance() const;
 
     void StartInstance() const;
 

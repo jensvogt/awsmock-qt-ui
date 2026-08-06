@@ -63,6 +63,11 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected parameter(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * @brief AWS region

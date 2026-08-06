@@ -47,6 +47,9 @@ RestApiKeyList::RestApiKeyList(const QString &title, QWidget *parent) : BasePage
     _tableView->setServiceApis(_apiGatewayService->getApis());
 
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &RestApiKeyList::ShowContextMenu);
+
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &RestApiKeyList::DeleteSelected);
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
         const auto keyId = _tableView->GetValue<QString>(index, 0);
         RestApiKeyDialog dialog(keyId, this);
@@ -118,7 +121,16 @@ void RestApiKeyList::ShowContextMenu(const QPoint &pos) {
         _apiGatewayService->DisableApiKey(keyId);
         new Awsmock::Components::ToastOverlay("API key disabled!\nName: " + name, this);
     } else if (selectedAction == deleteAction) {
-        _apiGatewayService->DeleteApiKey(keyId);
-        new Awsmock::Components::ToastOverlay("API key deleted!\nName: " + name, this);
+        DeleteSelected();
     }
+}
+
+void RestApiKeyList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const auto keyId = _tableView->GetValue<QString>(selectedRows.first(), 0);
+    const auto name = _tableView->GetValue<QString>(selectedRows.first(), 1);
+    _apiGatewayService->DeleteApiKey(keyId);
+    new Awsmock::Components::ToastOverlay("API key deleted!\nName: " + name, this);
 }

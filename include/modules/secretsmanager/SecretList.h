@@ -69,6 +69,11 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected secret(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * @brief Service

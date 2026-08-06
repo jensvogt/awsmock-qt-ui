@@ -76,6 +76,9 @@ SNSMessageList::SNSMessageList(const QString &title, QWidget *parent) : BasePage
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SNSMessageList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &SNSMessageList::DeleteSelected);
+
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SNSMessageList::LoadContent);
 
@@ -148,7 +151,16 @@ void SNSMessageList::ShowContextMenu(const QPoint &pos) {
         _snsService->ResendMessage(_topicArn, messageId);
         new Awsmock::Components::ToastOverlay("Message resend.\nMessageId: " + messageId);
     } else if (selectedAction == deleteAction) {
-        const auto messageId = _tableView->GetValue<QString>(index, 0);
+        DeleteSelected();
+    }
+}
+
+void SNSMessageList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    for (const QModelIndex &row: selectedRows) {
+        const auto messageId = _tableView->GetValue<QString>(row, 0);
         _snsService->DeleteMessage(_topicArn, messageId);
     }
 }

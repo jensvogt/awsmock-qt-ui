@@ -75,6 +75,9 @@ KMSKeyList::KMSKeyList(const QString &title, QWidget *parent) : BasePage(parent)
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &KMSKeyList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &KMSKeyList::DeleteSelected);
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto keyId = _tableView->GetValue<QString>(index, 0);
@@ -136,10 +139,18 @@ void KMSKeyList::ShowContextMenu(const QPoint &pos) {
         KMSKeyDialog dialog(keyId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Keys", QString("Delete %1 selected keys?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _kmsService->DeleteKey(_tableView->GetValue<QString>(row, 0));
-            }
+        DeleteSelected();
+    }
+}
+
+void KMSKeyList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Keys", QString("Delete %1 selected keys?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        for (const QModelIndex &row: selectedRows) {
+            _kmsService->DeleteKey(_tableView->GetValue<QString>(row, 0));
         }
     }
 }

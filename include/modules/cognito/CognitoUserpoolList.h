@@ -54,6 +54,11 @@ public:
 
     void ShowContextMenu(const QPoint &pos) const;
 
+    /**
+     * @brief Delete the currently selected user pool(s)
+     */
+    void DeleteSelected() const;
+
 private:
     /**
      * @brief Layout

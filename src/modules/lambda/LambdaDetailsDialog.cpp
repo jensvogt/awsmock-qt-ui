@@ -141,6 +141,13 @@ void LambdaDetailsDialog::SetupInstancesTab() {
     _ui->instanceTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->instanceTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowInstanceContextMenu);
 
+    // Delete key
+    auto *instanceDeleteAction = new QAction(_ui->instanceTable);
+    instanceDeleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+    instanceDeleteAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->instanceTable->addAction(instanceDeleteAction);
+    connect(instanceDeleteAction, &QAction::triggered, this, &LambdaDetailsDialog::KillSelectedInstance);
+
     // Connect double-click
     connect(_ui->instanceTable, &QTableWidget::doubleClicked, this, [this](const QModelIndex &index) {
         // Get the position
@@ -206,6 +213,13 @@ void LambdaDetailsDialog::SetupEnvironmentTab() const {
     // Add context menu
     _ui->environmentTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->environmentTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowEnvironmentContextMenu);
+
+    // Delete key
+    auto *environmentDeleteAction = new QAction(_ui->environmentTable);
+    environmentDeleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+    environmentDeleteAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->environmentTable->addAction(environmentDeleteAction);
+    connect(environmentDeleteAction, &QAction::triggered, this, &LambdaDetailsDialog::DeleteSelectedEnvironment);
 
     // Send request
     _lambdaService->GetLambdaEnvironment(_lambdaArn);
@@ -282,9 +296,19 @@ void LambdaDetailsDialog::ShowEnvironmentContextMenu(const QPoint &pos) const {
             _lambdaService->UpdateLambdaEnvironment(_lambdaArn, dialog.GetKey(), dialog.GetValue());
         }
     } else if (selectedAction == deleteAction) {
-        _lambdaService->RemoveLambdaEnvironment(_lambdaArn, key);
-        _ui->environmentTable->removeRow(row);
+        DeleteSelectedEnvironment();
     }
+}
+
+void LambdaDetailsDialog::DeleteSelectedEnvironment() const {
+    const int row = _ui->environmentTable->currentRow();
+    if (row < 0) return;
+
+    const QTableWidgetItem *keyItem = _ui->environmentTable->item(row, 0);
+    if (!keyItem) return;
+
+    _lambdaService->RemoveLambdaEnvironment(_lambdaArn, keyItem->text());
+    _ui->environmentTable->removeRow(row);
 }
 
 void LambdaDetailsDialog::SetupEventSourcesTab() const {
@@ -330,6 +354,13 @@ void LambdaDetailsDialog::SetupEventSourcesTab() const {
     // Add context menu
     _ui->eventSourceTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(_ui->eventSourceTable, &QTableWidget::customContextMenuRequested, this, &LambdaDetailsDialog::ShowEventSourceContextMenu);
+
+    // Delete key
+    auto *eventSourceDeleteAction = new QAction(_ui->eventSourceTable);
+    eventSourceDeleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+    eventSourceDeleteAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->eventSourceTable->addAction(eventSourceDeleteAction);
+    connect(eventSourceDeleteAction, &QAction::triggered, this, &LambdaDetailsDialog::DeleteSelectedEventSource);
 
     // Send request
     _lambdaService->ListLambdaEventSources(_lambdaArn);
@@ -392,9 +423,19 @@ void LambdaDetailsDialog::ShowEventSourceContextMenu(const QPoint &pos) const {
             _lambdaService->AddEventSource(dialog.GetType(), _lambdaArn, dialog.GetEventSourceArn(), true, dialog.GetBatchSize(), dialog.GetMaximumBatchingWindowInSeconds(), dialog.GetUuid());
         }
     } else if (selectedAction == deleteAction) {
-        _lambdaService->RemoveEventSource(_lambdaArn, eventSourceArn);
-        _ui->eventSourceTable->removeRow(row);
+        DeleteSelectedEventSource();
     }
+}
+
+void LambdaDetailsDialog::DeleteSelectedEventSource() const {
+    const int row = _ui->eventSourceTable->currentRow();
+    if (row < 0) return;
+
+    const QTableWidgetItem *arnItem = _ui->eventSourceTable->item(row, 1);
+    if (!arnItem) return;
+
+    _lambdaService->RemoveEventSource(_lambdaArn, arnItem->text());
+    _ui->eventSourceTable->removeRow(row);
 }
 
 void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
@@ -426,10 +467,7 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
     }
 
     if (const QAction *selectedAction = menu.exec(_ui->instanceTable->viewport()->mapToGlobal(pos)); selectedAction == killAction) {
-        const QString instanceId = _ui->instanceTable->item(row, 0)->text();
-        _lambdaService->StopInstance(_lambdaArn, instanceId);
-        logInfo << "Lambda instance stopped, instanceId: " << instanceId;
-        new Awsmock::Components::ToastOverlay("Lambda instance killed.\nInstanceId: " + instanceId);
+        KillSelectedInstance();
     } else if (selectedAction == startAction) {
         _lambdaService->StartInstance(_lambdaArn);
         logInfo << "Lambda instance started, lambdaArn: " << _lambdaArn;
@@ -445,6 +483,19 @@ void LambdaDetailsDialog::ShowInstanceContextMenu(const QPoint &pos) const {
             logInfo << "Lambda instance dialog started, lambdaArn: " << _lambdaArn;
         }
     }
+}
+
+void LambdaDetailsDialog::KillSelectedInstance() const {
+    const int row = _ui->instanceTable->currentRow();
+    if (row < 0) return;
+
+    const QTableWidgetItem *idItem = _ui->instanceTable->item(row, 0);
+    if (!idItem) return;
+
+    const QString instanceId = idItem->text();
+    _lambdaService->StopInstance(_lambdaArn, instanceId);
+    logInfo << "Lambda instance stopped, instanceId: " << instanceId;
+    new Awsmock::Components::ToastOverlay("Lambda instance killed.\nInstanceId: " + instanceId);
 }
 
 void LambdaDetailsDialog::StartInstance() const {

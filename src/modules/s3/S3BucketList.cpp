@@ -87,6 +87,9 @@ S3BucketList::S3BucketList(const QString &title, QWidget *parent) : BasePage(par
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &S3BucketList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &S3BucketList::DeleteSelected);
+
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &S3BucketList::LoadContent);
 
@@ -161,13 +164,9 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     if (const QAction *selectedAction = menu->exec(_tableView->GetGlobalPosition(pos));
         selectedAction == purgeAction) {
         _s3Service->PurgeBucket(bucketName);
+        new Awsmock::Components::ToastOverlay("Purge bucket initiated.\nChanges may take some time to propagate.", _tableView);
     } else if (selectedAction == deleteAction) {
-        if (multiSelect && QMessageBox::question(nullptr, "Delete Buckets", QString("Delete %1 selected buckets?").arg(selectedRows.count())) != QMessageBox::Yes) {
-            return;
-        }
-        for (const QModelIndex &row: selectedRows) {
-            _s3Service->DeleteBucket(_tableView->GetValue<QString>(row, 0));
-        }
+        DeleteSelected();
     } else if (selectedAction == uploadAction) {
         if (S3ObjectAddDialog dialog(bucketName, bucketArn); dialog.exec() == QDialog::Accepted) {
             new Awsmock::Components::ToastOverlay("Object uploaded! Bucket: " + bucketName + ", Key: " + dialog.GetS3ObjectKey(), _tableView);
@@ -175,5 +174,17 @@ void S3BucketList::ShowContextMenu(const QPoint &pos) const {
     } else if (selectedAction == editAction) {
         S3BucketEditDialog dialog(bucketName);
         dialog.exec();
+    }
+}
+
+void S3BucketList::DeleteSelected() const {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    if (selectedRows.count() > 1 && QMessageBox::question(nullptr, "Delete Buckets", QString("Delete %1 selected buckets?").arg(selectedRows.count())) != QMessageBox::Yes) {
+        return;
+    }
+    for (const QModelIndex &row: selectedRows) {
+        _s3Service->DeleteBucket(_tableView->GetValue<QString>(row, 0));
     }
 }

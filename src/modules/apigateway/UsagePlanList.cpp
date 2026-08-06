@@ -54,6 +54,9 @@ UsagePlanList::UsagePlanList(const QString &title, QWidget *parent) : BasePage(p
     _tableView->setServiceApis(_apiGatewayService->getApis());
 
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &UsagePlanList::ShowContextMenu);
+
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &UsagePlanList::DeleteSelected);
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
         const auto planId = _tableView->GetValue<QString>(index, 0);
         UsagePlanDetailDialog dialog(planId, this);
@@ -111,7 +114,16 @@ void UsagePlanList::ShowContextMenu(const QPoint &pos) {
         UsagePlanDetailDialog dialog(planId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        _apiGatewayService->DeleteUsagePlan(planId);
-        new Awsmock::Components::ToastOverlay("Usage plan deleted!\nName: " + name, this);
+        DeleteSelected();
     }
+}
+
+void UsagePlanList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const auto planId = _tableView->GetValue<QString>(selectedRows.first(), 0);
+    const auto name = _tableView->GetValue<QString>(selectedRows.first(), 1);
+    _apiGatewayService->DeleteUsagePlan(planId);
+    new Awsmock::Components::ToastOverlay("Usage plan deleted!\nName: " + name, this);
 }

@@ -73,6 +73,11 @@ public:
      */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected lambda function(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * AWS region

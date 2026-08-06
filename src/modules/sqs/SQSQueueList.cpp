@@ -99,6 +99,9 @@ SQSQueueList::SQSQueueList(const QString &title, QWidget *parent) : BasePage(par
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SQSQueueList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &SQSQueueList::DeleteSelected);
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto queueArn = _tableView->GetValue<QString>(index, 8);
@@ -192,14 +195,22 @@ void SQSQueueList::ShowContextMenu(const QPoint &pos) {
     } else if (selectedAction == redriveAction) {
         _sqsService->RedriveQueue(queueArn);
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Queues", QString("Delete %1 selected queues?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _sqsService->DeleteQueue(_tableView->GetValue<QString>(row, 7));
-            }
-        }
+        DeleteSelected();
     } else if (selectedAction == editAction) {
         SQSQueueDetailsDialog dialog(queueArn);
         dialog.exec();
     }
     StartAutoUpdate();
+}
+
+void SQSQueueList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Queues", QString("Delete %1 selected queues?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        for (const QModelIndex &row: selectedRows) {
+            _sqsService->DeleteQueue(_tableView->GetValue<QString>(row, 7));
+        }
+    }
 }

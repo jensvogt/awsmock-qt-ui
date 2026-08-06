@@ -93,6 +93,11 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected message(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * @brief Parent topic ARN
