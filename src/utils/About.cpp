@@ -2,8 +2,6 @@
 // Created by vogje01 on 11/16/25.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_About.h" resolved
-
 #include <utils/About.h>
 #include "ui_About.h"
 
