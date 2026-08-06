@@ -66,6 +66,9 @@ SSMParameterList::SSMParameterList(const QString &title, QWidget *parent) : Base
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SSMParameterList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &SSMParameterList::DeleteSelected);
+
     // Add context menu
     connect(_tableView, &PageableTable::ReloadTable, this, &SSMParameterList::LoadContent);
 
@@ -116,9 +119,18 @@ void SSMParameterList::ShowContextMenu(const QPoint &pos) {
 
     const auto parameterName = _tableView->GetValue<QString>(index, 0);
     if (const auto selectedAction = menu.exec(_tableView->GetGlobalPosition(pos)); selectedAction == deleteAction) {
-        _ssmService->DeleteParameter(parameterName);
+        DeleteSelected();
     } else if (selectedAction == editAction) {
         SSMParameterEditDialog dialog(parameterName, this);
         dialog.exec();
+    }
+}
+
+void SSMParameterList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    for (const QModelIndex &row: selectedRows) {
+        _ssmService->DeleteParameter(_tableView->GetValue<QString>(row, 0));
     }
 }

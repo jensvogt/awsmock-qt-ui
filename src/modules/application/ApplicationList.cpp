@@ -88,6 +88,9 @@ ApplicationList::ApplicationList(const QString &title, QWidget *parent) : BasePa
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &ApplicationList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &ApplicationList::DeleteSelected);
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto name = _tableView->GetValue<QString>(index, 0);
@@ -229,12 +232,21 @@ void ApplicationList::ShowContextMenu(const QPoint &pos) {
             new Awsmock::Components::ToastOverlay("Application uploaded!\nName: " + name, this);
         }
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Applications", QString("Delete %1 selected applications?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _applicationService->DeleteApplication(_tableView->GetValue<QString>(row, 0));
-            }
-            LoadContent();
-            new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 applications deleted!").arg(selectedRows.count()) : "Application deleted!\nName: " + name, this);
+        DeleteSelected();
+    }
+}
+
+void ApplicationList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Applications", QString("Delete %1 selected applications?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        const auto name = _tableView->GetValue<QString>(selectedRows.first(), 0);
+        for (const QModelIndex &row: selectedRows) {
+            _applicationService->DeleteApplication(_tableView->GetValue<QString>(row, 0));
         }
+        LoadContent();
+        new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 applications deleted!").arg(selectedRows.count()) : "Application deleted!\nName: " + name, this);
     }
 }

@@ -77,6 +77,11 @@ private
 slots:
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected queue(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * @brief Qt network manager

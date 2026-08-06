@@ -42,6 +42,7 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
     purgeAllButton->setToolTip("Purge all objects");
     connect(purgeAllButton, &QPushButton::clicked, [this]() {
         _s3Service->PurgeBucket(_bucketName);
+        new Awsmock::Components::ToastOverlay("Purge all objects initiated.\nChanges may take some time to propagate.", this);
     });
 
     // Toolbar refresh action
@@ -86,6 +87,11 @@ S3ObjectList::S3ObjectList(const QString &title, QWidget *parent) : BasePage(par
 
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &S3ObjectList::ShowContextMenu);
+
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, [this]() {
+        HandleBulkDelete(_tableView->GetSelectedRows());
+    });
 
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &S3ObjectList::LoadContent);

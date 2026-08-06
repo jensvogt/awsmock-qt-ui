@@ -91,6 +91,9 @@ LambdaList::LambdaList(const QString &title, QWidget *parent) : BasePage(parent)
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &LambdaList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &LambdaList::DeleteSelected);
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto arn = _tableView->GetValue<QString>(index, 10);
@@ -254,12 +257,21 @@ void LambdaList::ShowContextMenu(const QPoint &pos) {
             new Awsmock::Components::ToastOverlay("Lambda code uploaded! Name: " + name, this);
         }
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Lambdas", QString("Delete %1 selected lambda functions?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _lambdaService->DeleteLambda(_tableView->GetValue<QString>(row, 0));
-            }
-            LoadContent();
-            new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 lambdas deleted!").arg(selectedRows.count()) : "Lambda deleted! Name: " + name, this);
+        DeleteSelected();
+    }
+}
+
+void LambdaList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Lambdas", QString("Delete %1 selected lambda functions?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        const auto name = _tableView->GetValue<QString>(selectedRows.first(), 0);
+        for (const QModelIndex &row: selectedRows) {
+            _lambdaService->DeleteLambda(_tableView->GetValue<QString>(row, 0));
         }
+        LoadContent();
+        new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 lambdas deleted!").arg(selectedRows.count()) : "Lambda deleted! Name: " + name, this);
     }
 }

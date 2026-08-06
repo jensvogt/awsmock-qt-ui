@@ -82,6 +82,11 @@ SQSMessageList::SQSMessageList(const QString &title, QWidget *parent) : BasePage
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SQSMessageList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, [this]() {
+        HandleBulkDelete(_tableView->GetSelectedRows());
+    });
+
     // Connect paging changes
     connect(_tableView, &PageableTable::ReloadTable, this, &SQSMessageList::LoadContent);
 

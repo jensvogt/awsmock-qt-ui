@@ -63,6 +63,12 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &SecretList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, [this]() {
+        DeleteSelected();
+        LoadContent();
+    });
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto secretId = _tableView->GetValue<QString>(index, 1);
@@ -120,12 +126,20 @@ void SecretList::ShowContextMenu(const QPoint &pos) {
         SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Secrets", QString("Delete %1 selected secrets?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _secretsManagerService->DeleteSecret(_tableView->GetValue<QString>(row, 1));
-            }
-        }
+        DeleteSelected();
     }
     LoadContent();
     StartAutoUpdate();
+}
+
+void SecretList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Secrets", QString("Delete %1 selected secrets?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        for (const QModelIndex &row: selectedRows) {
+            _secretsManagerService->DeleteSecret(_tableView->GetValue<QString>(row, 1));
+        }
+    }
 }

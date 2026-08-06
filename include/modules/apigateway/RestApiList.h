@@ -75,6 +75,11 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected Rest API(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * AWS region

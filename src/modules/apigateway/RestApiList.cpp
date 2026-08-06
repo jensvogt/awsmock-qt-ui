@@ -83,6 +83,9 @@ RestApiList::RestApiList(const QString &title, QWidget *parent) : BasePage(paren
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &RestApiList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &RestApiList::DeleteSelected);
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto name = _tableView->GetValue<QString>(index, 0);
@@ -188,11 +191,20 @@ void RestApiList::ShowContextMenu(const QPoint &pos) {
         //         new Awsmock::Components::ToastOverlay("Application uploaded!\nName: " + name, this);
         //     }
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(this, "Delete Rest APIs", QString("Delete %1 selected Rest APIs?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _apiGatewayService->DeleteRestApi(_tableView->GetValue<QString>(row, 0));
-            }
-            new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 REST APIs deleted!").arg(selectedRows.count()) : "REST API deleted!\nName: " + name, this);
+        DeleteSelected();
+    }
+}
+
+void RestApiList::DeleteSelected() {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(this, "Delete Rest APIs", QString("Delete %1 selected Rest APIs?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        const auto name = _tableView->GetValue<QString>(selectedRows.first(), 0);
+        for (const QModelIndex &row: selectedRows) {
+            _apiGatewayService->DeleteRestApi(_tableView->GetValue<QString>(row, 0));
         }
+        new Awsmock::Components::ToastOverlay(multiSelect ? QString("%1 REST APIs deleted!").arg(selectedRows.count()) : "REST API deleted!\nName: " + name, this);
     }
 }

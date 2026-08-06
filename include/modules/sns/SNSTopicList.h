@@ -77,6 +77,11 @@ signals:
 private slots:
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected topic(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * @brief AWS region

@@ -73,6 +73,11 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected application(s)
+     */
+    void DeleteSelected();
+
 private:
     /**
      * AWS region

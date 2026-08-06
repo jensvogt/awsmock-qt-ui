@@ -89,6 +89,9 @@ DynamoDbTableList::DynamoDbTableList(const QString &title, QWidget *parent) : Ba
     // Add context menu
     connect(_tableView, &PageableTable::ContextMenuRequested, this, &DynamoDbTableList::ShowContextMenu);
 
+    // Delete key
+    connect(_tableView, &PageableTable::DeleteRequested, this, &DynamoDbTableList::DeleteSelected);
+
     // Add details shortcut
     connect(_tableView, &PageableTable::ShowDetailsSignal, this, [this](const QModelIndex &index) {
         const auto tableName = _tableView->GetValue<QString>(index, 0);
@@ -172,13 +175,21 @@ void DynamoDbTableList::ShowContextMenu(const QPoint &pos) const {
         DynamoDbExportTableDialog dialog(tableName);
         dialog.exec();
     } else if (selectedAction == deleteAction) {
-        if (!multiSelect || QMessageBox::question(nullptr, "Delete Tables", QString("Delete %1 selected tables?").arg(selectedRows.count())) == QMessageBox::Yes) {
-            for (const QModelIndex &row: selectedRows) {
-                _dynamoDbService->DeleteTable(_tableView->GetValue<QString>(row, 0));
-            }
-        }
+        DeleteSelected();
     } else if (selectedAction == editAction) {
         DynamoDbEditTableDialog dialog(tableName);
         dialog.exec();
+    }
+}
+
+void DynamoDbTableList::DeleteSelected() const {
+    const QModelIndexList selectedRows = _tableView->GetSelectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const bool multiSelect = selectedRows.count() > 1;
+    if (!multiSelect || QMessageBox::question(nullptr, "Delete Tables", QString("Delete %1 selected tables?").arg(selectedRows.count())) == QMessageBox::Yes) {
+        for (const QModelIndex &row: selectedRows) {
+            _dynamoDbService->DeleteTable(_tableView->GetValue<QString>(row, 0));
+        }
     }
 }

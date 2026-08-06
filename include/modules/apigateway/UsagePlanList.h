@@ -36,6 +36,11 @@ public:
 private slots:
     void ShowContextMenu(const QPoint &pos);
 
+    /**
+     * @brief Delete the currently selected usage plan
+     */
+    void DeleteSelected();
+
 private:
     QString _region;
     PageableTable *_tableView;

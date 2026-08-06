@@ -80,6 +80,11 @@ private slots:
      */
     void ShowContextMenu(const QPoint &pos) const;
 
+    /**
+     * @brief Delete the currently selected bucket(s)
+     */
+    void DeleteSelected() const;
+
 private:
     /**
      * @brief AWS region
