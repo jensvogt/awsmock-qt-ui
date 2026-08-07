@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.11.85](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.84...v1.11.85) (2026-08-07)
+
+
+### Bug Fixes
+
+* key support for paging ([afbd8ec](https://github.com/jensvogt/awsmock-qt-ui/commit/afbd8ec4fa695dc3bf2103721b57c5997cb978c4))
+* key support for paging ([df16e35](https://github.com/jensvogt/awsmock-qt-ui/commit/df16e3524328b195d52ff9d2e1126aa4eed5e4c5))
+* key support for paging ([59eba90](https://github.com/jensvogt/awsmock-qt-ui/commit/59eba901682af7f0bdd7d50ff85162df8f6c1198))
+* key support for paging ([db24eb7](https://github.com/jensvogt/awsmock-qt-ui/commit/db24eb7be1374c13c48fe6708dc3e4b1e6b65637))
+* key support for paging ([b297823](https://github.com/jensvogt/awsmock-qt-ui/commit/b297823c483493274d079c6372b6ae933c1ba8c9))
+
 ## [1.11.84](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.83...v1.11.84) (2026-08-04)
 
 
