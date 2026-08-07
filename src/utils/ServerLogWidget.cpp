@@ -2,8 +2,6 @@
 // Created by vogje01 on 2/13/26.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_ServerLogWidget.h" resolved
-
 #include <utils/ServerLogWidget.h>
 #include "ui_ServerLogWidget.h"
 

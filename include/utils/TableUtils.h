@@ -2,12 +2,14 @@
 // Created by vogje01 on 11/9/25.
 //
 
-#ifndef AWSMOCK_QT_UI_TABLE_UTILS_H
-#define AWSMOCK_QT_UI_TABLE_UTILS_H
+#pragma once
 
-#include <QTableWidget>
-#include <QDateTime>
+// Qt includes
 #include <QStandardItemModel>
+#include <QTableWidget>
+
+// Awsmock includes
+#include <utils/DateTimeUtils.h>
 
 class TableUtils {
 public:
@@ -45,4 +47,3 @@ public:
 
     static void SetColumn(QStandardItemModel *dataModel, int row, int col, bool value, const QIcon &enabledIcon, const QIcon &disabledIcon);
 };
-#endif //AWSMOCK_QT_UI_TABLE_UTILS_H

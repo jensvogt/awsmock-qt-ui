@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_CONFIGURATION_H
-#define AWSMOCK_QT_UI_CONFIGURATION_H
+#pragma once
 
 // C++ includes
 #include <iostream>
@@ -151,5 +150,3 @@ private:
      */
     bool _connected = true;
 };
-
-#endif // AWSMOCK_QT_UI_CONFIGURATION_H
