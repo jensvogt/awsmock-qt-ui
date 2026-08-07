@@ -2,10 +2,7 @@
 // Created by vogje01 on 11/9/25.
 //
 
-#include <QStandardItemModel>
 #include <utils/TableUtils.h>
-
-#include "utils/DateTimeUtils.h"
 
 
 void TableUtils::SetColumn(QTableWidget *tableWidget, const int row, const int col, const QString &value) {

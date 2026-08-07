@@ -2,8 +2,7 @@
 // Created by vogje01 on 2/13/26.
 //
 
-#ifndef AWSMOCK_QT_UI_SERVER_LOG_WIDGET_H
-#define AWSMOCK_QT_UI_SERVER_LOG_WIDGET_H
+#pragma once
 
 // Qt includes
 #include <QWidget>
@@ -81,6 +80,3 @@ private:
      */
     QTimer *_reconnectTimer{};
 };
-
-
-#endif // AWSMOCK_QT_UI_SERVER_LOG_WIDGET_H

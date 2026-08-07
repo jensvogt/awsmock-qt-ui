@@ -2,8 +2,6 @@
 // Created by jensv on 19/04/2026.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_ConfigAddUrlDialog.h" resolved
-
 #include <utils/ConfigAddUrlDialog.h>
 #include "ui_ConfigAddUrlDialog.h"
 

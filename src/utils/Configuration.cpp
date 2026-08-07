@@ -1,4 +1,3 @@
-
 #include <utils/Configuration.h>
 #include <utils/Logging.h>
 
