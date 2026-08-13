@@ -1,11 +1,12 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_UPDATE_REQUEST_H
-#define AWSMOCK_QT_UI_APPLICATION_UPDATE_REQUEST_H
+#pragma once
 
+// Qt includes
 #include <QList>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
 
+// Awsmock
 #include <dto/application/Application.h>
 
 struct ApplicationUpdateRequest {
@@ -23,5 +24,3 @@ struct ApplicationUpdateRequest {
         return requestDoc.toJson();
     }
 };
-
-#endif // AWSMOCK_QT_UI_APPLICATION_UPDATE_REQUEST_H

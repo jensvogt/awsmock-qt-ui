@@ -1,9 +1,10 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_CREATE_REQUEST_H
-#define AWSMOCK_QT_UI_APPLICATION_CREATE_REQUEST_H
+#pragma once
 
+// Qt includes
 #include <QJsonObject>
 #include <QJsonDocument>
 
+// Awsmock includes
 #include <dto/application/Application.h>
 
 struct ApplicationCreateRequest {
@@ -24,5 +25,3 @@ struct ApplicationCreateRequest {
         return requestDoc.toJson();
     }
 };
-
-#endif // AWSMOCK_QT_UI_APPLICATION_CREATE_REQUEST_H

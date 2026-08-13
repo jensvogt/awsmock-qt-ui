@@ -1,10 +1,11 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_H
-#define AWSMOCK_QT_UI_APPLICATION_H
+#pragma once
 
+// Qt includes
 #include <QDateTime>
 #include <QJsonObject>
 
-#include "utils/JsonUtils.h"
+// Awsmock includes
+#include <utils/JsonUtils.h>
 
 struct Application {
     QString region;
@@ -153,5 +154,3 @@ struct Application {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_APPLICATION_H
