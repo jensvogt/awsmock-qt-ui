@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.86](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.85...v1.11.86) (2026-08-13)
+
+
+### Bug Fixes
+
+* selection during updates - add context menu ([a7d4e63](https://github.com/jensvogt/awsmock-qt-ui/commit/a7d4e635a441468a4f5e3325025a454d632df943))
+* selection during updates - add context menu ([47e510e](https://github.com/jensvogt/awsmock-qt-ui/commit/47e510e1d2c3bd1cc515ce1ff90e8674595b8529))
+
 ## [1.11.85](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.84...v1.11.85) (2026-08-07)
 
 
