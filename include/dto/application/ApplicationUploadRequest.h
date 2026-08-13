@@ -1,6 +1,6 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_UPLOAD_REQUEST_H
-#define AWSMOCK_QT_UI_APPLICATION_UPLOAD_REQUEST_H
+#pragma once
 
+// Qt includes
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -31,5 +31,3 @@ struct ApplicationUploadRequest {
         return requestDoc.toJson();
     }
 };
-
-#endif // AWSMOCK_QT_UI_APPLICATION_UPLOAD_REQUEST_H
