@@ -1,5 +1,4 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_LIST_RESPONSE_H
-#define AWSMOCK_QT_UI_APPLICATION_LIST_RESPONSE_H
+#pragma once
 
 // Qt includes
 #include <QList>
@@ -27,5 +26,3 @@ struct ApplicationListResponse {
         }
     }
 };
-
-#endif // AWSMOCK_QT_UI_APPLICATION_LIST_RESPONSE_H

@@ -1,6 +1,6 @@
-#ifndef AWSMOCK_QT_UI_APPLICATION_COUNTER_H
-#define AWSMOCK_QT_UI_APPLICATION_COUNTER_H
+#pragma once
 
+// Qt includes
 #include <QDateTime>
 #include <QJsonObject>
 
@@ -47,6 +47,3 @@ struct ApplicationCounter {
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
     }
 };
-
-
-#endif // AWSMOCK_QT_UI_APPLICATION_COUNTER_H
