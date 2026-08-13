@@ -6,14 +6,19 @@
 #define AWSMOCK_QT_UI_APPLICATION_LOGS_DIALOG_H
 
 // C++ includes
+#include <algorithm>
 #include <utility>
 
 // Qt includes
+#include <QClipboard>
 #include <QDialog>
+#include <QGuiApplication>
+#include <QMenu>
 #include <QScrollBar>
 #include <QStandardItemModel>
 
 // Awsmock includes
+#include <components/ContextMenu.h>
 #include <modules/docker/DockerLogClient.h>
 #include <utils/IconUtils.h>
 
@@ -66,6 +71,18 @@ public:
      * @brief Sends the new log level to the docker application container.
      */
     void UpdateLogLevel() const;
+
+    /**
+     * @brief Show the log list context menu
+     *
+     * @param pos mouse pointer position
+     */
+    void ShowContextMenu(const QPoint &pos);
+
+    /**
+     * @brief Copies the currently selected log lines to the clipboard
+     */
+    void CopySelectedLogLines() const;
 
 private:
     /**

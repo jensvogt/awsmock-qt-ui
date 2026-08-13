@@ -6,8 +6,11 @@
 #define AWSMOCK_QT_UI_LAMBDA_LOGS_DIALOG_H
 
 // Qt includes
+#include <QClipboard>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QGuiApplication>
+#include <QTextEdit>
 
 // AwsMock includes
 #include <utils/IconUtils.h>
@@ -53,6 +56,15 @@ public:
     void HandleGetResult(const LambdaGetResultsResponse &lambdaLogsResult) const;
 
     void HandleRequestPrettyButton(bool checked) const;
+
+    /**
+     * @brief Copies the selected text of a log text edit to the clipboard.
+     *
+     * @par Copies the current text selection, or the entire content when nothing is selected.
+     *
+     * @param textEdit text edit to copy from
+     */
+    static void CopyToClipboard(const QTextEdit *textEdit);
 
 private:
     /**

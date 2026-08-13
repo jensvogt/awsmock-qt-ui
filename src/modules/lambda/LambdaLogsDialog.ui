@@ -175,6 +175,13 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="requestCopyButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="requestPrettyButton">
            <property name="text">
             <string>PushButton</string>
@@ -234,6 +241,36 @@
         <number>9</number>
        </property>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayoutOutput">
+         <property name="leftMargin">
+          <number>5</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacerOutput">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="outputCopyButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QTextEdit" name="outputEdit"/>
        </item>
       </layout>
@@ -261,6 +298,36 @@
        <property name="bottomMargin">
         <number>9</number>
        </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayoutLogs">
+         <property name="leftMargin">
+          <number>5</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacerLogs">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="logsCopyButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <widget class="QTextEdit" name="logsEdit"/>
        </item>

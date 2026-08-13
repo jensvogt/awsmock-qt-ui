@@ -135,55 +135,85 @@ ApplicationEditDialog::~ApplicationEditDialog() {
 }
 
 void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &applicationGetResponse) {
-    _application = applicationGetResponse.application;
+
+    // Start/Stop/Refresh re-fetch the application to refresh status information. If the
+    // user already has unsaved edits (e.g. in the Dockerfile editor), the fields below must
+    // not be overwritten with the (now stale) server data, or the edits get silently lost
+    // and the subsequent save would write back the reverted content.
+    const bool populateEditableFields = !_initialized;
+
+    if (populateEditableFields) {
+        _application = applicationGetResponse.application;
+    } else {
+        // Keep the user's unsaved edits, only refresh the read-only/status related fields
+        Application &current = _application;
+        const Application &fetched = applicationGetResponse.application;
+        current.runtime = fetched.runtime;
+        current.runType = fetched.runType;
+        current.imageId = fetched.imageId;
+        current.imageName = fetched.imageName;
+        current.imageSize = fetched.imageSize;
+        current.imageMd5 = fetched.imageMd5;
+        current.containerId = fetched.containerId;
+        current.containerName = fetched.containerName;
+        current.status = fetched.status;
+        current.enabled = fetched.enabled;
+        current.lastStarted = fetched.lastStarted;
+        current.created = fetched.created;
+        current.modified = fetched.modified;
+    }
+
     _ui->regionEdit->setText(_application.region);
     _ui->nameEdit->setText(_application.name);
     _ui->runtimeEdit->setText(_application.runtime);
     _ui->runTypeEdit->setText(_application.runType);
-    _ui->privatePortEdit->setText(QString::number(_application.privatePort));
-    _ui->publicPortEdit->setText(QString::number(_application.publicPort));
     _ui->archiveEdit->setText(_application.archive);
-    _ui->versionEdit->setText(_application.version);
     _ui->imageNameEdit->setText(_application.imageName);
     _ui->imageIdEdit->setText(_application.imageId);
     _ui->containerIdEdit->setText(!_application.containerId.isEmpty() ? _application.containerId.first(12) : "-");
     _ui->containerNameEdit->setText(_application.containerName);
     _ui->statusEdit->setText(_application.status);
     _ui->enabledCheckBox->setChecked(_application.enabled);
-    _ui->dockerfileEdit->SetText(_application.dockerFile);
-    _ui->descriptionEdit->setText(_application.description);
     _ui->lastStartedEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.lastStarted));
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(_application.modified));
 
-    // Update environment table
-    int r = 0;
-    for (auto [key, value]: _application.environment.asKeyValueRange()) {
-        SetColumn(_envDataModel, r, 0, key);
-        SetColumn(_envDataModel, r, 1, value);
-        r++;
-    }
+    if (populateEditableFields) {
+        _ui->privatePortEdit->setText(QString::number(_application.privatePort));
+        _ui->publicPortEdit->setText(QString::number(_application.publicPort));
+        _ui->versionEdit->setText(_application.version);
+        _ui->dockerfileEdit->SetText(_application.dockerFile);
+        _ui->descriptionEdit->setText(_application.description);
 
-    // Update tag table
-    r = 0;
-    _ui->tagTable->setRowCount(0);
-    _ui->tagTable->setSortingEnabled(false);
-    for (auto [key, value]: _application.tags.asKeyValueRange()) {
-        _ui->tagTable->insertRow(r);
-        SetColumn(_ui->tagTable, r, 0, key);
-        SetColumn(_ui->tagTable, r, 1, value);
-        r++;
-    }
-    _ui->tagTable->setRowCount(static_cast<int>(_application.tags.count()));
-    _ui->tagTable->setSortingEnabled(true);
-    _ui->tagTable->sortItems(_tagSortColumn, _tagSortOrder);
+        // Update environment table
+        int r = 0;
+        for (auto [key, value]: _application.environment.asKeyValueRange()) {
+            SetColumn(_envDataModel, r, 0, key);
+            SetColumn(_envDataModel, r, 1, value);
+            r++;
+        }
 
-    // Update dependencies tab
-    r = 0;
-    _ui->dependencyList->clear();
-    for (const auto &name: _application.dependencies) {
-        _ui->dependencyList->insertItem(r, name);
-        r++;
+        // Update tag table
+        r = 0;
+        _ui->tagTable->setRowCount(0);
+        _ui->tagTable->setSortingEnabled(false);
+        for (auto [key, value]: _application.tags.asKeyValueRange()) {
+            _ui->tagTable->insertRow(r);
+            SetColumn(_ui->tagTable, r, 0, key);
+            SetColumn(_ui->tagTable, r, 1, value);
+            r++;
+        }
+        _ui->tagTable->setRowCount(static_cast<int>(_application.tags.count()));
+        _ui->tagTable->setSortingEnabled(true);
+        _ui->tagTable->sortItems(_tagSortColumn, _tagSortOrder);
+
+        // Update dependencies tab
+        r = 0;
+        _ui->dependencyList->clear();
+        for (const auto &name: _application.dependencies) {
+            _ui->dependencyList->insertItem(r, name);
+            r++;
+        }
     }
 
     // Set start button
@@ -193,6 +223,8 @@ void ApplicationEditDialog::UpdateApplication(const ApplicationGetResponse &appl
     // Save container ID
     _containerId = applicationGetResponse.application.containerId;
     _ui->logsButton->setEnabled(true);
+
+    _initialized = true;
 }
 
 void ApplicationEditDialog::SetupDockerfileTab() {
