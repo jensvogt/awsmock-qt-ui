@@ -39,6 +39,17 @@ ApplicationLogsDialog::ApplicationLogsDialog(const QString &applicationName, con
     _ui->logListView->setWordWrap(false);
     _ui->logListView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     _ui->logListView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    _ui->logListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    // Copy selected lines to the clipboard, either via the context menu or Ctrl+C
+    _ui->logListView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_ui->logListView, &QListView::customContextMenuRequested, this, &ApplicationLogsDialog::ShowContextMenu);
+
+    auto *copyAction = new QAction(this);
+    copyAction->setShortcut(QKeySequence::Copy);
+    copyAction->setShortcutContext(Qt::WidgetShortcut);
+    _ui->logListView->addAction(copyAction);
+    connect(copyAction, &QAction::triggered, this, &ApplicationLogsDialog::CopySelectedLogLines);
     connect(_dockerLogClient, &DockerLogClient::LogReceived, [&](const QStringList &lines) {
         for (const QString &line: lines) {
             const auto item = new QStandardItem(line);
@@ -149,4 +160,32 @@ void ApplicationLogsDialog::UpdateLogLevel() const {
     if (_autoScroll) {
         _ui->logListView->scrollToBottom();
     }
+}
+
+void ApplicationLogsDialog::ShowContextMenu(const QPoint &pos) {
+    if (!_ui->logListView->selectionModel()->hasSelection()) {
+        return;
+    }
+
+    QMenu *menu = new ContextMenu(this);
+    QAction *copyAction = menu->addAction(IconUtils::GetIcon("clipboard"), tr("Copy"));
+    connect(copyAction, &QAction::triggered, this, &ApplicationLogsDialog::CopySelectedLogLines);
+    menu->exec(_ui->logListView->viewport()->mapToGlobal(pos));
+}
+
+void ApplicationLogsDialog::CopySelectedLogLines() const {
+    QModelIndexList selected = _ui->logListView->selectionModel()->selectedIndexes();
+    if (selected.isEmpty()) {
+        return;
+    }
+
+    std::sort(selected.begin(), selected.end(), [](const QModelIndex &a, const QModelIndex &b) {
+        return a.row() < b.row();
+    });
+
+    QStringList lines;
+    for (const QModelIndex &index: selected) {
+        lines << index.data(Qt::DisplayRole).toString();
+    }
+    QGuiApplication::clipboard()->setText(lines.join('\n'));
 }

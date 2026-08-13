@@ -82,6 +82,16 @@ private:
     bool _changed = false;
 
     /**
+     * @brief Set to true once the dialog has been populated for the first time.
+     *
+     * Start/Stop/Refresh re-fetch the application from the server to update status
+     * information. That response must not clobber edits the user already made in the
+     * editable fields (Dockerfile, description, version, ports, environment, tags,
+     * dependencies), so those are only populated on the initial load.
+     */
+    bool _initialized = false;
+
+    /**
      * @brief Application logs dialog
      */
     ApplicationLogsDialog *_applicationLogsDialog;
