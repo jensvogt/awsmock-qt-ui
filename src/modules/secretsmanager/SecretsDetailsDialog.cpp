@@ -23,6 +23,13 @@ SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) :
         LoadContent();
     });
 
+    // Rotate button
+    _ui->rotateButton->setText(nullptr);
+    _ui->rotateButton->setIcon(IconUtils::GetIcon("restart"));
+    connect(_ui->rotateButton, &QPushButton::clicked, this, [this]() {
+        _secretsManagerService->RotateSecret(_secretArn);
+    });
+
     // Version refreshButton
     _ui->versionRefreshButton->setText(nullptr);
     _ui->versionRefreshButton->setIcon(IconUtils::GetIcon("refresh"));
@@ -34,6 +41,21 @@ SecretsDetailsDialog::SecretsDetailsDialog(QString secretArn, QWidget *parent) :
 
     // Value edit
     connect(_ui->valueEdit, &QTextEdit::textChanged, this, [this]() {
+        _changed = true;
+    });
+
+    // Rotation rules edit
+    _ui->automaticallyAfterDaysEdit->setValidator(new QIntValidator(1, 1000, this));
+    connect(_ui->rotationEnabledCheck, &QCheckBox::checkStateChanged, this, [this](int) {
+        _changed = true;
+    });
+    connect(_ui->automaticallyAfterDaysEdit, &QLineEdit::textChanged, this, [this]() {
+        _changed = true;
+    });
+    connect(_ui->rotationDurationEdit, &QLineEdit::textChanged, this, [this]() {
+        _changed = true;
+    });
+    connect(_ui->scheduleExpressionEdit, &QLineEdit::textChanged, this, [this]() {
         _changed = true;
     });
 
@@ -68,9 +90,26 @@ SecretsDetailsDialog::~SecretsDetailsDialog() {
     delete _ui;
 }
 
+bool SecretsDetailsDialog::ValidateRotationRules() const {
+    if (!_ui->rotationEnabledCheck->isChecked()) {
+        return true;
+    }
+    return !_ui->automaticallyAfterDaysEdit->text().trimmed().isEmpty() ||
+           !_ui->rotationDurationEdit->text().trimmed().isEmpty() ||
+           !_ui->scheduleExpressionEdit->text().trimmed().isEmpty();
+}
+
 void SecretsDetailsDialog::HandleAccept() {
+    if (!ValidateRotationRules()) {
+        QMessageBox::warning(this, "Error", "When rotation is enabled, at least one rotation rule field (automatically after days, duration or schedule expression) must be filled in!");
+        return;
+    }
     if (_changed) {
         _secretCounter.secretString = _ui->valueEdit->toPlainText().toUtf8();
+        _secretCounter.rotationEnabled = _ui->rotationEnabledCheck->isChecked();
+        _secretCounter.automaticallyAfterDays = _ui->automaticallyAfterDaysEdit->text().toLong();
+        _secretCounter.duration = _ui->rotationDurationEdit->text();
+        _secretCounter.scheduleExpression = _ui->scheduleExpressionEdit->text();
         _secretsManagerService->UpdateSecret(_secretCounter);
     }
     accept();
@@ -96,7 +135,14 @@ void SecretsDetailsDialog::UpdateSecret(const SecretCounter &secretCounter) {
     _ui->deleteDateEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.deletedDate));
     _ui->createdEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.created));
     _ui->modifiedEdit->setText(DateTimeUtils::GetDateTimeFormat(secretCounter.modified));
+    _ui->lambdaArnEdit->setText(secretCounter.rotationLambdaARN);
     _ui->valueEdit->setText(secretCounter.secretString);
+
+    // Rotation rules
+    _ui->rotationEnabledCheck->setChecked(secretCounter.rotationEnabled);
+    _ui->automaticallyAfterDaysEdit->setText(secretCounter.automaticallyAfterDays > 0 ? QString::number(secretCounter.automaticallyAfterDays) : "");
+    _ui->rotationDurationEdit->setText(secretCounter.duration);
+    _ui->scheduleExpressionEdit->setText(secretCounter.scheduleExpression);
 
     // Save secret ID
     _secretId = secretCounter.secretId;

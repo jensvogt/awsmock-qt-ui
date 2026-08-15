@@ -46,7 +46,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     _tableView = new PageableTable(this);
     _tableView->SetHeaderNames(headers);
     _tableView->SetResizeModes({QHeaderView::Stretch, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents, QHeaderView::ResizeToContents});
-    _tableView->SetHiddenColumns({5});
+    _tableView->SetHiddenColumns({4});
     _tableView->SetSorting(1, "name", -1);
     _tableView->setServiceApis(_secretsManagerService->getApis());
 
@@ -54,7 +54,7 @@ SecretList::SecretList(const QString &title, QWidget *parent) : BasePage(parent)
     connect(_tableView, &PageableTable::DoubleClicked, this, [this](const QModelIndex &index) {
 
         // Extract ARN
-        const QString secretId = _tableView->GetValue<QString>(index, 1);
+        const auto secretId = _tableView->GetValue<QString>(index, 1);
 
         SecretsDetailsDialog dialog(secretId, this);
         dialog.exec();

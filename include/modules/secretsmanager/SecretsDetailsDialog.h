@@ -92,6 +92,16 @@ public:
 
 private:
     /**
+     * @brief Validates the rotation rules tab
+     *
+     * When rotation is enabled, at least one of the rotation rules fields (automatically after days,
+     * duration, schedule expression) must be filled in.
+     *
+     * @return true if the rotation rules are valid, false otherwise
+     */
+    bool ValidateRotationRules() const;
+
+    /**
      * @brief UI components
      */
     Ui::SecretsDetailsDialog *_ui;

@@ -91,9 +91,19 @@ struct SecretCounter {
     QString rotationLambdaARN;
 
     /**
-     * Rotation rules
+     * Automatic rotation period in days
      */
-    //RotationRules rotationRules;
+    long automaticallyAfterDays = 0;
+
+    /**
+     * Rotation duration
+     */
+    QString duration;
+
+    /**
+     * Rotation schedule expression
+     */
+    QString scheduleExpression;
 
     /**
      * Secret values
@@ -112,10 +122,16 @@ struct SecretCounter {
         lastChangedDate = QDateTime::fromString(jsonObject["lastChangedDate"].toString(), Qt::ISODate);
         lastRotatedDate = QDateTime::fromString(jsonObject["lastRotatedDate"].toString(), Qt::ISODate);
         nextRotatedDate = QDateTime::fromString(jsonObject["nextRotatedDate"].toString(), Qt::ISODate);
-        rotationEnabled = jsonObject["RotationEnabled"].toBool();
-        rotationLambdaARN = jsonObject["RotationLambdaARN"].toString();
+        rotationEnabled = jsonObject["rotationEnabled"].toBool();
+        rotationLambdaARN = jsonObject["rotationLambdaARN"].toString();
         created = QDateTime::fromString(jsonObject["created"].toString(), Qt::ISODate);
         modified = QDateTime::fromString(jsonObject["modified"].toString(), Qt::ISODate);
+        if (jsonObject.contains("rotationRules") && jsonObject["rotationRules"].isObject()) {
+            const QJsonObject rotationRulesObject = jsonObject["rotationRules"].toObject();
+            automaticallyAfterDays = static_cast<long>(rotationRulesObject["AutomaticallyAfterDays"].toDouble());
+            duration = rotationRulesObject["Duration"].toString();
+            scheduleExpression = rotationRulesObject["ScheduleExpression"].toString();
+        }
     }
 
     QJsonObject ToJsonObject() const {
@@ -134,6 +150,11 @@ struct SecretCounter {
         jsonObject["rotationLambdaARN"] = rotationLambdaARN;
         jsonObject["created"] = created.toString(Qt::ISODate);
         jsonObject["modified"] = modified.toString(Qt::ISODate);
+        QJsonObject rotationRulesObject;
+        rotationRulesObject["AutomaticallyAfterDays"] = static_cast<qint64>(automaticallyAfterDays);
+        rotationRulesObject["Duration"] = duration;
+        rotationRulesObject["ScheduleExpression"] = scheduleExpression;
+        jsonObject["rotationRules"] = rotationRulesObject;
         return jsonObject;
     }
 };

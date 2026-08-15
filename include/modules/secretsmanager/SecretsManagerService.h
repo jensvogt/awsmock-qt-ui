@@ -29,7 +29,7 @@ public:
      * @brief Secrets Manager Service
      */
     SecretsManagerService() {
-        setApis({"ListSecrets", "GetSecret", "GetSecretVersions", "CreateSecret", "UpdateSecret", "DeleteSecret"});
+        setApis({"ListSecrets", "GetSecret", "GetSecretVersions", "CreateSecret", "UpdateSecret", "DeleteSecret", "RotateSecret"});
     }
 
     /**
@@ -99,6 +99,15 @@ public:
      * @param secretId The unique identifier of the secret to be deleted.
      */
     void DeleteSecret(const QString &secretId);
+
+    /**
+     * @brief Manually triggers rotation of a secret.
+     *
+     * Sends a request to rotate the specified secret using its configured rotation Lambda function.
+     *
+     * @param secretId The unique identifier of the secret to be rotated.
+     */
+    void RotateSecret(const QString &secretId);
 
 signals:
     /**
