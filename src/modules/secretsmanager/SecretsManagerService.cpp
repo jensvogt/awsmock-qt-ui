@@ -94,7 +94,7 @@ void SecretsManagerService::GetSecret(const QString &secretId) {
                       [this, timer](const bool success, const QByteArray &response, int, const QString &error) {
                           if (success) {
                               // The API returns an JSON secretsManager counter list
-                              std::cerr << response.toStdString() << std::endl;
+                              //std::cerr << response.toStdString() << std::endl;
                               if (const QJsonDocument jsonDoc = QJsonDocument::fromJson(response); jsonDoc.isObject()) {
                                   SecretCounter secretCounter;
                                   secretCounter.FromJson(jsonDoc.object());
@@ -206,5 +206,32 @@ void SecretsManagerService::DeleteSecret(const QString &secretId) {
                               logError << error;
                           }
                           emit EventBus::instance().TimerSignal("DeleteSecret", timer.elapsed());
+                      });
+}
+
+void SecretsManagerService::RotateSecret(const QString &secretId) {
+    QElapsedTimer timer;
+    timer.start();
+
+    QJsonObject jRequest = CreateBaseRequest();
+    jRequest["SecretId"] = secretId;
+    const QJsonDocument requestDoc(jRequest);
+
+    _restManager.post(GetBaseUrl(),
+                      requestDoc.toJson(),
+                      {
+                          {"x-awsmock-target", "secretsmanager"},
+                          {"x-awsmock-action", "RotateSecret"},
+                          {"content-type", "application/json"}
+                      },
+                      [this, timer, secretId](const bool success, const QByteArray &, int, const QString &error) {
+                          if (success) {
+                              // RotateSecret only returns {ARN, Name, VersionId}, not the full secret,
+                              // so reload the details instead of parsing the response as a SecretCounter.
+                              GetSecret(secretId);
+                          } else {
+                              logError << error;
+                          }
+                          emit EventBus::instance().TimerSignal("RotateSecret", timer.elapsed());
                       });
 }
