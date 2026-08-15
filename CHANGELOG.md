@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.87](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.86...v1.11.87) (2026-08-15)
+
+
+### Bug Fixes
+
+* key support for paging ([faa224b](https://github.com/jensvogt/awsmock-qt-ui/commit/faa224b59bf4521565e045c2212b7e457db7e20f))
+* secrets manager rotation ([45b356e](https://github.com/jensvogt/awsmock-qt-ui/commit/45b356e5db7e6daa59b0bbb134c2aeaf4c00791d))
+* secrets manager rotation ([c47c633](https://github.com/jensvogt/awsmock-qt-ui/commit/c47c6333147ffb0f31aabf707ac52dd0b7c4f3cd))
+
 ## [1.11.86](https://github.com/jensvogt/awsmock-qt-ui/compare/1.11.85...v1.11.86) (2026-08-13)
 
 
